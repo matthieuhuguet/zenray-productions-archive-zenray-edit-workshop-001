@@ -1,0 +1,17 @@
+{
+  "verifiedAt": "2026-10-08T00:01:35+02:00",
+  "date": "8 October 2026",
+  "projectId": "zenray-edit",
+  "backupJobId": "23ca4686-7309-4037-a1d6-06d0cff2c6e5",
+  "cloudArchiveManifest": "pages/ZenRayAssets/zenray-edit/sources/tmp/workshop/SkillArchives/ZenRayEditSkillFinal-7October2026.tar.gz.file.json",
+  "cloudProofManifest": "pages/ZenRayAssets/zenray-edit/sources/tmp/workshop/SkillArchives/ZenRayEditSkillFinalProof.json.file.json",
+  "restoredArchiveSha256": "239de92c9ec725d2e8573e3921f7d58e235650d01171676a275d6011c743c8bb",
+  "localArchiveSha256": "239de92c9ec725d2e8573e3921f7d58e235650d01171676a275d6011c743c8bb",
+  "archiveBytes": 148787688,
+  "regularFilesExpected": 150,
+  "regularFilesRestored": 150,
+  "missingMembers": [],
+  "extraMembers": [],
+  "mismatchedMembers": [],
+  "allChecksPassed": true
+}
