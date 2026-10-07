@@ -1,0 +1,50 @@
+# Éditeur du post intégré au lot
+
+Le texte appartient au lot. Les calques de texte des images restent indépendants.
+L'éditeur affiche directement la légende préparée par l'agent, puis conserve chaque modification
+de Matthieu. Il ne contacte aucun service pour réécrire le texte en arrière-plan.
+
+| Famille | Définition unique | Paramètres |
+|---|---|---|
+| Légende | `assets/post-editor/zr-post-editor.js` | `_post.json` : `text`, `format`, `limit` |
+| Apparence du post | `assets/post-editor/zr-post-editor.css` | variables `--zr-post-*` |
+| Instances photo | `scripts/zr-hda-instance.py` | source, mode, projet, format photo, destination, post |
+| Instructions historiques | `references/fusion-sources/` | copie complète et empreinte de chaque source |
+| Navigation | `scripts/index-skill.py` | titres et lignes réels de `SKILL.md` |
+
+Exemple de données, à remplir avec le vrai texte préparé :
+
+```json
+{"text": "", "format": "4:5", "limit": 2200}
+```
+
+Le format de la carte est un aperçu du texte. Il ne recadre aucune photo et ne change pas la
+limite de caractères. Une longue légende se lit par défilement, jamais par une coupe automatique.
+Le compteur mesure les points de code Unicode, comme `len()` en Python, espaces et retours compris.
+La limite est un paramètre de travail, pas une validation de publication par Instagram.
+
+Le bouton Post est actif à l'ouverture. Photos rend les réglages visibles sans perdre le brouillon,
+le cadrage ni la sélection. Sur grand écran, le post et l'image restent côte à côte ; sur petit écran,
+un clic fait passer d'un espace à l'autre. La transition respecte la réduction des animations.
+
+Les modifications du texte s'enregistrent dans le navigateur de cette instance. Exporter produit
+`_post.json` sur disque, Importer restaure ce fichier ou un texte `.txt` / `.md`. Le bouton de copie
+de tous les réglages inclut la légende. Le navigateur ne réécrit pas automatiquement le fichier du
+disque : récupérer l'export ou les valeurs copiées pour une reprise sur un autre appareil.
+
+Lors d'une nouvelle révision déployée sur disque par l'agent (nouvelle empreinte `revision` dans `_post-data.js`), l'éditeur archive automatiquement l'ancien brouillon local (`:archive:<revision>`) et charge la nouvelle version préparée immédiatement au rechargement de la page (⌘R). Pendant la session de travail sur la même révision, les modifications en cours de frappe dans le navigateur restent conservées.
+
+`--force` conserve `_params.json`, `_crop_params.json`, `out/` et les autres sorties, tout en archivant le code remplacé dans `.hda-history/`. Les prévisualisations servent seulement à l'écran. Aucun rendu photo, vignettage, publication ou suppression d'ancienne instance n'est déclenché par l'éditeur.
+
+
+## Correction UI du 2026-09-03
+
+La coque entière, Photos comme Post, utilise désormais `assets/ui/zr-ui.css` et `zr-ui.js`. Le thème clair est le défaut ; le bouton Sombre/Clair conserve le choix. La carte de texte reste en 4:5 et prend la matière du thème, avec InterVariable embarquée et 13 px CSS maximum. La prescription précédente d’un panneau blanc indépendant et de texte à 17 px est remplacée. Le wallpaper et les valeurs de verre proviennent de `Memory/Design/ZenRayProgress/UI/10-sidebar.html`.
+
+Les captures et `verification-ui.json` dans `~/.claude/tmp/tmp-atelier-socialmedia` prouvent les deux thèmes à 1728 × 1117 pixels CSS, facteur d’écran 2. `scripts/verify-ui.cjs` interroge aussi les polices réellement rendues par Chromium et contrôle le défaut clair, la reprise du choix et l’absence de débordement à 390 pixels.
+
+## Contrat courant et preuves (7 October 2026)
+
+- Les commandes actuelles suivent ActiveContract.md ; l’index est le routage par fichier des 15 blocs, pas des lignes du SKILL.md courant. (7 October 2026)
+- verify-post-editor.cjs contrôle les trois boutons actuels, fidélité Unicode et répétitions, reload, format indépendant, dépassement non coupé, copie post/params, passage Photos/Post, Export indisponible hors serveur et petit écran. Les anciennes actions Importer/Exporter du post sont historiques. (7 October 2026)
+- verify-ui.cjs contrôle les modes heavy/light, thèmes clair/sombre, Inter réellement embarquée, géométrie du panneau et écran 390 px. Cela ne prouve pas un cook photo ou un pipeline vidéo complet. (7 October 2026)

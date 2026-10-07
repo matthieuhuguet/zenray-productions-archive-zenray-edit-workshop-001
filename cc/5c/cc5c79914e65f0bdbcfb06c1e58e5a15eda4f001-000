@@ -1,0 +1,169 @@
+# Template Creator
+
+Ce mode transforme une ou plusieurs références en templates mesurés, afin de pouvoir changer le
+fond, le texte et les effets sans reconstruire la mise en page. La source de vérité est le JSON.
+Chaque dossier de template contient aussi son guide PNG et son Markdown lisible.
+
+## Déclenchement
+
+Utiliser ce mode lorsqu'il faut reproduire la composition d'une image avec un nouveau fond, analyser
+des références, créer un guide de calques, ou ajouter des réglages photo à un atelier HTML.
+
+## Livrables obligatoires
+
+Créer dans le projet :
+
+1. `assets/backgrounds.json` : fonds renommés, dimensions, SHA256 et texte connu.
+2. `templates/template-spec.json` : coordonnées, calques, variantes et mesures source.
+3. `templates/<template-id>/template-guide.png` : un seul template annoté par image.
+4. `templates/<template-id>/template.md` : description et chiffres du même template.
+5. `Scripts/build_from_template.py` ou un générateur équivalent qui accepte un fond, un template,
+   un texte principal et un texte secondaire seulement quand ce dernier est requis.
+
+Ne pas créer d'atlas multi-template, de `template-spec.md` global, de planche de fontes ou de
+font matcher. Les observations de chaque référence restent dans le JSON, même lorsqu'elles
+appartiennent à la même famille.
+
+## Mesurer avant de déduire
+
+Préserver les originaux et les renommer par rôle. Mesurer leurs dimensions natives, les bandes noires
+et le cadre actif. Toutes les coordonnées emploient les pixels source, depuis le coin supérieur gauche.
+
+Pour chaque texte, conserver :
+
+- boîte d'encre visible `[x, y, width, height]`, jamais la boîte CSS ;
+- ancre SVG et baseline ;
+- taille de composition et interlettrage ;
+- casse, centrage, ordre et nombre de calques ;
+- type, largeur et espacement seulement.
+
+Lire le texte à l'œil et confirmer avec OCR sur une zone serrée. Mesurer l'encre avec un masque de
+contraste local, puis vérifier le cadre directement sur le raster. Le contraste mesure, l'OCR confirme
+la lecture. Si l'encre reste ambiguë, documenter l'incertitude au lieu d'élargir le cadre.
+
+## Typographie, règle de vérité
+
+Un raster ne permet pas de prouver le nom d'une police. Ne jamais écrire de famille, de confiance de
+matching ou de substitut supposé dans l'analyse de référence. Les seules valeurs autorisées sont :
+
+```json
+{
+  "type_class": "serif",
+  "width_class": "normal",
+  "tracking_class": "expanded"
+}
+```
+
+Classes possibles :
+
+- `type_class` : `serif`, `sans`, `mono`, `other` ;
+- `width_class` : `condensed`, `normal`, `expanded` ;
+- `tracking_class` : `condensed`, `normal`, `expanded`.
+
+Une fonte employée pour le rendu est déclarée séparément comme « fonte de production choisie » avec
+son chemin et sa licence. Elle ne devient jamais une identification de la fonte source. Si le fichier
+de la police d'origine, le document éditable ou ses métadonnées existent, citer cette preuve dans le
+projet, sans transformer cette exception en reconnaissance visuelle.
+
+## Déduire les familles de template
+
+Normaliser les mesures par le cadre actif. Deux références rejoignent une même famille si le nombre et
+l'ordre des calques coïncident et si leurs ancres, baselines, tailles et interlettrages se superposent
+dans une tolérance mesurée. Garder les coordonnées de chaque référence, puis définir la valeur réutilisable.
+
+Une composition à liste éditoriale reste un template indépendant : elle ne doit pas être forcée dans un
+contrat à un ou deux textes. Quand les baselines des lignes diffèrent, stocker `baseline_y_by_line` au lieu
+d'inventer une hauteur de ligne uniforme.
+
+## Guide par template
+
+Chaque guide respecte les règles suivantes :
+
+- un seul template par PNG, jamais quatre sur la même planche ;
+- le côté le plus long mesure au moins 3840 px ;
+- partir du raster source et utiliser l'entier d'agrandissement minimal qui atteint 4K ;
+- aucune réduction, déformation ou recadrage de la référence ;
+- les boîtes ont un remplissage translucide et un contour de 1 px maximum dans le PNG final ;
+- les coordonnées et mesures sont calculées dans l'espace source, puis multipliées pour le guide ;
+- le titre, la légende et la clé de couleurs occupent une bande externe, jamais le design ;
+- le Markdown se trouve dans le même dossier que le PNG.
+
+Couleurs stables : bleu pour le fond, rose pour le texte principal, cyan pour le texte secondaire,
+jaune pour un effet ou séparateur, orange pour une liste éditoriale et vert pour les axes ou zones sûres.
+Utiliser une opacité basse, environ 10 à 15 % pour le remplissage et 60 à 70 % pour le contour, afin que
+le guide reste lisible sans manger l'image.
+
+Le Markdown indique le format source, les calques dans leur ordre de profondeur, les coordonnées,
+les boîtes d'encre, les baselines, les tailles, l'interlettrage, les classifications typographiques et
+les conditions du texte secondaire. Le guide permet une lecture rapide par vision, le Markdown permet
+une lecture exacte par texte.
+
+## Génération
+
+Le texte est un nœud SVG `<text>` ou HTML unique. Ne jamais reconstruire les lettres avec plusieurs
+blocs, images, contours ou masques. L'interlettrage reste une propriété du texte ; l'ombre et les effets
+restent des calques séparés. Le générateur refuse un fond absent, un paramètre non résolu et un texte
+secondaire absent lorsqu'il est requis.
+
+Le schéma minimal est :
+
+```json
+{
+  "coordinate_system": {
+    "origin": "top-left",
+    "canvas_width": 3456,
+    "canvas_height": 2234,
+    "units": "source pixels"
+  },
+  "typography_analysis_policy": {
+    "raster_family_names": "forbidden"
+  },
+  "templates": {
+    "kicker_over_title": {
+      "anchor_x": 1728,
+      "secondary": { "font_size": 52, "letter_spacing": 16, "baseline_y": 1083 },
+      "primary": { "font_size": 88, "letter_spacing": 24, "baseline_y": 1183 }
+    }
+  }
+}
+```
+
+## Réglages photo
+
+Lorsqu'un atelier HTML contient une image, installer les contrôles photo du skill :
+
+```bash
+~/.claude/skills/zenray-edit/scripts/install-template-creator.sh <dossier-projet>
+```
+
+Le script copie `zr-photo-adjustments.js` et `zr-photo-adjustments.css`. Le module original couvre :
+
+- Vignette et Strength, de 0 à 100 ;
+- Selective Color : rouge, jaune, vert, cyan, bleu, magenta avec Hue, Saturation et Luminance ;
+- Levels : Input Black, Midtone, Input White, Output Black, Output White ;
+- Black and White ;
+- Color : Saturation et Vibrance ;
+- Light : Brilliance, Exposure, Highlights, Shadows, Brightness, Contrast, Black Point ;
+- Filters : Original, Vivid, Vivid Warm, Vivid Cool, Dramatic, Dramatic Warm, Dramatic Cool, Mono,
+  Silvertone, Noir.
+
+Les valeurs sont des entiers. Les réglages sont neutres par défaut : 0 pour les corrections, Original et
+force 100 pour le filtre. Le module ne copie pas le code propriétaire d'Apple Photos, il fournit une
+équivalence originale des mêmes familles de réglages. Les curseurs écrivent dans les variables CSS de
+`:root`, jamais directement dans les styles de l'image.
+
+## Vérification avant livraison
+
+Vérifier que :
+
+1. chaque fond du manifeste existe et correspond à son SHA256 ;
+2. chaque boîte d'encre, ancre et baseline reste dans le canvas source ;
+3. chaque guide est seul dans son image, fait au minimum 4K et possède son Markdown voisin ;
+4. les annotations respectent l'opacité et le contour maximal de 1 px final ;
+5. aucun fichier d'atlas ou font matcher ne subsiste ;
+6. chaque template produit au moins un PNG aux dimensions du fond ;
+7. le HTML signale un rendu prêt, la fonte de production disponible, un texte qui tient et une liste qui tient ;
+8. la chaîne photo est neutre au défaut et ses 32 contrôles changent une mire synthétique.
+
+Le projet `/Users/zenray/.claude/tmp/tmp-thewitcher3-artdirection` est l'exemple de référence : dix fonds
+manifestés, huit références mesurées, quatre templates, quatre guides 4K autonomes et les contrôles automatisés.

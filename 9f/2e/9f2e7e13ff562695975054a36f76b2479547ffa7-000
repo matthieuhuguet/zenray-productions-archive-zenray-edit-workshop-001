@@ -1,0 +1,67 @@
+#!/usr/bin/env node
+// Verify the current three-button contract and preserve every draft. (7 October 2026, 17:00 Europe/Paris)
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const {pathToFileURL}=require('node:url');
+const {chromium}=require('./RenderComposition.cjs').loadPlaywright({});
+(async()=>{
+  const directories=process.argv.slice(2);
+  assert.equal(directories.length,2,'Provide heavy and light fixtures.');
+  const browser=await chromium.launch({headless:true});
+  const checks=[];
+  try {
+    for(const [index,directory] of directories.entries()) {
+      const context=await browser.newContext({viewport:{width:1728,height:1117}});
+      await context.addInitScript(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async text=>window.copiedPost=text}}));
+      const page=await context.newPage(),errors=[];
+      page.on('pageerror',error=>errors.push(error.message));
+      await page.goto(pathToFileURL(path.join(directory,'index.html')).href);
+      await page.waitForFunction(()=>window.ZRPostEditor&&document.getElementById('zr-copy-post-btn'));
+      await page.evaluate(()=>document.fonts.ready);
+      const original=JSON.parse(fs.readFileSync(path.join(directory,'_post.json'),'utf8'));
+      const editor=page.getByRole('textbox',{name:'Texte du post',exact:true});
+      assert.equal(await editor.inputValue(),original.text);
+      assert.equal(await page.locator('.zr-save-bar button').count(),3);
+      assert.equal(await editor.evaluate(el=>getComputedStyle(el).fontWeight),'400');
+      assert.equal(await editor.evaluate(el=>getComputedStyle(el).fontSize),'13px');
+      const edited='🤍 日本語\nJe veux garder ça, garder ça. <script>window.injected=true</script>';
+      await editor.fill(edited);
+      assert.ok((await page.locator('#zr-post-count').innerText()).startsWith(Array.from(edited).length+' /'));
+      assert.equal(await page.evaluate(()=>window.injected),undefined);
+      await page.reload();await page.waitForFunction(()=>window.ZRPostEditor);
+      assert.equal(await editor.inputValue(),edited);
+      const imageFormat=await page.locator('#fmtSelect').inputValue();
+      await page.locator('#zr-post-format').selectOption('9:16');
+      assert.equal(await page.locator('#fmtSelect').inputValue(),imageFormat);
+      await editor.fill('a'.repeat(original.limit+1));
+      assert.equal((await editor.inputValue()).length,original.limit+1);
+      assert.equal(await page.locator('#zr-post-overflow').innerText(),'1 en trop');
+      await editor.fill(edited);
+      await page.locator('#zr-copy-post-btn').click();
+      assert.equal(await page.evaluate(()=>window.copiedPost),edited);
+      await page.locator('#zr-copy-params-btn').click();
+      const payload=await page.evaluate(()=>window.copiedPost);
+      assert.equal(JSON.parse(payload.slice(payload.indexOf('{'))).post.text,edited);
+      await page.getByRole('button',{name:'Photos',exact:true}).click();
+      assert.equal(await page.locator('#zr-post-pane').isVisible(),false);
+      if(index===0) assert.equal(await page.locator('.zr-photo-panel').isVisible(),true);
+      await page.getByRole('button',{name:'Post',exact:true}).click();
+      assert.equal(await editor.inputValue(),edited);
+      assert.ok((await page.locator('#zr-export-btn').getAttribute('title')).includes('--serve'));
+      assert.equal(await page.locator('#zr-export-btn').isDisabled(),true);
+      await editor.fill(original.text);
+      await page.locator('#zr-post-format').selectOption(original.format);
+      await page.screenshot({path:path.join(directory,'PostEditorProof.png')});
+      await page.setViewportSize({width:390,height:844});
+      const bounds=await page.locator('#zr-post-pane').boundingBox();
+      assert.ok(bounds.x>=0&&bounds.x+bounds.width<=391);
+      assert.deepEqual(errors,[]);
+      checks.push({mode:index===0?'heavy':'light',checks:['draft exact','three current actions','unicode and repetition preserved','reload preserved','no injection','overflow not cut','independent formats','copy post','copy parameters with full post','mode switch','offline export visibly disabled','mobile fits']});
+      await context.close();
+    }
+    const result={ok:true,checks};
+    for(const directory of directories)fs.writeFileSync(path.join(directory,'PostEditorVerification.json'),JSON.stringify(result,null,2)+'\n');
+    console.log(JSON.stringify(result,null,2));
+  } finally {await browser.close();}
+})().catch(error=>{console.error(error);process.exit(1);});

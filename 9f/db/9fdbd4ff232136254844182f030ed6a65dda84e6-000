@@ -1,0 +1,17 @@
+# Contrat actif (7 October 2026)
+
+- Ce contrat prime sur les recettes historiques. L’instruction actuelle de Matthieu garde priorité ; aucun nouveau projet par prompt, aucun identifiant de session inventé. (7 October 2026)
+- Assets fournit chemins et identité ; Memory1 garde le texte durable, les binaires et exports restent dans les sources liées. Le compte rendu et la preuve cloud sont deux résultats distincts. (7 October 2026)
+- Grammaire seule par défaut, sans fusion de répétitions ni nouvel ordre ni langues ajoutées. Les propositions demandées sont identifiées et leurs ajouts signalés ; aucun vécu, logistique ou auteur inventé. (7 October 2026)
+- Interface : InterVariable 400, AnthropicSerif 350 pour éditorial et 400 pour nombres, AnthropicMono pour code ; fonts embarquées. Les accents artistiques explicitement choisis restent possibles, les licences sont respectées. (7 October 2026)
+- Curseurs supplémentaires sur demande explicite ; les contrôles propres à l’atelier existant restent utilisables. Paramètres regroupés, 8 au maximum par catégorie, sources et réglages toujours conservés. (7 October 2026)
+- Format : demande explicite, sinon référence mesurée, sinon clarification utile. export.json permet un facteur entier explicite ; par défaut le grand côté atteint au moins 3840 px, sans agrandissement d’un ancien bitmap. (7 October 2026)
+- Un rendu absent, trop lourd, de mauvaises dimensions ou ne respectant pas alpha/durée/codec échoue explicitement. Les conversions ne suppriment pas le seul master et n’annoncent pas de réussite si la limite n’est pas satisfaite. (7 October 2026)
+- Aucun navigateur personnel ; les scripts renvoient URL/path, l’agent ouvre le navigateur interne. Chromium headless Playwright dispose d’un contexte isolé. (7 October 2026)
+- Externes historiques non inclus : export-png.sh, backup-memory.sh, render_mikiri_flash.py. Chercher dans sources liées ou déclarer leur absence ; les exports actuels fournis passent par render.sh et RenderComposition.cjs. (7 October 2026)
+- Publication publique et promotion sont des actions distinctes de l’archivage privé Assets, exécutées seulement si autorisées. (7 October 2026)
+
+## Attestation du logiciel courant (7 October 2026)
+
+- BundleManifest.json lie la documentation, les scripts et les templates à leurs empreintes ; CheckContract.py refuse fichier ajouté, supprimé ou modifié. RecordBundle.py est une commande explicite de release revue, jamais une étape automatique du vérificateur. (7 October 2026)
+- Les tests UI suivent les trois boutons actuels Export, Copier params, Copier post ; import/export du post historique retirés ne sont pas des capacités promises. Le serveur heavy accepte destinations sœurs, restreint la lecture aux sources sélectionnées et à l’instance, et annonce l’URL interne. (7 October 2026)

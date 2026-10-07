@@ -1,0 +1,290 @@
+{
+  "schema": "urn:zenray:design-registry:v2",
+  "name": "ZenRay Design Registry",
+  "updated": "7 October 2026",
+  "root": "templates",
+  "count": 9,
+  "targetCapacity": 1000,
+  "designs": {
+    "luxe-epure": {
+      "id": "luxe-epure",
+      "name": "Luxe Épuré (Direction Galerie)",
+      "type": "page",
+      "domain": "web-editorial",
+      "tags": [
+        "luxe",
+        "epure",
+        "editorial",
+        "galerie",
+        "serif-deux-tons",
+        "respiration",
+        "minimal"
+      ],
+      "description": "Le catalogue d'une maison d'édition plutôt qu'un tableau de bord. Deux sous-groupes Atelier et Conduite, vide maîtrisé, grandes pièces qu'on regarde vraiment.",
+      "file": "zenray-assets-mockups/02-galerie.html",
+      "origin": "templates/zenray-assets-mockups/02-galerie.html",
+      "components": [
+        "sidebar-deux-groupes",
+        "titre-serif-deux-tons",
+        "grille-aerée",
+        "panneau-detail-epure"
+      ],
+      "tokens": {
+        "--fond": "#FDFDFC",
+        "--corps": "17px",
+        "--serif": "AnthropicSerif",
+        "--sans": "Inter",
+        "--poids-serif": "350"
+      }
+    },
+    "atelier-liquid-glass": {
+      "id": "atelier-liquid-glass",
+      "name": "Atelier Liquid Glass",
+      "type": "page",
+      "domain": "web-app",
+      "tags": [
+        "atelier",
+        "liquid-glass",
+        "verre",
+        "outils",
+        "compteurs",
+        "filtres",
+        "structure"
+      ],
+      "description": "Liquid Glass poussé, le plus fidèle au système produit existant. Assets en cartes vitrées, segmentation en sous-groupes nommés, compteurs en serif.",
+      "file": "zenray-assets-mockups/01-atelier.html",
+      "origin": "templates/zenray-assets-mockups/01-atelier.html",
+      "components": [
+        "sidebar-sous-groupes",
+        "carte-verre-vitree",
+        "compteurs-serif",
+        "filtres-pilotes"
+      ],
+      "tokens": {
+        "--verre": "rgba(253,253,252,0.66)",
+        "--flou": "blur(28px) saturate(180%)",
+        "--accent": "#0A84FF"
+      }
+    },
+    "studio-sombre": {
+      "id": "studio-sombre",
+      "name": "Studio Sombre Réutilisable",
+      "type": "page",
+      "domain": "web-3d",
+      "tags": [
+        "studio",
+        "sombre",
+        "dense",
+        "cinema",
+        "reutilisation",
+        "3d",
+        "dark-mode"
+      ],
+      "description": "La bibliothèque dense d'un vrai studio 3D, sombre par défaut. Filtres empilés par type, moteur et année, panneau d'inspection complet avec licences.",
+      "file": "zenray-assets-mockups/03-studio.html",
+      "origin": "templates/zenray-assets-mockups/03-studio.html",
+      "components": [
+        "sidebar-compacte-dense",
+        "panneau-inspection-licence",
+        "filtres-empiles"
+      ],
+      "tokens": {
+        "--fond": "#1A1A19",
+        "--encre": "#F0EFEB",
+        "--corps": "14px"
+      }
+    },
+    "salon-synthese": {
+      "id": "salon-synthese",
+      "name": "Salon Synthèse (Atelier + Galerie)",
+      "type": "page",
+      "domain": "web-editorial",
+      "tags": [
+        "salon",
+        "synthese",
+        "corail",
+        "chaleur",
+        "verre",
+        "editorial",
+        "hybride"
+      ],
+      "description": "La synthèse entre 01 Atelier et 02 Galerie : matière verre, repères d'outils, titre serif deux tons, accent corail chaud du site et lumière individuelle par pièce.",
+      "file": "zenray-assets-mockups/04-salon.html",
+      "origin": "templates/zenray-assets-mockups/04-salon.html",
+      "components": [
+        "sidebar-sous-groupes-verre",
+        "titre-serif-deux-tons",
+        "lumiere-famille",
+        "carte-vedette"
+      ],
+      "tokens": {
+        "--accent": "#A8552F",
+        "--fond": "#F2F1EE",
+        "--r-panel": "14px"
+      }
+    },
+    "pure-pill-liquid-glass": {
+      "id": "pure-pill-liquid-glass",
+      "name": "Pure Pill Liquid Glass",
+      "type": "component",
+      "domain": "ui-capsule",
+      "tags": [
+        "capsule",
+        "pill",
+        "999px",
+        "liquid-glass",
+        "morphing",
+        "depliable",
+        "minimal"
+      ],
+      "description": "Capsule dépliable fermée à bord arrondi 999px avec trois petits points et flèche toggle. Transition fluide vers une carte aux coins adoucis (20px) en s'ouvrant.",
+      "file": "designs/components/pure-pill-liquid-glass.html",
+      "origin": "templates/zenray-assets-mockups/05-capsules-hda.html#p1",
+      "components": [
+        "capsule-trigger-999",
+        "toggle-arrow",
+        "expand-body-card"
+      ],
+      "tokens": {
+        "--capsule-r-closed": "999px",
+        "--capsule-r-open": "20px",
+        "--capsule-pad-y": "12px",
+        "--capsule-pad-x": "20px",
+        "--capsule-bg-alpha": "0.04",
+        "--capsule-border-alpha": "0.12",
+        "--capsule-blur": "16px"
+      }
+    },
+    "monogram-split-pill": {
+      "id": "monogram-split-pill",
+      "name": "Monogram Split Pill",
+      "type": "component",
+      "domain": "ui-capsule",
+      "tags": [
+        "capsule",
+        "split",
+        "monogram",
+        "badge",
+        "bouton-tactile",
+        "pill"
+      ],
+      "description": "Capsule avec pastille badge compacte d'ancrage à gauche (ex: AI, ROLE) et bouton circulaire tactile à droite avec flèche animée lors de l'ouverture.",
+      "file": "designs/components/monogram-split-pill.html",
+      "origin": "templates/zenray-assets-mockups/05-capsules-hda.html#p2",
+      "components": [
+        "badge-pill-anchor",
+        "capsule-round-toggle",
+        "expand-body-card"
+      ],
+      "tokens": {
+        "--capsule-r-closed": "999px",
+        "--capsule-r-open": "20px",
+        "--badge-bg": "rgba(0,0,0,0.06)"
+      }
+    },
+    "editorial-glow-stepper": {
+      "id": "editorial-glow-stepper",
+      "name": "Editorial Glow & Stepper",
+      "type": "component",
+      "domain": "ui-capsule",
+      "tags": [
+        "capsule",
+        "editorial",
+        "glow",
+        "corail",
+        "stepper",
+        "01-02-03",
+        "accent"
+      ],
+      "description": "Capsule avec lueur corail chaude au survol, pastille de points interactive, et liste ordonnée avec puces numérotées 1, 2, 3 accentuées.",
+      "file": "designs/components/editorial-glow-stepper.html",
+      "origin": "templates/zenray-assets-mockups/05-capsules-hda.html#p3",
+      "components": [
+        "glow-hover-border",
+        "chip-dots",
+        "stepper-numbered-points"
+      ],
+      "tokens": {
+        "--accent-lueur": "rgba(168, 85, 47, 0.22)",
+        "--accent-doux": "rgba(168, 85, 47, 0.12)",
+        "--capsule-r-closed": "999px"
+      }
+    },
+    "all-in-one-capsule": {
+      "id": "all-in-one-capsule",
+      "name": "All-in-One Capsule (Proposition 4)",
+      "type": "component",
+      "domain": "ui-capsule",
+      "tags": [
+        "capsule",
+        "all-in-one",
+        "pill",
+        "tag",
+        "dots",
+        "arrow",
+        "attenuation",
+        "fade-theme",
+        "prop4"
+      ],
+      "description": "Capsule tout-en-un avec tag à gauche, capsule de points au centre, pastille flèche à droite, options d'activation/désactivation et transition d'ouverture adoucie sans à-coup de bordure.",
+      "file": "zenray-assets-mockups/05-capsules-hda.html#p4-ai",
+      "origin": "templates/zenray-assets-mockups/05-capsules-hda.html#p4",
+      "components": [
+        "capsule-badge-pill",
+        "capsule-dots-pill",
+        "capsule-round-toggle",
+        "expand-soft-fade"
+      ],
+      "tokens": {
+        "--capsule-r-closed": "999px",
+        "--capsule-r-open": "20px",
+        "--capsule-pad-y": "12px",
+        "--capsule-pad-x": "20px",
+        "--capsule-bg-alpha": "0.04",
+        "--capsule-border-alpha": "0.12",
+        "--capsule-blur": "16px"
+      }
+    },
+    "zenray-studio-store-galerie": {
+      "id": "zenray-studio-store-galerie",
+      "name": "ZenRay Studio, vitrine du store (Direction Galerie)",
+      "type": "page",
+      "domain": "web-store",
+      "tags": [
+        "store",
+        "vitrine",
+        "galerie",
+        "gnomon",
+        "leartes",
+        "clair-sombre",
+        "serif-deux-tons",
+        "hda"
+      ],
+      "description": "Vitrine du store zenray.studio : hero, sélection, collections, dernières sorties filtrables, services, journal. Structure The Gnomon Workshop et Leartes Studios, matière Galerie. Clair par défaut, sombre au bouton.",
+      "file": "zenray-studio/02-store-final/index.html",
+      "mockup": "zenray-studio/01-maquette-portfolio/index.html",
+      "url": "https://zenray-studio.pages.dev",
+      "repository": "/Users/zenray/Create/Build/Productions/GithubProductions/ZenRayStudio",
+      "origin": "templates/zenray-assets-mockups/02-galerie.html",
+      "components": [
+        "header-recherche-theme",
+        "hero-serif-deux-tons",
+        "plate-vignette",
+        "grille-produits-filtres",
+        "bande-services",
+        "journal-3-colonnes",
+        "bandeau-outils",
+        "pied-liens"
+      ],
+      "tokens": {
+        "--paper": "#FBFAF7",
+        "--ink": "#22211E",
+        "--brand": "#9A5B3C",
+        "--body": "17px",
+        "--serif": "AnthropicSerif",
+        "--sans": "Inter",
+        "--zr-weight-serif": "350"
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+# Record a reviewed release separately from immutable source manifests. (7 October 2026, 17:00 Europe/Paris)
+import argparse
+import hashlib
+import json
+from pathlib import Path
+
+parser = argparse.ArgumentParser(description='Explicitly record the current release; never called automatically by validation.')
+parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parent.parent)
+arguments = parser.parse_args()
+root = arguments.root.resolve()
+files = {str(path.relative_to(root)):hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted(root.rglob('*')) if path.is_file() and path.name != 'BundleManifest.json' and '__pycache__' not in path.parts and path.suffix != '.pyc' and path.name != '.DS_Store'}
+record = {'schema':'zenray-skill-release-v1','date':'7 October 2026','skill':'zenray-edit','files':files}
+(root / 'BundleManifest.json').write_text(json.dumps(record, indent=2) + '\n')
+print(json.dumps({'recordedFiles':len(files),'manifest':str(root/'BundleManifest.json')}))

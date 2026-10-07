@@ -1,0 +1,51 @@
+# Instances zenray-html-hda
+
+Registre append-only des outils crees depuis `templates/`. Une ligne par
+instance : la relire coute quelques dizaines de tokens, la recreer a la main
+en coutait plus de trente mille.
+
+| Date | Mode | Projet | Images | Dossier |
+|---|---|---|---|---|
+| 2026-08-31 18:43 | light | acquarium-post1 | 9 | `~/.claude/tmp/acquarium-post1/zenray-html-hda-acquarium-post1` |
+| 2026-09-01 17:05 | heavy | acquarium-post1 | 9 | `~/.claude/tmp/acquarium-post1/zenray-html-hda-acquarium-post1/out/zenray-html-hda-acquarium-post1-heavy` |
+| 2026-09-01 17:39 | light | destr | 2 | `/private/tmp/zr-destr/zenray-html-hda-destr` |
+| 2026-09-01 17:39 | light | destr | 2 | `/private/tmp/zr-destr/zenray-html-hda-destr` |
+| 2026-09-01 17:41 | heavy | acquarium-post1 | 9 | `/Users/zenray/.claude/tmp/acquarium-post1/zenray-html-hda-acquarium-post1/out/zenray-html-hda-acquarium-post1-heavy` |
+| 2026-09-01 17:42 | heavy | acquarium-post1 | 9 | `/Users/zenray/.claude/tmp/acquarium-post1/zenray-html-hda-acquarium-post1/out/zenray-html-hda-acquarium-post1-heavy` |
+| 2026-09-01 17:44 | heavy | acquarium-post1 | 9 | `/Users/zenray/.claude/tmp/acquarium-post1/zenray-html-hda-acquarium-post1/out/zenray-html-hda-acquarium-post1-heavy` |
+| 2026-09-01 17:50 | heavy | acquarium-post1 | 9 | `/Users/zenray/.claude/tmp/acquarium-post1/zenray-html-hda-acquarium-post1/out/zenray-html-hda-acquarium-post1-heavy` |
+| 2026-09-01 17:55 | heavy | acquarium-post1 | 9 | `/Users/zenray/.claude/tmp/acquarium-post1/zenray-html-hda-acquarium-post1/out/zenray-html-hda-acquarium-post1-heavy` |
+| 2026-09-01 18:00 | heavy | acquarium-post1 | 9 | `/Users/zenray/.claude/tmp/acquarium-post1/zenray-html-hda-acquarium-post1/out/zenray-html-hda-acquarium-post1-heavy` |
+| 2026-09-01 18:05 | heavy | acquarium-post1 | 9 | `/Users/zenray/.claude/tmp/acquarium-post1/zenray-html-hda-acquarium-post1/out/zenray-html-hda-acquarium-post1-heavy` |
+| 2026-09-01 18:05 | light | acquarium-post1 | 9 | `/Users/zenray/.claude/tmp/acquarium-post1/zenray-html-hda-acquarium-post1` |
+| 2026-09-01 18:11 | light | ito-post4 | 9 | `/Users/zenray/.claude/tmp/ito-post4/zenray-html-hda-ito-post4` |
+| 2026-09-01 18:22 | heavy | ito-post4 | 9 | `/Users/zenray/.claude/tmp/ito-post4/zenray-html-hda-ito-post4-heavy` |
+| 2026-09-01 18:37 | light | ito-post4 | 9 | `/Users/zenray/.claude/tmp/ito-post4/zenray-html-hda-ito-post4` |
+| 2026-09-01 18:37 | heavy | ito-post4 | 9 | `/Users/zenray/.claude/tmp/ito-post4/zenray-html-hda-ito-post4-heavy` |
+| 2026-09-01 19:50 | heavy | acquarium-post1 | 9 | `/Users/zenray/.claude/tmp/acquarium-post1/zenray-html-hda-acquarium-post1/out/zenray-html-hda-acquarium-post1-heavy` |
+| 2026-09-01 19:57 | heavy | ito-post4 | 9 | `/Users/zenray/.claude/tmp/ito-post4/zenray-html-hda-ito-post4-heavy` |
+| 2026-09-02 00:00 | light | ito-tokaikan-title | 1 | `/Users/zenray/.claude/tmp/tmp-ito-tokaikan-title/zenray-html-hda-ito-tokaikan-title` |
+| 2026-09-02 02:14 | heavy | tinder-img-6433 | 1 | `/Users/zenray/.claude/tmp/tmp-tinder/zenray-html-hda-tinder-img-6433-heavy` |
+| 2026-09-02 02:15 | heavy | tinder-v2 | 1 | `/Users/zenray/.claude/tmp/tmp-tinder/zenray-html-hda-tinder-v2-heavy` |
+| 2026-09-02 02:45 | heavy | debuging | 1 | `/Users/zenray/.claude/tmp/tmp-tinder/zenray-html-hda-debuging-heavy` |
+| 2026-09-02 23:32 | heavy | jogasaki-post2 | 17 | `/Users/zenray/.claude/tmp/jogasaki-post2/zenray-html-hda-jogasaki-post2-heavy` |
+| 2026-09-02 23:41 | heavy | shadow-test | 1 | `/Users/zenray/.claude/tmp/tmp-tinder/zenray-html-hda-shadow-test-heavy` |
+| 2026-09-03 00:02 | heavy | border-test | 2 | `/private/tmp/border-test/zenray-html-hda-border-test-heavy` |
+| 2026-09-03 00:06 | light | border-test-light | 2 | `/private/tmp/border-test-light/zenray-html-hda-border-test-light` |
+| 2026-09-03 12:52 | heavy | shimoda-post3-unzip | 13 | `/Users/zenray/Downloads/shimoda-post3-unzip/zenray-html-hda-shimoda-post3-unzip-heavy` |
+| 2026-09-03 12:53 | heavy | shimoda-post3 | 13 | `/Users/zenray/.claude/tmp/shimoda-post3/zenray-html-hda-shimoda-post3-heavy` |
+| 2026-09-03 13:30 | heavy | shimoda-post3 | 13 | `/Users/zenray/.claude/tmp/tmp-atelier-socialmedia/atelier` |
+| 2026-09-03 13:30 | light | shimoda-light | 1 | `/Users/zenray/.claude/tmp/tmp-atelier-socialmedia/atelier-light` |
+| 2026-09-03 13:33 | light | IMG_6056 | 1 | `/Users/zenray/.claude/tmp/tmp-atelier-socialmedia/verification-instancer` |
+| 2026-09-03 13:44 | light | verif-light | 1 | `/Users/zenray/.claude/tmp/tmp-verif-post-light/zenray-html-hda-verif-light` |
+| 2026-09-03 14:00 | light | IMG_6056 | 1 | `/Users/zenray/.claude/tmp/tmp-atelier-socialmedia/verification-instancer-ui` |
+| 2026-09-03 14:00 | light | IMG_6056 | 1 | `/Users/zenray/.claude/tmp/tmp-atelier-socialmedia/verification-instancer-ui2` |
+| 2026-09-03 15:25 | light | verif-save | 1 | `/Users/zenray/.claude/tmp/tmp-verif-save-light/zenray-html-hda-verif-save` |
+| 2026-09-03 15:40 | heavy | streets-jogasaki5 | 17 | `/Users/zenray/.claude/tmp/streets-jogasaki5/zenray-html-hda-streets-jogasaki5-heavy` |
+| 2026-09-03 15:53 | heavy | clip-cowork | 3 | `/Users/zenray/.claude/tmp/tmp-clip-cowork/zenray-html-hda-clip-cowork-heavy` |
+| 2026-09-10 00:23 | heavy | tmp-selection1 | 13 | `/Users/zenray/.claude/tmp/tmp-selection1/zenray-html-hda-tmp-selection1-heavy` |
+| 2026-09-10 00:39 | heavy | tmp-selection-v2 | 13 | `/Users/zenray/.claude/tmp/tmp-selection-v2/zenray-html-hda-tmp-selection-v2-heavy` |
+| 2026-09-13 10:10 | heavy | LouisianaBayouShortStyle | 1 | `/Users/zenray/.claude/tmp/tmp-louisiana-bayou-short-style/atelier` |
+| 2026-10-01 20:14 | heavy | ceramic-ad-grade | 3 | `/Users/zenray/.claude/tmp/tmp-ad-colour-grade/frames/zenray-html-hda-ceramic-ad-grade-heavy` |
+| 2026-10-07 23:05 | light | out | 1 | `/Users/zenray/.claude/tmp/tmp-zenray-edit/PreservationFixture` |
+| 2026-10-07 23:06 | heavy | out | 1 | `/Users/zenray/.claude/tmp/tmp-zenray-edit/HeavyFixture` |

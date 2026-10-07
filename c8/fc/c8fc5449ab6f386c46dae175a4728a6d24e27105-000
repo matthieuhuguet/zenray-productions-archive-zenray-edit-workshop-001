@@ -1,0 +1,65 @@
+#!/usr/bin/env node
+// 2026-09-03 : vérifier le dessin réel de la police, les deux thèmes et la géométrie 4K.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { pathToFileURL } = require('node:url');
+const { chromium } = require('./RenderComposition.cjs').loadPlaywright({});
+(async () => {
+  const browser = await chromium.launch({ headless: true });
+  const results = [];
+  try {
+    for (const directory of process.argv.slice(2)) {
+      const context = await browser.newContext({ viewport: { width: 1728, height: 1117 }, deviceScaleFactor: 2, colorScheme: 'dark' });
+      const page = await context.newPage();
+      const errors = [];
+      page.on('pageerror', e => errors.push(e.message));
+      await page.goto(pathToFileURL(path.join(directory, 'index.html')).href);
+      await page.waitForFunction(() => document.documentElement.dataset.zrFont === 'ready');
+      assert.equal(await page.locator('html').getAttribute('data-zr-theme'), 'light', 'Clair par défaut, même si le système est sombre.');
+      const cdp = await context.newCDPSession(page);
+      await cdp.send('DOM.enable'); await cdp.send('CSS.enable');
+      for (const theme of ['light', 'dark']) {
+        if (theme === 'dark') await page.locator('.zr-theme-toggle').click();
+        assert.equal(await page.locator('html').getAttribute('data-zr-theme'), theme);
+        const metrics = await page.evaluate(() => {
+          const css = el => getComputedStyle(el);
+          const editor = document.querySelector('#zr-post-text');
+          const shell = document.querySelector('.zr-side-glass');
+          const button = document.querySelector('#zr-copy-post-btn');
+          return { fontSize: css(editor).fontSize, fontFamily: css(editor).fontFamily, weight: css(editor).fontWeight,
+            glass: css(shell).backgroundImage, filter: css(shell).backdropFilter, panel: css(document.querySelector('.zr-post-pane')).backgroundColor,
+            color: css(editor).color, buttonColor: css(button).color, viewport: innerWidth, ratio: devicePixelRatio,
+            width: editor.getBoundingClientRect().width, height: editor.getBoundingClientRect().height };
+        });
+        assert.equal(metrics.fontSize, '13px'); assert.equal(metrics.weight, '400');
+        assert.equal(metrics.filter, 'blur(27px) saturate(1.69)');
+        assert.equal(metrics.panel, 'rgba(0, 0, 0, 0)');
+        assert.ok(metrics.glass.includes(theme === 'light' ? '0.78' : '0.13'), JSON.stringify({theme, metrics}));
+        assert.ok(Math.abs(metrics.width / metrics.height - 0.8) < 0.003);
+        const { root } = await cdp.send('DOM.getDocument');
+        const { nodeId } = await cdp.send('DOM.querySelector', { nodeId: root.nodeId, selector: '#zr-copy-post-btn' });
+        const { fonts } = await cdp.send('CSS.getPlatformFontsForNode', { nodeId });
+        assert.ok(fonts.length && fonts.every(f => f.isCustomFont && /Inter/i.test(f.familyName)), JSON.stringify(fonts));
+        await page.screenshot({ path: path.join(directory, 'ui-' + theme + '.png') });
+        await page.getByRole('button', { name: 'Photos', exact: true }).click();
+        if (await page.locator('.zr-photo-panel').count()) {
+          await page.locator('.zr-photo-panel details').evaluateAll(els => els.forEach(el => el.open = true));
+          assert.equal(await page.locator('.zr-photo-panel').evaluate(el => getComputedStyle(el).backgroundColor), 'rgba(0, 0, 0, 0)');
+        }
+        await page.screenshot({ path: path.join(directory, 'ui-' + theme + '-photos.png') });
+        await page.getByRole('button', { name: 'Post', exact: true }).click();
+        results.push({ directory, theme, metrics, renderedFonts: fonts });
+      }
+      await page.reload(); await page.waitForFunction(() => window.ZRPostEditor);
+      assert.equal(await page.locator('html').getAttribute('data-zr-theme'), 'dark');
+      await page.setViewportSize({ width: 390, height: 844 });
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+      const mobile = await page.locator('#zr-post-text').boundingBox();
+      assert.ok(mobile.x >= 0 && mobile.x + mobile.width <= 390);
+      assert.deepEqual(errors, []);
+      await context.close();
+    }
+    console.log(JSON.stringify({ ok: true, results }, null, 2));
+  } finally { await browser.close(); }
+})().catch(error => { console.error(error); process.exit(1); });

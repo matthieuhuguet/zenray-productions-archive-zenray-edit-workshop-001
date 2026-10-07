@@ -1,0 +1,1723 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>ZenRay HTML Photoshop — Font Book</title>
+<style>
+    @font-face { font-family:'f_Abril_ttf'; src:url('file:///Users/zenray/Library/Fonts/Abril.ttf') format('truetype'); }
+  @font-face { font-family:'f_AbrilFatface_Regular_ttf'; src:url('file:///Users/zenray/Library/Fonts/AbrilFatface-Regular.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicMono_Black_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicMono-Black.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicMono_Bold_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicMono-Bold.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicMono_ExtraBold_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicMono-ExtraBold.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicMono_Light_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicMono-Light.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicMono_Medium_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicMono-Medium.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicMono_Regular_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicMono-Regular.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicMono_SemiBold_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicMono-SemiBold.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSans_Black_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSans-Black.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSans_BlackItalic_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSans-BlackItalic.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSans_Bold_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSans-Bold.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSans_BoldItalic_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSans-BoldItalic.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSans_ExtraBold_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSans-ExtraBold.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSans_ExtraBoldItalic_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSans-ExtraBoldItalic.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSans_Italic_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSans-Italic.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSans_Light_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSans-Light.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSans_LightItalic_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSans-LightItalic.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSans_Medium_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSans-Medium.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSans_MediumItalic_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSans-MediumItalic.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSans_Regular_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSans-Regular.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSans_SemiBold_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSans-SemiBold.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSans_SemiBoldItalic_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSans-SemiBoldItalic.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSerif_Black_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSerif-Black.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSerif_BlackItalic_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSerif-BlackItalic.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSerif_Bold_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSerif-Bold.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSerif_BoldItalic_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSerif-BoldItalic.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSerif_ExtraBold_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSerif-ExtraBold.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSerif_ExtraBoldItalic_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSerif-ExtraBoldItalic.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSerif_Italic_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSerif-Italic.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSerif_Light_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSerif-Light.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSerif_LightItalic_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSerif-LightItalic.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSerif_Medium_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSerif-Medium.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSerif_MediumItalic_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSerif-MediumItalic.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSerif_Regular_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSerif-Regular.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSerif_SemiBold_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSerif-SemiBold.ttf') format('truetype'); }
+  @font-face { font-family:'f_AnthropicSerif_SemiBoldItalic_ttf'; src:url('file:///Users/zenray/Library/Fonts/AnthropicSerif-SemiBoldItalic.ttf') format('truetype'); }
+  @font-face { font-family:'f_apotek_comp_black_webfont_ttf'; src:url('file:///Users/zenray/Library/Fonts/apotek_comp_black-webfont.ttf') format('truetype'); }
+  @font-face { font-family:'f_Didonesque_Stencil_Bold_otf'; src:url('file:///Users/zenray/Library/Fonts/Didonesque-Stencil-Bold.otf') format('opentype'); }
+  @font-face { font-family:'f_Generic_G20_FR_Classic_DEMO_otf'; src:url('file:///Users/zenray/Library/Fonts/Generic-G20-FR-Classic-DEMO.otf') format('opentype'); }
+  @font-face { font-family:'f_Generic_G50_CC_Typic_DEMO_otf'; src:url('file:///Users/zenray/Library/Fonts/Generic-G50-CC-Typic-DEMO.otf') format('opentype'); }
+  @font-face { font-family:'f_Generic_G80_RD_Standard_DEMO_otf'; src:url('file:///Users/zenray/Library/Fonts/Generic-G80-RD-Standard-DEMO.otf') format('opentype'); }
+  @font-face { font-family:'f_GoldenHopes_PERSONAL_USE_ONLY_otf'; src:url('file:///Users/zenray/Library/Fonts/GoldenHopes_PERSONAL_USE_ONLY.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Display_Black_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Display-Black.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Display_Bold_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Display-Bold.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Display_Heavy_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Display-Heavy.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Display_Light_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Display-Light.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Display_Medium_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Display-Medium.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Display_Regular_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Display-Regular.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Display_Semibold_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Display-Semibold.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Display_Thin_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Display-Thin.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Display_Ultralight_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Display-Ultralight.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Italic_ttf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Italic.ttf') format('truetype'); }
+  @font-face { font-family:'f_SF_Compact_Rounded_Black_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Black.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Rounded_Bold_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Bold.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Rounded_Heavy_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Heavy.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Rounded_Light_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Light.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Rounded_Medium_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Medium.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Rounded_Regular_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Regular.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Rounded_Semibold_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Semibold.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Rounded_Thin_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Thin.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Rounded_Ultralight_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Ultralight.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_Black_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-Black.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_BlackItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-BlackItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_Bold_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-Bold.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_BoldItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-BoldItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_Heavy_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-Heavy.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_HeavyItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-HeavyItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_Light_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-Light.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_LightItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-LightItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_Medium_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-Medium.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_MediumItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-MediumItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_Regular_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-Regular.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_RegularItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-RegularItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_Semibold_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-Semibold.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_SemiboldItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-SemiboldItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_Thin_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-Thin.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_ThinItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-ThinItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_Ultralight_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-Ultralight.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_Text_UltralightItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact-Text-UltralightItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Compact_ttf'; src:url('file:///Users/zenray/Library/Fonts/SF-Compact.ttf') format('truetype'); }
+  @font-face { font-family:'f_SF_Pro_Display_Black_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-Black.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_BlackItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-BlackItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_Bold_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-Bold.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_BoldItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-BoldItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_Heavy_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-Heavy.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_HeavyItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-HeavyItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_Light_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-Light.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_LightItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-LightItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_Medium_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-Medium.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_MediumItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-MediumItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_Regular_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-Regular.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_RegularItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-RegularItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_Semibold_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-Semibold.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_SemiboldItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-SemiboldItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_Thin_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-Thin.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_ThinItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-ThinItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_Ultralight_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-Ultralight.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Display_UltralightItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Display-UltralightItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Italic_ttf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Italic.ttf') format('truetype'); }
+  @font-face { font-family:'f_SF_Pro_Rounded_Black_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Black.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Rounded_Bold_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Bold.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Rounded_Heavy_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Heavy.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Rounded_Light_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Light.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Rounded_Medium_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Medium.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Rounded_Regular_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Regular.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Rounded_Semibold_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Semibold.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Rounded_Thin_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Thin.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Rounded_Ultralight_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Ultralight.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_Black_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-Black.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_BlackItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-BlackItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_Bold_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-Bold.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_BoldItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-BoldItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_Heavy_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-Heavy.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_HeavyItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-HeavyItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_Light_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-Light.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_LightItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-LightItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_Medium_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-Medium.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_MediumItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-MediumItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_Regular_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-Regular.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_RegularItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-RegularItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_Semibold_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-Semibold.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_SemiboldItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-SemiboldItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_Thin_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-Thin.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_ThinItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-ThinItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_Ultralight_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-Ultralight.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_Text_UltralightItalic_otf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro-Text-UltralightItalic.otf') format('opentype'); }
+  @font-face { font-family:'f_SF_Pro_ttf'; src:url('file:///Users/zenray/Library/Fonts/SF-Pro.ttf') format('truetype'); }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 48px 40px 96px;
+    background: #fafafa; color: #2b2b2b;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  h1 { font-size: 34px; margin: 0 0 6px; }
+  .sub { color: #6b6b6b; font-size: 15px; margin-bottom: 40px; }
+  h2 {
+    font-size: 13px; letter-spacing: .14em; text-transform: uppercase;
+    color: #8a8a8a; margin: 48px 0 16px;
+    border-bottom: 1px solid #e6e6e6; padding-bottom: 10px;
+  }
+  h3.group {
+    font-size: 15px; margin: 34px 0 12px; color: #6b6b6b; font-weight: 600;
+  }
+  h3 .count {
+    font-size: 12px; color: #a5a5a5; font-weight: 500;
+    background: #efefef; border-radius: 20px; padding: 2px 9px; margin-left: 6px;
+  }
+  .card {
+    background: #fff; border: 1px solid #e8e8e8; border-radius: 14px;
+    padding: 20px 24px; margin-bottom: 12px;
+  }
+  .card.brand { border-color: #d8c9a4; background: #fffdf6; }
+  .meta { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .name { font-size: 15px; font-weight: 600; }
+  .role {
+    font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
+    color: #b3862c; background: #fdf6e3; border-radius: 20px; padding: 3px 10px;
+  }
+  .note { font-size: 13px; color: #8a8a8a; flex-basis: 100%; margin-top: 2px; }
+  .sample { font-size: 46px; line-height: 1.25; margin: 14px 0 4px; }
+  .sample.small { font-size: 19px; color: #6b6b6b; margin-bottom: 12px; }
+  code.path {
+    display: block; font-size: 12px; color: #7a7a7a;
+    background: #f4f4f4; border-radius: 8px; padding: 8px 12px;
+    user-select: all; word-break: break-all;
+  }
+</style></head>
+<body>
+  <h1>Font Book</h1>
+  <div class="sub">
+    128 fonts installed in ~/Library/Fonts. Click a path to select it,
+    then paste it into a <code>@font-face</code> src. Regenerate with
+    <code>scripts/build-fontbook.sh</code>.
+  </div>
+
+  <h2>ZenRay brand — already used, reuse these first</h2>
+  
+  <div class="card brand">
+    <div class="meta">
+      <div class="name">Didonesque-Stencil-Bold</div>
+      <div class="role">Display title</div>
+      <div class="note">The ZenRay headline face. Used for ZENRAY DICTATE and every slide headline.</div>
+    </div>
+    <div class="sample" style="font-family:'f_Didonesque_Stencil_Bold_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_Didonesque_Stencil_Bold_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/Didonesque-Stencil-Bold.otf</code>
+  </div>
+  <div class="card brand">
+    <div class="meta">
+      <div class="name">GoldenHopes_PERSONAL_USE_ONLY</div>
+      <div class="role">Handwritten signature</div>
+      <div class="note">Used for &#x27;zenray presents&#x27;. PERSONAL USE ONLY licence, check before any commercial use.</div>
+    </div>
+    <div class="sample" style="font-family:'f_GoldenHopes_PERSONAL_USE_ONLY_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_GoldenHopes_PERSONAL_USE_ONLY_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/GoldenHopes_PERSONAL_USE_ONLY.otf</code>
+  </div>
+  <div class="card brand">
+    <div class="meta">
+      <div class="name">AnthropicSans-Medium</div>
+      <div class="role">Body text</div>
+      <div class="note">Default running text on slides.</div>
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSans_Medium_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSans_Medium_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSans-Medium.ttf</code>
+  </div>
+  <div class="card brand">
+    <div class="meta">
+      <div class="name">AnthropicSans-SemiBold</div>
+      <div class="role">Body emphasis</div>
+      <div class="note">Bold runs inside body text, eyebrows, key captions.</div>
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSans_SemiBold_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSans_SemiBold_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSans-SemiBold.ttf</code>
+  </div>
+  <div class="card brand">
+    <div class="meta">
+      <div class="name">AnthropicSerif-Bold</div>
+      <div class="role">Serif alternative</div>
+      <div class="note">Used before Didonesque; kept as a fallback display option.</div>
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSerif_Bold_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSerif_Bold_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSerif-Bold.ttf</code>
+  </div>
+  <div class="card brand">
+    <div class="meta">
+      <div class="name">Abril</div>
+      <div class="role">Serif alternative</div>
+      <div class="note">Tried for SWITZERLAND, superseded by Didonesque Stencil.</div>
+    </div>
+    <div class="sample" style="font-family:'f_Abril_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_Abril_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/Abril.ttf</code>
+  </div>
+
+  <h2>Everything else installed</h2>
+  <h3 class="group">AbrilFatface <span class="count">1</span></h3>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AbrilFatface-Regular</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AbrilFatface_Regular_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AbrilFatface_Regular_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AbrilFatface-Regular.ttf</code>
+  </div><h3 class="group">AnthropicMono <span class="count">7</span></h3>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicMono-Black</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicMono_Black_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicMono_Black_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicMono-Black.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicMono-Bold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicMono_Bold_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicMono_Bold_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicMono-Bold.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicMono-ExtraBold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicMono_ExtraBold_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicMono_ExtraBold_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicMono-ExtraBold.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicMono-Light</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicMono_Light_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicMono_Light_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicMono-Light.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicMono-Medium</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicMono_Medium_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicMono_Medium_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicMono-Medium.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicMono-Regular</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicMono_Regular_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicMono_Regular_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicMono-Regular.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicMono-SemiBold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicMono_SemiBold_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicMono_SemiBold_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicMono-SemiBold.ttf</code>
+  </div><h3 class="group">AnthropicSans <span class="count">12</span></h3>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSans-Black</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSans_Black_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSans_Black_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSans-Black.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSans-BlackItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSans_BlackItalic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSans_BlackItalic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSans-BlackItalic.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSans-Bold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSans_Bold_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSans_Bold_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSans-Bold.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSans-BoldItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSans_BoldItalic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSans_BoldItalic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSans-BoldItalic.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSans-ExtraBold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSans_ExtraBold_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSans_ExtraBold_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSans-ExtraBold.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSans-ExtraBoldItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSans_ExtraBoldItalic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSans_ExtraBoldItalic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSans-ExtraBoldItalic.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSans-Italic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSans_Italic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSans_Italic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSans-Italic.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSans-Light</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSans_Light_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSans_Light_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSans-Light.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSans-LightItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSans_LightItalic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSans_LightItalic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSans-LightItalic.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSans-MediumItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSans_MediumItalic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSans_MediumItalic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSans-MediumItalic.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSans-Regular</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSans_Regular_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSans_Regular_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSans-Regular.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSans-SemiBoldItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSans_SemiBoldItalic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSans_SemiBoldItalic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSans-SemiBoldItalic.ttf</code>
+  </div><h3 class="group">AnthropicSerif <span class="count">13</span></h3>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSerif-Black</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSerif_Black_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSerif_Black_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSerif-Black.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSerif-BlackItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSerif_BlackItalic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSerif_BlackItalic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSerif-BlackItalic.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSerif-BoldItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSerif_BoldItalic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSerif_BoldItalic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSerif-BoldItalic.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSerif-ExtraBold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSerif_ExtraBold_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSerif_ExtraBold_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSerif-ExtraBold.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSerif-ExtraBoldItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSerif_ExtraBoldItalic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSerif_ExtraBoldItalic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSerif-ExtraBoldItalic.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSerif-Italic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSerif_Italic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSerif_Italic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSerif-Italic.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSerif-Light</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSerif_Light_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSerif_Light_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSerif-Light.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSerif-LightItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSerif_LightItalic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSerif_LightItalic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSerif-LightItalic.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSerif-Medium</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSerif_Medium_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSerif_Medium_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSerif-Medium.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSerif-MediumItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSerif_MediumItalic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSerif_MediumItalic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSerif-MediumItalic.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSerif-Regular</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSerif_Regular_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSerif_Regular_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSerif-Regular.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSerif-SemiBold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSerif_SemiBold_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSerif_SemiBold_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSerif-SemiBold.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">AnthropicSerif-SemiBoldItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_AnthropicSerif_SemiBoldItalic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_AnthropicSerif_SemiBoldItalic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/AnthropicSerif-SemiBoldItalic.ttf</code>
+  </div><h3 class="group">apotek <span class="count">1</span></h3>
+  <div class="card">
+    <div class="meta">
+      <div class="name">apotek_comp_black-webfont</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_apotek_comp_black_webfont_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_apotek_comp_black_webfont_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/apotek_comp_black-webfont.ttf</code>
+  </div><h3 class="group">Generic <span class="count">3</span></h3>
+  <div class="card">
+    <div class="meta">
+      <div class="name">Generic-G20-FR-Classic-DEMO</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_Generic_G20_FR_Classic_DEMO_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_Generic_G20_FR_Classic_DEMO_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/Generic-G20-FR-Classic-DEMO.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">Generic-G50-CC-Typic-DEMO</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_Generic_G50_CC_Typic_DEMO_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_Generic_G50_CC_Typic_DEMO_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/Generic-G50-CC-Typic-DEMO.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">Generic-G80-RD-Standard-DEMO</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_Generic_G80_RD_Standard_DEMO_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_Generic_G80_RD_Standard_DEMO_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/Generic-G80-RD-Standard-DEMO.otf</code>
+  </div><h3 class="group">SF <span class="count">85</span></h3>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Display-Black</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Display_Black_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Display_Black_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Display-Black.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Display-Bold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Display_Bold_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Display_Bold_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Display-Bold.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Display-Heavy</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Display_Heavy_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Display_Heavy_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Display-Heavy.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Display-Light</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Display_Light_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Display_Light_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Display-Light.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Display-Medium</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Display_Medium_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Display_Medium_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Display-Medium.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Display-Regular</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Display_Regular_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Display_Regular_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Display-Regular.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Display-Semibold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Display_Semibold_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Display_Semibold_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Display-Semibold.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Display-Thin</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Display_Thin_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Display_Thin_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Display-Thin.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Display-Ultralight</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Display_Ultralight_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Display_Ultralight_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Display-Ultralight.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Italic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Italic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Italic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Italic.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Rounded-Black</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Rounded_Black_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Rounded_Black_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Black.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Rounded-Bold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Rounded_Bold_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Rounded_Bold_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Bold.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Rounded-Heavy</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Rounded_Heavy_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Rounded_Heavy_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Heavy.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Rounded-Light</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Rounded_Light_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Rounded_Light_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Light.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Rounded-Medium</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Rounded_Medium_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Rounded_Medium_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Medium.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Rounded-Regular</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Rounded_Regular_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Rounded_Regular_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Regular.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Rounded-Semibold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Rounded_Semibold_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Rounded_Semibold_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Semibold.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Rounded-Thin</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Rounded_Thin_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Rounded_Thin_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Thin.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Rounded-Ultralight</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Rounded_Ultralight_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Rounded_Ultralight_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Rounded-Ultralight.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-Black</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_Black_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_Black_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-Black.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-BlackItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_BlackItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_BlackItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-BlackItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-Bold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_Bold_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_Bold_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-Bold.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-BoldItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_BoldItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_BoldItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-BoldItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-Heavy</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_Heavy_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_Heavy_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-Heavy.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-HeavyItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_HeavyItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_HeavyItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-HeavyItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-Light</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_Light_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_Light_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-Light.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-LightItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_LightItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_LightItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-LightItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-Medium</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_Medium_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_Medium_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-Medium.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-MediumItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_MediumItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_MediumItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-MediumItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-Regular</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_Regular_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_Regular_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-Regular.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-RegularItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_RegularItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_RegularItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-RegularItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-Semibold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_Semibold_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_Semibold_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-Semibold.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-SemiboldItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_SemiboldItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_SemiboldItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-SemiboldItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-Thin</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_Thin_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_Thin_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-Thin.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-ThinItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_ThinItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_ThinItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-ThinItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-Ultralight</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_Ultralight_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_Ultralight_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-Ultralight.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact-Text-UltralightItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_Text_UltralightItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_Text_UltralightItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact-Text-UltralightItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Compact</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Compact_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Compact_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Compact.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-Black</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_Black_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_Black_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-Black.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-BlackItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_BlackItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_BlackItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-BlackItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-Bold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_Bold_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_Bold_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-Bold.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-BoldItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_BoldItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_BoldItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-BoldItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-Heavy</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_Heavy_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_Heavy_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-Heavy.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-HeavyItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_HeavyItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_HeavyItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-HeavyItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-Light</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_Light_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_Light_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-Light.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-LightItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_LightItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_LightItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-LightItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-Medium</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_Medium_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_Medium_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-Medium.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-MediumItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_MediumItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_MediumItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-MediumItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-Regular</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_Regular_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_Regular_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-Regular.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-RegularItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_RegularItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_RegularItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-RegularItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-Semibold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_Semibold_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_Semibold_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-Semibold.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-SemiboldItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_SemiboldItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_SemiboldItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-SemiboldItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-Thin</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_Thin_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_Thin_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-Thin.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-ThinItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_ThinItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_ThinItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-ThinItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-Ultralight</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_Ultralight_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_Ultralight_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-Ultralight.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Display-UltralightItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Display_UltralightItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Display_UltralightItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Display-UltralightItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Italic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Italic_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Italic_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Italic.ttf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Rounded-Black</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Rounded_Black_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Rounded_Black_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Black.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Rounded-Bold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Rounded_Bold_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Rounded_Bold_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Bold.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Rounded-Heavy</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Rounded_Heavy_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Rounded_Heavy_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Heavy.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Rounded-Light</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Rounded_Light_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Rounded_Light_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Light.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Rounded-Medium</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Rounded_Medium_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Rounded_Medium_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Medium.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Rounded-Regular</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Rounded_Regular_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Rounded_Regular_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Regular.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Rounded-Semibold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Rounded_Semibold_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Rounded_Semibold_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Semibold.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Rounded-Thin</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Rounded_Thin_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Rounded_Thin_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Thin.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Rounded-Ultralight</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Rounded_Ultralight_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Rounded_Ultralight_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Rounded-Ultralight.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-Black</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_Black_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_Black_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-Black.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-BlackItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_BlackItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_BlackItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-BlackItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-Bold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_Bold_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_Bold_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-Bold.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-BoldItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_BoldItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_BoldItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-BoldItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-Heavy</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_Heavy_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_Heavy_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-Heavy.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-HeavyItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_HeavyItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_HeavyItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-HeavyItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-Light</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_Light_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_Light_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-Light.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-LightItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_LightItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_LightItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-LightItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-Medium</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_Medium_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_Medium_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-Medium.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-MediumItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_MediumItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_MediumItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-MediumItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-Regular</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_Regular_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_Regular_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-Regular.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-RegularItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_RegularItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_RegularItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-RegularItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-Semibold</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_Semibold_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_Semibold_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-Semibold.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-SemiboldItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_SemiboldItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_SemiboldItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-SemiboldItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-Thin</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_Thin_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_Thin_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-Thin.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-ThinItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_ThinItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_ThinItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-ThinItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-Ultralight</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_Ultralight_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_Ultralight_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-Ultralight.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro-Text-UltralightItalic</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_Text_UltralightItalic_otf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_Text_UltralightItalic_otf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro-Text-UltralightItalic.otf</code>
+  </div>
+  <div class="card">
+    <div class="meta">
+      <div class="name">SF-Pro</div>
+      
+      
+    </div>
+    <div class="sample" style="font-family:'f_SF_Pro_ttf'">ZenRay Dictate</div>
+    <div class="sample small" style="font-family:'f_SF_Pro_ttf'">
+      ABCDEFGHIJKLM abcdefghijklm 0123456789 &amp; ? !
+    </div>
+    <code class="path">file:///Users/zenray/Library/Fonts/SF-Pro.ttf</code>
+  </div>
+</body></html>
