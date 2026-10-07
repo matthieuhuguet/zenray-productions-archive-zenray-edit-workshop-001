@@ -1,0 +1,48 @@
+# ZenRay Edit migration audit (7 October 2026)
+
+Audit en lecture seule des sources canoniques `/Users/zenray/.claude/skills/zenray-html-photoshop-pdf-hda-socialmedia-shorts-reel` et `/Users/zenray/.claude/skills/edit-text`. Aucune source modifiée. (7 October 2026)
+
+## Inventaire mesuré (7 October 2026)
+
+- Ancien atelier : 115 fichiers, 52 673 422 octets ; SKILL.md : 341 525 octets, 6 279 lignes. Le corps massif doit devenir une référence historique et le nouveau SKILL.md un routeur court. (7 October 2026)
+- 13 scripts : zr-hda-instance.py, zr-design.mjs, new-project.sh, render-frames.sh, build-fontbook.sh, index-skill.py, update-ui-instances.py, install-template-creator.sh, vignette.sh, instagram_maxq.py, verify-post-instance.py, verify-post-editor.cjs, verify-ui.cjs. (7 October 2026)
+- 60 fichiers templates : composition slide/text/canvas, cadrage hda-light et crop-apply.py, photo hda-heavy et photo-apply.py, bibliothèque designs, maquettes Assets et Studio, knowledge-license-roadmap avec build.py et render.cjs. (7 October 2026)
+- 15 fichiers assets : post-editor JS/CSS/font, photo-controls JS/CSS, UI JS/CSS/save, InterVariable/AnthropicSerif/AnthropicMono embarqués et licence Inter. (7 October 2026)
+- 9 références : INDEX, post-editor, template-creator, trois corpus de fusion, manifest et originaux.tar.gz ; instances/INDEX.md ; fontbook.html ; 13 photos JPG dans un dossier de sélection historique. (7 October 2026)
+- edit-text est une instruction seule, sans scripts ni templates. Son protocole nécessite séparation stricte correction fidèle / réécriture explicitement demandée. (7 October 2026)
+
+## Échecs prouvés et conflits à corriger (7 October 2026)
+
+- `python3 scripts/index-skill.py --verify-only` sort avec code 1 et `AssertionError: zenray-html-photoshop-pdf-hda`. Les empreintes historiques ne prouvent actuellement pas une fusion intacte. Conserver les anciens octets et expliciter la différence plutôt que régénérer une preuve trompeuse. (7 October 2026)
+- Registre réel : 9 designs, capacité cible seulement 1000+. Quatre pages référencent pages/*.html absents ; all-in-one-capsule est absent ; entrée Studio se résout sous templates/ alors que trois composants se résolvent sous templates/designs/. Définir une seule racine, vérifier chaque entrée et corriger vers sourceOrigine quand le fichier source existe. (7 October 2026)
+- `zr-hda-instance.py` lignes 363 et 563 lance `open -a Google Chrome` ; --open et le serveur heavy violent la restriction navigateur personnel. Remplacer le lancement par sortie structurée de l’URL, ouverture via navigateur interne par l’agent. new-project.sh conseille également le navigateur personnel ligne 51. (7 October 2026)
+- templates/render.sh impose W=1080, H=1350, facteur 2, donc 2160×2700, tandis que la doctrine annonce ceil(3840 / grand côté), soit 3240×4050 pour 4:5. Centraliser format/échelle, vérifier la sortie réelle. (7 October 2026)
+- render.sh convertit PNG en JPEG au-delà de 8 Mio puis supprime PNG ; si toutes les qualités dépassent 8 Mio, aucune erreur ne suit. Le contrat de conservation des sources et du maximum mesuré doit être explicite, avec échec avant suppression du seul rendu. (7 October 2026)
+- Documentation promet export-png.sh, backup-memory.sh et render_mikiri_flash.py, absents du bundle inventorié. Les localiser avant de prétendre que le pipeline short est autonome ; les recettes expliquées ne valent pas scripts disponibles. (7 October 2026)
+- Ancien corpus place tantôt le travail dans Productions, tantôt les posts dans Memory ; aucune intégration BeginConversation/Client/checkpoint Assets V2 dans les scripts. Les nouvelles routes doivent employer le mapping Assets, atelier renvoyé, sources liées et mémoire Markdown séparée des binaires. (7 October 2026)
+- Instructions contradictoires : curseurs obligatoires partout dans anciennes sections, puis activation explicite ; anciennes polices contre trio actuel ; résolution 2x contre minimum grand côté 3840 ; noms de skills historiques à plusieurs endroits. Le contrat actif unique doit primer, références historiques identifiées comme archives. (7 October 2026)
+- edit-text chapitre 2 réordonne et fusionne une dictée et chapitre 6 exige traduction anglais/français systématique, alors que chapitre 1 impose grammaire seule par défaut. Appliquer réorganisation/traduction seulement lorsqu’autorisées ; aucune variante ni suppression automatique pour une correction simple. (7 October 2026)
+
+## Contrats du nouveau routeur zenray-edit (7 October 2026)
+
+- Brief : texte fourni ou création, type de média, référence, formats, sortie, état Assets existant. Une demande de correction garde vocabulaire, ordre, répétitions, images et assertions ; réécriture/traduction explicites seulement. (7 October 2026)
+- Choix : rechercher catalogue et templates avant toute fabrication ; instancier hda-light/heavy avec destination explicite et --post ; décomposer les familles et paramètres déjà variables en jetons/famille/instance. (7 October 2026)
+- Sources : garder les textes originaux et toutes sources par calque ; jamais inventer logistique, vécu, auteur ou asset manquant ; déclarer un manque ; conserver le brouillon et les réglages lors de reprise. (7 October 2026)
+- Modes : texte fidèle ; post multilingue demandé ; image/cadrage/photo ; composition/carrousel ; PDF ; animation/short/reel ; template depuis référence. Les anciens procédés restent disponibles dans références ciblées, sans charger 341 Ko pour corriger une virgule. (7 October 2026)
+- Assets : mapping vers projet zenray-edit, relation distincte à zenray-assets-v2, archive sources et exports séparés ; cloud vérifié par empreinte et job terminé, pas seulement dossier local ; checkpoint de résultat et prochain geste. (7 October 2026)
+- Vidéo/traitement lourd : appeler ffmpeg-hardware-check avant opération ; codecs selon alpha/Photos/plateforme, son explicitement contrôlé ; jamais publier ni promouvoir sans autorisation appropriée. (7 October 2026)
+
+## Vérifications réutilisables et portée réelle (7 October 2026)
+
+- verify-post-instance.py : vraie preuve de préservation _post/_params/_crop_params/out et historique HTML après --force ; remplacement concurrent de post refusé. Exécuter sur fixture dans atelier renvoyé, pas dans source canonique. (7 October 2026)
+- verify-post-editor.cjs : contrôle interactif navigateur isolé à conserver ; inspecter sa couverture et adapter la résolution du runtime Playwright avant annonce globale. (7 October 2026)
+- verify-ui.cjs : confirme police custom Inter, thème clair puis sombre, 13 px/400, ratio 4:5, mobile et absence erreurs page ; valeurs glass en dur et écran 1728×1117 ne prouvent pas export 4K ni tous modes. (7 October 2026)
+- Ajouter un vérificateur de contrat du bundle : noms, routage, liens fichiers/templates/catalogue, dépendances, absence ouverture navigateur personnel et règles actives de correction. Tester vert sur bundle valide et rouge sur copie volontairement cassée. (7 October 2026)
+- Publication : rapport de chaque format demandé avec dimensions/durée/codec/alpha/poids réel, capture isolée pour visuels, sources et finale identifiées ; limites non vérifiées conservées dans résultat. (7 October 2026)
+
+## Ordre de migration proposé (7 October 2026)
+
+1. Archiver intégralement ancien atelier et edit-text dans le projet zenray-edit ; enregistrer manifest chemins/empreintes, vérifier uploads et mapping segmenté. (7 October 2026)
+2. Créer zenray-edit en préservant ressources et scripts utiles, déplacer corpus en référence ; fusionner le protocole fidèle edit-text avec primauté explicite grammaire seule. (7 October 2026)
+3. Corriger catalogue, routes actives, instanciation, navigateur et contrats export ; rejouer préservation et une vraie sortie avec fixture. (7 October 2026)
+4. Synchroniser via skill-sync, corriger références actives du routage et Memory1, puis retirer anciennes entrées actives après preuve d’archive ; commit/push des seuls chemins concernés. (7 October 2026)

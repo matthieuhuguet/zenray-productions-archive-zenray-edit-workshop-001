@@ -1,0 +1,219 @@
+# Edit migration plan (7 October 2026)
+
+Lecture seule ; source /Users/zenray/.claude/skills/zenray-html-photoshop-pdf-hda-socialmedia-shorts-reel/SKILL.md, SHA256 `575fa9b2c2ff5658de296f649c8d86061928d5269db84e83abc9cba6bc01caa4`, 6279 lignes au relevé. Aucun skill actif modifié. (7 October 2026)
+
+## Découpage complet à bornes exactes (7 October 2026)
+
+Chaque intervalle est inclusif ; leur union couvre toutes les lignes exactement une fois. Conserver un `references/legacy/OriginalSkill.md` byte-identique et un manifest de provenance avant découpage. Les nouvelles références ci-dessous peuvent router vers ces intervalles sans réécrire l’histoire. (7 October 2026)
+
+| Lignes source | Référence proposée | Date |
+|---|---|---|
+| 1 à 585 | references/legacy/CompositionFoundation.md | 7 October 2026 |
+| 586 à 863 | references/legacy/ShortsPipeline.md | 7 October 2026 |
+| 864 à 882 | references/legacy/StudioLibrary.md | 7 October 2026 |
+| 883 à 1347 | references/legacy/CompositionRecipes.md | 7 October 2026 |
+| 1348 à 2668 | references/legacy/PhotoWorkflow.md | 7 October 2026 |
+| 2669 à 3141 | references/legacy/ParameterPanels.md | 7 October 2026 |
+| 3142 à 3470 | references/legacy/PdfEditing.md | 7 October 2026 |
+| 3471 à 5004 | references/legacy/NativeUiReference.md | 7 October 2026 |
+| 5005 à 5192 | references/legacy/PostEditorContract.md | 7 October 2026 |
+| 5193 à 5467 | references/legacy/SocialText.md | 7 October 2026 |
+| 5468 à 5550 | references/legacy/VignetteWorkflow.md | 7 October 2026 |
+| 5551 à 6023 | references/legacy/EditorCorrections.md | 7 October 2026 |
+| 6024 à 6087 | references/legacy/DesignLibrary.md | 7 October 2026 |
+| 6088 à 6123 | references/legacy/UiContract.md | 7 October 2026 |
+| 6124 à 6279 | references/legacy/ShortsCorrections.md | 7 October 2026 |
+
+## Routeur court et primauté (7 October 2026)
+
+- SKILL.md : résultat attendu, passage Assets existant, choix du mode, instanciation, contrôles, publication autorisée. Règles actives séparées des références historiques, aucune obligation de lire 341 Ko. (7 October 2026)
+- Texte : references/TextEditing.md actif, protocole edit-text original en references/legacy/EditText.md. Correction seule par défaut ; dictée réorganisée, versions et traductions uniquement sur demande explicite. (7 October 2026)
+- Photo : PhotoWorkflow + EditorCorrections + templates/hda-light et hda-heavy ; post facultatif. (7 October 2026)
+- Composition : CompositionFoundation + CompositionRecipes ; assets/calques conservés, formats paramétriques, choix du template existant. (7 October 2026)
+- PDF : PdfEditing, puis compétence PDF dédiée si nécessaire ; original intact et contrôle de chaque page. (7 October 2026)
+- Short/reel : ShortsPipeline + ShortsCorrections, dépendances à localiser ; le mode ne promet pas de script manquant. (7 October 2026)
+- Template et UI : references/template-creator.md, DesignLibrary, ParameterPanels et UiContract ; NativeUiReference seulement pour besoin natif/Dock. (7 October 2026)
+
+## index-skill.py : correctif minimal honnête (7 October 2026)
+
+- Lignes 13 à 30 : verify() mélange archive historique, copies modifiables, corpus courant et scripts importés ; cela casse dès qu’une correction a été intégrée. Ne pas remplacer silencieusement les empreintes du manifest d’origine. (7 October 2026)
+- archive originaux.tar.gz : 26 fichiers vérifiés par tarfile.extractfile + hashlib.sha256, tous conformes au manifest historique. Cette preuve permet vérifier l’archive sans extraire ni modifier. (7 October 2026)
+- Changer verify() pour vérifier chaque membre `<skill>/<relative>` dans l’archive, refuser membre manquant et empreinte incorrecte. Ne plus demander l’inclusion littérale de documents historiquement édités dans le nouveau routeur. (7 October 2026)
+- Attestation courante séparée : BundleManifest.json porte les hashes après migration, plus originalSkillSha256 et editTextSha256. Le vérificateur ne régénère jamais automatiquement le manifest utilisé pour sa propre décision. (7 October 2026)
+- Lignes 32 à 56 : build_index() suppose `Contrat UI prioritaire` présent dans SKILL.md et écrit un chemin d’ancien skill ligne 49. Indexer références explicitement dans routes.json ou dériver le nom du répertoire ; permettre contrat actif séparé. Préserver parsing des fences pour ignorer les commentaires de code ressemblant à des titres. (7 October 2026)
+- INDEX actuel est périmé : il annonce contrat UI ligne 6065, réel 6088 ; le nouveau routeur doit pointer vers fichier/section, sans index numérique manuel fragile. (7 October 2026)
+- Test négatif obligatoire : copie de l’archive avec octet corrompu ou manifest pointant vers membre absent doit sortir code non nul ; ne pas toucher l’archive d’origine. (7 October 2026)
+
+## render.sh : paramètres et conservation (7 October 2026)
+
+- Paramètres actuellement W=1080 H=1350 lignes 22/23 et scale=2 lignes 48/62. Lire un fichier export.json explicite, avec canvas.width, canvas.height, export.scale, export.minimumLongEdge, export.maximumBytes, export.format et export.jpegQualityLevels. (7 October 2026)
+- Définir le facteur par défaut ceil(minimumLongEdge / max(width,height)), borné conformément au contrat et refusant résultat trop petit ; surcharge utilisateur explicite conservée. Pour 1080×1350 et minimum 3840, facteur 3 et 3240×4050. (7 October 2026)
+- Rendu Chromium headless isolé, chemin exécutable choisi par paramètre/runtime disponible, aucune ouverture Google Chrome personnel ; document.fonts.ready et images décodées avant capture. (7 October 2026)
+- Sortie provisoire, vérifier dimensions, format/mode alpha requis, poids, puis déplacer atomiquement dans out/. Un target absent produit erreur ; zéro slide rendu produit erreur. (7 October 2026)
+- Ne supprimer ni source HTML/CSS/images ni seul master PNG. Si une livraison JPEG est demandée, écrire JPEG temporaire puis vérifier le poids ; toutes qualités trop lourdes produisent code non nul et conservent master. (7 October 2026)
+- PDF/transparence : ne pas convertir systématiquement RGBA vers RGB. Si export alpha requis, JPEG refusé. Plafond Git historique 100 Mo ne remplace pas limite plateforme 8 Mio. (7 October 2026)
+- Vérification fixture : composition 4:5 et un paysage, contrôle exact dimensions et source SHA256 inchangée ; dépassement artificiel de maximumBytes doit refuser export sans perdre master. (7 October 2026)
+
+## Références et chemins à migrer (7 October 2026)
+
+- scripts/index-skill.py : chemin ancien codé dans build_index ; scripts/new-project.sh : README ancien nom et navigateur personnel ; scripts/build-fontbook.sh : ancien chemin de commande ; scripts/zr-hda-instance.py : --open et deux lancements Chrome. (7 October 2026)
+- references/INDEX.md : toutes les commandes anciennes et ranges périmés ; references/post-editor.md, template-creator.md et instances/INDEX.md : vérifier liens/commandes, préserver historique des instances réelles. (7 October 2026)
+- templates/designs/index.json : racine unique à fixer. Quatre pages peuvent pointer vers zenray-assets-mockups/01-atelier, 02-galerie, 03-studio, 04-salon ; all-in-one pointe vers ancre p4 du fichier 05-capsules-hda existant si aucune extraction autonome ; trois composants restent designs/components ; Studio sous zenray-studio/02-store-final. Vérifier toutes cibles localement. (7 October 2026)
+- Texte/code clés françaises du catalogue et zr-design doivent devenir anglais lorsqu’ils sont touchés ; commentaires anglais d’abord et date actuelle. Ne pas traduire les titres de données visibles sans besoin. (7 October 2026)
+- Export scripts externes promises : export-png.sh, backup-memory.sh, Houdini/Scripts/render_mikiri_flash.py. Localiser source et rattacher dépendance Assets, sinon afficher statut indisponible. (7 October 2026)
+- Tous les chemins contenus dans corpus historique restent tels quels ; les commandes actives sont migrées vers zenray-edit et le contrat actif explique que les anciens noms sont archivés. Cette distinction évite de falsifier la provenance. (7 October 2026)
+- Archive/mapping avant suppression : projet zenray-edit distinct du projet zenray-assets-v2, sources originales liées, inventaire bytes/hash, upload job terminal et vérification remote. La relation entre projets ne mélange pas leurs racines. (7 October 2026)
+
+## Table exhaustive des sections réelles (7 October 2026)
+
+Cette table provient d’un parsing qui ignore les fences ; ranges inclusifs limités par le prochain titre de niveau 1/2. (7 October 2026)
+
+| Lignes | Section | Date |
+|---|---|---|
+| 16 à 24 | ZenRay HTML Photoshop PDF | 7 October 2026 |
+| 25 à 36 | Index de navigation | 7 October 2026 |
+| 37 à 53 | La loi fondamentale : un visuel n'est jamais une image | 7 October 2026 |
+| 54 à 77 | Les TROIS états d'un visuel, à ne jamais confondre (2026-08-20) | 7 October 2026 |
+| 78 à 141 | Deuxième loi : un asset est un HDA, jamais un dessin figé | 7 October 2026 |
+| 142 à 178 | Anatomie d'un projet | 7 October 2026 |
+| 179 à 198 | Où vivent les fichiers | 7 October 2026 |
+| 199 à 260 | Le format se demande, il ne se présume jamais | 7 October 2026 |
+| 261 à 292 | Les polices | 7 October 2026 |
+| 293 à 327 | Fabriquer un asset de texte | 7 October 2026 |
+| 328 à 351 | Découper une image de référence en assets | 7 October 2026 |
+| 352 à 369 | Mode `Template Creator` : une référence devient une machine | 7 October 2026 |
+| 370 à 387 | Annoter une capture (surlignage, flèches, cadres) | 7 October 2026 |
+| 388 à 415 | Composer | 7 October 2026 |
+| 416 à 436 | Un asset qu'on n'a pas ne s'invente pas, il reste un trou déclaré | 7 October 2026 |
+| 437 à 466 | Les pièges déjà payés | 7 October 2026 |
+| 467 à 498 | Recadrer sans recadrer : le fond flou dans les deux sens (2026-08-20) | 7 October 2026 |
+| 499 à 530 | Le panneau de curseurs, obligatoire sur tout HTML d'atelier (2026-08-20) | 7 October 2026 |
+| 531 à 549 | Sauvegarder un post dans Memory : un DOSSIER, jamais un fichier (2026-08-20) | 7 October 2026 |
+| 550 à 578 | Rendre | 7 October 2026 |
+| 579 à 585 | Animer | 7 October 2026 |
+| 586 à 863 | Pipeline Reel et Shorts 15s : Houdini Viewport, OBS, Audio, Sous-titres Auto-Fit et Export 4K (2026-09-10) | 7 October 2026 |
+| 864 à 882 | ZenRay Studio, le store : design consigné et site en ligne (2026-09-11) | 7 October 2026 |
+| 883 à 890 | Démarrer un projet | 7 October 2026 |
+| 891 à 894 | Le réflexe, en une ligne | 7 October 2026 |
+| 895 à 957 | Méthode de calage sur une référence : mesurer, jamais deviner (2026-08-12) | 7 October 2026 |
+| 958 à 988 | Aller vite, protocole (2026-08-12, après une séance beaucoup trop lente) | 7 October 2026 |
+| 989 à 1005 | L'arc d'un carrousel produit, gabarit éprouvé | 7 October 2026 |
+| 1006 à 1022 | Cas concrets de la séance, à recopier plutôt qu'à réinventer | 7 October 2026 |
+| 1023 à 1081 | Cas concret : un classement de vingt lignes en HDA (2026-08-15) | 7 October 2026 |
+| 1082 à 1108 | Lien avec le skill social | 7 October 2026 |
+| 1109 à 1142 | Police de titre retenue : Generic G50 (2026-08-12) | 7 October 2026 |
+| 1143 à 1152 | Piège : ne pas mettre à l'échelle les réglages du filtre nuageux avec la police (2026-08-12) | 7 October 2026 |
+| 1153 à 1211 | Le carton titre « brume », d'après la référence CUBA / VIÑALES (2026-08-12) | 7 October 2026 |
+| 1212 à 1228 | Poser un titre sur une photo pleine page | 7 October 2026 |
+| 1229 à 1269 | Trois lois de sortie, valables pour TOUT visuel (2026-08-23) | 7 October 2026 |
+| 1270 à 1313 | Préréglage « article en carrousel », validé le 2026-08-23 | 7 October 2026 |
+| 1314 à 1347 | Couper une image large en deux slides de carrousel qui se prolongent | 7 October 2026 |
+| 1348 à 1399 | UN SEUL OUTIL, UNE SEULE COPIE : le cadrage rejoint la chaîne (2026-09-01) | 7 October 2026 |
+| 1400 à 1523 | LE WORKFLOW COMPLET, de photos brutes à images publiables (2026-09-01) | 7 October 2026 |
+| 1524 à 1778 | RÈGLE D'ARGENT : un outil hda ne se REGÉNÈRE jamais, il s'INSTANCIE (2026-09-01) | 7 October 2026 |
+| 1779 à 1821 | Recharger un `_params.json` deja ecrit : jamais perdre un lot deja regle (2026-09-03) | 7 October 2026 |
+| 1822 à 1880 | Bordure exterieure liee, pour joindre deux images sans les recadrer (2026-09-03) | 7 October 2026 |
+| 1881 à 1940 | Ombre portee sophistiquee du texte, Distance/Spread/Size (2026-09-02) | 7 October 2026 |
+| 1941 à 2194 | Découpage rapide en lot : l'outil `zenray-html-hda-<projet>/`, sliders zoom/pan et index image (2026-08-31) | 7 October 2026 |
+| 2195 à 2217 | Poupée russe : un `out/` peut devenir la source d'un nouvel outil imbriqué (2026-09-01) | 7 October 2026 |
+| 2218 à 2296 | Le mode HEAVY : un seul HTML, reorder inclus, module photo complet (2026-09-01) | 7 October 2026 |
+| 2297 à 2594 | Workflows and questions prompt to user (retours de Matthieu, journal vivant, 2026-08-31) | 7 October 2026 |
+| 2595 à 2668 | Esthetique Liquid Glass et deux familles de police seulement (2026-09-03) | 7 October 2026 |
+| 2669 à 2677 | Annexe conservée : copie intégrale de `design-sliders` | 7 October 2026 |
+| 2678 à 2679 | Régler à l'œil, avec des curseurs | 7 October 2026 |
+| 2680 à 2691 | Le problème que ça supprime | 7 October 2026 |
+| 2692 à 2702 | Quand déclencher, sans attendre qu'il le demande | 7 October 2026 |
+| 2703 à 2712 | Ce que c'est, en une phrase | 7 October 2026 |
+| 2713 à 2727 | Les quatre règles | 7 October 2026 |
+| 2728 à 2792 | La recette, à copier telle quelle | 7 October 2026 |
+| 2793 à 2807 | Le poser sur un site React qui existe déjà | 7 October 2026 |
+| 2808 à 2817 | Cas concret, à reproduire (2026-08-20) | 7 October 2026 |
+| 2818 à 3036 | Mode `-text` : il édite le texte, le bouton renvoie le diff | 7 October 2026 |
+| 3037 à 3083 | Mode `-image` : régler un visuel dans sa page, pas dans un éditeur | 7 October 2026 |
+| 3084 à 3115 | L'article est un HDA, et c'est ce qui rend l'itération rapide | 7 October 2026 |
+| 3116 à 3121 | Où finissent les valeurs | 7 October 2026 |
+| 3122 à 3130 | Skills voisins, pour ne pas se tromper de porte | 7 October 2026 |
+| 3131 à 3135 | Interface de paramètres courte, 8 par catégorie (30 September 2026) | 7 October 2026 |
+| 3136 à 3141 | Règle d’activation explicite, 2026-08-27 | 7 October 2026 |
+| 3142 à 3143 | zenray-html-photoshop-pdf | 7 October 2026 |
+| 3144 à 3155 | Modifier un PDF de bout en bout, sans rupture visuelle | 7 October 2026 |
+| 3156 à 3177 | Prompt de départ, à reprendre sans ambiguïté | 7 October 2026 |
+| 3178 à 3197 | Contrat de travail | 7 October 2026 |
+| 3198 à 3232 | 1. Préparer un espace de travail et archiver la source | 7 October 2026 |
+| 3233 à 3265 | 2. Inventorier la nature du PDF avant de toucher au texte | 7 October 2026 |
+| 3266 à 3297 | 3. Construire la table de remplacement avant toute édition | 7 October 2026 |
+| 3298 à 3338 | 4. Relever le style avant chaque remplacement | 7 October 2026 |
+| 3339 à 3380 | 5. Éditer par lignes complètes, avec Inter | 7 October 2026 |
+| 3381 à 3439 | 6. Contrôler la sortie sur chaque page | 7 October 2026 |
+| 3440 à 3458 | 7. Publier la sortie seulement après les contrôles verts | 7 October 2026 |
+| 3459 à 3470 | Liste de fermeture | 7 October 2026 |
+| 3471 à 3486 | Workflow UI native macOS vers HTML et React | 7 October 2026 |
+| 3487 à 3507 | 1. Définir le périmètre avant de coder | 7 October 2026 |
+| 3508 à 3539 | 2. Inspecter la référence native et l’environnement réel | 7 October 2026 |
+| 3540 à 3580 | 3. Mesurer la référence, ne pas estimer | 7 October 2026 |
+| 3581 à 3617 | 4. Décomposer l’interface en composants visuels | 7 October 2026 |
+| 3618 à 3668 | 5. Transformer les tokens natifs en tokens HTML | 7 October 2026 |
+| 3669 à 3687 | 6. Faire la correspondance native vers React | 7 October 2026 |
+| 3688 à 3740 | 7. Construire l’arbre React | 7 October 2026 |
+| 3741 à 3791 | 8. Reproduire le Liquid Glass sans fabriquer un rectangle opaque | 7 October 2026 |
+| 3792 à 3839 | 9. Reproduire la typographie et les icônes | 7 October 2026 |
+| 3840 à 3929 | 10. Implémenter le drag sans casser le clic | 7 October 2026 |
+| 3930 à 3972 | 11. Reproduire le positionnement lié au Dock | 7 October 2026 |
+| 3973 à 4032 | 12. Créer la page d’atelier avec les curseurs | 7 October 2026 |
+| 4033 à 4076 | 13. Servir le prototype et rendre une capture comparable | 7 October 2026 |
+| 4077 à 4093 | 14. Itérer par une seule cause à la fois | 7 October 2026 |
+| 4094 à 4118 | 15. Vérifier les interactions et les états | 7 October 2026 |
+| 4119 à 4147 | 16. Organiser les fichiers du projet HTML | 7 October 2026 |
+| 4148 à 4169 | 17. Nettoyer avant de livrer | 7 October 2026 |
+| 4170 à 4187 | 18. Prompt réutilisable pour une future transposition | 7 October 2026 |
+| 4188 à 4210 | 19. Checklist de fermeture de la transposition | 7 October 2026 |
+| 4211 à 4258 | 20. Correction importante sur l’alignement natif avec le Dock | 7 October 2026 |
+| 4259 à 4564 | 21. Lire la taille réelle du Dock pour une UI native compacte | 7 October 2026 |
+| 4565 à 4801 | 22. Transposition HTML et React de cette version pilotée par le Dock | 7 October 2026 |
+| 4802 à 4822 | 23. Checklist finale pour cette famille d’UI | 7 October 2026 |
+| 4823 à 4870 | 24. Correction HDA des valeurs de secours système | 7 October 2026 |
+| 4871 à 5004 | 25. Règle générale : rechercher les valeurs système avant de coder | 7 October 2026 |
+| 5005 à 5192 | Contrat actif socialmedia, fusion du 2026-09-03 | 7 October 2026 |
+| 5193 à 5200 | Annexe intégrale conservée : zenray-social-media | 7 October 2026 |
+| 5201 à 5202 | Social Media : les règles ici, la chronologie dans SocialMedia1.md | 7 October 2026 |
+| 5203 à 5215 | Qui fait foi (arbitrage du 2026-08-06, à ne pas rediscuter) | 7 October 2026 |
+| 5216 à 5219 | Le fichier chronologique | 7 October 2026 |
+| 5220 à 5232 | Lecture (économe en tokens, future-proof) | 7 October 2026 |
+| 5233 à 5240 | Écriture (après chaque post ou feedback) | 7 October 2026 |
+| 5241 à 5246 | Ce que le fichier sait déjà (ne pas réinventer) | 7 October 2026 |
+| 5247 à 5250 | Hashtags : CONSIGNE MATTHIEU du 2026-08-06 | 7 October 2026 |
+| 5251 à 5260 | Chiffres : CONSIGNE MATTHIEU du 2026-08-06 | 7 October 2026 |
+| 5261 à 5278 | Photos : CONSIGNE MATTHIEU du 2026-08-06 (non négociable) | 7 October 2026 |
+| 5279 à 5313 | Texte renvoyé par Matthieu : SUPPRESSION et ORDRE font loi (2026-08-12, erreur commise deux fois de suite) | 7 October 2026 |
+| 5314 à 5345 | Longueur Instagram : 2200 caractères de plafond, 2000 de cible (2026-08-12) | 7 October 2026 |
+| 5346 à 5359 | Ordre des langues : EN, puis 日本語, puis FR (2026-08-12) | 7 October 2026 |
+| 5360 à 5384 | Ne jamais inventer un fait logistique (2026-08-12, erreur grave payée) | 7 October 2026 |
+| 5385 à 5389 | Skills liés | 7 October 2026 |
+| 5390 à 5404 | RÈGLE ABSOLUE : tout média passe par `zenray-html-photoshop-pdf-hda` (2026-08-20) | 7 October 2026 |
+| 5405 à 5433 | Le format « source horizontale vers 9:16 » (2026-08-20, validé par Matthieu) | 7 October 2026 |
+| 5434 à 5450 | Les visuels : skill `zenray-html-photoshop-pdf-hda` (2026-08-12) | 7 October 2026 |
+| 5451 à 5467 | Aller plus vite (2026-08-12, demande explicite) | 7 October 2026 |
+| 5468 à 5474 | Annexe intégrale conservée : post-vignette | 7 October 2026 |
+| 5475 à 5478 | Post multilingue + vignettage photo | 7 October 2026 |
+| 5479 à 5504 | Volet A : Le texte du post | 7 October 2026 |
+| 5505 à 5550 | Volet B : Vignettage doux des photos | 7 October 2026 |
+| 5551 à 5585 | Un affichage arrondi qui fait croire a une valeur fausse, 2026-09-03 | 7 October 2026 |
+| 5586 à 5646 | La fenetre de cadrage depend du ZOOM, pas seulement de la couverture, 2026-09-03 | 7 October 2026 |
+| 5647 à 5679 | Trois boutons, trois gestes, aucun telechargement, 2026-09-03 | 7 October 2026 |
+| 5680 à 5736 | Enregistrer et Cuire depuis la page : delete, simplify, accelerate, automate, 2026-09-03 | 7 October 2026 |
+| 5737 à 5782 | L'ombre portee se reduit a Size et Strength, et le bug qu'elle cachait, 2026-09-03 | 7 October 2026 |
+| 5783 à 5820 | Le repli de police etait un NOM, pas un chemin, 2026-09-03 | 7 October 2026 |
+| 5821 à 5854 | Un theme, clair par defaut, et le bouton primaire reste PLEIN, 2026-09-03 | 7 October 2026 |
+| 5855 à 5890 | Contrôle des gabarits après fusion, 2026-09-03 | 7 October 2026 |
+| 5891 à 5919 | Vérification de la fusion et de l’éditeur, 2026-09-03 | 7 October 2026 |
+| 5920 à 5929 | Migration définitive validée le 2026-09-03 | 7 October 2026 |
+| 5930 à 5963 | Le bouton Export ne cuisait rien : le serveur ne demarrait que sur demande explicite, 2026-09-03 | 7 October 2026 |
+| 5964 à 6023 | Grille de composition 3x3, contraste automatique en CSS pur, cachee par defaut (2026-09-03) | 7 October 2026 |
+| 6024 à 6064 | La bibliotheque des maquettes de direction, ZenRay Assets (2026-09-05) | 7 October 2026 |
+| 6065 à 6087 | Le Registre des 1000+ Designs HDA, propositions paramétriques et zéro gaspillage de tokens (2026-09-05) | 7 October 2026 |
+| 6088 à 6100 | Contrat UI prioritaire, Liquid Glass et InterVariable, 2026-09-03 | 7 October 2026 |
+| 6101 à 6111 | Discard d'une photo vers le sous-dossier _deprecated (2026-09-10) | 7 October 2026 |
+| 6112 à 6123 | Roue chromatique moderne et palette 12 teintes élémentaires (2026-09-10) | 7 October 2026 |
+| 6124 à 6140 | Correction critique du compute : polices UltraBold et couleurs de texte (2026-09-10) | 7 October 2026 |
+| 6141 à 6147 | Style de titre et de sous-titre des shorts, correction du 2026-09-12, TROISIEME et derniere passe | 7 October 2026 |
+| 6148 à 6279 | Style de titre et de sous-titre des shorts, correction du 2026-09-12, PUIS re-correction le meme jour | 7 October 2026 |
