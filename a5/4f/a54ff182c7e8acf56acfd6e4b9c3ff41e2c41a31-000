@@ -5,3 +5,9 @@
 - Read canonical feedback: /Users/zenray/.claude/Memory1/Projects/zenray-edit/FEEDBACK.md. Append through feedback-stack; never rewrite prior entries. (7 October 2026)
 - Work in /Users/zenray/.claude/tmp/tmp-zenray-edit; keep durable knowledge in /Users/zenray/.claude/Memory1/Projects/zenray-edit. Linked production directories remain in place. (7 October 2026)
 - Assets watches registered sources automatically. A local entry is not proof of verified cloud backup. (7 October 2026)
+
+## Current canonical Assets and feedback instructions (7 October 2026)
+
+- Correction of the earlier generated startup lines: apply `/Users/zenray/.claude/skills/zenray-assets/SKILL.md`, the canonical workflow with integrated feedback. The former zenray-assets-v2 name is a compatibility entry; project IDs remain unchanged. (7 October 2026)
+- Correction of the earlier feedback-stack instruction: the sole writer is `/Users/zenray/.claude/skills/zenray-feedback/scripts/feedback.py`. Read the canonical project FEEDBACK.md; preserve every existing byte and append dated corrections through this writer with stable event IDs. (7 October 2026)
+- Inspect native capture before adding a prompt manually; do not duplicate prompts already captured. Bind the actual host session, retain an existing binding, and use a source-labeled checkpoint for verified results. A local checkpoint does not prove cloud backup. (7 October 2026)

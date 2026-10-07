@@ -1,0 +1,138 @@
+---
+name: edit-text
+description: Retravailler un texte de Matthieu pour le rendre plus juste et plus intéressant, sans jamais lui prendre sa voix. Utiliser quand il demande d'améliorer, de corriger, de raccourcir ou de traduire un texte qu'il a écrit ou dicté, quand il donne un brouillon en dictée vocale, quand il dit « corrige juste la grammaire », ou quand un texte doit être posé sur le site, dans un post, un article ou une capsule.
+---
+
+# Éditer un texte de Matthieu
+
+## La loi qui commande tout le reste
+
+> **Ses mots, donnés le 21 août 2026 :** « QUAND JE TE DEMANDE D'ÉCRIRE QUELQUE CHOSE NE CHANGE
+> JAMAIS MON STYLE, CORRIGE UNIQUEMENT LA GRAMMAIRE ET SOIS PROACTIF. »
+
+Sa voix est exactement ce qui distingue un texte de lui d'un texte produit par une machine, et c'est
+cette voix qu'il construit publiquement. Un lissage bien intentionné détruit précisément la valeur
+qu'il vient chercher. Ce skill ne desserre jamais cette règle ; il dit comment travailler DANS cette
+contrainte plutôt que contre elle.
+
+## 1. Le seul cas où l'on réécrit vraiment
+
+Il y a deux demandes, et les confondre est la faute la plus coûteuse.
+
+| Ce qu'il demande | Ce qu'on fait |
+|---|---|
+| « corrige », « c'est bon ? », « mets ça sur le site » | Orthographe, accord, conjugaison, ponctuation manquante, mot mal transcrit par la dictée. **Rien d'autre.** |
+| « fais-moi des propositions », « rends-le meilleur », « 3 versions » | On réécrit, mais on RESTE dans sa voix, et on rend plusieurs directions au lieu d'une |
+
+Dans le doute, on est dans la première colonne.
+
+## 2. Un brouillon dicté ne se corrige pas, il se DÉPLIE
+
+Matthieu dicte souvent, et une dictée n'est pas un texte mal écrit : c'est un texte **complet dont
+l'ordre n'est pas encore posé**. Le réflexe fautif est de le nettoyer phrase par phrase. Le geste
+juste est d'en extraire la liste des idées, puis de les reposer dans un ordre qui tienne.
+
+**La méthode, et elle est mécanique.**
+
+1. Numéroter chaque idée distincte de la dictée, y compris les répétitions et les « tu vois ».
+2. Repérer celles qui disent la même chose deux fois : elles fusionnent, elles ne se suppriment pas.
+3. Repérer celles qu'il CORRIGE en cours de route. Une dictée contient souvent une rectification :
+   « je veux pas forcément dire que penser est plus important, mais que… ». La seconde formulation
+   fait foi, et la première doit disparaître du rendu.
+4. Rendre le texte, puis **rendre le tableau de couverture** : une ligne par idée numérotée, et où
+   elle se trouve dans le rendu.
+
+Ce tableau n'est pas une politesse. C'est le seul moyen pour lui de vérifier en dix secondes que
+rien n'a été perdu, et c'est exactement ce qu'il demande quand il dit « sans rien oublier ».
+
+## 3. Court et long sont deux textes, jamais un texte et son résumé
+
+Quand un texte doit exister en version courte et en version longue, la version courte n'est **pas**
+le premier paragraphe de la longue.
+
+- **Le court est une THÈSE.** Il se suffit, il se cite, et quelqu'un qui ne clique jamais a compris
+  la position.
+- **Le long ARGUMENTE.** Il donne l'exemple, la conséquence, la nuance, la limite.
+
+Le test : si le court peut se coller au début du long sans rien changer, le court n'a pas été écrit,
+il a été coupé.
+
+## 4. Rendre plusieurs directions, jamais une seule version « meilleure »
+
+Une seule proposition met Matthieu dans une position de juge sans repère : meilleure que quoi ?
+Trois versions qui diffèrent par le TON lui rendent une décision facile, et cette décision lui
+appartient.
+
+Le triptyque qui a fonctionné, à reprendre :
+
+| Direction | Ce qui la caractérise | Son risque, à dire |
+|---|---|---|
+| **La sienne, resserrée** | Même ordre, même argument, redites enlevées | aucun |
+| **Le manifeste** | Phrases brèves, une idée par phrase, assumé | peut sembler dogmatique |
+| **La posée** | Ouvre sur ce qu'il FAIT plutôt que sur ce qu'il refuse | perd un peu de mordant |
+
+Et une ligne par direction disant **pour qui elle est écrite** : ceux qui le suivent déjà, un studio
+qui le découvre, tout le monde. C'est ce qui transforme un choix esthétique en choix stratégique.
+
+## 5. Signaler chaque ajout, sans exception
+
+Quand une reformulation introduit une idée que Matthieu n'a pas dite, elle se signale en clair, avec
+la phrase concernée et la possibilité de la retirer sans rien casser.
+
+C'est la règle d'anti-invention appliquée à l'écriture : une idée glissée en douce dans un texte
+publié sous son nom devient sa parole sans qu'il l'ait choisie. Le format qui marche :
+
+> Deux ajouts que je te signale plutôt que de les glisser en douce. Dans B, « … » condense deux
+> idées en une. Dans C, « … » est une affirmation que tu n'as pas faite ; si c'est un mot de trop,
+> il saute sans rien casser.
+
+## 6. Toujours donner la version française, même pour un texte anglais
+
+Il édite en français, quelle que soit la langue de publication. Rendre l'anglais seul le force à
+traduire mentalement avant de pouvoir juger, ce qui coûte un aller-retour à chaque fois.
+
+Donc : chaque proposition sort **en anglais ET en français**, et les deux versions sont posées
+séparément dans le produit, jamais collées dans le même bloc. Sur un site bilingue, cela veut dire
+deux entrées de traduction, pas une chaîne qui contient les deux langues.
+
+## 7. La grammaire, elle, se corrige sans demander
+
+Ne pas changer son style n'est pas une excuse pour rendre un texte fautif. Les corrections qui se
+font toujours, en silence :
+
+- l'accord, la conjugaison, l'orthographe ;
+- la ponctuation manquante, et **jamais** un tiret cadratin, un tiret demi-cadratin ou un double
+  tiret employé comme ponctuation ;
+- les mots que la reconnaissance vocale a déformés, en les rétablissant dans leur forme réelle
+  (« Cloud Code » devient « Claude Code », un nom propre reprend ses majuscules) ;
+- une phrase laissée sans complément par l'oral : on la ferme avec le mot que la phrase appelait, et
+  on le signale.
+
+## 8. Le contrôle avant de rendre
+
+1. Chaque idée de la dictée est présente, et le tableau de couverture le montre ligne par ligne.
+2. Les idées qu'il a rectifiées en cours de route ne subsistent que dans leur seconde version.
+3. Aucun ajout n'est passé en silence.
+4. Le court se tient seul, et n'est pas le début du long.
+5. Anglais et français existent tous les deux, séparés.
+6. Aucun tiret cadratin nulle part.
+7. Son vocabulaire est intact : si un mot a changé sans qu'une faute le justifie, il se remet.
+
+## Erreurs déjà payées
+
+| Erreur | Ce qu'elle coûte | La règle |
+|---|---|---|
+| Corriger une dictée phrase par phrase | Le texte reste dans l'ordre de la parole, donc illisible à l'écrit | Extraire les idées, puis les reposer |
+| Garder une formulation qu'il a rectifiée plus loin | On publie sous son nom l'inverse de ce qu'il pense. Payé le 2026-08-28 : « thinking is far better » est resté en ligne alors qu'il venait de dire précisément le contraire | La dernière formulation fait foi |
+| Rendre une seule version « améliorée » | Il n'a aucun repère pour juger, l'échange repart à zéro | Trois directions, et pour qui chacune est écrite |
+| Le court écrit comme un extrait du long | Deux blocs redondants, et le lecteur qui n'ouvre pas n'a rien compris | Le court est une thèse, le long l'argumente |
+| Anglais seul | Il doit traduire avant de pouvoir éditer | Toujours les deux langues |
+| Une idée ajoutée sans le dire | Sa parole publique contient une phrase qu'il n'a pas choisie | Signaler chaque ajout, avec la possibilité de le retirer |
+| Lisser une tournure parlée en tournure écrite | Sa voix disparaît, et c'est elle qui a de la valeur | Grammaire seule, sauf demande explicite de réécriture |
+
+## Voisins, à ne pas confondre
+
+`recit-francais` traite la SYNTAXE de mes propres réponses, pas les textes de Matthieu.
+`recap-simple` clôt une tâche par un tableau, il ne rédige pas.
+`zenray-html-photoshop-pdf-hda-socialmedia` place un texte déjà écrit dans un post.
+Ce skill traite uniquement le passage d'un brouillon de Matthieu à un texte publiable.

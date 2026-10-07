@@ -1,0 +1,585 @@
+---
+name: zenray-html-photoshop-pdf-hda-socialmedia-shorts-reel
+description: >
+  Atelier unique ZenRay : posts et articles, correction fidèle, traductions,
+  hashtags, batch photo, vignettage, calques HTML, carrousels, PDF et exports.
+  Utiliser pour préparer, corriger, traduire ou composer un post et ses médias.
+  Le post est directement éditable dans les ateliers light et heavy, en Inter,
+  noir sur blanc, au format 4:5 par défaut. Lire references/INDEX.md puis le
+  Contrat actif socialmedia, avant les seules sections utiles du corpus conservé.
+  Remplace le routage séparé des anciens skills social et vignette.
+---
+
+**Lecture obligatoire avant toute fabrication :** ouvrir `references/INDEX.md`, puis le contrat UI prioritaire du 2026-09-03. Clair par défaut, Liquid Glass sidebar, InterVariable embarquée, post 13 px maximum. Les anciennes recettes conservées plus bas ne remplacent pas ce contrat.
+
+
+# ZenRay HTML Photoshop PDF
+
+Photoshop, mais le document est un fichier HTML et les calques sont des `<img>`.
+
+Le but n'est pas de dessiner joli du premier coup. Le but est de **garder la
+main sur chaque morceau** pour itérer en secondes plutôt qu'en minutes, et de
+pouvoir produire une identité de marque cohérente sur Instagram et ailleurs sans
+ouvrir un seul logiciel.
+
+## Index de navigation
+
+- **AVANT DE FABRIQUER QUOI QUE CE SOIT** : lire « LE WORKFLOW COMPLET » puis
+  « RÈGLE D'ARGENT ». Un outil hda s'INSTANCIE depuis `templates/` en une
+  commande, il ne se réécrit jamais à la main. Un travail fait n'est jamais
+  perdu, il est la source du suivant.
+- **Lot de photos à traiter** : `scripts/zr-hda-instance.py <dossier> --open`
+  pour le cadrage, puis le même script en `--mode heavy` sur le `out/` obtenu.
+- **Section `design-sliders` intégrée** : l’annexe intégrale se trouve en fin de skill.
+- **Curseurs seulement sur demande** : voir « Règle d’activation explicite, 2026-08-27 ».
+- **Mode `Template Creator`** : lire `references/template-creator.md` en entier dès qu’une référence doit devenir un gabarit réutilisable.
+
+## La loi fondamentale : un visuel n'est jamais une image
+
+Un visuel est **un dossier d'assets** plus **un fichier HTML qui les assemble**.
+
+Ne JAMAIS produire un visuel en une seule passe de rendu monolithique où le
+texte, les images et la mise en page sont fondus ensemble. Cette approche a été
+essayée le 2026-08-11 et rejetée par Matthieu, dans ces termes : « on va faire en
+sorte de copier asset par asset ». Elle échoue pour trois raisons vérifiées :
+
+1. **Changer une police oblige à tout refaire.** Avec des assets séparés, on
+   régénère un seul PNG et on recharge.
+2. **On ne peut pas déplacer un élément.** Fondu dans une image, un titre n'est
+   plus qu'un ensemble de pixels.
+3. **On étire ce qui ne doit pas l'être.** Le premier essai a agrandi une
+   bannière de 1738×166 pour couvrir un cadre de 1080×1350 : bouillie floue
+   illisible. Voir « Ne jamais agrandir » plus bas.
+
+## Les TROIS états d'un visuel, à ne jamais confondre (2026-08-20)
+
+Une bonne part des malentendus vient de ce qu'on appelle « le visuel » trois choses
+différentes. Elles ont chacune un rôle, un emplacement et une durée de vie.
+
+| État | Ce que c'est | Ce qu'on en fait |
+|---|---|---|
+| **1. Les assets** | les morceaux : `assets/01-media.webp`, `02-fond-flou.webp`, `assets/fonts/*.woff2`. Chacun est indépendant et remplaçable | on les régénère un par un, jamais tous ensemble |
+| **2. Le HTML d'atelier** | le document à calques, **avec son panneau de curseurs**. C'est l'outil de design, pour Matthieu comme pour moi | on l'ouvre, on tourne les boutons, on copie les valeurs. Il ne se livre JAMAIS |
+| **3. L'asset final** | le **PNG** rendu depuis le HTML, à l'échelle demandée (x1, x2 pour la 4K, x3) | c'est le seul livrable, celui qu'on publie |
+
+Le HTML n'est pas le produit, il est l'atelier. Le PNG n'est pas modifiable, il est le
+produit. Confondre les deux mène soit à livrer un panneau de curseurs, soit à ne plus
+pouvoir rien changer.
+
+**L'échelle est un paramètre, pas une décision improvisée.** `export.echelle` dans
+`_params.json` : 1 rend la taille de composition, 2 la double (2160×3840 pour un 9:16,
+c'est la 4K), 3 la triple. Le rendu se fait toujours depuis la MÊME composition, jamais
+en agrandissant un PNG déjà rendu.
+
+**Plafond de 100 Mo par fichier, vérifié par le script, pas espéré.** Au-delà, GitHub
+refuse le push et bloque tout le dépôt Memory. Le contrôle est dans `export-png.sh` et
+dans `backup-memory.sh`, et il échoue bruyamment.
+
+## Deuxième loi : un asset est un HDA, jamais un dessin figé
+
+> **La loi générale vit désormais dans `~/.claude/CLAUDE.md`**, bannière
+> « PRIORITÉ 0 ABSOLUE : TOUT CODE PRODUIT EST UN HDA », qui l'étend à tout le
+> code produit, quel que soit le langage, et qui fait foi en cas de divergence.
+> Ce qui suit en est l'application visuelle.
+
+Demande de Matthieu, le 2026-08-15, dans ses mots : les assets doivent être
+« comme des HDA sur Houdini », donc éditables, paramétrables, modulaires par
+variables, pour que les membres d'une même famille partagent leurs chiffres,
+leurs couleurs, leurs dégradés et leurs icônes au lieu d'être vingt fichiers
+recopiés à la main.
+
+Le vocabulaire de Houdini se transpose terme pour terme, et il vaut la peine de
+le poser une fois pour toutes.
+
+| Houdini | Ici |
+|---|---|
+| La définition du HDA | Le gabarit, un seul fichier HTML ou SVG, sans aucune valeur en dur |
+| L'interface de paramètres | `_params.json` pour les données, `_canvas.css` pour les jetons visuels |
+| Une instance posée dans la scène | Un PNG rendu, numéroté, dans le dossier de travail |
+| Le cook | `build.py`, qui instancie le gabarit une fois par jeu de paramètres |
+
+**Le recensement des familles précède toute production.** Avant d'ouvrir le
+premier fichier, on liste ce que le visuel contient et on regroupe ce qui
+partage des propriétés : deux éléments qui ne diffèrent que par une valeur ne
+sont jamais deux assets, ils sont un gabarit et deux jeux de paramètres. Ce
+recensement s'écrit dans le README du projet, en tableau, famille par famille,
+avec la liste des paramètres exposés. C'est lui qui empêche la duplication sur
+le moment, et c'est encore lui qu'on relit six mois plus tard pour savoir où
+toucher.
+
+**Trois étages de paramètres, jamais mélangés.**
+
+| Étage | Ce qu'on y met | Où |
+|---|---|---|
+| Jetons globaux | palette, dégradés, familles de polices, rayons, échelle typographique | `_canvas.css`, en tête |
+| Paramètres de famille | hauteur d'une barre, largeur d'une cellule chiffrée, taille d'un drapeau, règle d'alternance | bloc dédié de `_params.json` |
+| Surcharges d'instance | un rang précis qu'on veut d'une autre couleur, un chiffre, une icône | la ligne de l'instance, dans `_params.json` |
+
+Une surcharge d'instance l'emporte sur son étage de famille, qui l'emporte sur
+les jetons globaux. C'est exactement la cascade de CSS, il suffit de ne pas la
+contrarier.
+
+**Aucune valeur en dur dans un gabarit.** Ni code hexadécimal, ni taille de
+police, ni chiffre de données. Le gabarit ne porte que des références, `var(--…)`
+côté CSS et des accolades de substitution côté HTML. Une valeur écrite en dur
+reste un défaut même quand elle produit le bon rendu, puisqu'elle sort du champ
+de l'interface et devient introuvable le jour où il faut la changer.
+
+**Le test qui valide une décomposition, à passer avant de rendre quoi que ce
+soit.** Changer une couleur, une police ou une géométrie doit se faire à un seul
+endroit, se propager partout où cette valeur a du sens, et nulle part ailleurs.
+Si teindre les vingt barres d'un classement demande vingt modifications, la
+décomposition est ratée et il faut la refaire tout de suite. Inversement, si
+changer la couleur d'une seule ligne oblige à toucher les dix-neuf autres, le
+paramètre est simplement rangé au mauvais étage.
+
+**Ce que la loi permet, au-delà du confort d'édition.** Un jeu d'assets
+paramétriques se recompose dans un carré, une story ou un paysage sans être
+refabriqué, pourvu que la géométrie s'exprime en variables plutôt qu'en pixels
+figés au fond des règles. C'est la raison profonde de la loi, et elle rejoint
+directement la question de format ci-dessous.
+
+## Anatomie d'un projet
+
+```
+<projet>/
+  _canvas.css          # format, polices, couleurs, styles partagés
+  slide-1.html         # le "document Photoshop" de la slide 1
+  slide-2.html
+  slide-3.html
+  render.sh            # exporte tout en 1x et 2x, vérifie les dimensions
+  1-title-script.png   # asset 1  (texte, PNG transparent)
+  2-title-caps.png     # asset 2  (texte, PNG transparent)
+  3-waveform.png       # asset 3  (capture)
+  4-chart.png          # asset 4  (capture annotée)
+  1-title-script.html  # la source qui a généré l'asset 1
+  2-title-caps.html    # la source qui a généré l'asset 2
+  out/                 # LES SORTIES, à part du travail
+    slide-1.png        #   2160x2700, un seul fichier par slide
+```
+
+**Les PNG finis vivent dans `out/`, jamais mélangés aux sources.** Le dossier de
+travail reste lisible, et les fichiers à publier se prennent d'un geste, sans
+avoir à les trier au milieu des assets et des gabarits.
+
+**Un seul fichier par slide, en 2160×2700.** Exporter aussi un 1080×1350 à côté
+est de la duplication pure : le 2× porte strictement plus d'information, et ce
+qui aurait besoin du 1× se réduit en une seconde, tandis que l'inverse est
+impossible.
+
+**Chaque asset porte un index numérique et un nom parlant.** `1-title-script.png`,
+pas `text-frames-from.png`. L'index est l'ordre d'empilement / de lecture, le nom
+dit ce que c'est. Demande explicite de Matthieu : « ce serait bien que chaque
+asset aient un index différent genre 1 2 3 4 5 + nom ».
+
+**Chaque asset de texte garde son HTML source à côté.** Régénérer un titre dans
+une autre police, une autre taille ou une autre couleur = éditer son `.html` et
+relancer le rendu. Sans la source, l'asset est mort.
+
+## Où vivent les fichiers
+
+**Décision tranchée, ne pas la rouvrir à chaque projet.**
+
+| Cas | Emplacement |
+|---|---|
+| Le visuel appartient à un projet existant | `<projet>/docs/social/` |
+| Visuel de marque autonome, pas rattaché à un dépôt | `~/Create/Build/Productions/ZenRayStudio/<sujet>/` |
+
+Pourquoi pas ailleurs, puisque la question s'est posée :
+
+- **Pas `Downloads/`** : dossier de passage, nettoyé, aucune garantie de survie.
+  Un asset qu'on veut réutiliser dans trois mois n'y a rien à faire.
+- **Pas `Memory/`** : c'est le dépôt de connaissance, synchronisé vers GitHub,
+  et il a déjà payé des incidents de taille (`GH001`, fichiers > 100 Mo). Y
+  déverser des PNG de production est une mauvaise idée structurelle.
+- **`Productions/`** est déjà le foyer de ce qui est fabriqué. Les visuels y
+  sont, et quand ils servent un dépôt précis ils voyagent avec lui, versionnés
+  au même endroit que le code qu'ils annoncent.
+
+## Le format se demande, il ne se présume jamais
+
+Règle posée par Matthieu le 2026-08-15 : le skill disait 4:5, il faut désormais
+**toujours poser la question du format avant de fabriquer quoi que ce soit**, en
+même temps que celle de la résolution de sortie. Le 4:5 reste le défaut proposé,
+parce qu'il occupe le plus de surface dans le fil Instagram, mais ce n'est qu'un
+défaut, jamais une règle.
+
+**L'ordre de décision, tel que Matthieu l'a fixé le 2026-08-15.** D'abord, si le
+prompt précise un format, ce format s'applique, sans question. Ensuite, si aucun
+format n'est précisé mais qu'une image de référence est fournie, **le format est
+celui de la source**, mesuré sur elle et non deviné. Enfin, dans tous les autres
+cas, la question se pose avant de fabriquer quoi que ce soit. Pour une suite de
+visuels, la même chaîne se rejoue à chaque fois : le prompt d'abord, la source
+ensuite, la question en dernier recours.
+
+**La résolution de sortie, elle, ne se demande presque jamais.** La règle est un
+agrandissement à facteur entier, deux, trois ou quatre selon le rapport, choisi
+comme le plus petit entier qui atteint ou dépasse 3840 pixels sur le grand côté.
+Un 4:5 part donc en fois trois, soit 3240 × 4050, un carré en fois quatre, une
+story ou un paysage en fois deux. Aucune sortie ne descend en dessous de cette
+barre sans une raison explicite.
+
+| Format | Canevas | Facteur | Sortie livrée |
+|---|---|---|---|
+| 4:5 portrait, défaut Instagram | 1080 × 1350 | ×3 | 3240 × 4050 |
+| 1:1 carré | 1080 × 1080 | ×4 | 4320 × 4320 |
+| 9:16 story et reel | 1080 × 1920 | ×2 | 2160 × 3840 |
+| 16:9 paysage, YouTube | 1920 × 1080 | ×2 | 3840 × 2160 |
+| 1:2 bandeau vertical | 1080 × 2160 | ×2 | 2160 × 4320 |
+| 3:4 | 1080 × 1440 | ×3 | 3240 × 4320 |
+| 2:3 affiche | 1080 × 1620 | ×3 | 3240 × 4860 |
+| 4:3 | 1440 × 1080 | ×3 | 4320 × 3240 |
+
+Le facteur se calcule, il ne se retient pas : `ceil(3840 / grand_côté_du_canevas)`,
+borné à quatre. `render.sh` le fait seul et vérifie la dimension obtenue.
+
+**Le canevas garde une hauteur fixe, quel que soit le format.** C'est une planche
+à dessin, pas une page web, et du contenu qui déborde reste un défaut de mise en
+page. `render.sh` refuse de livrer quand les dimensions ne tombent pas juste,
+parce qu'un mauvais format qui passe en silence finit recadré par Instagram sans
+que personne comprenne pourquoi.
+
+**Le 2x et le 4K se rendent, ils ne s'agrandissent pas.** Le facteur d'échelle
+refait le rendu à la résolution demandée. Agrandir un PNG déjà rendu produirait
+exactement le flou que tout ce skill cherche à éviter.
+
+**Un seul fichier par slide et par format demandé.** Exporter en plus un 1x à
+côté du 4K est de la duplication pure, puisque la grande résolution porte
+strictement plus d'information et se réduit en une seconde.
+
+
+**Le canevas a une hauteur FIXE.** Il ne grandit pas avec son contenu. C'est une
+planche à dessin, pas une page web. Du contenu qui déborde est un bug de mise en
+page à corriger, jamais une raison d'allonger le cadre. `render.sh` refuse de
+livrer si les dimensions ne tombent pas juste, parce qu'un export à la mauvaise
+taille se fait recadrer par Instagram sans prévenir personne.
+
+**Le 2x se rend, il ne s'agrandit pas.** `--force-device-scale-factor=2` refait
+le rendu à double résolution. Agrandir le PNG 1x produirait exactement le flou
+qu'on cherche à éviter.
+
+## Les polices
+
+Toutes les polices installées vivent dans `~/Library/Fonts/`. On les charge par
+`@font-face` avec une URL `file://` absolue, ce qui marche en rendu Chromium
+headless sans installation ni réseau.
+
+```css
+@font-face {
+  font-family: 'DidonesqueStencil';
+  src: url('file:///Users/zenray/Library/Fonts/Didonesque-Stencil-Bold.otf') format('opentype');
+}
+```
+
+**Le catalogue visuel est dans `fontbook.html`, à côté de ce fichier.** L'ouvrir
+dans un navigateur pour voir chaque police rendue, avec son chemin exact prêt à
+copier. Le régénérer après toute installation de police :
+
+```bash
+~/.claude/skills/zenray-html-photoshop-pdf/scripts/build-fontbook.sh
+```
+
+Le trio de marque établi jusqu'ici, à réutiliser par défaut pour rester cohérent :
+
+| Rôle | Police | Fichier |
+|---|---|---|
+| Titre display | Didonesque Stencil Bold | `Didonesque-Stencil-Bold.otf` |
+| Signature manuscrite | Golden Hopes | `GoldenHopes_PERSONAL_USE_ONLY.otf` |
+| Texte courant | Anthropic Sans (Medium / SemiBold) | `AnthropicSans-*.ttf` |
+
+Golden Hopes est sous licence **usage personnel uniquement**. Le signaler avant
+tout usage commercial ; ne pas l'employer en silence sur un visuel qui vend.
+
+## Fabriquer un asset de texte
+
+Un fichier HTML minuscule, une seule ligne de texte, fond transparent.
+
+```html
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  @font-face { font-family:'X'; src:url('file:///Users/zenray/Library/Fonts/X.otf') format('opentype'); }
+  html, body { margin:0; padding:0; background: transparent; }
+  .wrap { width:1900px; height:400px; display:flex; align-items:center; justify-content:center; }
+  .txt  { font-family:'X'; font-size:200px; color:#2b2b2b; }
+</style></head>
+<body><div class="wrap"><div class="txt">ZenRay Dictate</div></div></body></html>
+```
+
+Rendu, **transparence obligatoire** :
+
+```bash
+chrome --headless=new --disable-gpu --hide-scrollbars \
+  --default-background-color=00000000 \
+  --window-size=1900,400 --screenshot="2-title-caps.png" "file://$PWD/2-title-caps.html"
+```
+
+Sans `--default-background-color=00000000`, le PNG sort avec un fond blanc opaque
+qui écrasera tout ce qu'il recouvre dans la composition. Vérifier après coup que
+le mode est bien `RGBA` :
+
+```bash
+python3 -c "from PIL import Image; im=Image.open('2-title-caps.png'); print(im.mode, im.size)"
+```
+
+Prévoir un cadre nettement plus large que le texte attendu : un glyphe coupé au
+bord est irrécupérable, alors que du vide transparent ne coûte rien.
+
+## Découper une image de référence en assets
+
+Quand Matthieu fournit un visuel à reproduire, **mesurer, ne pas estimer à
+l'œil**. Les frontières entre panneaux se trouvent en cherchant les ruptures de
+couleur ligne par ligne.
+
+```python
+from PIL import Image
+im = Image.open(src).convert("RGB"); w,h = im.size; px = im.load()
+prev = None
+for y in range(h):
+    row = [px[x,y] for x in range(0, w, 10)]
+    avg = tuple(sum(c[i] for c in row)/len(row) for i in range(3))
+    if prev and sum(abs(avg[i]-prev[i]) for i in range(3)) > 25:
+        print("rupture à y =", y)
+    prev = avg
+```
+
+Pour retrouver la position d'un texte dans une référence, scanner sa couleur
+d'encre et relever la boîte englobante. Ça a donné, sur le gabarit Switzerland,
+des panneaux de 588 px séparés par un cadre de 3 px et une position de titre au
+pixel près, là où l'estimation visuelle se serait trompée de plusieurs dizaines
+de pixels.
+
+## Mode `Template Creator` : une référence devient une machine
+
+Dès que Matthieu demande d’identifier une mise en page, de reproduire une référence avec
+une autre image, ou de fabriquer un template à partir d’une ou plusieurs captures, lire
+`references/template-creator.md` en entier puis suivre son contrat. Ce mode produit une
+spécification JSON exécutable et, pour chaque template, un dossier contenant un PNG guide 4K
+et son Markdown jumeau. Un guide ne montre jamais plus d’un template.
+
+Sur un raster, le mode décrit uniquement le type (`serif`, `sans`, `mono`, `other`), la largeur
+(`condensed`, `normal`, `expanded`) et l’interlettrage. Il ne nomme jamais une famille de fonte
+et ne lance aucun font matching. La fonte de rendu est un choix séparé, documenté comme tel.
+
+Dans le mode Template Creator, dès que le document contient une image, les réglages photo complets
+deviennent automatiques. Les fichiers canoniques sont
+`assets/photo-controls/zr-photo-adjustments.js` et
+`assets/photo-controls/zr-photo-adjustments.css`. Ils s’emploient tels quels, sans recopier
+leurs constantes dans chaque projet.
+
+## Annoter une capture (surlignage, flèches, cadres)
+
+Composer par-dessus l'original avec un calque translucide, jamais en repeignant
+les pixels d'origine.
+
+```python
+from PIL import Image, ImageDraw
+src = Image.open(path).convert("RGBA")
+overlay = Image.new("RGBA", src.size, (0,0,0,0))
+ImageDraw.Draw(overlay).rectangle([x0, 0, x1, src.height], fill=(255,214,0,128))  # 128 = 50%
+Image.alpha_composite(src, overlay).convert("RGB").save(out)
+```
+
+Localiser la cible par mesure, comme ci-dessus : pour surligner une barre précise
+d'un graphique, scanner la ligne à mi-hauteur pour trouver ses bornes exactes en
+x, puis élargir de quelques pixels pour que la bande se lise comme « cette
+colonne » et pas comme « ce rectangle ».
+
+## Composer
+
+Le fichier `slide-N.html` est le document. Les assets y entrent en `<img>`, et
+tous les réglages remontent en variables CSS **en haut du fichier**, pour qu'un
+ajustement soit une ligne à changer et non une chasse dans le corps du style.
+
+```html
+<link rel="stylesheet" href="_canvas.css">
+<style>
+  .lockup img.script { width: 380px; }
+  .lockup img.caps   { width: 936px; }
+</style>
+...
+<div class="canvas">
+  <div class="question">…</div>
+  <div class="spacer"></div>
+  <div class="lockup">
+    <img class="script" src="1-title-script.png">
+    <img class="caps"   src="2-title-caps.png">
+  </div>
+  <div class="spacer"></div>
+  <div class="waveform"><img src="3-waveform.png"></div>
+</div>
+```
+
+`.spacer` répartit l'espace restant dans un cadre à hauteur fixe, au lieu de tout
+empiler en haut.
+
+## Un asset qu'on n'a pas ne s'invente pas, il reste un trou déclaré
+
+Règle de Matthieu, le 2026-08-15 : « si tu n'as pas l'asset tu n'inventes rien tu
+laisses en transparent, ou blanc. » Elle vaut d'abord pour les photographies,
+puisque c'est là que la tentation est la plus forte, mais elle couvre tout ce qui
+vient du dehors, une capture, un logo de tiers, une illustration, une texture
+photographique.
+
+Concrètement, l'emplacement manquant devient un **slot déclaré** dans
+`_params.json`, avec sa boîte, son cadrage et un `src` à `null`. La composition
+n'y dessine rien, et le PNG livré y laisse du transparent, ou du blanc quand le
+fond du visuel l'exige. Le jour où le fichier arrive, il suffit de renseigner le
+`src` et de relancer le rendu, sans toucher à la mise en page.
+
+La distinction à tenir : une **couleur de fond** paramétrée n'est pas un asset
+inventé, c'est un jeton, et elle reste donc autorisée. Ce qui est proscrit, c'est
+de fabriquer une fausse photographie, une texture de substitution ou un
+pictogramme approchant pour boucher le trou, parce que le visuel a alors l'air
+fini alors qu'il ne l'est pas, et que personne ne se souvient six mois plus tard
+de ce qui était vrai.
+
+## Les pièges déjà payés
+
+**Ne jamais agrandir une petite image pour remplir un grand cadre.** Une bannière
+de 1738×166 étalée en `background-size: cover` sur 1080×1350 devient une texture
+floue méconnaissable. Si une image ne peut pas remplir le cadre à sa résolution
+native, elle n'est pas le fond : elle est un élément posé dans la composition, à
+sa taille.
+
+**Ne jamais superposer un texte à un fond qui contient déjà ce texte.** Le
+panneau découpé d'une référence garde le titre incrusté dans ses pixels. Y
+reposer le titre neuf produit un doublon illisible. Soit on choisit un fond
+vierge, soit on place le texte ailleurs.
+
+**Vérifier le rendu en le regardant, avant de le livrer.** Lire le PNG produit,
+réellement, à chaque fois. Trois défauts de cette session (flou, doublon, texte
+hors cadre) auraient été vus en une seconde et ont coûté un aller-retour chacun.
+
+**Le panneau de prévisualisation de Claude Desktop ne lit pas les fichiers hors
+du projet ouvert.** Ne pas insister dessus, ouvrir dans le navigateur :
+
+```bash
+open -a "Google Chrome" <chemin>/slide-1.html
+```
+
+**Donner le chemin absolu complet.** Un chemin relatif affiché dans le chat n'est
+pas cliquable depuis le dossier de travail de la session et fait perdre un tour.
+
+**Attention aux commentaires laissés dans le code.** Ils partent avec le fichier ;
+un brouillon oublié dedans se lit comme du travail bâclé.
+
+## Recadrer sans recadrer : le fond flou dans les deux sens (2026-08-20)
+
+Un même principe couvre les deux cas, et c'est toujours le même : **quand le format de la
+source ne remplit pas le format de sortie, on ne recadre jamais la source, on comble avec
+le média lui-même flouté.** Le fond porte alors le dégradé exact de la scène, ce qu'aucune
+couleur choisie à la main ne sait imiter.
+
+| Sens | Source | Sortie | Le flou comble |
+|---|---|---|---|
+| **Vertical** | horizontale, 16:9 ou 2:1 | 9:16 (Reel, Story) | le **haut et le bas** |
+| **Horizontal** | verticale, 9:16 | 16:9 (YouTube, miniature, bannière) | la **gauche et la droite** |
+
+Le premier sens a son gabarit complet et validé :
+`Memory/Posts/2026-08-20-blackmyth-wukong/`.
+
+Le second est la **transposition exacte** : le fond flou s'étire en 16:9 au lieu du 9:16,
+le média garde sa hauteur pleine et se centre horizontalement, et l'espace libre se
+retrouve à gauche et à droite plutôt qu'en haut et en bas. Le titre et le sous-titre ne
+peuvent plus se poser au-dessus et en dessous du média, faute de place, donc ils se posent
+dans les bandes latérales ou en surimpression sur le média, au choix du cas.
+
+**Ce qui change dans le gabarit, et rien d'autre :** `format.largeur` / `format.hauteur`,
+la génération de `02-fond-flou.webp` (`-resize 1920x1080^` au lieu de `1080x1920^`), et
+l'axe des positions, qui devient un X. Les curseurs, la loi des trois états, le plafond de
+100 Mo et la sauvegarde dans `Memory/Posts/` ne bougent pas.
+
+**Ce dont il ne faut PAS tenir compte** dans la référence fournie par Matthieu (une
+miniature de Julien Chièze) : le logo du jeu en haut à droite, les icônes de réseaux et
+le filigrane du site en bas à gauche. Ce sont des éléments de marque propres à cette
+chaîne, pas des composants du format. Seuls comptent le fond flou latéral et le média
+vertical centré.
+
+## Le panneau de curseurs, obligatoire sur tout HTML d'atelier (2026-08-20)
+
+Règle inscrite en PRIORITÉ 0 dans `~/.claude/CLAUDE.md`, bannière « TOUT MOCKUP DESIGN
+PORTE SES CURSEURS », qui fait foi. Ce qui suit en est l'application.
+
+Dans Houdini, un HDA n'est pas seulement un réseau propre : c'est un réseau dont les
+paramètres sont **exposés sur un panneau** pour que l'artiste tourne les boutons. Un HTML
+d'atelier sans curseurs viole donc la même loi qu'un code truffé de valeurs en dur, à ceci
+près que le prix se paie en allers-retours : chaque « un peu plus clair », « un poil moins
+flou » coûte un tour complet là où un curseur coûte trois secondes. Retour de Matthieu le
+2026-08-20, dans ses mots : « les sliders SONT VRAIMENT un ajout ultra intelligent ».
+
+**Ce que le panneau contient, sans qu'il ait à le redemander.** Tout paramètre dont la
+bonne valeur se juge à l'œil et non au raisonnement : opacité, luminosité, flou, échelle,
+espacement, rayon, teinte, taille et graisse de police, **et la position Y de CHAQUE
+calque, indépendamment des autres**. Plus un sélecteur de police par calque quand
+plusieurs familles sont servies. Plus un bouton **« Copier les valeurs pour le prompt »**
+qui rend une ligne collable telle quelle.
+
+**Ce qu'il ne fait jamais.** Un curseur n'écrit pas un style sur un élément : il n'écrit
+**que** des variables CSS d'un `:root`, et tout le reste en découle. Sinon on a fabriqué
+un HDA à dix instances non reliées.
+
+**Ce qui ne part jamais.** Le panneau est un outil d'atelier. Le rendu final l'exclut par
+construction (`?rendu=1` pose une classe qui le masque, et de toute façon le livrable est
+le PNG). Les valeurs retenues, elles, migrent dans `_params.json`.
+
+**Un effet coûteux se règle en direct puis se cuit hors-ligne.** Le curseur pilote un
+`filter: blur()` pendant qu'on cherche ; une fois la valeur arrêtée, le flou est gravé
+dans l'asset par ImageMagick. Ce qui est confortable pour l'artiste est ruineux pour le
+navigateur du visiteur.
+
+## Sauvegarder un post dans Memory : un DOSSIER, jamais un fichier (2026-08-20)
+
+`Memory/Posts/` ne contenait que des `.md`. Un texte seul ne suffit pas : sans ses assets,
+un post n'est plus refabricable six mois plus tard. La convention est désormais un dossier
+par post, `Memory/Posts/AAAA-MM-JJ-slug/` :
+
+```
+_params.json          l'interface de parametres
+gabarit.html          le gabarit, sans aucune valeur en dur
+build.py              le cook : params + assets -> HTML
+assets/               les morceaux, polices comprises
+  fonts/*.woff2
+<post>.html           le HTML d'atelier, curseurs compris
+media/*.png           l'asset final rendu
+```
+
+Script de référence : `backup-memory.sh` du gabarit 9:16. Il refuse de copier si un
+fichier dépasse 100 Mo, la limite au-delà de laquelle GitHub bloque le push.
+
+## Rendre
+
+`render.sh` fait tout : rendu 1x, rendu 2x, et **assertion des dimensions**.
+
+```bash
+./render.sh              # toutes les slides
+./render.sh slide-2      # une seule
+```
+
+Il écrit dans `out/` et échoue bruyamment si une sortie ne fait pas exactement
+2160×2700. Un mauvais format qui passe en silence est pire qu'une erreur : c'est
+Instagram qui recadre, et personne ne comprend pourquoi.
+
+**Instagram refuse tout fichier au-delà de 8 Mo, et `render.sh` le vérifie tout
+seul.** Un PNG plein cadre à fond photo (donc opaque, sans canal alpha à
+préserver) franchit régulièrement ce seuil, un flyer 2160×2700 avec beaucoup de
+détail dépasse facilement 9 Mo. Dès que la taille dépasse 8 Mo, le script
+reconvertit en JPEG en cherchant la qualité la plus haute qui tienne sous la
+limite (95 en général suffit, un flyer photo passe alors autour de 2 à 3 Mo) et
+supprime le PNG surdimensionné, pour qu'il ne traîne pas et ne finisse pas
+uploadé par erreur. Incident payé le 2026-08-12 : le PNG de 9,3 Mo du carton
+FUJI est parti tel quel vers Instagram, refusé, alors que la vérification de
+poids n'existait pas encore dans le script, elle y est désormais, systématique,
+pas à réclamer.
+
+Chromium headless se trouve dans le cache Playwright :
+`~/Library/Caches/ms-playwright/chromium-*/chrome-mac-arm64/*.app/Contents/MacOS/*`.
+S'il manque : `npx playwright install chromium`.
+
+## Animer
+
+Même principe, les assets ne changent pas. L'animation vit dans le HTML, en CSS
+`@keyframes`, et se capture image par image en pilotant `animation-delay` puis en
+assemblant avec ffmpeg (voir `scripts/render-frames.sh`). Un GIF ou un MP4 n'est
+jamais la source : la source reste le HTML plus ses assets.
+

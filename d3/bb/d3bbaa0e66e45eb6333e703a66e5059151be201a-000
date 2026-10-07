@@ -1,0 +1,96 @@
+{
+  "sourceSha256": "575fa9b2c2ff5658de296f649c8d86061928d5269db84e83abc9cba6bc01caa4",
+  "lineCount": 6279,
+  "blocks": [
+    {
+      "name": "CompositionFoundation",
+      "path": "references/legacy/CompositionFoundation.md",
+      "startLine": 1,
+      "endLine": 585
+    },
+    {
+      "name": "ShortsPipeline",
+      "path": "references/legacy/ShortsPipeline.md",
+      "startLine": 586,
+      "endLine": 863
+    },
+    {
+      "name": "StudioLibrary",
+      "path": "references/legacy/StudioLibrary.md",
+      "startLine": 864,
+      "endLine": 882
+    },
+    {
+      "name": "CompositionRecipes",
+      "path": "references/legacy/CompositionRecipes.md",
+      "startLine": 883,
+      "endLine": 1347
+    },
+    {
+      "name": "PhotoWorkflow",
+      "path": "references/legacy/PhotoWorkflow.md",
+      "startLine": 1348,
+      "endLine": 2668
+    },
+    {
+      "name": "ParameterPanels",
+      "path": "references/legacy/ParameterPanels.md",
+      "startLine": 2669,
+      "endLine": 3141
+    },
+    {
+      "name": "PdfEditing",
+      "path": "references/legacy/PdfEditing.md",
+      "startLine": 3142,
+      "endLine": 3470
+    },
+    {
+      "name": "NativeUiReference",
+      "path": "references/legacy/NativeUiReference.md",
+      "startLine": 3471,
+      "endLine": 5004
+    },
+    {
+      "name": "PostEditorContract",
+      "path": "references/legacy/PostEditorContract.md",
+      "startLine": 5005,
+      "endLine": 5192
+    },
+    {
+      "name": "SocialText",
+      "path": "references/legacy/SocialText.md",
+      "startLine": 5193,
+      "endLine": 5467
+    },
+    {
+      "name": "VignetteWorkflow",
+      "path": "references/legacy/VignetteWorkflow.md",
+      "startLine": 5468,
+      "endLine": 5550
+    },
+    {
+      "name": "EditorCorrections",
+      "path": "references/legacy/EditorCorrections.md",
+      "startLine": 5551,
+      "endLine": 6023
+    },
+    {
+      "name": "DesignLibrary",
+      "path": "references/legacy/DesignLibrary.md",
+      "startLine": 6024,
+      "endLine": 6087
+    },
+    {
+      "name": "UiContract",
+      "path": "references/legacy/UiContract.md",
+      "startLine": 6088,
+      "endLine": 6123
+    },
+    {
+      "name": "ShortsCorrections",
+      "path": "references/legacy/ShortsCorrections.md",
+      "startLine": 6124,
+      "endLine": 6279
+    }
+  ]
+}

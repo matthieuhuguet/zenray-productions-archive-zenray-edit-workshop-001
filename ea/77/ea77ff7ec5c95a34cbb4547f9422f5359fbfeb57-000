@@ -1,0 +1,64 @@
+## La bibliotheque des maquettes de direction, ZenRay Assets (2026-09-05)
+
+**Sa demande, dans ses mots.** « integre les 3 themes que tu avais cree dans les templates
+dans un espace qui s'appelle ZenRayAssets design mockups proposition ; le but c'est de garder
+les designs qu'on a deja crees dans le skill et de les identifier quand j'en ai besoin via une
+amelioration ou une regeneration depuis les templates. »
+
+C'est la loi de la BIBLIOTHEQUE appliquee au DESIGN et non plus seulement a l'outil. Jusqu'ici,
+`templates/` ne portait que les deux ateliers photo. Une maquette de direction produite pour un
+projet mourait dans son dossier de travail, et la suivante repartait d'une page blanche, ce qui
+est le septieme echec critique de la loi HDA du `CLAUDE.md` global.
+
+**Ou elles vivent.** `templates/zenray-assets-mockups/`, quatre directions plus leur index et
+leur README. Le README dit laquelle est retenue, ce que chacune resout, et comment instancier.
+
+| Direction | Le parti pris |
+|---|---|
+| `01-atelier.html` | Liquid Glass poussé, le plus vite deployable |
+| `02-galerie.html` | Editorial, luxe, epure. **Retenue le 2026-09-05** |
+| `03-studio.html` | Dense, sombre, oriente reutilisation |
+| `04-salon.html` | La synthese entre 01 et 02 |
+
+**Les polices ne sont pas dupliquees, elles sont reduites.** Les quatre maquettes declaraient
+six a neuf faces statiques chacune et pointaient vers `~/Library/Fonts` en absolu. Or les deux
+familles du trio sont VARIABLES, `Inter` de 100 a 900 et `AnthropicSerif` de 300 a 800 : trois
+faces servies depuis `fonts/` couvrent donc tout, et le dossier pese 836 Kio au lieu de 1,2 Mio
+de TTF. Le nom de famille reste `Inter` et `AnthropicSerif`, jamais le nom systeme, puisqu'un
+`@font-face` servi fait du nom une etiquette que nous controlons.
+
+**Le controle qui tranche, et il ne se juge pas a l'oeil.** Comparer la LARGEUR du meme texte
+entre la famille servie et un repli connu : identiques, c'est un repli silencieux. Mesure du
+2026-09-05 sur `04-salon.html`, serif 250,9 px contre 245,1 px pour Georgia, Inter 227,8 px
+contre 264,4 px pour Hiragino, trois faces `loaded`, zero element en monospace.
+
+**Le defaut deja paye sur ces fichiers, a ne pas rejouer.** `03-studio.html` rendait une page
+entierement vide alors que son HTML se terminait proprement par sa balise fermante : une
+apostrophe non echappee dans une chaine JavaScript levait une `SyntaxError` qui tuait tout le
+script. Les chaines de donnees s'ecrivent donc en guillemets doubles. **Un fichier
+syntaxiquement complet n'est pas un fichier qui marche**, et seule l'ouverture reelle le dit.
+
+
+## Le Registre des 1000+ Designs HDA, propositions paramétriques et zéro gaspillage de tokens (2026-09-05)
+
+**Les cinq règles absolues données par Matthieu :**
+
+1. **Règle d'or : Toujours proposer à partir de l'existant paramétrique ou poser la question (Anti-gaspillage de tokens)**
+   Devant toute demande de design, composant, page ou article, l'agent ne repart JAMAIS d'une page blanche. Il consulte d'abord le registre `templates/designs/index.json` (ou la commande `node scripts/zr-design.mjs find <mots-clés>`). Si plusieurs directions existent ou si un choix est requis, il pose directement la question exacte :
+   *« On part sur plusieurs propositions depuis les mockups avec des sliders et plusieurs designs ? Et des valeurs paramétriques en mode HDA sliders ? »*
+   Les propositions se génèrent en dérivant les gabarits existants pour ne pas brûler de tokens inutilement.
+
+2. **Indexation obligatoire avec un ID parlant (`<nom-parlant>`)**
+   Toute proposition ou composant validé est enregistré dans `templates/designs/index.json` sous un ID sémantique clair (ex: `luxe-epure`, `atelier-liquid-glass`, `studio-sombre`, `salon-synthese`, `pure-pill-liquid-glass`, `monogram-split-pill`, `editorial-glow-stepper`).
+   Quand Matthieu demande par exemple « le design luxe épuré depuis templates », l'agent résout immédiatement l'ID `luxe-epure` sans hésiter ni demander de reformulation.
+
+3. **Sélection atomique du design avant déploiement**
+   À partir des maquettes avec curseurs HDA (ex: `templates/designs/catalog.html` ou `templates/zenray-assets-mockups/05-capsules-hda.html`), on choisit atomiquement le composant retenu. Seul ce composant est intégré dans le code de production (React, HTML, CSS, article) puis déployé.
+
+4. **Composants disséqués dans `templates/designs/components/`**
+   Les maquettes ne restent pas figées en blocs monolithiques : les briques réutilisables (capsules dépliables, badges d'ancrage, panneaux de curseurs HDA, pastilles d'étapes) sont disséquées dans `components/` pour être réassemblées instantanément dans n'importe quel projet.
+
+5. **Architecture scalable pour plus de 1000 designs**
+   L'organisation sous `templates/designs/` (`pages/`, `components/`, `sections/`, `articles/`) associée au script `scripts/zr-design.mjs` et au visualiseur `templates/designs/catalog.html` est dimensionnée pour cataloguer et retrouver plus de 1000 designs distincts sans encombrer le contexte de l'agent.
+
+

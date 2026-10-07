@@ -1,0 +1,79 @@
+---
+name: post-vignette
+description: Prépare un post réseaux sociaux (Instagram) multilingue EN/FR/JP + applique le vignettage doux validé aux photos du post. Utiliser dès que Matthieu prépare un post Instagram/social sur le Japon ou ailleurs, demande de corriger/adapter un texte de post bilingue ou trilingue, demande des hashtags, ou demande un vignettage/assombrissement des bords sur des photos (mots déclencheurs : "post", "insta", "vignettage", "vignette", "effet sur les bords", "hashtags", "adapte la traduction"). Même si une seule des deux moitiés est demandée (texte seul ou photos seules), utiliser ce skill.
+---
+
+# Post multilingue + vignettage photo
+
+Deux volets indépendants, souvent demandés ensemble. Traiter uniquement ce qui est demandé.
+
+## Volet A — Le texte du post
+
+**Source de vérité du style : skill `social-media` → `Memory/SocialMedia/SocialMedia1.md`** (index + posts publiés + feedbacks). Le consulter d'abord ; les règles ci-dessous en sont le condensé validé le 2026-07-12.
+
+### Règles de correction (validées 2026-07-12)
+
+0. **Phrases courtes, nominales quand possible.** "À Chichibu, à 2h de Tokyo." tient seul. Rejeté violemment : "J'y marche pendant plus de 6h pour aller du..." — verbeux. Une idée par phrase, couper les "pour aller", "pendant", "qui se confondrait".
+1. **Grammaire seulement, jamais le style.** Corriger accords, orthographe, prépositions, majuscules/accents des noms propres. Ne pas reformuler les tournures voulues, ne pas lisser la voix de Matthieu.
+1bis. **Suppression = verrou.** Dès que Matthieu enlève une phrase, une idée ou un détail, ne jamais le réintroduire, même reformulé ou dans une traduction, sans demande explicite. La dernière version validée dans sa langue source est le canon : traduire exactement son contenu, sans embellissement.
+2. **Vérifier que chaque version linguistique parle du même sujet ET porte les mêmes détails.** Piège réel rencontré : la partie japonaise d'un post recyclait un ancien texte sur Tanabata (七夕) alors que le français décrivait une randonnée à Mitsumine — hors sujet ET périmé (le 7/7 était passé). Second piège réel : un détail ajouté en FR ("à l'aller privilégier le bus") manquait en EN et JP. Toujours relire chaque bloc et confirmer qu'il est une adaptation fidèle et complète du contenu principal, pas une traduction mot à mot ni un reste d'un autre post.
+3. **Adapter, pas traduire.** La version japonaise doit sonner native (fragments naturels de type Instagram, forme polie légère), la version anglaise idem. Garder les émojis du texte source aux positions équivalentes.
+4. **Vérifier les noms propres à la source (web), jamais de mémoire.** Piège réel : sanctuaire 三峯神社 (avec 峯) mais gare 三峰口駅 (avec 峰) — même lecture "mitsumine", kanji différents, non interchangeables. Vérifier aussi la romanisation officielle (Mitsumineguchi, pas "Mitsumine guchi").
+5. **Terminologie exacte** : jinja = sanctuaire (shrine), pas temple. Signaler la confusion si le texte source la contient, en respectant le choix final de Matthieu.
+
+### Hashtags (règles validées)
+
+- Écarter tout tag hors sujet même s'il semble "japonais" (le piège Tanabata s'applique aussi aux tags).
+- Écarter les tags génériques noyés (#jinja) et les tags français à faible reach (#japon) au profit de l'anglais (#japan).
+- Toujours inclure le nom exact du lieu en kanji (ex. #三峯神社) si le post a une audience japonaise : c'est le seul tag qui accroche la recherche JP.
+- Livrer le nombre demandé, en justifiant les écartés en une ligne chacun.
+
+### Format de livraison
+
+- Dans le chat : un seul bloc copiable, ordre **Anglais → Français → Japonais**, hashtags à la fin.
+- Sur disque : sauvegarder dans `Memory/Posts/YYYY-MM-DD-<sujet>-post.md` avec les réglages photo utilisés et les décisions prises.
+
+## Volet B — Vignettage doux des photos
+
+Recette finale validée le 2026-07-12 après itérations (voir historique) : **moyenne de deux gradients radiaux**, appliquée en une seule passe multiply. Toujours partir des ORIGINAUX, jamais réappliquer sur une version déjà traitée.
+
+### Script
+
+`scripts/vignette.sh fichier1 [fichier2 ...]` — génère le masque fusionné à la taille de chaque image et sort `<nom>edited.jpg` à côté de l'original (originaux intacts).
+
+Réglages par variables d'environnement (défauts = recette validée) :
+
+| Variable | Défaut | Effet |
+|---|---|---|
+| R1 | 1.5 | ratio canvas du gradient serré (plus petit = bords plus marqués) |
+| G1 | 50 | gris du bord du gradient serré (gray50 = -50% aux coins du canvas) |
+| R2 | 3.0 | ratio canvas du gradient large (protège le centre) |
+| G2 | 40 | gris du bord du gradient large |
+| QUALITY | 92 | qualité JPEG de sortie, ignorée si MAXMB est posé |
+| MAXMB | vide | taille cible en Mo. Posée, elle remplace QUALITY : la qualité devient la variable que la cible détermine |
+| OUTDIR | `instagram` si MAXMB est posé, sinon `.` | sous-dossier de sortie. **Les fichiers destinés à Instagram ne sortent JAMAIS à côté des originaux** |
+
+### Enchaînement avec la taille cible Instagram (consigne Matthieu du 2026-08-06)
+
+Pour un lot destiné à Instagram, poser `MAXMB=8` : le vignettage et le plafonnement se font dans la **même passe magick**, donc une seule quantification au lieu de deux, et le sous-échantillonnage de l'original est relevé puis réimposé. Aucun redimensionnement, aucune conversion de couleur, jamais.
+
+```
+MAXMB=8 zsh scripts/vignette.sh *.JPG
+```
+
+Les sorties atterrissent dans `<dossier des sources>/instagram/`, avec le nom d'origine et l'extension `.jpg`, **jamais à côté des originaux et jamais avec un suffixe `edited`**. C'est une consigne explicite de Matthieu, répétée deux fois, et elle vaut pour tout lot destiné à la publication. `OUTDIR=.` rétablit l'ancien comportement, à n'employer que s'il le demande.
+
+La règle complète, avec la liste des transformations interdites, vit dans le skill `social-media`, section « Photos ». Le script autonome pour plafonner **sans** vignetter vit dans le skill `social-media`, `scripts/instagram_maxq.py`.
+
+### Pourquoi cette forme (historique des itérations réelles)
+
+- Canvas 150% seul (white→gray50) : effet subtil mais **centre légèrement terne** — le blanc pur n'existe qu'au pixel central exact.
+- Canvas 120% : bords nets mais trop agressif.
+- Canvas 300% (white→gray40) : centre large parfaitement intact, bords doux — validé "parfait" mais bords un peu trop discrets seuls.
+- **Final : moyenne 50/50 des masques 150%/gray50 et 300%/gray40** — centre protégé par le gradient large + une vraie présence sur les bords apportée par le serré. Un seul multiply, pas de superposition de deux passes (deux multiply successifs sur-assombrissent : 0.5×0.6 = 0.3).
+
+### Pièges
+
+- WhatsApp livre parfois des **doublons byte-à-byte** sous des noms différents : `md5` sur le lot avant de traiter, signaler et supprimer le doublon (jamais une donnée unique).
+- `-compose multiply` travaille en sRGB encodé : c'est le rendu vignette classique voulu, ne pas "corriger" en linéaire.
+- Nommer court sur demande (`1.jpeg`/`1edited.jpg`) : les noms WhatsApp à espaces et parenthèses cassent la moitié des commandes non quotées.

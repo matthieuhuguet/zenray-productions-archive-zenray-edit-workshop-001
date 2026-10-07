@@ -1,0 +1,272 @@
+---
+name: zenray-social-media
+description: >
+  Point d'entrée UNIQUE pour tout travail de post réseaux sociaux ou article de Matthieu (Instagram, LinkedIn, X/Twitter, TikTok, ArtStation, article site zenray). Lit et écrit le tracker central SocialMedia1.md de façon économe en tokens via son index. Utiliser dès que Matthieu veut écrire, corriger, traduire ou adapter un post ou un article, demande des hashtags, demande "quel est mon style", prépare un cross-post, ou mentionne un réseau social, même s'il ne nomme pas le fichier. Toujours utiliser ce skill AVANT d'écrire le moindre mot de post : le style validé et les pièges connus y sont indexés.
+---
+
+# Social Media — les règles ici, la chronologie dans SocialMedia1.md
+
+## Qui fait foi (arbitrage du 2026-08-06, à ne pas rediscuter)
+
+Deux fichiers, deux natures, aucune duplication.
+
+| | Contenu | Statut |
+|---|---|---|
+| **Ce skill** | les RÈGLES : style, interdits, hashtags, chiffres, photos. Ce qui vaudra encore pour un post qui n'existe pas | **source unique de vérité.** Une règle se modifie ici et nulle part ailleurs |
+| **`SocialMedia1.md`** | la CHRONOLOGIE : posts publiés, brouillons, feedbacks datés, décisions avec leur contexte | source unique de l'historique. **N'y jamais recopier une règle, y renvoyer** |
+
+Pourquoi ne pas tout fusionner ici, question posée par Matthieu le 2026-08-06 : ce skill fait 71 lignes et se charge en entier à chaque invocation, tandis que le tracker en fait 1073 pour 72 ko et grossit à chaque post. Fusionner ferait payer le journal entier pour retrouver trois règles, et un skill trop long cesse d'être lu.
+
+Les sections du tracker antérieures au 2026-08-06 contiennent des règles recopiées. Elles valent comme témoignage de ce qui a été décidé ce jour-là, non comme référence : **en cas de divergence, ce skill l'emporte.**
+
+## Le fichier chronologique
+
+`/Users/zenray/.claude/Memory1/SocialMedia/SocialMedia1.md`. **Append-only** (loi du repo Memory : jamais supprimer ni réécrire une ligne). Il grossit sans limite : ne JAMAIS le lire en entier.
+
+## Lecture (économe en tokens, future-proof)
+
+1. Sommaire vivant avec numéros de ligne exacts :
+   ```
+   grep -n '^## ' /Users/zenray/.claude/Memory1/SocialMedia/SocialMedia1.md
+   ```
+2. Lire la dernière section `INDEX du fichier` (la plus récente en bas) : une ligne par section décrivant son contenu.
+3. Read par offset/limit UNIQUEMENT les sections utiles à la tâche. Minimum obligatoire avant d'écrire un post :
+   - `Règles d'écriture — OBLIGATOIRES` (bans : em-dash, emojis sauf demande, hashtags brand, mots tampons)
+   - `Stack par plateforme` (format attendu par réseau)
+   - la ou les sections STYLE les plus récentes pertinentes (Japan-light 2026-04-28, phrases courtes trilingue 2026-07-12, verbatim articles techniques 2026-05-04)
+   - le dernier post publié du même type (précédent immédiat = meilleure référence)
+
+## Écriture (après chaque post ou feedback)
+
+1. **Une règle nouvelle ou modifiée s'écrit DANS CE SKILL**, puis `~/.claude/skills/skill-sync/scripts/sync-skill.sh zenray-social-media`. Jamais dans le tracker.
+2. **Le tracker reçoit l'événement, pas la règle** : appender une section datée `## YYYY-MM-DD — <sujet>` avec le post publié, ce que Matthieu a dit, ce qui a été coupé, et **un renvoi d'une ligne** vers la section du skill quand une règle en est sortie.
+3. Mettre à jour l'index du tracker : une ligne au tableau du dernier INDEX. S'il est devenu trop faux, appender un nouvel `## YYYY-MM-DD — INDEX du fichier` complet (jamais modifier l'ancien).
+4. Post long ou avec assets : archive détaillée dans `Memory/Posts/YYYY-MM-DD-<sujet>-post.md`, référencée depuis la section.
+5. Commit automatique (repo Memory, sans demander).
+
+## Ce que le fichier sait déjà (ne pas réinventer)
+
+- Le style de Matthieu par registre : Japan-light (posts voyage), phrases courtes trilingues EN/FR/JP, verbatim + ponctuation pour ses articles techniques.
+- Les pièges payés : versions AI rejetées 3 fois (2026-05-04), piège Tanabata (une langue qui parle d'autre chose), kanji homophone 三峯神社/三峰口駅, hallucination de network boxes.
+- Le workflow complet article site + cross-post par plateforme.
+
+## Hashtags — CONSIGNE MATTHIEU du 2026-08-06
+
+Sur les posts photo Japon, **`#japan_photo_now` remplace `#japan`**, qui ne se met plus seul. Le reste ne bouge pas : cinq hashtags au maximum, dont le nom exact du lieu en kanji, jamais de tag de marque (`#ZenRay`, `#ZenRayProductions`, `#ZenRayStudios` restent interdits).
+
+## Chiffres — CONSIGNE MATTHIEU du 2026-08-06
+
+**Écarter les chiffres d'inventaire, garder les chiffres de coût.** Sont coupés d'office : nombre de bâtiments, de statues, de sculptures, de marches, de siècles d'ancienneté décoratifs. Sont gardés : prix, durée, dénivelé, distance, horaire limite.
+
+Sa raison, dans ses mots : « on ne se souvient jamais des détails spécifiques en termes de nombre, mais par contre on se souvient souvent du prix. » Le mécanisme est là : un nombre d'inventaire décrit l'objet et n'engage à rien, tandis qu'un prix ou une durée décrit ce que la visite coûte au lecteur, donc entre dans une décision. Le chiffre mémorable est celui qui a une conséquence pour qui lit.
+
+Le cas qui tranche, sur le post Nikkō : il a supprimé « environ 70 Jizō » en gardant, dans la même phrase, « personne ne les compte deux fois pareil ». La légende du compte impossible survit, le compte disparaît. Corollaire : les 1200 m de dénivelé du Nantai ressemblent à un chiffre d'inventaire mais n'en sont pas, ils mesurent l'effort, donc le coût.
+
+Appliquer dès le premier jet, sans attendre qu'il coupe.
+
+## Photos — CONSIGNE MATTHIEU du 2026-08-06 (non négociable)
+
+Quand il demande de préparer des photos pour Instagram, **une seule contrainte existe : la crête de poids, 8 Mo par photo.** Rien d'autre ne se touche.
+
+Interdits, chacun payé sur le lot Nantai :
+- **Ne pas redimensionner.** La photo garde la définition de l'original, 7680x4320 compris. Instagram accepte. Ne redimensionner que s'il le demande explicitement.
+- **Ne pas convertir l'espace colorimétrique**, ne pas retirer ni ajouter de profil.
+- **Ne pas changer le sous-échantillonnage chroma.** Relever celui de l'original et le réimposer, sinon l'encodeur applique son propre défaut. Forcer du 4:4:4 se retourne d'ailleurs contre son intention : sous taille cible fixe, le tiers d'octets gagné par la chroma se repaie en qualité de luminance, à laquelle l'œil est bien plus sensible.
+- **Ne pas fixer une qualité à la main** (85, 95, peu importe), ne pas passer en WebP ni en AVIF, ne pas stripper les métadonnées de sa propre initiative.
+- **Un fichier déjà sous la crête se copie à l'identique**, octet pour octet, jamais ré-encodé : une seconde quantification perd sans rien gagner.
+- **Originaux jamais touchés**, sortie dans un sous-dossier.
+
+Outil : `scripts/instagram_maxq.py`, dans ce skill, qui s'appuie sur `magick -define jpeg:extent=<octets>`. Un JPEG n'a pas de débit, seulement un poids ; viser une taille cible et boucler soi-même sur la qualité sont le même algorithme, si bien que l'outil n'est pas le point décisif. Le point décisif est de ne toucher qu'une variable.
+
+```
+python3 ~/.claude/skills/zenray-social-media/scripts/instagram_maxq.py <dossier> --max-mb 8 --jobs 16
+```
+
+## Texte renvoyé par Matthieu : SUPPRESSION et ORDRE font loi (2026-08-12, erreur commise deux fois de suite)
+
+Quand Matthieu recolle un texte qu'il a lui-même modifié, ce texte est la
+nouvelle référence. Il ne demande pas un avis, il livre un état.
+
+**Ce qu'il a enlevé est enlevé.** Une phrase absente de sa version est une
+suppression volontaire, jamais un oubli à réparer. Ne JAMAIS la réintroduire,
+même si elle ouvrait bien, même si elle « manque » à la lecture, même si c'est
+soi-même qui l'avait écrite au tour d'avant.
+
+**Ce qu'il a déplacé reste déplacé.** S'il remonte une proposition en tête de
+paragraphe, c'est l'ordre qu'il veut. Ne JAMAIS rétablir l'ordre précédent au
+motif qu'il coulait mieux.
+
+**Ses mots restent ses mots.** S'il écrit « en fallback » ou « la stack audio »,
+on garde. Chasser l'anglicisme ou chercher le synonyme plus élégant n'est pas
+demandé et efface sa voix.
+
+**Le seul travail autorisé est la correction de ce qui est cassé** : accord,
+conjugaison, doublon de mot (« de dictée de efficace »), ponctuation absente
+entre deux phrases, espace double, majuscule de début de phrase. Rien d'autre.
+
+Le test avant de rendre : superposer sa version et la mienne. Toute différence
+qui n'est pas une faute corrigée est une faute que j'ai commise.
+
+Ce qui a été payé le 2026-08-12, sur le post #6 : il avait supprimé la ligne
+d'ouverture « Il faut coder comme un peintre » et remonté « à la manière de
+Parakeet ou de Wispr Flow » en tête du deuxième paragraphe. J'ai remis la ligne
+et rétabli mon ordre. Deux fois de suite, ce qui a mis fin à sa patience, à
+juste titre.
+
+Corollaire pour les traductions : les autres langues se calquent sur la
+structure française telle qu'il l'a laissée, coupures et ordre compris. Une
+phrase supprimée en français ne réapparaît pas en anglais ni en japonais.
+
+## Longueur Instagram : 2200 caractères de plafond, 2000 de cible (2026-08-12)
+
+Instagram coupe une légende à **2200 caractères**. Matthieu vise **2000**, pour
+garder de la marge.
+
+**L'arithmétique qui décide de tout, à faire AVANT d'écrire.** Un post trilingue
+divise le budget par trois : environ **660 caractères par langue**, séparateurs
+et hashtags déduits. C'est court. À titre de repère mesuré sur le post #6, un
+bloc français confortable atteint 1600 caractères à lui seul, soit deux fois et
+demie le budget d'une langue en trilingue.
+
+Donc, dès le brief :
+
+- **Post monolingue** : environ 2000 caractères disponibles, on écrit
+  normalement.
+- **Post trilingue** : 660 par langue, il faut écrire court dès le premier jet.
+  Écrire long puis couper de moitié détruit le texte et fait perdre un tour.
+
+Le japonais tient naturellement dans ce budget, sa densité par caractère étant
+bien supérieure. C'est le français et l'anglais qui débordent, toujours.
+
+**Mesurer, ne pas estimer.** Compter les caractères avant de rendre :
+
+```bash
+python3 -c "print(len(open('bloc.txt').read()))"
+```
+
+Quand la coupe est nécessaire, elle se propose **avec le décompte** et en
+nommant ce qui saute, jamais en silence. Couper est une modification du texte de
+Matthieu, donc soumise à la règle ci-dessus : c'est lui qui arbitre ce qui
+disparaît, sur la base d'un chiffre, pas d'une impression.
+
+## Ordre des langues : EN, puis 日本語, puis FR (2026-08-12)
+
+Annule et remplace l'ordre noté dans le tracker le 2026-08-06, qui plaçait le
+français en deuxième position.
+
+Sur un post trilingue : **une seule ligne de drapeaux en tête**,
+`🇬🇧 EN/🇯🇵 日本語/🇫🇷 FR`, puis les trois textes séparés par `---`, dans cet
+ordre exact, anglais, japonais, français.
+
+Le français ferme le post alors qu'il reste la langue SOURCE : c'est lui que
+Matthieu écrit et corrige lui-même, les deux autres s'en déduisent. Ordre de
+rédaction et ordre de publication ne sont pas le même sujet, ne pas confondre
+les deux.
+
+## Ne jamais inventer un fait logistique (2026-08-12, erreur grave payée)
+
+Sur le post #7 Fuji, j'ai écrit « from Tokyo to the summit » et « reached the
+crater rim by 5 », dans les TROIS langues. Les deux étaient faux : Matthieu est
+monté depuis la 5th Station (accessible en bus depuis Tokyo, pas à pied depuis
+Tokyo), et le tour complet du cratère avec la montée au Kengamine dure 90
+minutes, ce qui n'a rien à voir avec « arriver à 5h ».
+
+**Ce n'est pas une faute de grammaire, c'est un fait inventé.** Un « depuis
+Tokyo jusqu'au sommet » plausible et bien tourné n'est pas une reformulation
+acceptable d'un brief flou : c'est fabriquer une information vérifiable, sur un
+itinéraire réel, publiée sous son nom.
+
+**Règle : quand le brief dictée donne un fait incomplet ou ambigu sur un lieu,
+un itinéraire, une durée ou un horaire, ne jamais combler le vide par une
+supposition plausible.** Soit on garde la formulation strictement au niveau de
+ce qui a été dit, soit on pose la question, jamais on n'invente le détail
+manquant pour que la phrase sonne mieux.
+
+**Corollaire propagation** : une correction de FAIT (pas de style) touche les
+trois langues à la fois, même si Matthieu ne l'a corrigée que dans un seul bloc
+collé. La règle « suppression et ordre du texte collé font loi » porte sur la
+FORME que Matthieu choisit ; elle ne dispense pas de corriger la même erreur
+factuelle partout où elle a été dupliquée.
+
+## Skills liés
+
+- Photos du post (vignettage) : skill `post-vignette` (`scripts/vignette.sh`).
+- Traduction brute : skill `translate`.
+
+## RÈGLE ABSOLUE : tout média passe par `zenray-html-photoshop-pdf-hda` (2026-08-20)
+
+Aucun visuel de post ne se fabrique à la main ni en une passe de rendu monolithique.
+**Chaque média de ce skill est produit par le skill `zenray-html-photoshop-pdf-hda`**, sans
+exception, parce que c'est lui qui porte la loi HDA : assets séparés, interface de
+paramètres, curseurs de réglage, export final en PNG.
+
+Quand un post demande un visuel, on bascule sur l'autre skill, on en revient avec le
+PNG, et on reprend le texte ici. Les deux se lisent ensemble dès que Matthieu dit
+« prépare le post ».
+
+**Où poser le dossier de travail.** Demander à Matthieu ; sans réponse, `~/Downloads/`
+est le défaut assumé. Un post est un DOSSIER (`~/Downloads/zenray-post-<slug>/`), jamais
+un fichier isolé.
+
+## Le format « source horizontale vers 9:16 » (2026-08-20, validé par Matthieu)
+
+Le cas le plus fréquent : la source est un trailer, une capture de jeu, une vidéo, donc
+du 16:9 ou du 2:1, et la destination est un Reel ou une Story en 9:16. Ne jamais recadrer
+la source pour la faire rentrer.
+
+La composition validée, de bas en haut :
+
+| Calque | Ce qu'il fait |
+|---|---|
+| Fond | **le média lui-même, flouté** et étiré en 9:16. C'est lui qui donne le dégradé exact de la scène ; ne jamais inventer une couleur de fond |
+| Média | posé au centre, **jamais recadré, jamais agrandi** au-delà de sa taille native |
+| Durée + pastille de lecture | le temps réel de la vidéo, en bas à droite du média, comme sur un Reel. À masquer si la source est une image fixe |
+| Titre | dans l'espace libre **au-dessus** du média, centré, avec une **ombre portée douce** — jamais un rectangle blanc arrondi, c'est plus élégant |
+| Sous-titre | **sous** le média et proche de lui, pas perdu au milieu du vide du bas |
+
+**Typographie par défaut, la même que matthieuhuguet.com :** titre en **AnthropicSerif
+350**, sous-titre en **Inter Regular**. Les trois familles (`AnthropicSerif`,
+`AnthropicMono`, `Inter`) sont interchangeables au curseur sur chaque calque, et elles
+sont SERVIES par le visuel (copiées dans `assets/fonts/`), jamais attendues du système :
+un repli de police ne se signale jamais, seul l'œil le voit.
+
+**Chaque calque se déplace en Y indépendamment** — titre, média, sous-titre. C'était une
+demande explicite : un calque dont la position dépend d'un autre empêche de composer.
+
+Gabarit de référence complet, réutilisable tel quel :
+`Memory/Posts/2026-08-20-blackmyth-wukong/` (`_params.json`, `gabarit.html`, `build.py`,
+`export-png.sh`, `backup-memory.sh`).
+
+## Les visuels : skill `zenray-html-photoshop-pdf-hda` (2026-08-12)
+
+Ce skill couvre le TEXTE. Tout ce qui est image, flyer, slide, carrousel,
+vignette ou animation relève de `zenray-html-photoshop-pdf-hda`, et les deux se lisent
+ensemble dès que Matthieu dit « prépare le post ».
+
+Ce que l'autre skill sait déjà, à ne pas réinventer ici : le format 4:5
+(1080×1350 en composition, export unique en 2160×2700), la méthode asset par
+asset avec index numérique, le catalogue de polices `fontbook.html`, et le
+gabarit d'un carrousel produit en quatre slides, accroche, ce que j'ai
+construit, le problème, la solution.
+
+**Le point de jonction qui fait perdre du temps quand on l'oublie :** la
+longueur de la légende se décide AVANT d'écrire, et le nombre de slides AVANT de
+composer. Les deux questions se posent dans le même souffle, au début, pas après
+avoir produit.
+
+## Aller plus vite (2026-08-12, demande explicite)
+
+La séance du post #6 a pris une soirée pour un carrousel et une légende. Matthieu
+a demandé que ce soit beaucoup plus rapide à l'avenir. Ce qui a coûté le temps,
+dans l'ordre :
+
+1. **Avoir écrit long avant de connaître la limite.** 3623 caractères produits
+   pour 2000 utilisables, donc 45 pour cent jetés. La limite se vérifie d'abord.
+2. **Avoir deviné l'ordre et les coupes** au lieu de suivre sa version collée,
+   ce qui a demandé deux tours de correction.
+3. **Avoir rendu les visuels après chaque micro-changement** plutôt qu'une fois
+   à la fin.
+
+Le raccourci, désormais : poser les trois questions de cadrage (langues,
+longueur, nombre de slides), écrire court du premier coup, produire les assets
+en une fournée, rendre une fois, vérifier de ses yeux, livrer.

@@ -1,0 +1,34 @@
+{
+  "zenray-html-photoshop-pdf-hda": {
+    "fontbook.html": "556331058cc893faf68052ab2cd5a46febdc2b845c316dc547e8b83f2f268a44",
+    "SKILL.md": "87a4fc031ff9eca7fbeb1db32d8d9275eb13a847dbbce56f66843916a1c1913c",
+    "references/template-creator.md": "567bd4c2053e31a85dc1529190820619a4ac1042b35cd97e2b3ea0571c8b3252",
+    "scripts/render-frames.sh": "143411ed4d74f46fd27e3b53b7bfb928b49081635b1bbc2581c0309c4fa91ac0",
+    "scripts/build-fontbook.sh": "0b9f38c4d8fce6799d251725b8bf53e689d3848f80efd8bcdb25175463cedd8c",
+    "scripts/zr-hda-instance.py": "8c8f8719ec3218207da282ac2f8c570fb209edfe140f04f4fc0bf30d3ed681cb",
+    "scripts/new-project.sh": "a7df0da8c8185b0a6e530fbb5677b9da9837c5147c0981404fd1b6891f9c2f68",
+    "scripts/install-template-creator.sh": "4c5f9fe46fc9033ed5829f89dc5ceed168da58ee176e6d91d582e4c71bbdf5d2",
+    "templates/slide-1.html": "7590a7c5012c74fc0377e14ef3622d1becd7b3293ba9ca0418d133d1c0c469da",
+    "templates/render.sh": "7148d1e58a3c582070ffd8676330417d5edc679d2d5e32d627a4cb3a1a06cce6",
+    "templates/_canvas.css": "2465da928ad944561b31b7430ae799e02724b645838569ec3c53e20989918445",
+    "templates/_cloudy.css": "b922f41a4d1fff16aeabb778463434d240a6697f97e096c2d42d58709faf3d7d",
+    "templates/text-asset.html": "b72d0f1a0d7ea74a9de7947b3046400dc3ddd4bc2811b837fc91b9a2f7fe0a77",
+    "templates/hda-light/index.html": "b96b8366bea892ddb17967788fd02cd72430fb3904ec791a44158c60e013a588",
+    "templates/hda-light/crop-apply.py": "36a4ca958246ee8459985657250d43653ae9d9a23b79d5bae549e36485fc8744",
+    "templates/hda-heavy/index.html": "f70c8b3e0c53c218973250bf37ac30b0a7adbdd6d2ccf042dbecf632c89278e1",
+    "templates/hda-heavy/photo-apply.py": "019db64c123ecd05def36adbde69fde3b333a772dcfec40262c6386fd66931c9",
+    "templates/hda-heavy/assets/photo-controls/zr-photo-adjustments.js": "9d405a5efabc63a79f1290045a8b7745144293f68ddbdabd2d667f27ce0f4ee6",
+    "templates/hda-heavy/assets/photo-controls/zr-photo-adjustments.css": "54aa009f05dff3c65df2e36578762070569fef3da3e974213196e10543fa9d7e",
+    "instances/INDEX.md": "5fe32af7784469d8e1748c34088d445d03556425bd5a0a5377e45f0e96ed5afa",
+    "assets/photo-controls/zr-photo-adjustments.js": "9d405a5efabc63a79f1290045a8b7745144293f68ddbdabd2d667f27ce0f4ee6",
+    "assets/photo-controls/zr-photo-adjustments.css": "00e20eb6bae1e17ee480694819fb2d14457781669c149d2c62b10a4b87883f2d"
+  },
+  "zenray-social-media": {
+    "SKILL.md": "8f2558c7d54446e84728950361a61cc130f16871e0c89cb967f27bf6dd7a5692",
+    "scripts/instagram_maxq.py": "fb79b2f9ea103a890cbdd4fe61dbfadea2009fa196bb5d3305b1177f3f5005d3"
+  },
+  "post-vignette": {
+    "SKILL.md": "43ac9158bf67bca3724bf6379d4a59eeaa52a89a1372136e4d81bc1ecb01fe2f",
+    "scripts/vignette.sh": "b74231e4ef440c72e2863cb500f88df539110c173e1c36e91f669c38e7b6fd96"
+  }
+}

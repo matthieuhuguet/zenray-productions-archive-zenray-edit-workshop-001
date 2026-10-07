@@ -1,0 +1,473 @@
+## Un affichage arrondi qui fait croire a une valeur fausse, 2026-09-03
+
+**Son bug.** « Le zoom devrait renvoyer sa vraie valeur une fois modifie mais il n'affiche que 1, 2
+ou 3. »
+
+**La valeur etait juste, seul l'affichage mentait.** Le curseur porte un pas de `0.01` et
+`writePath()` ecrivait bien `1.09` dans le modele, donc le cadrage et le cook etaient corrects
+depuis le debut. C'est `output.value = Math.round(Number(v))` qui ramenait tout a l'entier. Un
+affichage faux est aussi grave qu'une valeur fausse : il fait chercher un bug la ou il n'y en a pas,
+et il empeche de recopier un reglage trouve a l'oeil.
+
+**La correction deduit les decimales du PAS**, plutot que de les fixer par curseur, ce qui evite
+d'avoir a se souvenir du bon nombre pour chacun :
+
+```js
+function afficherValeur(v, step) {
+  var s = Number(step) || 1;
+  if (s >= 1) return String(Math.round(Number(v)));
+  var decimales = (String(s).split(".")[1] || "").length;
+  return String(Number(Number(v).toFixed(decimales)));   // 1.50 devient 1.5, 3.00 devient 3
+}
+```
+
+Le `Number(...toFixed(...))` retire les zeros inutiles : un zoom lit `1.5` et non `1.50`, `3` et non
+`3.00`. Trois points d'affichage l'utilisent, dont `syncPhotoControls()`, et le registre des
+controles conserve desormais le `step` pour que la resynchronisation affiche exactement comme le
+curseur.
+
+**Mesure apres correction :** 1.09 affiche `1.09`, 1.5 affiche `1.5`, 2.25 affiche `2.25`, 3 affiche
+`3`, et Position Y, dont le pas vaut 1, continue d'afficher `48`.
+
+**Le mode light n'avait pas ce defaut** : son `sliderRow()` prend deja un parametre `decimals` et le
+zoom y est declare a 2. Il n'a donc pas ete touche, mais il affiche `1.00` la ou le heavy affiche
+maintenant `1`. Divergence connue et assumee, a unifier le jour ou elle gene.
+
+## La fenetre de cadrage depend du ZOOM, pas seulement de la couverture, 2026-09-03
+
+**Son bug, exact.** « Quand je zoom je devrais etre capable de changer position Y, puisque le scale
+est lie au transform. Actuellement ca ne change rien. »
+
+**La cause, et elle est arithmetique.** La marge de deplacement etait calculee avec `s`, le facteur
+de couverture MINIMAL, jamais avec le facteur reellement applique :
+
+```js
+var s  = Math.max(p.w / nw, p.h / nh);
+var y0 = (nh - p.h / s) * (c.py / 100);   // faux des qu'on zoome
+```
+
+Sur une source 5712x4284 vers un cadre 4:5, `s` vaut 0,315 et `p.h / s` vaut exactement 4284, soit la
+hauteur entiere de la source : la marge verticale valait **zero**, ce qui est juste au zoom 1 puisque
+l'image couvre pile. Mais elle restait a zero en zoomant, alors que le zoom cree precisement de la
+marge sur les deux axes. Position Y n'avait donc rien a deplacer.
+
+**La correction.** La fenetre visible se calcule avec le facteur EFFECTIF, zoom et safescale
+compris, et c'est elle qui donne les marges :
+
+```js
+var k  = s * c.zoom * safeScale(c.rotate, p.w, p.h) * 1.002;
+var vw = p.w / k, vh = p.h / k;
+var x0 = Math.max(0, nw - vw) * (c.px / 100);
+var y0 = Math.max(0, nh - vh) * (c.py / 100);
+// puis on centre CETTE fenetre :
+ctx.translate(-(x0 + vw / 2), -(y0 + vh / 2));
+```
+
+`affine_coeffs()` cote Python suit la meme formule, `c = x0 + vw/2 - ...` et `f = y0 + vh/2 + ...`.
+Les deux portaient le meme defaut, donc l'apercu et le cook etaient coherents entre eux et faux
+ensemble : un ecart n'aurait rien revele, seul un calcul le pouvait.
+
+**Mesure, sur une source 5712x4284 vers 3240x4050 :**
+
+| Zoom | Ecart d'origine source entre py=0 et py=100 |
+|---|---|
+| 1 | 8,6 px, la marge du safescale, donc quasi nul comme attendu |
+| 2 | **2 146 px**, Position Y agit pleinement |
+
+Avant correction, les deux valaient zero.
+
+**Le cas du mode light, ou le cadrage est en CSS pur.** `object-position` repartit la marge de
+`object-fit: cover` AVANT le `scale()`, donc la marge nee du zoom ne lui est jamais soumise : meme
+bug, autre mecanisme. La compensation est une translation appliquee avant le scale, dont l'ecart se
+derive exactement :
+
+```
+tx = -cw * (z - 1) * (px/100 - 0.5)
+ty = -ch * (z - 1) * (py/100 - 0.5)
+```
+
+Elle vaut **zero au zoom 1**, donc aucune regression sur les cadrages deja valides. `applyPan()`
+la pose, et se rebranche partout ou le zoom, le pan, la rotation ou le format changent, propagation
+« a toutes » comprise : sept points d'appel, oublier le moindre laisserait un cadrage fige.
+
+**Verification par les PIXELS, jamais par le code.** Au zoom 2, on lit douze pixels repartis sur la
+hauteur du canvas WebGL avec `readPixels`, a py=0 puis a py=100 : les deux empreintes doivent
+differer. Elles etaient identiques avant, elles sont totalement differentes apres.
+
+## Trois boutons, trois gestes, aucun telechargement, 2026-09-03
+
+**Sa correction, et elle est juste.** « Ca sert a rien de downloader un param. Soit tu crees
+proprement un bouton export qui cook les jpg, soit tu copy paste les params pour le paste dans un
+LLM. Et un autre bouton qui copy uniquement le post. »
+
+Un fichier de parametres qui atterrit dans Downloads ne sert personne : il faut ensuite le retrouver,
+le deplacer, et rien n'est cuit au bout. Le telechargement disparait donc entierement.
+
+| Bouton | Ce qu'il fait | Hors serveur |
+|---|---|---|
+| **Export** | enregistre les reglages ET cuit les JPEG dans `out/` | desactive, avec la raison en infobulle |
+| **Copier params** | le bloc complet, lisible plus JSON, pour le coller a un LLM qui cuira ailleurs | fonctionne |
+| **Copier post** | la legende SEULE, sans les reglages | fonctionne |
+
+**Le presse-papier a trois voies, et la derniere ne peut pas echouer.** C'est le point qui compte,
+parce qu'un bouton de copie qui rend « copie refusee » laisse le travail hors de portee. L'ordre :
+`navigator.clipboard.writeText`, qui passe sur localhost puisque c'est un contexte securise ; puis
+`document.execCommand('copy')` ; puis, si les deux sont refuses, **la boite de sortie deja presente
+dans les deux gabarits** s'ouvre avec le texte selectionne, pret pour un Cmd+C. Rien de neuf n'a ete
+fabrique pour ce repli, `outBox` cote heavy et `batchOut` cote light existaient.
+
+**Mesure faite dans un navigateur isole**, ou les deux premieres voies sont refusees faute de geste
+utilisateur reel, ce qui a permis de verifier le repli lui-meme : Copier params depose 24 837
+caracteres contenant `"images"` et `"order"` ; Copier post depose 1 091 points de code commencant par
+la ligne de drapeaux et **ne contenant pas** `"images"`, donc bien la legende seule ; Export rend
+« 13 images écrites dans out/ ». Au clic reel de Matthieu, la premiere voie passe et la boite ne
+s'ouvre jamais.
+
+**Le compteur du post compte en POINTS DE CODE**, `Array.from(texte).length`, jamais `String.length` :
+sur un post trilingue, les trois drapeaux regionaux valent six unites UTF-16 de plus et feraient
+annoncer un depassement inexistant.
+
+## Enregistrer et Cuire depuis la page : delete, simplify, accelerate, automate, 2026-09-03
+
+**Sa demande, dans ses mots.** « Copier le post, Exporter, Importer sont contre productifs en terme
+d'UX. On va toujours au plus simple et on supprime. Y'aurait pas moyen d'avoir directement un bouton
+pour cuire les images en jpg, comme ca on skip l'etape du prompt. »
+
+**Ce qui a ete supprime, et c'est le vrai gain.** Quatre boutons devenaient un aller-retour complet
+a chaque reglage : copier le bloc, le coller dans un fichier, lancer le cook au terminal. Il en
+reste DEUX, et ils ferment la boucle sur place.
+
+| Avant | Apres |
+|---|---|
+| Copier TOUT (photos + post) | **Enregistrer** : ecrit `_params.json` ET met le bloc au presse-papier |
+| Copier le post | supprime, Enregistrer porte deja le post |
+| Exporter | supprime, Enregistrer ecrit le fichier |
+| Importer | supprime, l'atelier RELIT `_params.json` tout seul a l'ouverture |
+| (rien) | **Cuire les JPEG** : enregistre puis lance le cook, sans quitter la page |
+
+**Comment une page arrive a ecrire sur le disque.** Elle ne le fait pas : c'est le serveur local que
+le generateur lance deja qui gagne trois routes, et trois seulement. `/zr-capacites` dit ce que
+l'hote sait faire, `/zr-enregistrer` ecrit les reglages, `/zr-cuire` ecrit puis lance le cook du
+mode courant. **Aucun chemin ne vient du client** : le dossier et le script sont fixes a la creation
+du serveur, donc rien d'arbitraire ne s'execute. Le fichier precedent part dans `.hda-history/`
+avant d'etre remplace, jamais efface en silence.
+
+**La degradation est explicite, jamais muette.** En `file://`, `fetch` echoue, l'outil le sait par
+`/zr-capacites`, Enregistrer bascule sur copie plus telechargement, et Cuire se DESACTIVE en
+affichant pourquoi. La regle du 2026-09-01 tient toujours : une instance doit s'ouvrir en
+double-cliquant, seule l'automatisation demande le serveur.
+
+**`--serve` sert desormais SANS ouvrir de navigateur.** Il ne s'appliquait qu'avec `--open`, donc
+servir l'atelier obligeait a prendre l'ecran. `serve(..., ouvrir=False)` corrige cela, et c'est ce
+qui permet de verifier l'outil sans toucher au navigateur personnel.
+
+**Deux pieges payes pendant cette correction, tous deux du meme genre.**
+
+*Un test par sous-chaine qui matche son propre commentaire.* La balise n'a jamais ete ajoutee parce
+que `if "zr-save.js" not in t` trouvait le commentaire `// Exposes pour zr-save.js` ecrit trois
+lignes plus haut. La condition etait donc toujours fausse, sans erreur. **Un test d'existence porte
+sur la forme EXACTE qu'on va ecrire**, ici la balise entiere, jamais sur un fragment de nom.
+
+*Une route relative sous un sous-dossier.* `fetch('zr-capacites')` depuis
+`/<instance>/index.html` resout en `/<instance>/zr-capacites` et tombe sur un 404, si bien que
+l'outil se croyait hors serveur alors qu'il y etait. Les routes du service sont a la RACINE, donc
+elles s'appellent en absolu.
+
+**Verifie de bout en bout, dans les deux modes, dans un navigateur isole.** Heavy : Enregistrer rend
+« enregistré », `_params.json` porte 13 images, 4 textes et 1091 caracteres de post, l'ancien part
+dans `.hda-history/` ; Cuire rend « 13 images écrites dans out/ » et les fichiers sont horodates a
+la minute. Light : « enregistré » puis « 1 images écrites dans out/ » par `crop-apply.py`. Les
+quatre anciens boutons sont absents du DOM dans les deux.
+
+**Ce qui n'a PAS pu etre verifie, et il faut le dire.** La copie au presse-papier passe par
+`execCommand('copy')`, que le navigateur refuse hors d'un vrai geste utilisateur : en test
+automatise, la note affiche « enregistré » et non « enregistré et copié ». Le chemin d'ecriture est
+prouve, celui du presse-papier ne l'est que par construction.
+
+## L'ombre portee se reduit a Size et Strength, et le bug qu'elle cachait, 2026-09-03
+
+**Sa plainte, verifiee et fondee.** « Ombre portee non importee dans l'export proprement. »
+L'apercu montrait un halo, le JPEG livre n'en avait aucun. C'est exactement l'ecart que ce skill
+interdit, et il se mesure au lieu de se juger a l'oeil :
+
+```python
+a = draw_shadow_layer((3240, 4050), "Shimoda", font, 800, 3400, 3240,
+                      {"enabled": True, "size": 43, "spread": 0, "distance": 0})
+a.split()[3].getextrema()[1]     # alpha du pic : 95 sur 255, donc invisible
+```
+
+**La cause.** L'ancienne version dessinait UN tampon a alpha 200 puis le floutait. A Size 43 sur un
+canevas de 3240 px, le flou etale l'encre sur une surface telle que l'alpha du pic tombe a **95 sur
+255**, contre 188 pour l'ancien rendu fixe. Sur une photo claire, il ne reste rien. Le reglage
+existait, l'algorithme etait juste, mais aucune quantite d'encre n'y survivait.
+
+**La correction, et elle vient de sa simplification.** Distance et Spread disparaissent de
+l'interface, personne ne les reglait. Restent **Size**, le rayon du flou, et **Strength**, la
+densite, a **40 par defaut**. La densite s'obtient en RECOMPOSANT le meme voile sur lui-meme,
+`alpha = 1 - (1 - a)^n` avec `n = round(strength / 10)` : le degrade est conserve, la montee est
+monotone, et le CSS fait exactement pareil en repetant le meme triplet dans `text-shadow`, si bien
+que l'apercu et le cook restent identiques par construction.
+
+| Strength | Alpha du pic mesure |
+|---|---|
+| 0 | 0, l'ombre s'eteint proprement |
+| 20 | 185 |
+| **40, le defaut** | **236** |
+| 70 | 252 |
+| 100 | 254 |
+
+**Compatibilite.** Un `_params.json` ecrit avant cette date porte encore `distance` et `spread` : ils
+restent LUS, pour que son rendu d'alors se rejoue, et `strength` prend 40 s'il manque. Une migration
+tient en trois lignes, retirer les deux cles et poser `strength: 40`.
+
+**Ou toucher, et jamais dans un seul fichier.** `buildTextShadow()` cote JS et
+`draw_shadow_layer()` cote Python changent TOUJOURS ensemble, dans les QUATRE fichiers, heavy et
+light. C'est la meme regle que le shader photo, et c'est ce bug qui montre pourquoi : un ecart
+entre l'apercu et le cook vide le reglage de son sens sans qu'aucune erreur ne se declare.
+
+**La lecon generale, au-dela de ce skill.** Un effet visuel ne se verifie pas en relisant son
+algorithme, qui etait correct ici, mais en MESURANT ce qu'il depose reellement dans le pixel. Un
+alpha de 95 et un alpha de 236 produisent le meme code, la meme absence d'erreur, et deux resultats
+que tout separe.
+
+## Le repli de police etait un NOM, pas un chemin, 2026-09-03
+
+**Sa plainte, exacte.** « Inter ne peut pas marcher puisque c'est intervariable sur mon systeme donc
+ca fallback toujours sur hiragino, JE VEUX INTER PAS HIRAGINO. » Il avait entierement raison, et la
+cause se mesure en une commande.
+
+```zsh
+fc-scan --format "%{family}\n" ~/Library/Fonts/InterVariable.ttf   # rend : Inter Variable
+```
+
+Le nom de famille reel porte un ESPACE. `font-family: Inter` et `font-family: InterVariable`
+echouent donc tous les DEUX a trouver la police du systeme, et le navigateur descend
+silencieusement sur `Hiragino Sans W4`, le repli suivant de la pile. Rien ne le signale : c'est
+exactement le piege du repli muet deja inscrit dans le `CLAUDE.md` global, « une police systeme
+n'est pas une garantie, SERVIR la police ».
+
+**La correction est de servir le fichier, jamais de corriger le nom.** `assets/ui/fonts.css`
+declare `@font-face { font-family: InterVariable; src: url('./InterVariable.woff2') }` et le woff2
+de 344 Kio est copie dans CHAQUE atelier. Le nom devient alors une etiquette que nous controlons,
+et la police ne depend plus ni du systeme, ni du reseau, ni du protocole.
+
+**Le controle qui tranche, et il ne se juge pas a l'oeil.** Comparer la LARGEUR du meme texte dans
+les deux familles : identiques, c'est un repli ; differentes, la bonne police rend.
+
+```js
+await document.fonts.ready;
+[...document.fonts].map(f => f.family + ' ' + f.status);   // doit contenir "InterVariable loaded"
+const c = document.createElement('canvas').getContext('2d');
+c.font = '13px InterVariable';        const a = c.measureText('Shimoda peninsula 1854').width;
+c.font = '13px "Hiragino Sans W4"';   const b = c.measureText('Shimoda peninsula 1854').width;
+Math.abs(a - b) < 0.5;                // true = repli silencieux, la correction n'a pas pris
+```
+
+Mesure obtenue sur l'atelier Shimoda : `InterVariable loaded`, 149,42 px contre 163,46 px pour
+Hiragino, donc un ecart franc de 14 px et aucun repli. `zr-ui.js` pose en plus
+`document.documentElement.dataset.zrFont` a `ready` ou `error`, et affiche une alerte visible quand
+la police manque : un repli redevient bruyant au lieu de rester invisible.
+
+## Un theme, clair par defaut, et le bouton primaire reste PLEIN, 2026-09-03
+
+**Sa plainte.** « L'UI est incoherente et pas liquid glass, le theme est sombre et light a la fois. »
+Le panneau photo imposait ses couleurs sombres pendant que l'editeur de post imposait du blanc : deux
+recettes concurrentes sur la meme page, exactement le sixieme echec HDA deja documente.
+
+`assets/ui/zr-ui.css` porte desormais le theme unique, tokens `--g9-*` repris de
+`ZenRayProgress/src/theme.js`. **Clair par defaut**, sombre memorise dans `localStorage` et bascule
+par un bouton, jamais par une preference systeme devinee. Le verre ne se pose pas sur les panneaux
+eux-memes mais sur une coque fixe `.zr-side-glass` injectee derriere eux : les controles defilent,
+le verre ne bouge pas. Verifie, la coque mesure 412x696 et couvre le panneau de 412x644.
+
+**Le defaut que la mesure a trouve et que l'oeil aurait laisse passer.** Le bouton principal
+« Copier TOUT » etait traite comme un ETAT actif, donc translucide, ce qui donnait un contraste de
+**1,29:1** : le bouton le plus important de l'outil paraissait desactive. Corrige en bouton PLEIN,
+`btnPrimaryBg` et `btnPrimaryText` de ZenRayProgress, mesure a **4,02:1** dans les deux themes. La
+regle qui en sort : un bouton d'ACTION est plein, un bouton d'ETAT est translucide, et les deux ne
+partagent jamais la meme regle CSS.
+
+```js
+function lum(c){const m=c.match(/[\d.]+/g).map(Number);const f=v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4)};return 0.2126*f(m[0])+0.7152*f(m[1])+0.0722*f(m[2])}
+const s = getComputedStyle(document.getElementById('copyAllBtn'));
+(Math.max(lum(s.color),lum(s.backgroundColor))+0.05)/(Math.min(lum(s.color),lum(s.backgroundColor))+0.05);  // >= 3
+```
+
+**Le texte du post est plafonne a 13 px**, sa demande pour un ecran qui sort en 4K, et le plafond est
+ecrit comme un plafond, `min(var(--zr-post-font-size, 13px), 13px)` : un reglage ne peut pas le
+depasser par accident.
+
+**La propagation ne se demande pas.** `scripts/update-ui-instances.py --all` met a niveau tous les
+ateliers deja sur le disque et archive l'ancien code dans `.hda-history/`. Mesure du passage :
+21 ateliers vus, 15 mis a jour, 6 disparus, et **158 fichiers de travail preserves**, parametres,
+posts et sorties compris.
+
+## Contrôle des gabarits après fusion, 2026-09-03
+
+Sa demande : « vérifie que les templates HTML sont à jour avec l'intégralité du skill updated ».
+Contrôle fait dans un navigateur isolé, sur des instances réelles, jamais par lecture du code seul.
+
+**Ce qui était déjà en place, confirmé par mesure.** Les deux gabarits portent le Liquid Glass, la
+hauteur de header mesurée par `--top-h`, zéro élément en police mono, et l'éditeur de post câblé de
+bout en bout : feuille de style, script, `_post-data.js` généré, et `ZRPostEditor.snapshot()` inclus
+dans « Copier TOUT (photos + post) ».
+
+**Mesures relevées sur le lot Shimoda, 13 images, légende de 1445 caractères.** L'éditeur est un
+`textarea#zr-post-text` en Inter, fond blanc, texte `rgb(20,20,20)`, aperçu 4:5. Une frappe de
+13 caractères fait passer l'instantané de 1451 à 1464, donc l'édition remonte bien dans l'API. Le
+brouillon survit à un rechargement par la clé locale `zr-post:<chemin>`. Aucune erreur JavaScript.
+
+**Le compteur compte en POINTS DE CODE, pas en unités UTF-16, et c'est ce qui le rend juste.**
+Mesuré : `1458 / 2200` affiché quand `String.length` vaut 1464, l'écart de 6 venant des trois
+drapeaux régionaux, chacun étant une paire de substituts. Après nettoyage du test, l'affichage
+retombe sur 1445, exactement la valeur mesurée côté Python. Un compteur basé sur `length`
+annoncerait donc un dépassement inexistant sur tout post trilingue.
+
+**Le seul écart réel trouvé, et corrigé.** Le titre du gabarit LIGHT rendait en `-apple-system / 600`
+alors que le heavy rendait en `AnthropicSerif / 350` : la règle du titre n'avait été portée que dans
+un des deux fichiers, parce que leurs déclarations `h1` diffèrent et qu'un remplacement ciblé sur la
+forme du heavy ne trouvait rien dans le light. Corrigé en `var(--zr-police-serif)` et
+`var(--zr-poids-serif)`, vérifié après régénération : `AnthropicSerif / 350 / 18px`.
+
+**La leçon, valable pour toute capacité portée dans les deux gabarits.** Vérifier une règle
+typographique en cherchant la CHAÎNE de la règle rate les divergences de forme entre les deux
+fichiers. Le contrôle fiable lit la valeur CALCULÉE dans un navigateur, gabarit par gabarit :
+
+```js
+const cs = getComputedStyle(document.querySelector('h1'));
+cs.fontFamily.split(',')[0] + ' / ' + cs.fontWeight;   // doit valoir AnthropicSerif / 350 dans les DEUX
+```
+
+## Vérification de la fusion et de l’éditeur, 2026-09-03
+
+Les trois corpus sont conservés, avec leurs sources intégrales et leurs empreintes dans
+`references/fusion-sources/`. `scripts/index-skill.py --check-originals` vérifie aussi que les trois
+anciens dossiers restent intacts avant toute suppression autorisée.
+
+Les contrôles de navigateur s’exécutent dans Chromium isolé depuis un dépôt possédant Playwright :
+
+```zsh
+node ~/.claude/skills/zenray-html-photoshop-pdf-hda-socialmedia-shorts-reel/scripts/verify-post-editor.cjs \
+  /Users/zenray/.claude/tmp/tmp-atelier-socialmedia/atelier \
+  /Users/zenray/.claude/tmp/tmp-atelier-socialmedia/atelier-light
+```
+
+Preuves conservées dans `tmp-atelier-socialmedia/verification.json` et dans les deux `apercu.png` :
+édition et reprise, compteur Unicode, dépassement sans troncature, format indépendant des photos,
+export/import, copie du post et du lot complet, import invalide sans perte, petit écran, préférence
+de réduction des animations, refus de stockage et de presse-papier visibles, aucune erreur JavaScript.
+
+La reprise sur disque est contrôlée par `scripts/verify-post-instance.py IMAGE DESTINATION_NEUVE`.
+Il conserve ses fixtures pour inspection et vérifie que le post, les paramètres et les sorties sont
+identiques après régénération, que l’ancien code est archivé et qu’un remplacement de brouillon
+est refusé avant écriture. Preuve : `tmp-atelier-socialmedia/verification-instancer/verification.json`.
+
+L’aperçu contient les treize photos du lot Shimoda et les 1445 caractères de la légende déjà archivée
+dans `Memory/Posts/2026-09-03-shimoda-post.md`, recopiée exactement. Il sert à valider l’outil ; il
+ne publie rien et ne modifie pas l’atelier original du lot.
+
+
+## Migration définitive validée le 2026-09-03
+
+Matthieu autorise explicitement la suppression des trois anciens skills. Le seul point d’entrée actif est désormais `zenray-html-photoshop-pdf-hda-socialmedia`. Cette validation remplace les mentions antérieures d’attente ; les textes historiques restent intacts.
+
+Dans toute instruction ou commande historique conservée ci-dessus, résoudre les noms de skills `zenray-html-photoshop-pdf-hda`, `zenray-social-media` et `post-vignette` vers `zenray-html-photoshop-pdf-hda-socialmedia`, quel que soit le préfixe Claude, Codex ou Memory. Les scripts et gabarits sont disponibles sous les mêmes chemins relatifs dans le skill unifié. Ne pas recréer les anciens skills.
+
+Les 26 fichiers d’origine sont également conservés dans `references/fusion-sources/originaux.tar.gz`, vérifiés un par un contre les empreintes SHA-256 de `manifest.json` avant suppression. Cette archive est une sauvegarde historique, pas un second skill actif. Les trois corpus restent intégralement dans ce SKILL.md ; les scripts et gabarits actifs portent les ajouts de l’éditeur de post.
+
+Vérification après migration : `python3 scripts/index-skill.py --verify-only` depuis ce skill. L’option `--check-originals` ne s’utilise plus après retrait des anciens dossiers.
+
+## Le bouton Export ne cuisait rien : le serveur ne demarrait que sur demande explicite, 2026-09-03
+
+**Sa plainte, exacte.** « Fix mon bouton export, ça devrait cuire directement via le bouton export,
+directement écrire sur le disque. » Le bouton faisait déjà ce geste dans `assets/ui/zr-save.js`
+(POST `/zr-cuire`), et le serveur savait déjà répondre (`serve()` dans `zr-hda-instance.py`). La
+panne n'était ni dans le bouton ni dans la route, elle était dans le **générateur**.
+
+**La cause.** `main()` ne démarrait `serve()` que si `--serve` OU `--open` était passé sur la ligne
+de commande. La commande la plus naturelle pour instancier un atelier heavy,
+`zr-hda-instance.py <dossier> --mode heavy --project X`, sans aucun des deux drapeaux, sortait donc
+sans jamais servir : ni le canvas WebGL (masqué par les aperçus data URI, donc invisible), ni les
+routes `/zr-capacites`, `/zr-enregistrer`, `/zr-cuire`. Le bouton Export, côté navigateur, faisait
+alors exactement ce qu'il doit faire dans ce cas : se désactiver et afficher « hors serveur ». Le
+symptôme ressemblait à un bouton cassé, la cause était un serveur jamais lancé.
+
+**La correction.** Le commentaire du code disait déjà « le mode heavy EXIGE http », mais le contrôle
+de flux ne le faisait respecter que derrière `--open`. Le mode heavy sert désormais **toujours**,
+sans condition sur `--serve` ni `--open` : `serve(dest, source_dir, html_path, ouvrir=args.open)`.
+`--open` continue de piloter uniquement l'ouverture de Chrome, jamais la nécessité du serveur. Le
+mode light reste inchangé, en `file://` par défaut, `--serve` y demeure un choix explicite.
+
+**Conséquence opérationnelle, à ne pas oublier.** `serve()` est bloquant
+(`threading.Event().wait()`) : générer une instance heavy est désormais une commande qui ne rend
+jamais la main tant qu'on ne l'arrête pas. Toujours la lancer via `run_in_background: true`, jamais
+en foreground, et vérifier ensuite les capacités avant de rendre la main à Matthieu :
+
+```zsh
+curl -s http://127.0.0.1:<port>/zr-capacites   # doit rendre {"enregistrer": true, "cuire": true, ...}
+```
+
+**Vérifié** sur l'instance `zenray-html-hda-clip-cowork-heavy` : régénérée sans `--open` ni
+`--serve` explicites, elle sert désormais d'elle-même (capacités confirmées par `curl`), et le
+bouton Export peut écrire dans `out/` sans qu'aucune commande supplémentaire ne soit nécessaire.
+
+## Grille de composition 3x3, contraste automatique en CSS pur, cachee par defaut (2026-09-03)
+
+**Sa demande, en une phrase.** « Faut ajouter une grille 3x3 en gris ou noir ou blanc en fonction
+du contraste, effet shader à appliquer, pour afficher ou hide cette grille, cachée par défaut dans
+un submenu. »
+
+**Le choix technique : aucun calcul de contraste en JS.** La tentation evidente est d'echantillonner
+les pixels sous chaque ligne (readPixels ou getImageData) et de choisir noir/blanc/gris selon la
+luminance mesuree, exactement le genre d'algorithme qui casse des que le cadrage bouge et qu'il faut
+relancer a chaque frame. La solution retenue est plus simple et plus juste : `mix-blend-mode:
+difference` sur une ligne blanche. Le navigateur inverse alors la couleur LOCALEMENT, pixel par
+pixel, contre tout ce qu'il y a en dessous, canvas WebGL ou `<img>` : blanche sur fond sombre, noire
+sur fond clair, grise sur fond moyen. C'est litteralement le shader demande, en CSS pur, toujours a
+jour meme si l'image zoome, pivote ou change, sans une seule ligne de JavaScript de mesure.
+
+```css
+.zr-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  display: none; mix-blend-mode: difference;
+  background-image:
+    linear-gradient(to right, transparent calc(33.3333% - .5px), #fff calc(33.3333% - .5px),
+      #fff calc(33.3333% + .5px), transparent calc(33.3333% + .5px)),
+    linear-gradient(to right, transparent calc(66.6667% - .5px), #fff calc(66.6667% - .5px),
+      #fff calc(66.6667% + .5px), transparent calc(66.6667% + .5px)),
+    /* memes deux gradients en to bottom pour les lignes horizontales */;
+}
+body.zr-grid-on .zr-grid { display: block; }
+```
+
+**Cachee par defaut, dans un submenu, exactement comme demande.** Un `<details class="zr-grid-menu">`
+ferme par defaut dans le header (le meme patron `<details>/<summary>` deja utilise partout dans le
+panneau de reglages photo), avec une seule case a cocher `Grille 3×3 (composition)`. Le toggle ne
+pose PAS de style element par element : il bascule une seule classe sur `<body>`, et une seule regle
+CSS (`body.zr-grid-on .zr-grid`) decide de l'affichage partout, y compris sur des cartes creees
+dynamiquement en mode light. C'est la loi HDA telle quelle : une seule regle, propagee automatiquement
+partout ou elle a du sens.
+
+**Ou la grille vit dans les deux gabarits.** Heavy : un seul `#gridOverlay` dans `.frame`, au-dessus
+du canvas, de la bordure et des calques de texte (dernier enfant, donc dessine par-dessus tout). Light :
+un `.zr-grid` par carte, ajoute par `buildCard()` juste avant `card.appendChild(frame)`, donc chaque
+nouvelle photo du lot herite du meme overlay sans code supplementaire.
+
+**C'est un outil d'atelier, jamais dans le rendu final.** Ni `photo-apply.py` ni `crop-apply.py` ne
+savent que la grille existe : elle vit entierement en CSS/DOM cote apercu, et le cook ne lit jamais
+l'etat de la case a cocher. Un JPEG cuit avec la grille visible a l'ecran sort identique a un JPEG
+cuit sans elle.
+
+**Verifie dans un navigateur isole (jamais celui de Matthieu), les deux gabarits.** Heavy : grille
+cachee au chargement (`display:none`, case decochee), un clic la montre
+(`mix-blend-mode: difference` confirme par `getComputedStyle`), capture ecran montrant les lignes
+sombres sur le sol clair et claires sur le feuillage sombre de la meme photo, contraste automatique
+sans aucun reglage. Light : trois cartes, `document.querySelectorAll('.zr-grid').length === 3`,
+toutes cachees par defaut, un seul clic sur la case les affiche toutes les trois a la fois.
+
+**Ou toucher pour une prochaine extension.** Le bloc CSS `.zr-grid` et le HTML `<details
+class="zr-grid-menu">` doivent TOUJOURS changer ensemble dans les DEUX gabarits, `hda-heavy/index.html`
+et `hda-light/index.html` : c'est le meme piege que le shader photo et l'ombre portee, un ecart entre
+les deux viderait la capacite de son sens dans l'un des deux modes. L'epaisseur du trait est un
+parametre, `--zr-grid-thickness` (defaut `1px`), a exposer en curseur le jour ou Matthieu le demande.
+

@@ -1,0 +1,465 @@
+## Démarrer un projet
+
+```bash
+~/.claude/skills/zenray-html-photoshop-pdf/scripts/new-project.sh <nom> [dossier-parent]
+```
+
+Copie `_canvas.css`, `render.sh` et une première slide d'exemple, prêts à éditer.
+
+## Le réflexe, en une ligne
+
+Décomposer, mesurer, composer, vérifier de ses yeux, exporter en 4:5.
+
+## Méthode de calage sur une référence : mesurer, jamais deviner (2026-08-12)
+
+Employée pour caler FUJI sur la référence CUBA / VIÑALES, à réutiliser chaque
+fois que Matthieu fournit une image de référence dont il faut reproduire les
+proportions et la position d'un titre.
+
+**Étape 1, la boîte englobante par scan de pixels.** Pour chaque bloc de texte
+blanc, scanner ligne par ligne les pixels quasi-blancs (`r,g,b > seuil`, écarts
+entre canaux faibles) et retenir min/max en x et y :
+
+```python
+def bbox_in_band(y0, y1):
+    minx, maxx, miny, maxy = w, 0, h, 0
+    for y in range(y0, y1):
+        for x in range(0, w):
+            r,g,b = px[x,y]
+            if is_white(r,g,b):
+                minx, maxx = min(minx,x), max(maxx,x)
+                miny, maxy = min(miny,y), max(maxy,y)
+    return minx, miny, maxx, maxy
+```
+
+Repérer d'abord les bandes verticales approximatives (comptage de pixels blancs
+par ligne, tous les 2px) pour savoir où chercher, avant le scan fin : le ciel
+clair produit lui aussi des centaines de faux positifs, il faut donc borner la
+recherche aux bandes où le compte de blanc est nettement plus bas que dans le
+ciel mais nettement plus haut que dans le vide.
+
+**Étape 2, les ratios, pas les valeurs absolues.** Convertir chaque boîte en
+fraction du canevas de référence (`largeur/l_canevas`, `hauteur/h_canevas`,
+centre en fraction) : cela seul se transpose d'une image à l'autre, où que
+change la résolution.
+
+```
+ratio hauteur titre / hauteur sous-titre = h_titre / h_sous_titre
+centre_frac_y = (y0+y1) / 2 / h_canevas
+```
+
+**Étape 3, appliquer par la HAUTEUR du glyphe, pas la largeur du mot.** La
+largeur d'un mot différent (FUJI contre CUBA) ne peut structurellement pas
+correspondre : F-U-J-I est plus étroit que C-U-B-A à hauteur de capitale égale.
+L'échelle typographique se lit sur la hauteur, jamais sur la largeur d'un mot
+différent.
+
+**Étape 4, retrouver le glyphe dans NOTRE propre asset** (même scan de bbox,
+sur le PNG transparent qu'on vient de rendre), pour connaître le facteur
+d'échelle à appliquer :
+
+```
+scale = hauteur_cible / hauteur_glyphe_natif
+largeur_affichage = largeur_canevas_natif * scale
+```
+
+**Étape 5, repositionner en absolu, pas en flex.** Une fois la taille connue,
+calculer le décalage entre le haut de l'image PNG et le centre du glyphe (le
+padding autour du texte n'est pas symétrique), pour poser chaque asset en
+`position: absolute` avec le centre du glyphe exactement au centre_frac mesuré,
+plutôt que de laisser un empilement flex avec des marges devinées.
+
+Le gain de cette méthode sur un simple ajustement à l'œil : le premier essai au
+jugé donnait un titre deux fois trop gros et des lignes secondaires mal
+alignées ; la version mesurée a été validée du premier coup.
+
+## Aller vite, protocole (2026-08-12, après une séance beaucoup trop lente)
+
+Le premier carrousel a coûté une soirée entière. Presque rien de ce temps n'est
+allé au dessin : il est parti en allers-retours évitables. Ce qui suit existe
+pour que le prochain prenne quinze minutes.
+
+**Les trois questions à poser AVANT d'ouvrir un fichier.** Elles décident de tout
+et coûtent une phrase :
+
+1. **Format** : 4:5 par défaut, sinon lequel.
+2. **Langues** : monolingue ou trilingue. Cela fixe le budget de texte, voir la
+   règle de longueur du skill `zenray-social-media`.
+3. **Combien de slides**, et quelle est l'histoire.
+
+**Écrire court d'emblée.** En trilingue, chaque langue dispose d'environ 660
+caractères. Écrire long puis couper de moitié détruit le texte et fait perdre un
+tour complet. C'est exactement ce qui est arrivé le 2026-08-12 : 3623 caractères
+produits pour 2000 utilisables.
+
+**Fabriquer tous les assets de texte en une seule fournée**, pas un par un. Une
+boucle sur les fichiers `N-*.html`, un seul appel de rendu, puis on compose.
+
+**Rendre une seule fois, à la fin.** `./render.sh` traite toutes les slides d'un
+coup et vérifie les dimensions. Rendre après chaque micro-changement est la
+deuxième source de lenteur.
+
+**Regarder le résultat, une fois, avant de le montrer.** Non négociable, et cela
+va plus vite que de le faire corriger : trois défauts de la séance du 2026-08-11
+(flou, texte en double, texte hors cadre) auraient sauté aux yeux en une seconde
+et ont coûté un aller-retour chacun.
+
+## L'arc d'un carrousel produit, gabarit éprouvé
+
+Structure du carrousel ZenRay Dictate, à réutiliser telle quelle pour annoncer
+un outil ou un projet :
+
+| Slide | Rôle | Contenu |
+|---|---|---|
+| 1 | **L'accroche** | La question que se pose le lecteur, plus le titre du projet et une preuve visuelle |
+| 2 | **Ce que j'ai construit** | L'icône, l'interface réelle, et six arguments de praticité en grille |
+| 3 | **Le problème** | Pourquoi les solutions existantes ne suffisent pas, avec un verdict daté |
+| 4 | **La solution** | Le geste en deux touches, la liste des bénéfices, le lien du dépôt |
+
+Le piège évité de justesse : la slide 2 manquait au premier jet, et le carrousel
+enchaînait un problème puis une solution sans jamais dire ce que l'objet FAIT.
+Matthieu l'a vu immédiatement. **Toujours vérifier qu'une slide répond à « c'est
+quoi, concrètement ».**
+
+## Cas concrets de la séance, à recopier plutôt qu'à réinventer
+
+**Découper une référence en panneaux.** Sur le gabarit Switzerland, un scan des
+ruptures de couleur ligne par ligne a donné trois panneaux de 588 px séparés par
+un cadre de 3 px, et la boîte englobante du titre au pixel près. L'estimation
+visuelle se serait trompée de plusieurs dizaines de pixels.
+
+**Surligner une barre précise d'un graphique.** Scanner la ligne à mi-hauteur
+pour trouver les bornes en x de la barre visée, ici 647 à 697 pour GPT
+Transcribe, puis élargir de quelques pixels et poser un calque translucide à
+50 pour cent sur toute la hauteur. Le résultat se lit comme « cette colonne » et
+non comme un rectangle posé au hasard.
+
+**Reprendre l'icône d'une app.** Le `.icns` d'un bundle macOS se fabrique depuis
+un PNG carré avec `sips` puis `iconutil`. Pour un visuel, reprendre directement
+le PNG source plutôt que d'extraire l'icns.
+
+## Cas concret : un classement de vingt lignes en HDA (2026-08-15)
+
+Premier projet monté entièrement sur la deuxième loi, la reproduction d'une
+infographie seasia à vingt pays. Cinq techniques en sont sorties, toutes
+réutilisables telles quelles.
+
+**Le moteur de gabarit tient en dix lignes et refuse le travail bâclé.** Une
+substitution de `{{clé}}`, puis une expression régulière qui cherche les
+accolades restantes et lève une erreur nommant les paramètres oubliés. Sans ce
+garde-fou, un paramètre absent passe en silence et sort en texte brut au milieu
+du visuel.
+
+```python
+html = template.read_text()
+for k, v in params.items():
+    html = html.replace("{{%s}}" % k, str(v))
+leftover = set(re.findall(r"\{\{(\w+)\}\}", html))
+if leftover:
+    raise SystemExit(f"parametres non fournis {sorted(leftover)}")
+```
+
+**Rendre chaque asset au facteur de SORTIE, puis le poser à sa largeur
+logique.** L'asset part en `--force-device-scale-factor=3`, donc son PNG porte
+trois fois les pixels, et la composition l'affiche à sa largeur en unités de
+canevas. À l'export, également en fois trois, chaque pixel de l'asset tombe
+exactement sur un pixel de sortie. Netteté parfaite, sans agrandissement nulle
+part.
+
+**Rogner le transparent plutôt que calculer une largeur de texte.** Le gabarit
+de texte se rend dans une boîte volontairement trop grande, puis `Image.getbbox`
+donne la boîte du glyphe et on recadre dessus. La composition place alors le
+coin haut-gauche du texte réel, sans jamais mesurer une chasse de police ni
+prévoir un débordement.
+
+**Les drapeaux de pays viennent des emoji du système, et c'est la bonne
+réponse.** Une paire d'indicateurs régionaux (`chr(0x1F1E6 + ord(c) - ord('A'))`)
+rend en Chromium headless avec Apple Color Emoji, sans réseau, sans dépendance,
+et couvre Taïwan, Hong Kong, Macao et le Bhoutan, que les jeux SVG dessinés à la
+main ratent toujours. Le seul écart est l'ondulation du dessin Apple, là où une
+infographie montre des drapeaux plats. Poser le glyphe dans une puce blanche
+avec un `padding` de deux pixels suffit à retrouver le liseré de la référence,
+et ce `flagInset` mérite d'exister comme paramètre plutôt que d'être deviné.
+
+**Deux assertions gratuites qui valident la décomposition**, à lancer avant de
+livrer. La première cherche un code hexadécimal ou une taille en pixels qui ne
+serait pas une substitution dans les gabarits, la seconde vérifie qu'aucune
+instance générée ne conserve d'accolades.
+
+```bash
+grep -nE '#[0-9A-Fa-f]{3,6}\b|:[[:space:]]*[0-9]+px' hda/*.html | grep -v '{{'
+grep -c '{{' assets/src/*.html | grep -v ':0'
+```
+
+**Ce qui reste à faire une fois pour toutes, et qui manquait ici :** le
+multi-format demande un bloc de surcharges par rapport, puisque les positions
+d'instance s'expriment en pixels du canevas actif. Tant qu'il n'existe pas,
+changer `canvas.active` ne suffit pas, et il vaut mieux l'écrire dans le README
+du projet que de laisser croire à un mot magique.
+
+## Lien avec le skill social
+
+Un visuel ne se fabrique presque jamais seul : il accompagne une légende. Les
+deux skills se répondent.
+
+- **Les règles de TEXTE** (longueur Instagram, ordre des langues, suppressions et
+  ordre imposés par Matthieu, hashtags, chiffres) vivent dans
+  `zenray-social-media`. Ne jamais les recopier ici.
+- **Les règles de VISUEL** (format, assets, polices, rendu) vivent ici.
+
+**Le sens du déclenchement, décidé le 2026-08-20 :** `zenray-social-media` est le point
+d'entrée d'un post, et **chacun de ses médias est obligatoirement produit ici**. On ne
+fabrique jamais un visuel de post à la main ni en une passe monolithique. Si le dossier de
+travail n'est pas précisé, demander ; sans réponse, `~/.claude/tmp/zenray-post-<slug>/` est
+le défaut assumé.
+
+**Format « source horizontale vers 9:16 »** (trailer, capture de jeu, vidéo 16:9 ou 2:1
+vers un Reel) : gabarit complet et validé dans
+`Memory/Posts/2026-08-20-blackmyth-wukong/`. Fond = le média lui-même flouté, média centré
+jamais recadré, durée et pastille de lecture, titre au-dessus en AnthropicSerif 350 avec
+ombre portée douce, sous-titre juste en dessous en Inter Regular, trois positions Y
+indépendantes. La description côté texte vit dans `zenray-social-media`.
+
+Quand Matthieu demande « prépare le post », les deux sont concernés : lire la
+règle de longueur avant d'écrire la légende, et le gabarit de carrousel avant de
+composer les slides.
+
+## Police de titre retenue : Generic G50 (2026-08-12)
+
+Trois polices génériques testées côte à côte pour le carton FUJI, mêmes
+réglages d'effet cotonneux : `Generic-G20-FR-Classic-DEMO.otf` (arrondie,
+douce), `Generic-G50-CC-Typic-DEMO.otf` (grotesque nette), `Generic-G80-RD-Standard-DEMO.otf`
+(grain déjà intégré au dessin des lettres). Matthieu a choisi **G50**.
+
+G50 remplace Didonesque Stencil / Anthropic Sans Black comme titre par défaut
+des cartons « brume » sur photo de voyage, chaque fois qu'un test rapide n'a
+pas eu lieu. Fichier à charger :
+
+```css
+@font-face {
+  font-family: 'GenericG50';
+  src: url('file:///Users/zenray/Library/Fonts/Generic-G50-CC-Typic-DEMO.otf') format('opentype');
+}
+```
+
+Méthode de comparaison rapide, à réutiliser telle quelle pour trancher entre
+plusieurs polices sur un même effet : rendre chaque variante isolément, les
+composer sur un même fond sombre uni les unes sous les autres avec PIL, montrer
+UN SEUL fichier de comparaison plutôt que plusieurs allers-retours.
+
+```python
+from PIL import Image
+imgs = [Image.open(f"{n}.png") for n in names]
+w, h = imgs[0].size
+canvas = Image.new("RGBA", (w, h*len(imgs)), (30,40,55,255))
+for i, im in enumerate(imgs):
+    bg = Image.new("RGBA", im.size, (30,40,55,255))
+    canvas.paste(Image.alpha_composite(bg, im), (0, i*h))
+canvas.convert("RGB").save("compare.png")
+```
+
+## Piège : ne pas mettre à l'échelle les réglages du filtre nuageux avec la police (2026-08-12)
+
+En doublant la taille du titre FUJI, doubler aussi `scale` et `stdDeviation` du
+filtre (7→12, 1,6→2,4) a fait fondre les lettres en blob lisse, sans grain :
+les grosses valeurs de `scale` courbent le trait entier au lieu d'ajouter du
+grain fin. **`scale` et `stdDeviation` sont des pixels absolus, pas des
+proportions de la police.** Garder les mêmes valeurs absolues quel que soit
+l'agrandissement du texte ; à police plus grande, le même grain en pixels lit
+même plus fin relativement, ce qui est l'effet recherché.
+
+## Le carton titre « brume », d'après la référence CUBA / VIÑALES (2026-08-12)
+
+Traitement de titre pour une photo de voyage ou de paysage. Une grotesque très
+grasse, blanche, dont les bords ne sont pas nets mais légèrement mangés, comme
+imprimés dans la brume. Matthieu l'a identifié en une phrase : « c'est Anthropic
+Sans avec un effet doux nuageux ».
+
+Structure du bloc, en trois assets empilés et centrés :
+
+```
+▲  3776M          asset 1, meta, très interlettré
+FUJI              asset 2, le mot, énorme
+KENGAMINE         asset 3, meta, très interlettré
+```
+
+Le mot principal est le lieu large, la ligne du bas le point précis, comme CUBA
+puis VIÑALES. La ligne du haut porte l'altitude, qui est un chiffre de coût au
+sens de la règle des chiffres du skill social : elle mesure l'effort, elle reste.
+
+**L'effet, trois couches dans cet ordre**, fichier `_cloudy.css` du projet Fuji
+à recopier :
+
+1. `feTurbulence` en `fractalNoise` plus `feDisplacementMap` : ronge le contour
+   de façon organique. C'est ce qui donne le grain. Un simple flou ne produit
+   pas cela, il ramollit sans texturer.
+2. `feGaussianBlur` très léger, 0,4 à 0,7 : adoucit ce que le déplacement a
+   rendu trop dentelé.
+3. `drop-shadow` blanche large et diffuse : le halo de brume, qui détache le
+   texte d'un fond photo sans le cerner d'un trait.
+
+Réglages qui tiennent, mesurés le 2026-08-12 sur la référence CUBA / VIÑALES :
+`baseFrequency` à 0,013 (plus bas que la première tentative à 0,022, qui donnait
+un grain trop fin et un bord pas assez cotonneux), `scale` à 7 sur le très gros
+titre, 3,2 sur les lignes secondaires, `feGaussianBlur` à 1,6 et 0,9
+respectivement. Le halo se double : un `drop-shadow` serré et un second, large et
+très diffus, pour la brume plutôt qu'un simple contour flouté.
+
+Les lignes secondaires (élévation, sous-titre) veulent une taille bien plus
+grande qu'il n'y paraît : 100 à 104px sur un asset de 260px de haut, pas 44px.
+Trop petites, elles se lisent comme une légende technique plutôt que comme un
+élément du carton titre, défaut vu et corrigé le 2026-08-12.
+
+Le filtre SVG se déclare dans le corps du fichier, en `width="0" height="0"`, et
+s'applique par `filter: url(#cloud)`. Il faut le redéclarer dans CHAQUE fichier
+d'asset : un filtre SVG ne traverse pas les documents.
+
+Graisses : `AnthropicSans-Black` pour le mot, `AnthropicSans-Medium` avec
+`letter-spacing: 0.42em` pour les lignes secondaires.
+
+**Vérifier un asset blanc sur transparent en le compositant sur du sombre**,
+sinon on ne juge rien :
+
+```python
+from PIL import Image
+fg = Image.open('2-title-place.png')
+bg = Image.new('RGBA', fg.size, (40,55,75,255))
+Image.alpha_composite(bg, fg).convert('RGB').save('/tmp/check.png')
+```
+
+## Poser un titre sur une photo pleine page
+
+Le voile de lisibilité se fait en deux dégradés superposés, jamais en un
+assombrissement uniforme qui écraserait la photo :
+
+```css
+background:
+  radial-gradient(ellipse at 50% 48%, rgba(0,0,0,.42) 0%, rgba(0,0,0,.10) 55%, rgba(0,0,0,0) 75%),
+  linear-gradient(180deg, rgba(0,0,0,.22) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 70%, rgba(0,0,0,.30) 100%);
+```
+
+Le radial creuse juste sous le bloc titre, le linéaire tient le haut et le bas.
+La photo garde ses couleurs partout ailleurs.
+
+`object-position` recadre la photo dans le cadre 4:5 sans la déformer. Sur une
+image 16:9 posée en portrait, c'est ce réglage qui décide de ce qu'on garde.
+
+## Trois lois de sortie, valables pour TOUT visuel (2026-08-23)
+
+**PARTIR DE L'EXISTANT, ne jamais réinventer.** Quand un article existe déjà, ses visuels et son
+texte sont la matière première : on les réutilise, on ne fabrique rien de neuf. Chercher dans
+`Memory/**/Posts/` et dans `public/projects/<slug>/` AVANT d'ouvrir un éditeur. Inventer un visuel
+quand l'article en porte un est du temps perdu deux fois, à la fabrication puis à la divergence.
+
+**UN SEUL DOSSIER `assets/`, et il ne contient que ce qui se poste.** Les fichiers de travail,
+HTML de cuisson, palettes, rendus intermédiaires, vivent ailleurs, par exemple dans
+`carrousel/html/`. Chercher un asset dans trois dossiers coûte plus cher que la propriété du
+rangement, et un HTML de 8 Mo posé au milieu des images fait échouer le contrôle de poids sur un
+fichier qui n'aurait jamais dû s'y trouver.
+
+**SYSTÉMATIQUEMENT les deux formats, MP4 et GIF, chacun sous 8 Mo.** LinkedIn et Instagram
+n'acceptent pas les mêmes choses : Instagram refuse le GIF dans un carrousel et veut du MP4,
+LinkedIn avale le GIF qui s'anime tout seul dans le fil. Livrer les deux supprime la question.
+
+```bash
+# MP4 vers GIF, palette calculee sur la sequence entiere sinon ca fourmille.
+ffmpeg -y -i in.mp4 -vf "fps=20,scale=900:-2:flags=lanczos,palettegen=stats_mode=diff" pal.png
+ffmpeg -y -i in.mp4 -i pal.png \
+  -lavfi "fps=20,scale=900:-2:flags=lanczos[x];[x][1:v]paletteuse=dither=bayer:bayer_scale=3:diff_mode=rectangle" \
+  out.gif
+```
+
+La largeur est le seul levier de poids qui ne dégrade pas le mouvement : 900 px rend 1,7 à 2,9 Mo
+pour quatre à six secondes. Si ça dépasse, baisser la largeur avant de toucher au nombre d'images.
+
+**Les noms restent courts et numérotés**, `mocap1.mp4`, `mocap1.gif`, `mocap2.mp4`. Pas de
+`video-retarget-loop.mp4` : un nom qui décrit le contenu vieillit mal et se retape mal.
+
+**Le contrôle avant de rendre la main :**
+
+```bash
+python3 -c "
+import glob,os
+f=glob.glob('assets/*'); m=max(f,key=os.path.getsize)
+print(os.path.basename(m), round(os.path.getsize(m)/1048576,2),'Mo',
+      'VERT' if os.path.getsize(m)<8*1048576 else 'ROUGE')"
+```
+
+## Préréglage « article en carrousel », validé le 2026-08-23
+
+**Le geste, et il fait gagner une heure.** Pour transformer un article déjà publié en carrousel, on
+ne redessine RIEN : on lit les blocs de son JSON et on leur applique les styles du site, puis on
+pagine en 1080x1350. Une page est une TRANCHE de l'article, jamais une reformulation, si bien
+qu'aucun texte ne peut diverger entre la page web et le carrousel.
+
+Implémentation de référence, à copier telle quelle :
+`Memory/ZenRayShards/Posts/2026-08-23-metahuman-markerless-macos/carrousel/pages.py` et son
+`_pages.json`.
+
+**Le découpage se déclare par index de blocs**, ce qui rend une reprise triviale :
+
+```json
+{ "id": "06", "blocs": [23, 24, 25, 26, 27, 28] }
+```
+
+**La taille du corps se CHERCHE, elle ne se devine pas.** Sans `tailleTexte`, le script fait une
+dichotomie entre un minimum et un maximum pour trouver la plus grande valeur qui tient. Une page à
+moitié vide et une page tronquée sont deux défauts symétriques ; cette recherche supprime les deux
+et évite les allers-retours de réglage.
+
+**Trois pièges payés le 23 août, à ne jamais rejouer.**
+
+`overflow: hidden` coupe le contenu SANS RIEN DIRE, et c'est ainsi qu'un gif a disparu d'une page.
+Le script fait donc écrire à la page sa propre hauteur dans son `<title>`, que `--dump-dom` rend, et
+sort en code 3 si ça déborde.
+
+**Mesurer la hauteur sans libérer `body.style.height` ne mesure rien.** On lit alors la hauteur
+IMPOSÉE au cadre, donc toujours 1350, ce qui détecte le débordement mais ne dit jamais combien de
+place reste. Il faut passer `height:auto` sur `body` et `documentElement` avant de lire
+`scrollHeight`.
+
+**Chrome capture en 1x par défaut**, ce qui sort un texte pixellisé sur un écran de téléphone.
+`--force-device-scale-factor=2` rend en 2160x2700, la définition attendue par Instagram.
+
+**Deux contraintes de plateforme mesurées.** Instagram plafonne à 8 Mo par fichier et à 20 éléments
+par carrousel : un article de 97 blocs se réduit donc à une dizaine de pages, la colonne vertébrale
+et rien d'autre. Et **Instagram refuse les gifs dans un carrousel**, d'où une conversion en MP4
+cadré au même 1080x1350 que les pages, pour ne pas mélanger deux ratios.
+
+**Les polices viennent du serveur local**, donc `npm run build` et le serveur du site doivent
+tourner pendant la cuisson, sinon le rendu retombe silencieusement sur une police système.
+
+## Couper une image large en deux slides de carrousel qui se prolongent
+
+Quand une photo 16:9 est trop large pour qu'un seul recadrage 4:5 rende justice
+au sujet, la couper en deux tuiles verticales devient un carrousel Instagram
+qui semble continuer d'une image à l'autre. Chaque tuile reçoit une marge
+blanche, mais une seule règle décide où elle se pose : la marge marque un bord
+de cadre partout SAUF sur la couture, là où les deux tuiles doivent sembler se
+prolonger l'une dans l'autre. Concrètement, la tuile de gauche porte sa marge
+sur son bord vrai gauche (le bord extérieur du diptyque) plus haut et bas, rien
+sur son bord droit ; la tuile de droite fait l'inverse, marge à droite plus
+haut et bas, rien à gauche. C'est l'image qui doit paraître amorcée dès le bord
+extérieur et filer sans butée jusqu'à l'autre tuile, pas l'inverse.
+
+Incident payé le 2026-08-12 : la première version posait le raisonnement à
+l'envers, marge sur la couture et rien sur les bords extérieurs vrais, ce qui
+enferme chaque tuile dans son propre cadre au lieu de les relier. `t'as inversé
+le liserai le sens` a suffi à le dire. Avant de conclure, vérifier au pixel
+plutôt qu'à l'œil, avec `ImageOps.expand(crop, border=(gauche, haut, droite,
+bas), fill="white")` où l'ordre du tuple compte, puis un scan de la première
+colonne blanche depuis chaque bord des deux tuiles pour confirmer que la
+couture est bien la seule sans marge :
+
+```python
+from PIL import Image, ImageOps
+BORDER = 40  # pas 100 : un liseré de continuité reste discret
+
+left_tile  = ImageOps.expand(left_crop,  border=(BORDER, BORDER, 0, BORDER), fill="white")
+right_tile = ImageOps.expand(right_crop, border=(0, BORDER, BORDER, BORDER), fill="white")
+```
+
+Largeur du liseré : rester léger, de l'ordre de 1 à 1,5% de la largeur de la
+tuile. 100px sur une tuile de 3556px (2,8%) lit comme un cadre épais et non
+comme un simple liseré ; 40px passe.
+
