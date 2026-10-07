@@ -1,0 +1,39 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "mode": "heavy",
+      "checks": [
+        "draft exact",
+        "three current actions",
+        "unicode and repetition preserved",
+        "reload preserved",
+        "no injection",
+        "overflow not cut",
+        "independent formats",
+        "copy post",
+        "copy parameters with full post",
+        "mode switch",
+        "offline export visibly disabled",
+        "mobile fits"
+      ]
+    },
+    {
+      "mode": "light",
+      "checks": [
+        "draft exact",
+        "three current actions",
+        "unicode and repetition preserved",
+        "reload preserved",
+        "no injection",
+        "overflow not cut",
+        "independent formats",
+        "copy post",
+        "copy parameters with full post",
+        "mode switch",
+        "offline export visibly disabled",
+        "mobile fits"
+      ]
+    }
+  ]
+}

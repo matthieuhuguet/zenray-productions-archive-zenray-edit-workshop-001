@@ -1,0 +1,6 @@
+{
+  "ok": true,
+  "positiveAttestedFiles": 148,
+  "negativeExitCode": 1,
+  "negativeError": "AssertionError: Current bundle changed: scripts/RenderComposition.cjs"
+}

@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "instanceHttp": 200,
+  "exportEnabled": true,
+  "capabilities": {
+    "enregistrer": true,
+    "cuire": true,
+    "discard": true,
+    "restore": true,
+    "cook": "photo-apply.py"
+  },
+  "unrelatedFileStatus": 404
+}

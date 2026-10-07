@@ -1,0 +1,109 @@
+{
+  "ok": true,
+  "results": [
+    {
+      "directory": "/Users/zenray/.claude/tmp/tmp-zenray-edit/HeavyFixture",
+      "theme": "light",
+      "metrics": {
+        "fontSize": "13px",
+        "fontFamily": "InterVariable, \"Hiragino Sans W4\", \"Hiragino Sans\", sans-serif",
+        "weight": "400",
+        "glass": "linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(226, 230, 235, 0.54))",
+        "filter": "blur(27px) saturate(1.69)",
+        "panel": "rgba(0, 0, 0, 0)",
+        "color": "rgba(25, 27, 31, 0.92)",
+        "buttonColor": "rgba(25, 27, 31, 0.92)",
+        "viewport": 1728,
+        "ratio": 2,
+        "width": 378,
+        "height": 473
+      },
+      "renderedFonts": [
+        {
+          "familyName": "Inter Variable",
+          "postScriptName": "InterVariable",
+          "isCustomFont": true,
+          "glyphCount": 11
+        }
+      ]
+    },
+    {
+      "directory": "/Users/zenray/.claude/tmp/tmp-zenray-edit/HeavyFixture",
+      "theme": "dark",
+      "metrics": {
+        "fontSize": "13px",
+        "fontFamily": "InterVariable, \"Hiragino Sans W4\", \"Hiragino Sans\", sans-serif",
+        "weight": "400",
+        "glass": "linear-gradient(135deg, rgba(255, 255, 255, 0.133), rgba(255, 255, 255, 0.043))",
+        "filter": "blur(27px) saturate(1.69)",
+        "panel": "rgba(0, 0, 0, 0)",
+        "color": "rgb(255, 255, 255)",
+        "buttonColor": "rgba(25, 27, 31, 0.92)",
+        "viewport": 1728,
+        "ratio": 2,
+        "width": 378,
+        "height": 473
+      },
+      "renderedFonts": [
+        {
+          "familyName": "Inter Variable",
+          "postScriptName": "InterVariable",
+          "isCustomFont": true,
+          "glyphCount": 11
+        }
+      ]
+    },
+    {
+      "directory": "/Users/zenray/.claude/tmp/tmp-zenray-edit/PreservationFixture",
+      "theme": "light",
+      "metrics": {
+        "fontSize": "13px",
+        "fontFamily": "InterVariable, \"Hiragino Sans W4\", \"Hiragino Sans\", sans-serif",
+        "weight": "400",
+        "glass": "linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(226, 230, 235, 0.54))",
+        "filter": "blur(27px) saturate(1.69)",
+        "panel": "rgba(0, 0, 0, 0)",
+        "color": "rgba(25, 27, 31, 0.92)",
+        "buttonColor": "rgba(25, 27, 31, 0.92)",
+        "viewport": 1728,
+        "ratio": 2,
+        "width": 378,
+        "height": 473
+      },
+      "renderedFonts": [
+        {
+          "familyName": "Inter Variable",
+          "postScriptName": "InterVariable",
+          "isCustomFont": true,
+          "glyphCount": 11
+        }
+      ]
+    },
+    {
+      "directory": "/Users/zenray/.claude/tmp/tmp-zenray-edit/PreservationFixture",
+      "theme": "dark",
+      "metrics": {
+        "fontSize": "13px",
+        "fontFamily": "InterVariable, \"Hiragino Sans W4\", \"Hiragino Sans\", sans-serif",
+        "weight": "400",
+        "glass": "linear-gradient(135deg, rgba(255, 255, 255, 0.133), rgba(255, 255, 255, 0.043))",
+        "filter": "blur(27px) saturate(1.69)",
+        "panel": "rgba(0, 0, 0, 0)",
+        "color": "rgb(255, 255, 255)",
+        "buttonColor": "rgba(25, 27, 31, 0.92)",
+        "viewport": 1728,
+        "ratio": 2,
+        "width": 378,
+        "height": 473
+      },
+      "renderedFonts": [
+        {
+          "familyName": "Inter Variable",
+          "postScriptName": "InterVariable",
+          "isCustomFont": true,
+          "glyphCount": 11
+        }
+      ]
+    }
+  ]
+}
