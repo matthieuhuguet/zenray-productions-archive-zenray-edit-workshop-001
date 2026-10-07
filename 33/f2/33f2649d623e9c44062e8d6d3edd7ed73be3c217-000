@@ -1,0 +1,762 @@
+{
+  "createdAt": "2026-10-07T21:37:57.910503+00:00",
+  "projectId": "zenray-edit",
+  "archive": "ZenRayEditSkillFinal-7October2026.tar.gz",
+  "archiveBytes": 148787688,
+  "archiveSha256": "239de92c9ec725d2e8573e3921f7d58e235650d01171676a275d6011c743c8bb",
+  "regularFileCount": 150,
+  "manifestAttestedSkillFiles": 148,
+  "manifestSha256": "1830adbe5b6b5f0fca571644c864491c55ff6454eb8ccfa2ccdbba94859d85ab",
+  "files": [
+    {
+      "path": "skills/edit-text/SKILL.md",
+      "sha256": "6499724a253d2f0d0706e8b3cd73c74771628197f2418002bd54c7ab30848f7b",
+      "bytes": 836
+    },
+    {
+      "path": "skills/zenray-edit/.gitignore",
+      "sha256": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+      "bytes": 19
+    },
+    {
+      "path": "skills/zenray-edit/BundleManifest.json",
+      "sha256": "1830adbe5b6b5f0fca571644c864491c55ff6454eb8ccfa2ccdbba94859d85ab",
+      "bytes": 17346
+    },
+    {
+      "path": "skills/zenray-edit/SKILL.md",
+      "sha256": "1b49290d28ca024f99070b51df15a84d831481679174fbc1e5b509da15488571",
+      "bytes": 4418
+    },
+    {
+      "path": "skills/zenray-edit/ZENRAY-HTML-HDA STUDIO \u00b7 tmp-selection1/01.jpg",
+      "sha256": "3e9572638a8db0ad248d5d8afa8ff2ab657b70f43f25a4ce62a1b7db7521bcc3",
+      "bytes": 5096647
+    },
+    {
+      "path": "skills/zenray-edit/ZENRAY-HTML-HDA STUDIO \u00b7 tmp-selection1/02.jpg",
+      "sha256": "6810ab6c9c162cfe746d8ae83dce1ff44db480bd0aea3ecdbf07764ade6aeca5",
+      "bytes": 3409377
+    },
+    {
+      "path": "skills/zenray-edit/ZENRAY-HTML-HDA STUDIO \u00b7 tmp-selection1/03.jpg",
+      "sha256": "14ebaef30451bc3ca2271fe04e6189b2db4b943c484813c826286f794da7ce20",
+      "bytes": 2746713
+    },
+    {
+      "path": "skills/zenray-edit/ZENRAY-HTML-HDA STUDIO \u00b7 tmp-selection1/04.jpg",
+      "sha256": "c6bd83cd135ef3ef1942a792bd836ee8102bf76af37daf709a7fabdc3e5faa9f",
+      "bytes": 3374716
+    },
+    {
+      "path": "skills/zenray-edit/ZENRAY-HTML-HDA STUDIO \u00b7 tmp-selection1/05.jpg",
+      "sha256": "19ff7b117952b13dec076e852b2e7178f7b0d6c24c1771c1d3d780f564389e7a",
+      "bytes": 3792485
+    },
+    {
+      "path": "skills/zenray-edit/ZENRAY-HTML-HDA STUDIO \u00b7 tmp-selection1/06.jpg",
+      "sha256": "fb97132558334a94705eec98407c603470799435799628df5ae6dffb8fcdfd50",
+      "bytes": 3864849
+    },
+    {
+      "path": "skills/zenray-edit/ZENRAY-HTML-HDA STUDIO \u00b7 tmp-selection1/07.jpg",
+      "sha256": "e978dec8fc7a23f36c2be6c5f12daa4d41d22f772fb84391dff8069f99b19a39",
+      "bytes": 2921952
+    },
+    {
+      "path": "skills/zenray-edit/ZENRAY-HTML-HDA STUDIO \u00b7 tmp-selection1/08.jpg",
+      "sha256": "974ca6d7199636a7f3f7fb520be0270ab11673f6542661ae89b665824b6a8505",
+      "bytes": 3452763
+    },
+    {
+      "path": "skills/zenray-edit/ZENRAY-HTML-HDA STUDIO \u00b7 tmp-selection1/09.jpg",
+      "sha256": "8d2f3f6ab523ec085fa3d5011941e61f033005de2c49ade85b76ca8879e08945",
+      "bytes": 3207453
+    },
+    {
+      "path": "skills/zenray-edit/ZENRAY-HTML-HDA STUDIO \u00b7 tmp-selection1/10.jpg",
+      "sha256": "7fb130ca0e398672fd44fe13c6cb96a595d6fa208ec2eae02968e00610ff41be",
+      "bytes": 3115736
+    },
+    {
+      "path": "skills/zenray-edit/ZENRAY-HTML-HDA STUDIO \u00b7 tmp-selection1/11.jpg",
+      "sha256": "4a92d1ec068a71d6a489ab0d63497684a96a3d788c2c502bba6479143e5e2592",
+      "bytes": 3504335
+    },
+    {
+      "path": "skills/zenray-edit/ZENRAY-HTML-HDA STUDIO \u00b7 tmp-selection1/12.jpg",
+      "sha256": "6481be81b23b5e0e455d9ef699b3352c9b339b6527413bd2d304a17957391b28",
+      "bytes": 3398225
+    },
+    {
+      "path": "skills/zenray-edit/ZENRAY-HTML-HDA STUDIO \u00b7 tmp-selection1/13.jpg",
+      "sha256": "94c8821d12d89c319af78191c359626f80dc5328a8e58aa51d90e539a6481baa",
+      "bytes": 3681491
+    },
+    {
+      "path": "skills/zenray-edit/assets/photo-controls/zr-photo-adjustments.css",
+      "sha256": "02c10410642c657447f4fc0e0d30d4b52ec3053664bb2235c8437b7edb7f34a2",
+      "bytes": 3633
+    },
+    {
+      "path": "skills/zenray-edit/assets/photo-controls/zr-photo-adjustments.js",
+      "sha256": "9d405a5efabc63a79f1290045a8b7745144293f68ddbdabd2d667f27ce0f4ee6",
+      "bytes": 12739
+    },
+    {
+      "path": "skills/zenray-edit/assets/post-editor/InterVariable.woff2",
+      "sha256": "693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3",
+      "bytes": 352240
+    },
+    {
+      "path": "skills/zenray-edit/assets/post-editor/zr-post-editor.css",
+      "sha256": "94f27f9e309e0f5d4dc309896daeb19abacc84c79542bcf91a56bb07fc01cc49",
+      "bytes": 4558
+    },
+    {
+      "path": "skills/zenray-edit/assets/post-editor/zr-post-editor.js",
+      "sha256": "1a1ec6d85d5a00298539dc2920e1731ce2504cf9a3f0f8f928aeddc02f2729c2",
+      "bytes": 7265
+    },
+    {
+      "path": "skills/zenray-edit/assets/ui/AnthropicMono.woff2",
+      "sha256": "52026ce8594c447bc808a4aeec92563ab62d403bc65184924373d699a5e161a8",
+      "bytes": 41636
+    },
+    {
+      "path": "skills/zenray-edit/assets/ui/AnthropicSerif-Romans.woff2",
+      "sha256": "5868d251589c8c465ccc0120dc6981bdc4b6fb58b91c1147917f551e23913c46",
+      "bytes": 240848
+    },
+    {
+      "path": "skills/zenray-edit/assets/ui/Inter-LICENSE.txt",
+      "sha256": "262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a",
+      "bytes": 4380
+    },
+    {
+      "path": "skills/zenray-edit/assets/ui/InterVariable.woff2",
+      "sha256": "693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3",
+      "bytes": 352240
+    },
+    {
+      "path": "skills/zenray-edit/assets/ui/fond.webp",
+      "sha256": "d943cf35ef5ca01c2c17e7b18daecd423d9608de10a6d50a640b8d2a91de319f",
+      "bytes": 107962
+    },
+    {
+      "path": "skills/zenray-edit/assets/ui/fonts.css",
+      "sha256": "18863f625a61eae56ec38d2f057b1e63dbb721781a2605d312e4f3df7fbf6362",
+      "bytes": 766
+    },
+    {
+      "path": "skills/zenray-edit/assets/ui/zr-save.js",
+      "sha256": "d5b2ae9e5bc1ab57cf4e18b395516262e1164c8eaeba8a6494b702a669852a1c",
+      "bytes": 6290
+    },
+    {
+      "path": "skills/zenray-edit/assets/ui/zr-ui.css",
+      "sha256": "4a38ff36cc0f990e094e79cc48c25b6e59ade3e132d35cf694cdf7d48580c7bf",
+      "bytes": 13228
+    },
+    {
+      "path": "skills/zenray-edit/assets/ui/zr-ui.js",
+      "sha256": "c6c56acb323248f5a9fa85183cd2ce0f90dc9161b042fef96cff91750e549e78",
+      "bytes": 2217
+    },
+    {
+      "path": "skills/zenray-edit/fontbook.html",
+      "sha256": "556331058cc893faf68052ab2cd5a46febdc2b845c316dc547e8b83f2f268a44",
+      "bytes": 83451
+    },
+    {
+      "path": "skills/zenray-edit/instances/INDEX.md",
+      "sha256": "8cefba5929910488c68a26064de020cb57c1f8c0d4634131a7ff27e7c8026429",
+      "bytes": 5943
+    },
+    {
+      "path": "skills/zenray-edit/references/ActiveContract.md",
+      "sha256": "a4e540381600ae77696c42badeba53f2a6021e891705273cddc6e1f4dd5adee6",
+      "bytes": 2892
+    },
+    {
+      "path": "skills/zenray-edit/references/INDEX.md",
+      "sha256": "6261f29d45397cd57a2964688c31966e0202407dca4a280d01ee9cc0613e4145",
+      "bytes": 1403
+    },
+    {
+      "path": "skills/zenray-edit/references/Routes.json",
+      "sha256": "b0eb305329e13116e99b92facc69ed5f90c8bf9f93ead8bfff14165113cc6c1c",
+      "bytes": 2318
+    },
+    {
+      "path": "skills/zenray-edit/references/TextEditing.md",
+      "sha256": "24679afbb77099573f90a36686ae1d3c306e77a9ff12a209ad156326e64986b9",
+      "bytes": 1295
+    },
+    {
+      "path": "skills/zenray-edit/references/fusion-sources/manifest.json",
+      "sha256": "097c66e2880b9d953dafc6637a87b7fb501a4d7a16a63c579edcb97529fe68ac",
+      "bytes": 2794
+    },
+    {
+      "path": "skills/zenray-edit/references/fusion-sources/originaux.tar.gz",
+      "sha256": "142e6b5b8f13cfee765d248147602f80ded2b46faca2c60ca8fcd5153bee19de",
+      "bytes": 172536
+    },
+    {
+      "path": "skills/zenray-edit/references/fusion-sources/post-vignette.md",
+      "sha256": "43ac9158bf67bca3724bf6379d4a59eeaa52a89a1372136e4d81bc1ecb01fe2f",
+      "bytes": 7345
+    },
+    {
+      "path": "skills/zenray-edit/references/fusion-sources/zenray-html-photoshop-pdf-hda.md",
+      "sha256": "4d177a3cb777e604a32cd714dc97f8ad0c7cccefce8348b9934bf41fd170b40b",
+      "bytes": 232636
+    },
+    {
+      "path": "skills/zenray-edit/references/fusion-sources/zenray-social-media.md",
+      "sha256": "695caff5159aaa2816d7bc81853cf316bbf082c8c65a3eec92ba5fcded9969e5",
+      "bytes": 17351
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/CompositionFoundation.md",
+      "sha256": "0e84a5f5b15ed52533fc3842fe8c36c8f82cf25bac3ad1d1b1a76b7232f69f28",
+      "bytes": 29789
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/CompositionRecipes.md",
+      "sha256": "d1d778a3d7ca18135124e2afd306da71be604f6128f7ad9cf85d6c6455f358c5",
+      "bytes": 23011
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/DesignLibrary.md",
+      "sha256": "d737997207fde8502adccde3957e66f30559e120bbb4896383edf11da286f57f",
+      "bytes": 5103
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/EditText.md",
+      "sha256": "7446d6a484b2781bde914a1b29793cab709d7fea0aefa34f4ffabaf88d5e0547",
+      "bytes": 8220
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/EditorCorrections.md",
+      "sha256": "6ab52337395771e25ca99c78d48488c9ce1819796ced2707f7fbc4c882762271",
+      "bytes": 29685
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/NativeUiReference.md",
+      "sha256": "b8a1cd03531998d47a375230429c13e9bed6a8ff0104a6b8e971ae46e4a6411f",
+      "bytes": 58262
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/OriginalBundle.tar.gz",
+      "sha256": "4f2bf3f3f5ab42c5d3c62a78dd35300c2b05cc7c9be45ce685a455ce9ea36192",
+      "bytes": 51494633
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/OriginalBundleManifest.json",
+      "sha256": "109474aeabf6dae46f688507e0d0e744a8e118538958ab584d96c67f1c0963c7",
+      "bytes": 13493
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/OriginalSkill.md",
+      "sha256": "575fa9b2c2ff5658de296f649c8d86061928d5269db84e83abc9cba6bc01caa4",
+      "bytes": 341525
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/ParameterPanels.md",
+      "sha256": "39517e2ebc1a59bd06e69c54686ccbc872d2388f42639146ae6b8372de4b177b",
+      "bytes": 27173
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/PdfEditing.md",
+      "sha256": "0914f973c0e04c0ab3d909d098722811f7ff11612ad55814f521c5d7391bdfb5",
+      "bytes": 14427
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/PhotoWorkflow.md",
+      "sha256": "5ade2fe87a84e00b131dd18d82f531f5c41790f97627aa38c673986488b89ab2",
+      "bytes": 83294
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/PostEditorContract.md",
+      "sha256": "8cd5aef29ec1c910351805e7dfe07d77403490c1609d3c05f59a18016f4e0dc7",
+      "bytes": 14403
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/ShortsCorrections.md",
+      "sha256": "93b3abe0130a5df233556ba633f6ba59ca4ef41279d69bda53952ad68b632c07",
+      "bytes": 9803
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/ShortsPipeline.md",
+      "sha256": "d1f44ae23c8db25b81dd3338a9a8d0e5657a0a79ca1052ed7a7f7d96e205865a",
+      "bytes": 15059
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/SocialText.md",
+      "sha256": "bd9cd82de03ceb74d7282c65cc62166ab2d90c226321a9abce2e1771a5954971",
+      "bytes": 17436
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/StudioLibrary.md",
+      "sha256": "6a28fec826456d7f77af2f78c621a7ecdfc8ef69d23cc79920895975e2533d0d",
+      "bytes": 1241
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/UiContract.md",
+      "sha256": "b3985ca5c03ff7262133b54663ae006683b8e5cc3f2154858d28393a3fa1e7ad",
+      "bytes": 5462
+    },
+    {
+      "path": "skills/zenray-edit/references/legacy/VignetteWorkflow.md",
+      "sha256": "c03088f6cb51c90dff8cf18a3d02fd8d1802ece74dc114ff60a1bbdd67f0ffa2",
+      "bytes": 7377
+    },
+    {
+      "path": "skills/zenray-edit/references/post-editor.md",
+      "sha256": "6b66082cc5e8c27c2cf0f287cd5c497c9ec0e66c902186ef77ff9d9f2c6907f9",
+      "bytes": 4420
+    },
+    {
+      "path": "skills/zenray-edit/references/template-creator.md",
+      "sha256": "b3308d5acebe5efd929269d777ea76cd822bf496b91bf58d564b55910fcd118f",
+      "bytes": 7997
+    },
+    {
+      "path": "skills/zenray-edit/scripts/CheckContract.py",
+      "sha256": "de040184ba4bc915d93d9ac6f09b8e0e22014f72ed5224f4d246b7c00800dfd4",
+      "bytes": 2897
+    },
+    {
+      "path": "skills/zenray-edit/scripts/RecordBundle.py",
+      "sha256": "20c87ee33c78cfab8fcb7a2f22d5ba360b04c7c329d46c47a751bced59ff11ba",
+      "bytes": 1027
+    },
+    {
+      "path": "skills/zenray-edit/scripts/RenderComposition.cjs",
+      "sha256": "36a60350758959ee2b0f1fc61c8591f3738ef6d9a8fed1d00a5209b6619b6006",
+      "bytes": 6194
+    },
+    {
+      "path": "skills/zenray-edit/scripts/build-fontbook.sh",
+      "sha256": "c40a046a75b91e84723d706a522a310c5a433765b64e4ed2d457412e2445fa25",
+      "bytes": 5357
+    },
+    {
+      "path": "skills/zenray-edit/scripts/index-skill.py",
+      "sha256": "aa96f13a9347ba5c8ae478d9c699be5c246be831cc1bcc9d10a6931ca2683b53",
+      "bytes": 2353
+    },
+    {
+      "path": "skills/zenray-edit/scripts/instagram_maxq.py",
+      "sha256": "fb79b2f9ea103a890cbdd4fe61dbfadea2009fa196bb5d3305b1177f3f5005d3",
+      "bytes": 3906
+    },
+    {
+      "path": "skills/zenray-edit/scripts/install-template-creator.sh",
+      "sha256": "4c5f9fe46fc9033ed5829f89dc5ceed168da58ee176e6d91d582e4c71bbdf5d2",
+      "bytes": 838
+    },
+    {
+      "path": "skills/zenray-edit/scripts/new-project.sh",
+      "sha256": "756a9a16c650112a9d670ebe320629c1e426625b9cc8fda2ae14127344e41a46",
+      "bytes": 1312
+    },
+    {
+      "path": "skills/zenray-edit/scripts/render-frames.sh",
+      "sha256": "143411ed4d74f46fd27e3b53b7bfb928b49081635b1bbc2581c0309c4fa91ac0",
+      "bytes": 1781
+    },
+    {
+      "path": "skills/zenray-edit/scripts/update-ui-instances.py",
+      "sha256": "50f711ab77106710db95feb8211bcb881d67995dcc9554b8bb3f9f1522d90e42",
+      "bytes": 3502
+    },
+    {
+      "path": "skills/zenray-edit/scripts/verify-post-editor.cjs",
+      "sha256": "7a17394ce41e4047e5cac7b950ec43333abfe74b20103107854721e72c4a2172",
+      "bytes": 4570
+    },
+    {
+      "path": "skills/zenray-edit/scripts/verify-post-instance.py",
+      "sha256": "517e9defc6ce8bb38436344171cb9eca8e08a183fca5becaff3d62fbeefbc72b",
+      "bytes": 2963
+    },
+    {
+      "path": "skills/zenray-edit/scripts/verify-ui.cjs",
+      "sha256": "04f410a3916798f6b7ae7d878c033b9819d68aaa585adc1611a2ed6731e84368",
+      "bytes": 4467
+    },
+    {
+      "path": "skills/zenray-edit/scripts/vignette.sh",
+      "sha256": "b74231e4ef440c72e2863cb500f88df539110c173e1c36e91f669c38e7b6fd96",
+      "bytes": 3001
+    },
+    {
+      "path": "skills/zenray-edit/scripts/zr-design.mjs",
+      "sha256": "7bc7d39c6c07b39bd17f15405d43a0fdfc70041a2ae3ee47b2372bce4c03264b",
+      "bytes": 3527
+    },
+    {
+      "path": "skills/zenray-edit/scripts/zr-hda-instance.py",
+      "sha256": "4c20a46f891dd10c4c1dc0388172a26bbdec9af9492df8dcc48d17e47b24f37b",
+      "bytes": 27301
+    },
+    {
+      "path": "skills/zenray-edit/templates/_canvas.css",
+      "sha256": "1698524057d0926e5964ab88f72466a6671f9716746fba0984b391e084ecaf30",
+      "bytes": 1418
+    },
+    {
+      "path": "skills/zenray-edit/templates/_cloudy.css",
+      "sha256": "6f023721e7724ebecb6db5164f052f5ef3e708650d8ac4063fd41801ed422df9",
+      "bytes": 1808
+    },
+    {
+      "path": "skills/zenray-edit/templates/designs/catalog.html",
+      "sha256": "5ed5db54427ec26dc4fe5aed1475daeb08ffe712f1c5aff59b048d7be48e9178",
+      "bytes": 6734
+    },
+    {
+      "path": "skills/zenray-edit/templates/designs/components/design-sliders-panel.html",
+      "sha256": "34018f6bb11935bbcb6449ee9afb281789c7747f7e4cf84c8ab724a354e23714",
+      "bytes": 1531
+    },
+    {
+      "path": "skills/zenray-edit/templates/designs/components/editorial-glow-stepper.html",
+      "sha256": "ed10d2a0d518319ad919a766bd3b5f6e5fd1ce34ac30e0b14c96b6cf1f1377bc",
+      "bytes": 2479
+    },
+    {
+      "path": "skills/zenray-edit/templates/designs/components/monogram-split-pill.html",
+      "sha256": "2534cc1d91e428d6f87819e3419c69074c1b7db6e916629c13a80a278c3740b4",
+      "bytes": 3192
+    },
+    {
+      "path": "skills/zenray-edit/templates/designs/components/pure-pill-liquid-glass.html",
+      "sha256": "76792f95acfd2591b4c8adf62815801bea466b85bbd948b8feba952a656de1f8",
+      "bytes": 3980
+    },
+    {
+      "path": "skills/zenray-edit/templates/designs/index.json",
+      "sha256": "45d0d746036211084db5099151cd95da197dcc8fbfa95ba491a829b76567bafc",
+      "bytes": 9298
+    },
+    {
+      "path": "skills/zenray-edit/templates/export.json",
+      "sha256": "bf0fac419d05286d277f8d6a2e4859fd8157df4aafa9bcc338817f46cee76a55",
+      "bytes": 316
+    },
+    {
+      "path": "skills/zenray-edit/templates/hda-heavy/assets/photo-controls/zr-photo-adjustments.css",
+      "sha256": "02c10410642c657447f4fc0e0d30d4b52ec3053664bb2235c8437b7edb7f34a2",
+      "bytes": 3633
+    },
+    {
+      "path": "skills/zenray-edit/templates/hda-heavy/assets/photo-controls/zr-photo-adjustments.js",
+      "sha256": "9d405a5efabc63a79f1290045a8b7745144293f68ddbdabd2d667f27ce0f4ee6",
+      "bytes": 12739
+    },
+    {
+      "path": "skills/zenray-edit/templates/hda-heavy/index.html",
+      "sha256": "9d396b6bfb033b56a16baf82444aac80bfc0edebbd78910abd2d6f02684e4736",
+      "bytes": 99529
+    },
+    {
+      "path": "skills/zenray-edit/templates/hda-heavy/photo-apply.py",
+      "sha256": "e36cd87b8419982b1ab3afeae6758fd33855ebe24ba421ab47f740d7e9eb4570",
+      "bytes": 26813
+    },
+    {
+      "path": "skills/zenray-edit/templates/hda-light/crop-apply.py",
+      "sha256": "74c1a84d0f6e4ed36d9daef88b675c696b397ec2bf70c75645be49af455b332d",
+      "bytes": 17723
+    },
+    {
+      "path": "skills/zenray-edit/templates/hda-light/index.html",
+      "sha256": "d5105760d12efa3d5c7ec3c76d3bdefa8a6ddee4950346bab94ba560972d9c30",
+      "bytes": 69441
+    },
+    {
+      "path": "skills/zenray-edit/templates/knowledge-license-roadmap/README.md",
+      "sha256": "730ed5d2fc9c0299e6e186390d6cc31e1b2105d4e33c9f7ef089c1692f8060e1",
+      "bytes": 952
+    },
+    {
+      "path": "skills/zenray-edit/templates/knowledge-license-roadmap/Scripts/build.py",
+      "sha256": "6f08bc8f3ddd15dd510805456ad450536f86f1dcb002b96cd961c21065177f09",
+      "bytes": 5909
+    },
+    {
+      "path": "skills/zenray-edit/templates/knowledge-license-roadmap/Scripts/render.cjs",
+      "sha256": "36dde6dded3a7fa2221528d160c137b9626c369c9cdd3e793079f5fd759e73d3",
+      "bytes": 2803
+    },
+    {
+      "path": "skills/zenray-edit/templates/knowledge-license-roadmap/layout.css",
+      "sha256": "cda4d1bb0a8391af971b38f1349a832bf6aafb0d4e322d03f69dc4b2539fc520",
+      "bytes": 2527
+    },
+    {
+      "path": "skills/zenray-edit/templates/knowledge-license-roadmap/tokens.css",
+      "sha256": "e963d7fafa23115202f63758bea25990c7c3bf6b7599934ad0f5901edb6f5796",
+      "bytes": 459
+    },
+    {
+      "path": "skills/zenray-edit/templates/render.sh",
+      "sha256": "ec95e7087393cf8e2d67e415bfbc09f356c45192da95eed60b90b7d8cbc82bea",
+      "bytes": 262
+    },
+    {
+      "path": "skills/zenray-edit/templates/slide-1.html",
+      "sha256": "14a07f03fed4a2e653919cae8144ec5dabad0635f5b46856530d4f83f3234bc9",
+      "bytes": 1047
+    },
+    {
+      "path": "skills/zenray-edit/templates/text-asset.html",
+      "sha256": "466609645dc44022d1ff2a7bbd0cb6fb3eedf0ebb730540063b7d9fc978f9e6b",
+      "bytes": 1376
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-assets-mockups/00-index.html",
+      "sha256": "efdfa91eec08e65cacb9953c712ad5a71a5e7dd462e7d1dd534c85ebefbfe7f3",
+      "bytes": 8230
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-assets-mockups/01-atelier.html",
+      "sha256": "ea10982bfcef51cd37af26761098abb606047c5689e92645d9b83c57bc98bf5a",
+      "bytes": 59842
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-assets-mockups/02-galerie.html",
+      "sha256": "7255ab3c91dd7092440417ff98d0846f151902e4a34cd30b2efab5994f57ddd4",
+      "bytes": 48479
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-assets-mockups/03-studio.html",
+      "sha256": "edd65ed2c609c7052dab68ab9408b9d4757d697e7860c6a5cc3369b1f1af5d87",
+      "bytes": 59541
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-assets-mockups/04-salon.html",
+      "sha256": "ff093286787b50938697f6f8174d6c89af09bc37f771ebe8e00575d8f0d0f6fd",
+      "bytes": 32158
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-assets-mockups/05-capsules-hda.html",
+      "sha256": "e652524c6f4bb481a829bad690a72d6fef79e4ae1735cf652f76549fb53a3d60",
+      "bytes": 51216
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-assets-mockups/README.md",
+      "sha256": "cfc1587ce18e51bdada8c56ada1aaaa7393933f386bc348ec6b1d09fc1c93dec",
+      "bytes": 4689
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-assets-mockups/fonts/AnthropicSerif-Italics.woff2",
+      "sha256": "243d8270b2c5f6b1fa82c542cab080a5ba96912f8bb7a3cbddb5b9b1362db0c9",
+      "bytes": 38664
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-assets-mockups/fonts/AnthropicSerif-Romans.woff2",
+      "sha256": "5868d251589c8c465ccc0120dc6981bdc4b6fb58b91c1147917f551e23913c46",
+      "bytes": 240848
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-assets-mockups/fonts/InterVariable.woff2",
+      "sha256": "693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3",
+      "bytes": 352240
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/apercu-clair.jpg",
+      "sha256": "f34859486da98abac224ffd3de108db608a768d9168a8c1ed1412e34712c15c2",
+      "bytes": 477866
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/apercu-sombre.jpg",
+      "sha256": "9fc1e9039596a6aa289d9fb3b33fe84ff09d84bd86bcdcb0fd1cecf3fd85fe4d",
+      "bytes": 464409
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/assets/01-toki-pavilion.webp",
+      "sha256": "8a032a0c2793ac519f20dcc963e348d213f48b91477b955b203d045f67c9926b",
+      "bytes": 298266
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/assets/02-bayou-church.webp",
+      "sha256": "ee92b529744a05d5c6c96babc7af1417c604da11efd8cc57967e46c6c08ba5f8",
+      "bytes": 26518
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/assets/03-rock-generator.webp",
+      "sha256": "5d42966fdb545e2bc9aa2689042dac120c5bfbb47a30c6b598732fd907558bc6",
+      "bytes": 108538
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/assets/04-cliff-material.webp",
+      "sha256": "5958d584f289595e5e44d22444c0cd7014dad2cbedebe18f71137e8cf6b5f676",
+      "bytes": 55422
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/assets/05-water-wheel.webp",
+      "sha256": "d65186a6f0c9c4e176f365dd0e25edc36dd1b626f1f3857bdd531ff70aa419d4",
+      "bytes": 54506
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/assets/06-stairs-component.webp",
+      "sha256": "2dcc33c6c024f98fadfb94ab927b78907570ac4b86ddccbff2cbef59b57842b1",
+      "bytes": 24780
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/assets/07-pampa-grass.webp",
+      "sha256": "491c70f18d3e3c5069f6f9ff1200428a0b288b540c9ba32fd2603dfc3cdae387",
+      "bytes": 75904
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/assets/08-versailles-planter.webp",
+      "sha256": "669583eae935a261d9bbf0b82a7a0bcd5406045b7abbf5fe7a3f8ad524bc6d29",
+      "bytes": 110714
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/assets/09-toki-rooftops.webp",
+      "sha256": "e682b72312327933cb4abb894a363e8abb9ff990632aa5066be595c92f3656cb",
+      "bytes": 228372
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/assets/10-scattering.webp",
+      "sha256": "23f19857d95e380ed28cdace31132b35d9986382dbc8189998f55d46ad4292cc",
+      "bytes": 97140
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/assets/11-point-vop.webp",
+      "sha256": "c4329991a7e8f66a11c2c4aabef5be3de07182f2bd04495402c1ac697dd51bf7",
+      "bytes": 70848
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/assets/12-shutters.webp",
+      "sha256": "6ccdc5ba5173a356c3807b6813f23694dc9dd85d8a8dbd3c2e8d60b152d81e32",
+      "bytes": 122752
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/fonts/AnthropicSerif-Italics.woff2",
+      "sha256": "243d8270b2c5f6b1fa82c542cab080a5ba96912f8bb7a3cbddb5b9b1362db0c9",
+      "bytes": 38664
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/fonts/AnthropicSerif-Romans.woff2",
+      "sha256": "5868d251589c8c465ccc0120dc6981bdc4b6fb58b91c1147917f551e23913c46",
+      "bytes": 240848
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/fonts/InterVariable.woff2",
+      "sha256": "693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3",
+      "bytes": 352240
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/01-maquette-portfolio/index.html",
+      "sha256": "0a9d7efc08ae6a419017dbdd454e907db9bb5ef8efa23b153a12b2e34ae2f3d1",
+      "bytes": 29853
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/02-store-final/apercu-clair.jpg",
+      "sha256": "84ab93da398376a07ff273b2c929169982d6ad0cbe3803bf49bbb0f7babbeba6",
+      "bytes": 108146
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/02-store-final/apercu-sombre.jpg",
+      "sha256": "0d649c3b2fe08691e2e91db6a324ecf2f845e7f358726b2a7ce3ac19a000170e",
+      "bytes": 105164
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/02-store-final/fonts/AnthropicSerif-Italics.woff2",
+      "sha256": "243d8270b2c5f6b1fa82c542cab080a5ba96912f8bb7a3cbddb5b9b1362db0c9",
+      "bytes": 38664
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/02-store-final/fonts/AnthropicSerif-Romans.woff2",
+      "sha256": "5868d251589c8c465ccc0120dc6981bdc4b6fb58b91c1147917f551e23913c46",
+      "bytes": 240848
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/02-store-final/fonts/InterVariable.woff2",
+      "sha256": "693b77d4f32ee9b8bfc995589b5fad5e99adf2832738661f5402f9978429a8e3",
+      "bytes": 352240
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/02-store-final/index.html",
+      "sha256": "a2935f99b4d4ff15899da766c879f8b6eb9f89bff2770417eb459668d0fab42f",
+      "bytes": 29195
+    },
+    {
+      "path": "skills/zenray-edit/templates/zenray-studio/README.md",
+      "sha256": "2c4385c26aab6d338a66ec5e33d46180d03948127fc647c4246675b122fac5e5",
+      "bytes": 3796
+    },
+    {
+      "path": "skills/zenray-edit/tmp-selection1/01.jpg",
+      "sha256": "3e9572638a8db0ad248d5d8afa8ff2ab657b70f43f25a4ce62a1b7db7521bcc3",
+      "bytes": 5096647
+    },
+    {
+      "path": "skills/zenray-edit/tmp-selection1/02.jpg",
+      "sha256": "6810ab6c9c162cfe746d8ae83dce1ff44db480bd0aea3ecdbf07764ade6aeca5",
+      "bytes": 3409377
+    },
+    {
+      "path": "skills/zenray-edit/tmp-selection1/03.jpg",
+      "sha256": "14ebaef30451bc3ca2271fe04e6189b2db4b943c484813c826286f794da7ce20",
+      "bytes": 2746713
+    },
+    {
+      "path": "skills/zenray-edit/tmp-selection1/04.jpg",
+      "sha256": "c6bd83cd135ef3ef1942a792bd836ee8102bf76af37daf709a7fabdc3e5faa9f",
+      "bytes": 3374716
+    },
+    {
+      "path": "skills/zenray-edit/tmp-selection1/05.jpg",
+      "sha256": "19ff7b117952b13dec076e852b2e7178f7b0d6c24c1771c1d3d780f564389e7a",
+      "bytes": 3792485
+    },
+    {
+      "path": "skills/zenray-edit/tmp-selection1/06.jpg",
+      "sha256": "fb97132558334a94705eec98407c603470799435799628df5ae6dffb8fcdfd50",
+      "bytes": 3864849
+    },
+    {
+      "path": "skills/zenray-edit/tmp-selection1/07.jpg",
+      "sha256": "e978dec8fc7a23f36c2be6c5f12daa4d41d22f772fb84391dff8069f99b19a39",
+      "bytes": 2921952
+    },
+    {
+      "path": "skills/zenray-edit/tmp-selection1/08.jpg",
+      "sha256": "974ca6d7199636a7f3f7fb520be0270ab11673f6542661ae89b665824b6a8505",
+      "bytes": 3452763
+    },
+    {
+      "path": "skills/zenray-edit/tmp-selection1/09.jpg",
+      "sha256": "8d2f3f6ab523ec085fa3d5011941e61f033005de2c49ade85b76ca8879e08945",
+      "bytes": 3207453
+    },
+    {
+      "path": "skills/zenray-edit/tmp-selection1/10.jpg",
+      "sha256": "7fb130ca0e398672fd44fe13c6cb96a595d6fa208ec2eae02968e00610ff41be",
+      "bytes": 3115736
+    },
+    {
+      "path": "skills/zenray-edit/tmp-selection1/11.jpg",
+      "sha256": "4a92d1ec068a71d6a489ab0d63497684a96a3d788c2c502bba6479143e5e2592",
+      "bytes": 3504335
+    },
+    {
+      "path": "skills/zenray-edit/tmp-selection1/12.jpg",
+      "sha256": "6481be81b23b5e0e455d9ef699b3352c9b339b6527413bd2d304a17957391b28",
+      "bytes": 3398225
+    },
+    {
+      "path": "skills/zenray-edit/tmp-selection1/13.jpg",
+      "sha256": "94c8821d12d89c319af78191c359626f80dc5328a8e58aa51d90e539a6481baa",
+      "bytes": 3681491
+    }
+  ]
+}
