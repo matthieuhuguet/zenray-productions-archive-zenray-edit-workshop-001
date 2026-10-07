@@ -1,0 +1,473 @@
+# Annexe conservée : copie intégrale de `design-sliders`
+
+Le texte ci-dessous est copié intégralement, sans suppression ni réécriture, depuis le skill historique `design-sliders`. Il reste conservé ici jusqu’à sa suppression différée, qui exige la validation explicite de Matthieu.
+
+---
+name: design-sliders
+description: Régler un paramètre visuel (taille de police, graisse, couleur, espacement, flou, opacité, rayon, échelle) sur N'IMPORTE QUELLE page HTML ou site, en servant la vraie page en localhost avec un panneau de curseurs et un bouton qui copie les valeurs pour le prompt. Utiliser dès que Matthieu dit qu'une chose est « trop petite », « trop grosse », « trop claire », « trop floue », « pas assez espacée », dès qu'il demande « fais un localhost rapide pour que je te renvoie la bonne valeur », dès qu'il veut tester une police ou une couleur, ou dès qu'un réglage se juge à l'œil plutôt qu'au raisonnement. Vaut pour un site en production, un composant React, un mockup, un visuel : partout où il y a du CSS. Porte aussi le mode `-text`, qui rend le texte de la page éditable en place et copie UNIQUEMENT le diff des blocs modifiés : utiliser dès que Matthieu veut relire et corriger un article, une page ou une leçon lui-même, dès qu'il dit « je vais te faire les modifs », « laisse-moi éditer », « ouvre-moi ça que je corrige », ou dès qu'un texte se juge en le lisant en page plutôt qu'en le décrivant dans le chat.
+---
+
+# Régler à l'œil, avec des curseurs
+
+## Le problème que ça supprime
+
+Matthieu dit « ce titre est trop petit et celui-là beaucoup trop gros ». Sans curseurs,
+la boucle est : je devine une valeur, je build, il regarde, il redit « encore un peu »,
+je redevine. Trois à cinq allers-retours pour un nombre.
+
+Avec curseurs : je sers la page une fois, il tourne le bouton pendant dix secondes, il
+colle `--titre: 22px; --sous-titre: 15px;` dans le prompt. Un aller-retour, et la valeur
+est la sienne, pas mon approximation.
+
+**Son mot, le 2026-08-20 :** « les sliders SONT VRAIMENT un ajout ultra intelligent ».
+
+## Quand déclencher, sans attendre qu'il le demande
+
+Dès qu'un paramètre se juge **à l'œil** et non au raisonnement : taille et graisse de
+police, couleur, opacité, luminosité, flou, espacement, rayon, échelle, durée d'animation,
+position d'un calque. Si je m'apprête à écrire un nombre en espérant qu'il tombe juste,
+c'est le signal.
+
+Ne PAS déclencher pour ce qui se déduit : une correction de bug, une valeur imposée par une
+contrainte (un breakpoint, une limite d'API), ou un réglage que le projet a déjà tranché
+dans ses jetons.
+
+## Ce que c'est, en une phrase
+
+La loi HDA appliquée au moment du design. Dans Houdini, un HDA n'est pas seulement un
+réseau propre : c'est un réseau dont les paramètres sont **exposés sur un panneau** pour
+que l'artiste tourne les boutons lui-même. Une page sans curseurs viole la même règle qu'un
+code truffé de valeurs en dur.
+
+La loi générale vit dans `~/.claude/CLAUDE.md`, bannière « TOUT MOCKUP DESIGN PORTE SES
+CURSEURS », qui fait foi. Ce skill en est le mode d'emploi opérationnel.
+
+## Les quatre règles
+
+1. **Un curseur n'écrit QUE des variables CSS d'un `:root`.** Jamais un style sur un
+   élément. Sinon on fabrique un HDA à dix instances non reliées, et la valeur trouvée ne
+   se reporte nulle part.
+2. **Servir la VRAIE page, pas un mockup à part**, quand la page existe. Le contexte réel
+   (contenu, polices, composants voisins) est déjà là, et c'est lui qui fait qu'un 22px
+   paraît juste ou non. Un mockup séparé n'a de sens que si la page n'existe pas encore.
+3. **Le panneau ne part jamais en production.** Il vit derrière un garde explicite, dans un
+   fichier de `Design/`, ou il se retire avant le déploiement.
+4. **Un effet coûteux se cuit hors-ligne une fois la valeur trouvée.** Le curseur pilote un
+   `filter: blur()` pendant qu'on cherche ; en production, le flou est gravé dans l'asset
+   par ImageMagick. Ce qui est confortable pour l'artiste est ruineux pour le navigateur du
+   visiteur.
+
+## La recette, à copier telle quelle
+
+Trois morceaux : des variables, un panneau, un bouton de copie.
+
+```html
+<style>
+  /* 1. LES VARIABLES : le seul endroit où une valeur existe */
+  :root { --titre: 22px; --sous-titre: 15px; --interlettre: 0em; }
+
+  /* Les composants les CONSOMMENT, ils ne les redéfinissent jamais. */
+  .carte-titre { font-size: var(--titre); letter-spacing: var(--interlettre); }
+  .carte-dossier { font-size: var(--sous-titre); }
+
+  /* 2. LE PANNEAU : outil d'atelier, jamais livré */
+  .zr-sliders { position: fixed; right: 16px; bottom: 16px; z-index: 99999;
+    background: rgba(20,20,22,.94); color: #fff; border-radius: 10px; padding: 14px 16px;
+    width: 260px; font: 500 12px/1.4 ui-monospace, Menlo, monospace;
+    box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+  .zr-sliders label { display: block; margin-bottom: 12px; }
+  .zr-sliders .row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .zr-sliders input[type=range] { width: 100%; accent-color: #F38A5C; }
+  .zr-sliders button { width: 100%; padding: 8px; border: none; border-radius: 6px;
+    background: #F38A5C; color: #1a1a1a; font: 600 12px ui-monospace; cursor: pointer; }
+  .zr-sliders .out { margin-top: 8px; font-size: 11px; color: #9aa0a6; word-break: break-all; }
+</style>
+
+<div class="zr-sliders" id="zr-sliders">
+  <label><span class="row">Titre <b data-v="titre">22</b></span>
+    <input type="range" data-var="--titre" data-unit="px" min="12" max="48" step="1" value="22"></label>
+  <label><span class="row">Sous-titre <b data-v="sous-titre">15</b></span>
+    <input type="range" data-var="--sous-titre" data-unit="px" min="9" max="32" step="1" value="15"></label>
+  <button id="zr-copy">Copier les valeurs pour le prompt</button>
+  <div class="out" id="zr-out"></div>
+</div>
+
+<script>
+(function(){
+  var r = document.documentElement, p = document.getElementById('zr-sliders');
+  var champs = [].slice.call(p.querySelectorAll('input[data-var]'));
+  function appliquer(){
+    champs.forEach(function(i){
+      r.style.setProperty(i.dataset.var, i.value + (i.dataset.unit || ''));
+      var b = p.querySelector('[data-v="' + i.dataset.var.replace('--','') + '"]');
+      if (b) b.textContent = i.value;
+    });
+  }
+  champs.forEach(function(i){ i.addEventListener('input', appliquer); });
+  appliquer();
+  document.getElementById('zr-copy').addEventListener('click', function(){
+    var t = champs.map(function(i){ return i.dataset.var + ': ' + i.value + (i.dataset.unit||'') + ';'; }).join(' ');
+    var ta = document.createElement('textarea');
+    ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    var ok = false; try { ok = document.execCommand('copy'); } catch(e) {}
+    ta.remove();
+    document.getElementById('zr-out').textContent = (ok ? 'copié : ' : 'à copier à la main : ') + t;
+  });
+})();
+</script>
+```
+
+`navigator.clipboard` échoue souvent hors HTTPS ou quand la page n'a pas le focus :
+`execCommand('copy')` avec un repli affiché est plus fiable ici, et le texte reste visible
+même si la copie est refusée.
+
+## Le poser sur un site React qui existe déjà
+
+Le cas le plus fréquent, et le plus rapide.
+
+1. Repérer les composants concernés et remplacer leurs valeurs en dur par
+   `var(--nom, <valeur actuelle>)`. Le repli garde le rendu identique si le panneau
+   n'existe pas, donc rien ne casse en production.
+2. Monter le panneau derrière un garde explicite, par exemple
+   `{new URLSearchParams(location.search).has('design') && <SliderPanel />}` : il n'apparaît
+   qu'avec `?design=1`, jamais pour un visiteur.
+3. Servir en local (`preview_start` sur la config du projet), donner l'URL avec `?design=1`.
+4. Il colle les valeurs, je les inscris dans le fichier de jetons du projet
+   (`theme.js`, `tokens.css`, `_params.json` selon le langage) et je retire le garde si
+   c'était un ajout temporaire.
+
+## Cas concret, à reproduire (2026-08-20)
+
+Matthieu, sur la galerie de ZenRayProgress : « titre Serif pour titre et folder trop petit
+et Inter beaucoup trop gros, fais un localhost rapide pour que je te renvoie la bonne valeur
+dans le prompt ».
+
+Ce qu'il faut faire, exactement : deux variables (`--carte-titre`, `--carte-dossier`), le
+panneau, l'URL locale. Ce qu'il ne faut PAS faire : deviner 20px et 14px, builder, et
+attendre son verdict.
+
+## Mode `-text` : il édite le texte, le bouton renvoie le diff
+
+Même skill, même philosophie, autre matière. Les curseurs servent quand la bonne valeur est
+un nombre qui se juge à l'œil ; le mode `-text` sert quand la bonne phrase est une phrase
+qui se juge en la lisant, et qui appartient à Matthieu.
+
+**Ses mots, à l'origine du mode :** « ajoute des zones de texte editable pour pouvoir editer
+du texte sur l'article et te renvoyer mes propres modifications, le button copy edits devrait
+faire la différence comme ça tu comprends ».
+
+### Quand déclencher
+
+Dès qu'il veut relire et corriger lui-même un texte plutôt que me le décrire : un article,
+une page, une fiche produit, une leçon, un post. Ses phrases déclenchantes : « je vais te
+faire les modifs », « laisse-moi éditer », « ouvre-moi ça que je corrige », « je préfère
+réécrire moi-même ». Le signal de mon côté est le même que pour les curseurs : si je
+m'apprête à réécrire un paragraphe en espérant tomber juste, c'est qu'il faut lui rendre le
+clavier.
+
+Ne PAS déclencher pour une coquille unique qu'il nomme dans le chat, où un remplacement
+direct coûte moins cher qu'un serveur local.
+
+### Le principe, identique aux curseurs
+
+L'édition se fait sur la VRAIE page servie en localhost, jamais sur un mockup séparé ni sur
+un markdown recopié à côté. Il corrige dans la mise en page finale, avec sa typographie, ses
+images et ses blocs voisins, parce que c'est là qu'une phrase paraît trop longue, qu'une
+transition manque ou qu'un titre ne tient pas sur sa ligne.
+
+Et le point central, celui qu'il a nommé : **le bouton fait la différence.** Il ne recopie
+pas la page, il ne renvoie que les blocs réellement touchés. Un article de quarante
+paragraphes dont il corrige deux rend deux blocs, pas quarante. C'est ce qui rend le retour
+applicable sans ambiguïté, sans que j'aie à relire l'ensemble pour deviner ce qui a bougé, et
+sans que le presse-papier serve de photocopieuse.
+
+### La recette, à copier telle quelle
+
+Un seul morceau, autonome : il injecte son style et son panneau, donc il se colle aussi bien
+dans un `<script>` de la page que dans la console de DevTools sur une page déjà servie.
+
+```js
+(function(){
+  // LES CIBLES : le seul endroit où l'on décide ce qui devient éditable
+  var CIBLES = 'article h1, article h2, article h3, article p, article li, article blockquote';
+
+  var origine = Object.create(null);   // id -> texte d'origine, écrit une seule fois
+  var courant = Object.create(null);   // id -> texte en cours, survit à un remontage React
+  var obs = null;
+
+  var css = document.createElement('style');
+  css.textContent = `
+    .zr-text { position: fixed; right: 16px; bottom: 16px; z-index: 99999;
+      background: rgba(20,20,22,.94); color: #fff; border-radius: 10px; padding: 14px 16px;
+      width: 260px; font: 500 12px/1.4 ui-monospace, Menlo, monospace;
+      box-shadow: 0 10px 40px rgba(0,0,0,.35); }
+    .zr-text button { width: 100%; padding: 8px; border: none; border-radius: 6px;
+      background: #F38A5C; color: #1a1a1a; font: 600 12px ui-monospace; cursor: pointer; }
+    .zr-text .out { margin-top: 8px; font-size: 11px; color: #9aa0a6; }
+    .zr-text .etat { margin-bottom: 8px; }
+    [contenteditable=true]:focus { outline: 2px solid rgba(243,138,92,.55); outline-offset: 3px; }
+    [data-zr-modifie="1"] { background: rgba(243,138,92,.14); }`;
+  document.head.appendChild(css);
+
+  var panneau = document.createElement('div');
+  panneau.className = 'zr-text';
+  panneau.innerHTML = '<div class="etat"><b id="zr-n">0</b> bloc(s) modifié(s) sur <b id="zr-total">0</b></div>'
+    + '<button id="zr-copie">Copier les modifications</button>'
+    + '<div class="out" id="zr-sortie">le texte de la page est éditable</div>';
+  document.body.appendChild(panneau);
+
+  function net(s){ return String(s).replace(/\s+/g, ' ').trim(); }
+  function poser(el, v){ if (el && el.textContent !== v) el.textContent = v; }
+
+  function armer(){
+    var n = Object.create(null);
+    [].slice.call(document.querySelectorAll(CIBLES)).forEach(function(el){
+      if (panneau.contains(el)) return;
+      var tag = el.tagName.toLowerCase();
+      n[tag] = (n[tag] || 0) + 1;
+      var id = tag + '-' + ('0' + n[tag]).slice(-2);
+      el.setAttribute('data-zr-id', id);
+      if (!(id in origine)) origine[id] = net(el.textContent);
+      // React vient de réécrire le DOM : on réinjecte l'édition en cours au lieu de la perdre
+      if (id in courant && net(el.textContent) !== courant[id]) el.textContent = courant[id];
+      el.setAttribute('contenteditable', 'true');
+      el.setAttribute('spellcheck', 'true');
+      el.setAttribute('data-zr-modifie', (courant[id] || origine[id]) !== origine[id] ? '1' : '0');
+      if (!el.hasAttribute('data-zr-arme')) {
+        el.setAttribute('data-zr-arme', '1');
+        el.addEventListener('input', function(){
+          var k = el.getAttribute('data-zr-id');
+          courant[k] = net(el.textContent);
+          el.setAttribute('data-zr-modifie', courant[k] !== origine[k] ? '1' : '0');
+          compter();
+        });
+      }
+    });
+    compter();
+  }
+
+  // La parade au remontage : on se débranche pendant qu'on écrit, on se rebranche après.
+  function rearmer(){
+    if (obs) obs.disconnect();
+    armer();
+    if (obs) obs.observe(document.body, { childList: true, subtree: true });
+  }
+
+  function compter(){
+    var ids = Object.keys(origine), n = 0;
+    ids.forEach(function(id){ if ((courant[id] || origine[id]) !== origine[id]) n++; });
+    poser(document.getElementById('zr-n'), String(n));
+    poser(document.getElementById('zr-total'), String(ids.length));
+    return n;
+  }
+
+  function diff(){
+    var ids = Object.keys(origine), blocs = [];
+    ids.forEach(function(id){
+      var apres = (id in courant) ? courant[id] : origine[id];
+      if (apres !== origine[id]) {
+        blocs.push('[' + id + ']\n- avant : ' + origine[id] + '\n+ après : ' + apres);
+      }
+    });
+    if (!blocs.length) return 'AUCUNE MODIFICATION';
+    return 'MODIFS TEXTE (' + blocs.length + ' sur ' + ids.length + ' blocs)\n\n' + blocs.join('\n\n');
+  }
+  window.zrDiff = diff;   // repli console : copy(zrDiff())
+
+  document.getElementById('zr-copie').addEventListener('click', function(){
+    var t = diff(), ta = document.createElement('textarea');
+    ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    var ok = false; try { ok = document.execCommand('copy'); } catch(e) {}
+    ta.remove();
+    poser(document.getElementById('zr-sortie'),
+      ok ? 'copié : ' + compter() + ' bloc(s)' : 'copie refusée, tape copy(zrDiff()) dans la console');
+  });
+
+  obs = new MutationObserver(function(){ rearmer(); });
+  rearmer();
+})();
+```
+
+`navigator.clipboard` échoue souvent hors HTTPS ou quand la page n'a pas le focus, comme
+pour les curseurs : `execCommand('copy')` et le repli `copy(zrDiff())` dans la console
+laissent toujours une porte ouverte.
+
+### Le format de sortie, précis et stable
+
+Rien d'autre ne sort du bouton que ceci, et un bloc non touché n'y figure jamais :
+
+```text
+MODIFS TEXTE (2 sur 41 blocs)
+
+[h2-03]
+- avant : Le problème que ça supprime
++ après : Le problème que ceci supprime
+
+[p-07]
+- avant : Avec curseurs : je sers la page une fois.
++ après : Avec les curseurs, je sers la page une seule fois.
+```
+
+Trois garanties que je peux tenir pour acquises en le lisant. L'identifiant `tag-NN` est
+l'ordre d'apparition du bloc parmi les cibles, donc il repère la position ; la ligne
+`- avant` est le texte normalisé d'origine, donc elle sert de clé de recherche dans le
+fichier source, ce qui est le moyen le plus sûr de retrouver le bon endroit quand le rendu
+ne ressemble pas au source ; et les espaces multiples ainsi que les retours à la ligne sont
+réduits à une espace simple des deux côtés, si bien qu'une différence affichée est une
+différence réelle et jamais un artefact de mise en forme. Quand il n'a rien touché, la
+sortie vaut `AUCUNE MODIFICATION`, et il n'y a alors rien à appliquer.
+
+### Le piège React, et la parade
+
+Sur une page React, le DOM ne m'appartient pas : à chaque rendu, React réécrit ses nœuds
+depuis son état, et une édition faite directement dans la page disparaît sans un mot. C'est
+le même mécanisme silencieux qu'un repli de police, et il se répare de la même façon, en
+posant un observateur plutôt qu'en espérant.
+
+Trois précautions, dans cet ordre. Poser le snippet **après le montage**, donc à la main dans
+la console une fois la page affichée, ou derrière le garde `?design=1` déjà décrit plus haut
+pour les curseurs. Garder l'édition en cours **hors du DOM**, dans l'objet `courant`, qui est
+la seule mémoire fiable puisqu'il survit à n'importe quel remontage. Réarmer enfin sur
+`MutationObserver`, en se débranchant pendant qu'on réécrit pour ne pas se déclencher
+soi-même, ce que fait `rearmer()`.
+
+Si le curseur de saisie saute pendant qu'il tape, c'est que la page se rend trop souvent, par
+exemple à cause d'une animation ou d'un intervalle. La parade tient en une ligne : geler la
+page en enregistrant le HTML rendu (`document.documentElement.outerHTML` dans un fichier de
+`Design/`), puis éditer cette copie statique. Le diff reste exploitable, puisqu'il ne
+transporte que du texte et des identifiants.
+
+### L'interdit symétrique, le même que pour le panneau de curseurs
+
+Le panneau d'édition est un outil d'atelier. Il ne part JAMAIS en production, ni sur
+Cloudflare Pages, ni sur Vercel, ni ailleurs, et `contenteditable` encore moins que le reste,
+puisqu'un visiteur qui peut réécrire une page finit toujours par en faire une capture. Le
+snippet vit dans la console, ou dans un fichier de `Design/` hors du build, ou derrière un
+garde retiré avant le déploiement. Jamais après.
+
+### À l'arrivée : on ne corrige QUE la grammaire
+
+C'est la règle qui compte le plus au moment d'appliquer le diff, et elle est écrite en
+priorité zéro dans `~/.claude/CLAUDE.md`, section « PRIORITÉ 0 ABSOLUE : QUAND MATTHIEU
+ÉCRIT, ON NE TOUCHE QUE LA GRAMMAIRE (2026-08-23) », qui fait foi. Ses mots y sont : « QUAND
+JE TE DEMANDE D'ÉCRIRE QUELQUE CHOSE NE CHANGE JAMAIS MON STYLE, CORRIGE UNIQUEMENT LA
+GRAMMAIRE ET SOIS PROACTIF. »
+
+Concrètement, sur un texte qu'il vient de réécrire à la main, la ligne `+ après` s'applique
+telle quelle. Autorisé : l'orthographe, l'accord, la conjugaison, la ponctuation manquante,
+un mot que la dictée vocale a transcrit de travers. Interdit : reformuler pour faire mieux
+écrit, lisser une tournure parlée, remplacer un mot par un synonyme plus élégant, fusionner
+deux de ses phrases courtes, ajouter une nuance ou retirer une insistance.
+
+Le contrôle avant de rendre est celui de la bannière : comparer sa phrase et la mienne, et si
+un mot a changé sans qu'une faute le justifie, il se remet. Dans le doute, sa version gagne.
+C'est précisément pour cela que le bouton renvoie un diff plutôt que la page entière : le
+diff dit exactement ce qu'il a voulu, et ce qu'il n'a pas touché n'a pas à être discuté.
+
+## Mode `-image` : régler un visuel dans sa page, pas dans un éditeur
+
+Troisième matière, même philosophie. Les curseurs servent pour un nombre, le mode `-text`
+pour une phrase ; le mode `-image` sert quand la bonne composition d'une illustration se
+juge posée dans l'article, entre son titre et son paragraphe, et nulle part ailleurs.
+
+**Ce qui se règle ainsi**, parce que cela ne se raisonne pas : le cadrage (`object-position`
+en pour cent, quand une image large est recadrée par sa boîte), l'échelle, la hauteur de la
+boîte, le rayon des coins, l'ombre portée, la luminosité et le contraste, la saturation, et
+la marge qui l'isole du texte. Tous descendent de variables CSS, exactement comme le reste,
+donc le panneau de curseurs déjà décrit plus haut les pilote sans une ligne de plus.
+
+```css
+:root {
+  --img-hauteur: 420px;   --img-cadrage-x: 50%;  --img-cadrage-y: 50%;
+  --img-echelle: 1;       --img-rayon: 18px;     --img-ombre: 28px;
+  --img-lumiere: 1;       --img-contraste: 1;    --img-marge: 44px;
+}
+.figure { margin: var(--img-marge) 0; border-radius: var(--img-rayon);
+  box-shadow: 0 var(--img-ombre) calc(var(--img-ombre) * 2.2) -12px rgba(0,0,0,.34); }
+.figure img { height: var(--img-hauteur); width: 100%;
+  object-fit: cover; object-position: var(--img-cadrage-x) var(--img-cadrage-y);
+  transform: scale(var(--img-echelle));
+  filter: brightness(var(--img-lumiere)) contrast(var(--img-contraste)); }
+```
+
+**La règle de cuisson vaut ici plus qu'ailleurs.** Un `filter` et un `transform` sur une
+image de deux mégaoctets coûtent à chaque défilement du visiteur. Le curseur sert à TROUVER
+le nombre ; une fois trouvé, le recadrage et la correction se gravent dans l'asset par
+ImageMagick, et la page ne sert plus qu'un fichier déjà juste.
+
+**Jeu de réglages obligatoire dès que ce mode porte une image.** Le panneau inclut Vignette,
+Selective Color à six canaux, Levels, Black and White, Color avec Saturation et Vibrance,
+Light avec Brilliance, Exposure, Highlights, Shadows, Brightness, Contrast et Black Point,
+puis Filters avec Original, Vivid, Vivid Warm, Vivid Cool, Dramatic, Dramatic Warm,
+Dramatic Cool, Mono, Silvertone et Noir. Toutes les valeurs visibles sont des entiers sur
+100. Les corrections commencent à 0, Levels à `0, 50, 100, 0, 100`, le filtre à Original
+et sa force à 100. Cet état doit rendre l’image inchangée à deux niveaux RVB près au maximum.
+Sous la grille des filtres, le bouton « Appliquer ce filtre à toutes » (qui adapte son libellé
+au filtre actif, ex. « Appliquer Vivid Cool à toutes ») propage en un clic le filtre et son
+intensité à toutes les images du lot.
+
+Le code de Photos n’est pas public et ne se copie pas. Le module du skill reproduit les
+fonctions et l’ergonomie par un shader WebGL 2 original et inspectable, échoue clairement si
+WebGL 2 manque, puis teste séparément les 32 chemins de réglage. Voir le contrat complet dans
+`references/template-creator.md`.
+
+## L'article est un HDA, et c'est ce qui rend l'itération rapide
+
+**Ses mots, le 2026-08-27 :** « ce qui est important quand on crée un article c'est l'aspect
+instanciation, c'est-à-dire l'aspect template, puis que je peux modifier rapidement via
+l'immense technologie que nous apporte les HTML grâce aux codes ».
+
+C'est la loi HDA du `CLAUDE.md` global, appliquée au texte long, et la transposition est
+exacte. La DÉFINITION est le gabarit d'article : la grille, les blocs de section, la figure
+avec sa légende, l'encadré, le sommaire. L'INTERFACE DE PARAMÈTRES est le `:root` de jetons,
+plus le fichier de contenu. L'INSTANCE est un article publié. Le COOK est le build du site.
+
+**Ce que cela interdit, et c'est la faute qui coûte le plus cher sur un article long.**
+Écrire une taille, une couleur ou une marge à l'intérieur d'une section. Le jour où
+Matthieu dit « les figures sont trop grandes », un article à valeurs en dur demande de
+toucher trente blocs, et il en restera un qu'on aura oublié, qui se verra à la lecture.
+
+**Ce que cela rend possible**, et c'est tout l'intérêt qu'il nomme : un second article, six
+mois plus tard, pour montrer l'évolution, se fabrique en réinstanciant le même gabarit avec
+un autre contenu et d'autres assets. Rien à redessiner, et les deux articles se ressemblent
+par construction plutôt que par effort.
+
+**Le recensement précède la rédaction.** Avant d'écrire le premier paragraphe, lister les
+FAMILLES de blocs que l'article contient, comme la loi HDA l'exige pour tout projet : la
+section, la figure pleine largeur, la figure encadrée, la paire côte à côte, l'encadré de
+note, la légende de composant. Deux blocs qui ne diffèrent que par une valeur ne sont pas
+deux blocs, ce sont un gabarit et deux jeux de paramètres.
+
+**Les trois panneaux cohabitent sur la même page**, chacun sur sa matière, et c'est la
+combinaison qui rend la boucle courte : les curseurs de mise en page, les curseurs d'image,
+et le mode `-text` pour le contenu. Un seul aller-retour rend alors trois choses à la fois,
+un jeu de valeurs, un jeu de cadrages, et un diff de texte.
+
+## Où finissent les valeurs
+
+Jamais en dur dans un composant. Dans le fichier de jetons du projet, là où la loi HDA les
+attend : `src/theme.js` pour ZenRayWebsite et ZenRayProgress, `_params.json` pour un visuel
+fabriqué avec `zenray-html-photoshop-pdf`, `tokens.css` ailleurs.
+
+## Skills voisins, pour ne pas se tromper de porte
+
+- **Un visuel de communication** (post, flyer, carrousel, vignette) : `zenray-html-photoshop-pdf`,
+  qui applique ce même principe à un document à calques, avec `_params.json` comme interface
+  de paramètres et un export PNG comme livrable.
+- **Le site matthieuhuguet.com** : `zenray-website`, qui porte en plus le déploiement.
+- **Ici** : tout le reste, c'est-à-dire n'importe quelle page HTML ou n'importe quel site.
+  En cas de doute, ce skill est la bonne porte : il ne suppose rien du projet.
+
+## Interface de paramètres courte, 8 par catégorie (30 September 2026)
+
+- 30 September 2026 (demande de Matthieu, appliquée d'abord aux graphes Houdini) : un panneau de curseurs, comme une interface HDA, ne dépasse pas **8 paramètres par catégorie**, les plus prioritaires d'abord ; le reste reste dans les jetons. Les groupes existants de ce skill (Light 7, Levels 5, Crop 4, Selective 3) respectent déjà ce plafond ; les panneaux plus gros (capsules à 10 curseurs, panneau Sleep Shutdown à 11) sont à regrouper si Matthieu en demande la retouche.
+- 30 September 2026 : règle complète : `~/.claude/rules/ParametricHda1.md` (section du 30 September 2026) et le skill `zenray-houdini` (section du 30 September 2026, modèle `CeramicGreenParams.py`). Le panneau ne part jamais en production.
+
+## Règle d’activation explicite, 2026-08-27
+
+Cette règle prévaut sur toute formulation antérieure de la présente annexe et de ce skill : le panneau de curseurs ne s’active que lorsque Matthieu le demande explicitement. Une observation telle que « trop grand », « trop clair » ou « pas assez espacé » ne déclenche donc ni panneau, ni localhost, ni modification préparatoire de variables CSS.
+
+Les modes `-text` et `-image` restent disponibles, mais chacun requiert lui aussi une demande explicite correspondant à son usage : rendre le texte éditable ou régler une image à l’œil. Le HTML d’atelier conserve son architecture paramétrique, cependant le panneau reste absent tant que Matthieu ne le réclame pas.
+

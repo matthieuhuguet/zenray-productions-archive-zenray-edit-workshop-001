@@ -1,0 +1,9 @@
+{
+  "ok": true,
+  "checks": [
+    "Brouillon source repris ou vide explicite sans texte inventé",
+    "Post, paramètres et sorties identiques après régénération",
+    "Ancien code archivé",
+    "Remplacement de texte refusé avant écriture"
+  ]
+}

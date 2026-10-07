@@ -1,0 +1,26 @@
+{
+  "canvas": {
+    "width": 1920,
+    "height": 1080
+  },
+  "export": {
+    "scale": null,
+    "minimumLongEdge": 3840,
+    "maximumScale": 4,
+    "maximumBytes": 8388608,
+    "format": "png",
+    "requireAlpha": false,
+    "jpegQualityLevels": [
+      95,
+      92,
+      90,
+      88,
+      85
+    ],
+    "timeoutMs": 30000
+  },
+  "runtime": {
+    "playwrightRoot": null,
+    "chromiumExecutable": null
+  }
+}

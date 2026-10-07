@@ -1,0 +1,82 @@
+{
+  "ok": true,
+  "date": "7 October 2026",
+  "checks": [
+    {
+      "check": "Immutable archives and routed contract",
+      "ok": true,
+      "originalFiles": 115,
+      "fusionFiles": 26,
+      "blocks": 15,
+      "catalogEntries": 9
+    },
+    {
+      "check": "Render and sources unchanged",
+      "ok": true,
+      "directory": "/Users/zenray/.claude/tmp/tmp-zenray-edit/RepresentativePortrait",
+      "result": {
+        "ok": true,
+        "files": [
+          {
+            "file": "/Users/zenray/.claude/tmp/tmp-zenray-edit/RepresentativePortrait/out/slide-1.png",
+            "master": "/Users/zenray/.claude/tmp/tmp-zenray-edit/RepresentativePortrait/out/masters/slide-1.png",
+            "width": 3240,
+            "height": 4050,
+            "scale": 3,
+            "bytes": 128526,
+            "format": "png",
+            "quality": null
+          }
+        ]
+      }
+    },
+    {
+      "check": "Render and sources unchanged",
+      "ok": true,
+      "directory": "/Users/zenray/.claude/tmp/tmp-zenray-edit/RepresentativeLandscape",
+      "result": {
+        "ok": true,
+        "files": [
+          {
+            "file": "/Users/zenray/.claude/tmp/tmp-zenray-edit/RepresentativeLandscape/out/slide-1.png",
+            "master": "/Users/zenray/.claude/tmp/tmp-zenray-edit/RepresentativeLandscape/out/masters/slide-1.png",
+            "width": 3840,
+            "height": 2160,
+            "scale": 2,
+            "bytes": 83817,
+            "format": "png",
+            "quality": null
+          }
+        ]
+      }
+    },
+    {
+      "check": "Oversize JPEG rejected with master and source retained",
+      "ok": true,
+      "stderr": "Export exceeds maximumBytes; master retained: /Users/zenray/.claude/tmp/tmp-zenray-edit/OversizedExport/out/masters/slide-1.png"
+    },
+    {
+      "check": "Missing template rejected",
+      "ok": true,
+      "stderr": "AssertionError: luxe-epure"
+    },
+    {
+      "check": "Corrupt archive rejected",
+      "ok": true,
+      "error": "Archive digest mismatch: test.txt"
+    },
+    {
+      "check": "Post and parameter preservation",
+      "ok": true,
+      "details": {
+        "ok": true,
+        "checks": [
+          "Brouillon source repris ou vide explicite sans texte inventé",
+          "Post, paramètres et sorties identiques après régénération",
+          "Ancien code archivé",
+          "Remplacement de texte refusé avant écriture"
+        ]
+      }
+    }
+  ]
+}

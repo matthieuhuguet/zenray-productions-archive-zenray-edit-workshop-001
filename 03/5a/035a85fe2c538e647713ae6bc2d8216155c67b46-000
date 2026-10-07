@@ -1,0 +1,1120 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZenRay Assets, direction Atelier</title>
+<style>
+  /* Polices SERVIES par le gabarit, jamais attendues du systeme : un repli de police
+     ne se signale jamais, seul l'oeil le voit. Les deux familles sont VARIABLES, donc
+     trois faces couvrent toutes les graisses employees ici. */
+  @font-face{font-family:'Inter';src:url('fonts/InterVariable.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap;}
+  @font-face{font-family:'AnthropicSerif';src:url('fonts/AnthropicSerif-Romans.woff2') format('woff2');font-weight:300 800;font-style:normal;font-display:swap;}
+  @font-face{font-family:'AnthropicSerif';src:url('fonts/AnthropicSerif-Italics.woff2') format('woff2');font-weight:300 800;font-style:italic;font-display:swap;}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MAQUETTE, direction ATELIER. Aucun fichier du produit n'est touché.
+   Tokens repris tels quels du systeme ZenRayProgress (--zr-*, --g9-*).
+   Regle typographique : Inter pour l'interface, AnthropicSerif pour les titres
+   de contenu et pour TOUS les nombres visibles. Aucune monospace.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Polices installees dans ~/Library/Fonts, chargees en file:// ─────────── */
+
+
+/* AnthropicSerif est installee en coupes STATIQUES. Pour que la graisse de
+   composition 350 tombe sur un vrai dessin plutot que sur un faux gras, la
+   coupe Regular couvre la plage 340 a 500 : 350 et 400 y resolvent le meme
+   fichier, ce qui est le comportement honnete avec des fontes statiques. */
+
+
+
+
+
+/* ── Interface de parametres, etage 1 : jetons globaux ────────────────────── */
+:root{
+  --zr-police-sans:'Inter','Inter Variable','Hiragino Sans W4',-apple-system,sans-serif;
+  --zr-police-serif:'AnthropicSerif','Hiragino Mincho ProN W3',Georgia,serif;
+  --zr-poids-sans:400; --zr-poids-serif:350; --zr-poids-nombres:400;
+
+  --zr-ui-base:14px;
+  --zr-ui-3xs:calc(var(--zr-ui-base)*0.69);
+  --zr-ui-2xs:calc(var(--zr-ui-base)*0.77);
+  --zr-ui-xs:calc(var(--zr-ui-base)*0.85);
+  --zr-ui-sm:calc(var(--zr-ui-base)*0.92);
+  --zr-ui-md:var(--zr-ui-base);
+  --zr-ui-lg:calc(var(--zr-ui-base)*1.08);
+  --zr-ui-xl:calc(var(--zr-ui-base)*1.13);
+  --zr-ui-2xl:calc(var(--zr-ui-base)*1.20);
+  --zr-ui-3xl:calc(var(--zr-ui-base)*1.33);
+  --zr-corps-editeur:17px;
+  --zr-titre-1:calc(var(--zr-corps-editeur)*2.00);
+  --zr-titre-2:calc(var(--zr-corps-editeur)*1.58);
+  --zr-titre-3:calc(var(--zr-corps-editeur)*1.28);
+
+  --zr-r-chip:7px; --zr-r-control:10px; --zr-r-panel:14px; --zr-r-window:22px;
+  --zr-accent:#0A84FF; --zr-accent-soft:rgba(10,132,255,0.12);
+  --zr-selection:rgba(0,122,255,0.16);
+
+  --zr-bg-window:#EDEDEB; --zr-bg-content:#FDFDFC;
+  --zr-glass-bg:rgba(253,253,252,0.62); --zr-glass-bg-strong:rgba(253,253,252,0.80);
+  --zr-shadow-panel:0 8px 30px rgba(0,0,0,0.12);
+  --zr-shadow-pop:0 12px 40px rgba(0,0,0,0.18),0 2px 8px rgba(0,0,0,0.08);
+  --zr-shadow-overlay:0 24px 80px rgba(0,0,0,0.28),0 8px 24px rgba(0,0,0,0.14);
+
+  /* Materiau V9, la matiere reelle de la sidebar */
+  --g9-rim-ratio:0.20;
+  --g9-fg:rgba(25,27,31,.92);
+  --g9-bg:#fff;
+  --g9-muted:rgba(25,27,31,.56);
+  --g9-soft:rgba(25,27,31,.40);
+  --g9-rail:rgba(25,27,31,.16);
+  --g9-glass-a:rgba(255,255,255,.76);
+  --g9-glass-b:rgba(229,233,239,.42);
+  --g9-rim-main:rgb(34 37 43 / calc(0.46 * var(--g9-rim-ratio)));
+  --g9-rim-soft:rgb(34 37 43 / calc(0.18 * var(--g9-rim-ratio)));
+  --g9-rim-side:rgb(34 37 43 / calc(0.10 * var(--g9-rim-ratio)));
+  --g9-outer-line:0 0 0 0 transparent;
+  --g9-elev-a:0 14px 38px rgba(62,67,78,.13);
+  --g9-elev-b:0 3px 12px rgba(62,67,78,.08);
+  --g9-timing:0.35s; --g9-ease:cubic-bezier(.16,1,.3,1);
+  --g9-toolbar-glass-a:color-mix(in srgb, var(--g9-glass-a) 80%, #1b1d21 20%);
+  --g9-toolbar-glass-b:color-mix(in srgb, var(--g9-glass-b) 80%, #1b1d21 20%);
+
+  --ws-side-a:rgba(255,255,255,.78);
+  --ws-side-b:rgba(226,230,235,.54);
+
+  /* Propres a l'Atelier : la carte est OPAQUE, elle ne porte jamais de verre.
+     Un verre pose dans un verre n'a plus rien a refracter (loi des ancetres). */
+  --at-carte:rgba(255,255,255,.72);
+  --at-carte-fort:rgba(255,255,255,.90);
+  --at-filet:color-mix(in srgb, var(--g9-fg) 11%, transparent);
+  --at-vignette-fond:rgba(25,27,31,.05);
+  --at-chaud:#B5713F;         /* accent chaud de l'atelier, le bois et le cuivre */
+  --at-chaud-doux:rgba(181,113,63,.13);
+}
+
+html.zr-dark{
+  --zr-bg-window:#262624; --zr-bg-content:#1F1F1E;
+  --zr-glass-bg:rgba(31,31,30,0.58); --zr-glass-bg-strong:rgba(31,31,30,0.80);
+  --g9-fg:#fff; --g9-bg:#1c1c1e;
+  --g9-muted:rgba(255,255,255,.62);
+  --g9-soft:rgba(255,255,255,.46);
+  --g9-rail:rgba(255,255,255,.26);
+  --g9-glass-a:rgba(255,255,255,.20);
+  --g9-glass-b:rgba(255,255,255,.065);
+  --g9-rim-main:rgb(255 255 255 / calc(0.72 * var(--g9-rim-ratio)));
+  --g9-rim-soft:rgb(255 255 255 / calc(0.16 * var(--g9-rim-ratio)));
+  --g9-rim-side:rgb(255 255 255 / calc(0.085 * var(--g9-rim-ratio)));
+  --g9-outer-line:0 0 0 .72px rgb(0 0 0 / calc(0.66 * var(--g9-rim-ratio)));
+  --g9-elev-a:0 14px 36px rgba(0,0,0,.27);
+  --g9-elev-b:0 3px 11px rgba(0,0,0,.15);
+  --g9-toolbar-glass-a:color-mix(in srgb, var(--g9-glass-a) 68%, #000 32%);
+  --g9-toolbar-glass-b:color-mix(in srgb, var(--g9-glass-b) 68%, #000 32%);
+  --ws-side-a:rgba(255,255,255,.135);
+  --ws-side-b:rgba(255,255,255,.045);
+  --zr-accent:#409CFF; --zr-accent-soft:rgba(64,156,255,0.18);
+  --at-carte:rgba(255,255,255,.055);
+  --at-carte-fort:rgba(255,255,255,.10);
+  --at-filet:color-mix(in srgb, var(--g9-fg) 13%, transparent);
+  --at-vignette-fond:rgba(255,255,255,.05);
+  --at-chaud:#E0A272;
+  --at-chaud-doux:rgba(224,162,114,.16);
+}
+
+/* ── Scene, le verre a besoin d'une matiere a refracter ───────────────────── */
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:var(--zr-police-sans);
+  font-weight:var(--zr-poids-sans);
+  font-size:var(--zr-ui-md);
+  color:var(--g9-fg);
+  background:#e8e4dd;
+  -webkit-font-smoothing:antialiased;
+  padding:26px;
+  min-height:100%;
+}
+/* Le fond est peint sur body::before, un pseudo, jamais sur un ancetre du
+   verre : un ancetre a filtre casserait le backdrop des panneaux. */
+body::before{
+  content:"";position:fixed;inset:-6%;z-index:-2;
+  background:
+    radial-gradient(1100px 780px at 12% 8%,  #f6ece0 0%, rgba(246,236,224,0) 62%),
+    radial-gradient(950px 700px at 86% 12%,  #dfe6f2 0%, rgba(223,230,242,0) 60%),
+    radial-gradient(900px 900px at 74% 92%,  #efdfd0 0%, rgba(239,223,208,0) 58%),
+    radial-gradient(760px 620px at 26% 88%,  #dde7e2 0%, rgba(221,231,226,0) 60%),
+    linear-gradient(152deg,#f2ece4 0%,#e4e7ee 48%,#efe3d7 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,0.22),rgba(226,231,240,0.30));
+}
+html.zr-dark body{background:#191918}
+html.zr-dark body::before{
+  background:
+    radial-gradient(1100px 780px at 12% 8%,  #35302a 0%, rgba(53,48,42,0) 62%),
+    radial-gradient(950px 700px at 86% 12%,  #232a35 0%, rgba(35,42,53,0) 60%),
+    radial-gradient(900px 900px at 74% 92%,  #3a2f27 0%, rgba(58,47,39,0) 58%),
+    radial-gradient(760px 620px at 26% 88%,  #232b28 0%, rgba(35,43,40,0) 60%),
+    linear-gradient(152deg,#20201f 0%,#1b1d21 48%,#241f1b 100%);
+}
+html.zr-dark body::after{background:linear-gradient(180deg,rgba(31,31,30,0.38),rgba(24,24,23,0.52))}
+
+/* ── Cadre d'application. Aucun filtre ni transform ici, sinon les enfants
+      en verre perdent leur backdrop et un position:fixed s'y ancrerait. ──── */
+.app{
+  display:grid;
+  grid-template-columns:264px minmax(0,1fr);
+  gap:16px;
+  height:calc(100vh - 52px);
+  min-height:640px;
+  max-width:1560px;
+  margin:0 auto;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   1. LA SIDEBAR
+   ══════════════════════════════════════════════════════════════════════════ */
+.side{
+  position:relative;
+  display:flex;flex-direction:column;
+  border-radius:var(--zr-r-window);
+  padding:14px 12px 12px;
+  color:var(--g9-fg);
+  background:linear-gradient(135deg,var(--ws-side-a),var(--ws-side-b));
+  box-shadow:
+    var(--g9-outer-line),
+    inset 0 1px 0 var(--g9-rim-main),
+    inset 0 -1px 0 var(--g9-rim-main),
+    inset 0 2px 0 var(--g9-rim-soft),
+    inset 0 -2px 0 var(--g9-rim-soft),
+    inset 1px 0 0 var(--g9-rim-side),
+    inset -1px 0 0 var(--g9-rim-side),
+    var(--g9-elev-a), var(--g9-elev-b);
+  backdrop-filter:blur(27px) saturate(169%);
+  -webkit-backdrop-filter:blur(27px) saturate(169%);
+}
+
+.side-top{display:flex;align-items:center;gap:8px;padding:2px 4px 10px}
+.side-mark{
+  width:26px;height:26px;border-radius:9px;flex:none;
+  display:grid;place-items:center;
+  background:linear-gradient(140deg,var(--at-chaud),#8d5730);
+  color:#fff;font-family:var(--zr-police-serif);font-weight:500;font-size:13px;
+  box-shadow:0 2px 7px rgba(120,70,35,.35), inset 0 1px 0 rgba(255,255,255,.4);
+}
+.side-name{font-size:var(--zr-ui-sm);font-weight:500;letter-spacing:-.01em;flex:1;min-width:0}
+.side-name small{display:block;font-size:var(--zr-ui-3xs);font-weight:400;color:var(--g9-soft);letter-spacing:.06em;text-transform:uppercase;margin-top:1px}
+.icon-btn{
+  width:28px;height:28px;flex:none;padding:0;display:grid;place-items:center;
+  border:0;border-radius:9px;background:transparent;color:var(--g9-muted);cursor:pointer;
+  transition:background-color var(--g9-timing) var(--g9-ease),color var(--g9-timing) var(--g9-ease);
+}
+.icon-btn:hover{background:color-mix(in srgb,var(--g9-fg) 8%,transparent);color:var(--g9-fg)}
+
+/* Le filtre de navigation : premiere reponse a la densite, on tape trois
+   lettres et les quatorze entrees de Create se reduisent a une. */
+.side-search{
+  display:flex;align-items:center;gap:9px;height:34px;padding:0 12px;
+  border-radius:999px;overflow:hidden;position:relative;color:var(--g9-fg);
+  background:linear-gradient(135deg,var(--g9-toolbar-glass-a),var(--g9-toolbar-glass-b));
+  box-shadow:
+    var(--g9-outer-line),
+    inset 0 1px 0 var(--g9-rim-main), inset 0 -1px 0 var(--g9-rim-main),
+    inset 0 2px 0 var(--g9-rim-soft), inset 0 -2px 0 var(--g9-rim-soft),
+    inset 1px 0 0 var(--g9-rim-side), inset -1px 0 0 var(--g9-rim-side),
+    var(--g9-elev-b);
+}
+.side-search svg{color:var(--g9-muted);flex:none}
+.side-search input{
+  min-width:0;flex:1;border:0;outline:0;background:transparent;color:var(--g9-fg);
+  font-family:var(--zr-police-sans);font-size:var(--zr-ui-sm);font-weight:400;
+}
+.side-search input::placeholder{color:var(--g9-muted)}
+
+/* Les epingles : quatre destinations tenues au chaud, hors de la liste. */
+.pins{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 2px 4px}
+.pin{
+  height:44px;border:0;cursor:pointer;border-radius:12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  background:color-mix(in srgb,var(--g9-fg) 5%,transparent);
+  color:var(--g9-muted);font-family:var(--zr-police-sans);font-size:var(--zr-ui-3xs);
+  transition:background-color var(--g9-timing) var(--g9-ease),color var(--g9-timing) var(--g9-ease);
+}
+.pin:hover{background:color-mix(in srgb,var(--g9-fg) 9%,transparent);color:var(--g9-fg)}
+.pin[data-on="true"]{background:var(--at-chaud-doux);color:var(--at-chaud)}
+
+.nav{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding:6px 0 4px;margin-top:6px}
+.nav::-webkit-scrollbar{width:8px}
+.nav::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--g9-fg) 16%,transparent);border-radius:8px;border:2px solid transparent;background-clip:content-box}
+.nav::-webkit-scrollbar-track{background:transparent}
+
+/* Zone : titre cliquable, compteur a droite, contenu repliable. */
+.zone{margin-bottom:2px}
+.zone-head{
+  display:flex;align-items:center;gap:7px;width:100%;
+  min-height:26px;padding:0 10px;margin:8px 0 2px;
+  border:0;background:transparent;cursor:pointer;text-align:left;
+  color:var(--g9-soft);font-family:var(--zr-police-sans);
+  font-size:var(--zr-ui-xs);font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  transition:color var(--g9-timing) var(--g9-ease);
+}
+.zone-head:hover{color:var(--g9-fg)}
+.zone-head .lbl{flex:1;min-width:0}
+.zone-head .cnt{
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres);
+  font-size:var(--zr-ui-xs);letter-spacing:0;color:var(--g9-soft);
+  text-transform:none;font-variant-numeric:tabular-nums;
+}
+.zone-head .chev{
+  flex:none;color:var(--g9-soft);
+  transition:transform var(--g9-timing) var(--g9-ease);
+}
+.zone[data-open="false"] .chev{transform:rotate(-90deg)}
+.zone[data-open="false"] .zone-body{display:none}
+
+/* Sous rubrique : le geste qui casse le bloc de quatorze lignes en trois
+   respirations de cinq, six et trois. Filet fin, etiquette minuscule. */
+.sub{margin-top:9px}
+.sub:first-child{margin-top:2px}
+.sub-lbl{
+  display:flex;align-items:center;gap:9px;
+  padding:0 12px 5px;color:var(--g9-soft);
+  font-size:var(--zr-ui-3xs);font-weight:500;letter-spacing:.09em;text-transform:uppercase;
+}
+.sub-lbl::after{content:"";flex:1;height:1px;background:var(--at-filet)}
+
+.item{
+  position:relative;
+  display:flex;align-items:center;gap:9px;width:100%;
+  min-height:29px;padding:0 10px;
+  border:0;border-radius:10px;background:transparent;cursor:pointer;text-align:left;
+  color:var(--g9-fg);font-family:var(--zr-police-sans);
+  font-size:var(--zr-ui-md);font-weight:400;letter-spacing:-.015em;
+  transition:background-color var(--g9-timing) var(--g9-ease),color var(--g9-timing) var(--g9-ease);
+}
+.item .gl{flex:none;color:var(--g9-muted);transition:color var(--g9-timing) var(--g9-ease)}
+.item .txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .tag{
+  flex:none;font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres);
+  font-size:var(--zr-ui-2xs);color:var(--g9-soft);font-variant-numeric:tabular-nums;
+}
+.item:hover{background:color-mix(in srgb,var(--g9-fg) 6%,transparent)}
+.item:hover .gl{color:var(--g9-fg)}
+.item[data-on="true"]{background:var(--at-chaud-doux);color:var(--at-chaud);font-weight:500}
+.item[data-on="true"] .gl{color:var(--at-chaud)}
+.item[data-on="true"] .tag{color:var(--at-chaud)}
+.item .neuf{
+  flex:none;padding:1px 7px;border-radius:999px;
+  background:var(--at-chaud);color:#fff;
+  font-size:var(--zr-ui-3xs);font-weight:500;letter-spacing:.02em;
+}
+.item[hidden]{display:none}
+
+.side-foot{
+  display:flex;align-items:center;gap:8px;padding:10px 8px 2px;margin-top:6px;
+  border-top:1px solid var(--at-filet);color:var(--g9-muted);font-size:var(--zr-ui-2xs);
+}
+.side-foot .num{font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres);color:var(--g9-fg)}
+.side-foot .grow{flex:1}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   2. LA SCENE, vue ZenRay Assets
+   ══════════════════════════════════════════════════════════════════════════ */
+.stage{
+  position:relative;min-width:0;
+  display:grid;grid-template-columns:minmax(0,1fr) 0fr;
+  transition:grid-template-columns .42s var(--g9-ease);
+  border-radius:var(--zr-r-window);
+  background:linear-gradient(135deg,var(--g9-glass-a),var(--g9-glass-b));
+  box-shadow:
+    var(--g9-outer-line),
+    inset 0 1px 0 var(--g9-rim-main), inset 0 -1px 0 var(--g9-rim-main),
+    inset 0 2px 0 var(--g9-rim-soft), inset 0 -2px 0 var(--g9-rim-soft),
+    inset 1px 0 0 var(--g9-rim-side), inset -1px 0 0 var(--g9-rim-side),
+    var(--g9-elev-a), var(--g9-elev-b);
+  backdrop-filter:blur(27px) saturate(169%);
+  -webkit-backdrop-filter:blur(27px) saturate(169%);
+  overflow:hidden;
+}
+.stage[data-detail="true"]{grid-template-columns:minmax(0,1fr) 372px}
+
+.main{min-width:0;display:flex;flex-direction:column;overflow:hidden}
+.scroll{flex:1;min-height:0;overflow-y:auto;padding:0 26px 28px}
+.scroll::-webkit-scrollbar{width:10px}
+.scroll::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--g9-fg) 16%,transparent);border-radius:8px;border:3px solid transparent;background-clip:content-box}
+.scroll::-webkit-scrollbar-track{background:transparent}
+
+/* En tete editoriale */
+.head{padding:26px 26px 0;display:flex;align-items:flex-start;gap:22px}
+.head-txt{flex:1;min-width:0}
+.eyebrow{
+  font-family:var(--zr-police-sans);font-size:var(--zr-ui-3xs);font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--at-chaud);
+}
+h1{
+  margin:8px 0 0;font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:var(--zr-titre-1);line-height:1.08;letter-spacing:-.02em;color:var(--g9-fg);
+}
+.lede{
+  margin:9px 0 0;max-width:56ch;color:var(--g9-muted);
+  font-size:var(--zr-ui-lg);line-height:1.5;
+}
+.stats{display:flex;gap:22px;flex:none;padding-top:6px}
+.stat{text-align:right}
+.stat b{
+  display:block;font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres);
+  font-size:var(--zr-titre-3);line-height:1.1;color:var(--g9-fg);font-variant-numeric:tabular-nums;
+}
+.stat span{display:block;margin-top:3px;font-size:var(--zr-ui-3xs);letter-spacing:.09em;text-transform:uppercase;color:var(--g9-soft)}
+
+/* Barre d'outils */
+.tools{
+  position:sticky;top:0;z-index:5;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:18px 26px 14px;margin-bottom:2px;
+  background:linear-gradient(180deg,
+     color-mix(in srgb,var(--g9-bg) 62%, transparent) 0%,
+     color-mix(in srgb,var(--g9-bg) 62%, transparent) 68%,
+     transparent 100%);
+}
+.chips{display:flex;gap:6px;flex-wrap:wrap;flex:1;min-width:0}
+.chip{
+  border:0;cursor:pointer;border-radius:999px;padding:6px 13px;
+  font-family:var(--zr-police-sans);font-size:var(--zr-ui-sm);font-weight:400;
+  color:var(--g9-muted);background:color-mix(in srgb,var(--g9-fg) 6%,transparent);
+  transition:background-color var(--g9-timing) var(--g9-ease),color var(--g9-timing) var(--g9-ease);
+  white-space:nowrap;display:inline-flex;align-items:center;gap:7px;
+}
+.chip:hover{background:color-mix(in srgb,var(--g9-fg) 10%,transparent);color:var(--g9-fg)}
+.chip[data-on="true"]{background:var(--at-chaud);color:#fff;font-weight:500}
+.chip .n{
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres);
+  font-size:var(--zr-ui-2xs);opacity:.72;font-variant-numeric:tabular-nums;
+}
+.find{
+  display:flex;align-items:center;gap:8px;height:32px;padding:0 13px;flex:none;
+  border-radius:999px;color:var(--g9-fg);
+  background:linear-gradient(135deg,var(--g9-toolbar-glass-a),var(--g9-toolbar-glass-b));
+  box-shadow:
+    var(--g9-outer-line),
+    inset 0 1px 0 var(--g9-rim-main), inset 0 -1px 0 var(--g9-rim-main),
+    inset 1px 0 0 var(--g9-rim-side), inset -1px 0 0 var(--g9-rim-side),
+    var(--g9-elev-b);
+}
+.find input{border:0;outline:0;background:transparent;width:150px;color:var(--g9-fg);font-family:var(--zr-police-sans);font-size:var(--zr-ui-sm)}
+.find input::placeholder{color:var(--g9-muted)}
+.find svg{color:var(--g9-muted);flex:none}
+
+/* Le rayon : un intertitre serif qui coupe la grille en etageres */
+.rayon{
+  display:flex;align-items:baseline;gap:12px;
+  padding:20px 0 12px;
+}
+.rayon h2{
+  margin:0;font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:var(--zr-titre-3);letter-spacing:-.015em;color:var(--g9-fg);
+}
+.rayon .cnt{
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres);
+  font-size:var(--zr-ui-sm);color:var(--g9-soft);font-variant-numeric:tabular-nums;
+}
+.rayon .rule{flex:1;height:1px;background:var(--at-filet)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:16px}
+
+/* La carte. OPAQUE, jamais de backdrop-filter : elle est deja posee sur un
+   panneau en verre, et un verre dans un verre n'a plus rien a refracter. */
+.card{
+  position:relative;display:flex;flex-direction:column;overflow:hidden;
+  border:0;padding:0;cursor:pointer;text-align:left;
+  border-radius:16px;background:var(--at-carte);color:var(--g9-fg);
+  box-shadow:
+    inset 0 1px 0 var(--g9-rim-main), inset 0 -1px 0 var(--g9-rim-main),
+    inset 1px 0 0 var(--g9-rim-side), inset -1px 0 0 var(--g9-rim-side),
+    0 1px 2px rgba(28,26,24,.05), 0 8px 22px -12px rgba(28,26,24,.24);
+  transition:transform .28s var(--g9-ease), box-shadow .28s var(--g9-ease), background-color .28s var(--g9-ease);
+}
+.card:hover{
+  transform:translateY(-3px);background:var(--at-carte-fort);
+  box-shadow:
+    inset 0 1px 0 var(--g9-rim-main), inset 0 -1px 0 var(--g9-rim-main),
+    inset 1px 0 0 var(--g9-rim-side), inset -1px 0 0 var(--g9-rim-side),
+    0 2px 4px rgba(28,26,24,.06), 0 20px 40px -16px rgba(28,26,24,.34);
+}
+.card[data-on="true"]{
+  background:var(--at-carte-fort);
+  box-shadow:
+    inset 0 0 0 1.5px var(--at-chaud),
+    0 2px 4px rgba(28,26,24,.06), 0 20px 40px -16px rgba(28,26,24,.30);
+}
+.card[hidden]{display:none}
+
+.vig{
+  position:relative;aspect-ratio:4/3;overflow:hidden;
+  background:var(--at-vignette-fond);
+  border-bottom:1px solid var(--at-filet);
+}
+.vig svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.vig .mark{
+  position:absolute;left:12px;bottom:10px;z-index:2;
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:26px;line-height:1;color:rgba(255,255,255,.92);
+  text-shadow:0 1px 10px rgba(20,16,12,.34);letter-spacing:-.02em;
+}
+.vig .ph{
+  position:absolute;right:9px;top:9px;z-index:2;
+  padding:2px 8px;border-radius:999px;
+  background:rgba(20,16,12,.32);color:rgba(255,255,255,.86);
+  font-size:var(--zr-ui-3xs);font-weight:500;letter-spacing:.05em;
+  backdrop-filter:none;
+}
+.card-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px}
+.card-title{
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:var(--zr-ui-2xl);line-height:1.22;letter-spacing:-.015em;color:var(--g9-fg);
+}
+.card-meta{
+  display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+  color:var(--g9-soft);font-size:var(--zr-ui-2xs);
+}
+.card-meta .kind{color:var(--at-chaud);font-weight:500}
+.card-meta .num{font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres);color:var(--g9-muted);font-variant-numeric:tabular-nums}
+.card-meta .dot{opacity:.5}
+.card-desc{
+  color:var(--g9-muted);font-size:var(--zr-ui-sm);line-height:1.45;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+
+.vide{
+  padding:70px 0;text-align:center;color:var(--g9-soft);
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);font-size:var(--zr-titre-3);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   3. LA FICHE DE DETAIL
+   ══════════════════════════════════════════════════════════════════════════ */
+.detail{
+  min-width:0;overflow:hidden;
+  border-left:1px solid var(--at-filet);
+  display:flex;flex-direction:column;
+  background:color-mix(in srgb,var(--g9-bg) 40%,transparent);
+}
+.detail-in{width:372px;display:flex;flex-direction:column;height:100%;min-height:0}
+.detail-head{display:flex;align-items:center;gap:8px;padding:16px 18px 10px}
+.detail-head .k{
+  flex:1;min-width:0;color:var(--at-chaud);font-size:var(--zr-ui-3xs);
+  font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+}
+.detail-scroll{flex:1;min-height:0;overflow-y:auto;padding:0 18px 18px}
+.detail-scroll::-webkit-scrollbar{width:8px}
+.detail-scroll::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--g9-fg) 16%,transparent);border-radius:8px;border:2px solid transparent;background-clip:content-box}
+.detail-vig{
+  position:relative;aspect-ratio:16/10;border-radius:14px;overflow:hidden;
+  background:var(--at-vignette-fond);
+  box-shadow:inset 0 1px 0 var(--g9-rim-main), inset 0 -1px 0 var(--g9-rim-main);
+}
+.detail-vig svg{position:absolute;inset:0;width:100%;height:100%}
+.detail-vig .ph{
+  position:absolute;right:10px;top:10px;padding:3px 9px;border-radius:999px;
+  background:rgba(20,16,12,.34);color:rgba(255,255,255,.88);font-size:var(--zr-ui-3xs);font-weight:500;
+}
+.detail h3{
+  margin:15px 0 0;font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:var(--zr-titre-2);line-height:1.16;letter-spacing:-.02em;color:var(--g9-fg);
+}
+.detail .sous{margin:6px 0 0;color:var(--g9-muted);font-size:var(--zr-ui-sm)}
+.detail .prose{
+  margin:14px 0 0;color:var(--g9-fg);opacity:.86;
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:15.5px;line-height:1.58;letter-spacing:-.005em;
+}
+.fiche{margin:16px 0 0;border-top:1px solid var(--at-filet)}
+.fiche div{
+  display:flex;align-items:baseline;gap:12px;
+  padding:8px 2px;border-bottom:1px solid var(--at-filet);
+}
+.fiche dt{flex:none;width:98px;color:var(--g9-soft);font-size:var(--zr-ui-2xs);letter-spacing:.05em;text-transform:uppercase}
+.fiche dd{margin:0;flex:1;min-width:0;color:var(--g9-fg);font-size:var(--zr-ui-sm)}
+.fiche dd.num{font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres);font-size:var(--zr-ui-lg);font-variant-numeric:tabular-nums}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tag-s{
+  padding:3px 10px;border-radius:999px;font-size:var(--zr-ui-2xs);
+  color:var(--g9-muted);background:color-mix(in srgb,var(--g9-fg) 7%,transparent);
+}
+.detail-acts{
+  padding:14px 18px 18px;border-top:1px solid var(--at-filet);
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  background:color-mix(in srgb,var(--g9-bg) 30%,transparent);
+}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  height:36px;padding:0 14px;border:0;border-radius:11px;cursor:pointer;
+  font-family:var(--zr-police-sans);font-size:var(--zr-ui-sm);font-weight:500;
+  transition:filter .18s var(--g9-ease),transform .18s var(--g9-ease),background-color .18s var(--g9-ease);
+}
+.btn:active{transform:scale(.975)}
+.btn-primary{
+  grid-column:1 / -1;
+  background:linear-gradient(140deg,var(--at-chaud),#8d5730);color:#fff;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 3px 12px rgba(140,85,45,.32);
+}
+.btn-primary:hover{filter:brightness(1.06)}
+.btn-quiet{
+  background:color-mix(in srgb,var(--g9-fg) 7%,transparent);color:var(--g9-fg);
+}
+.btn-quiet:hover{background:color-mix(in srgb,var(--g9-fg) 12%,transparent)}
+
+/* ── Reglages d'accessibilite et repli sans backdrop-filter ───────────────── */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .side,.stage{background:var(--zr-glass-bg-strong)}
+}
+@media (prefers-reduced-transparency:reduce){
+  .side,.stage,.side-search,.find{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--zr-bg-content)}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important;animation:none !important}
+}
+@media (max-width:1180px){
+  .stage[data-detail="true"]{grid-template-columns:minmax(0,1fr) 320px}
+  .detail-in{width:320px}
+  .head{flex-direction:column;gap:14px}
+  .stats{padding-top:0}
+}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ════════════════ SIDEBAR ════════════════ -->
+  <aside class="side">
+    <div class="side-top">
+      <div class="side-mark">Z</div>
+      <div class="side-name">ZenRay<small>Atelier</small></div>
+      <button class="icon-btn" id="theme" title="Basculer le theme" aria-label="Basculer le theme">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="8" cy="8" r="3.1"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2L3.1 3.1"/></svg>
+      </button>
+      <button class="icon-btn" title="Reglages" aria-label="Reglages">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.4v1.5M8 13.1v1.5M14.6 8h-1.5M2.9 8H1.4M12.7 3.3l-1 1M4.3 11.7l-1 1M12.7 12.7l-1-1M4.3 4.3l-1-1"/></svg>
+      </button>
+    </div>
+
+    <label class="side-search">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7.2" cy="7.2" r="4.4"/><path d="M10.5 10.5L14 14"/></svg>
+      <input id="navfilter" type="search" placeholder="Filtrer la navigation">
+    </label>
+
+    <div class="pins" id="pins"></div>
+
+    <nav class="nav" id="nav"></nav>
+
+    <div class="side-foot">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 5.2 8 2l6 3.2v5.6L8 14l-6-3.2z"/><path d="M2 5.2 8 8.4l6-3.2M8 8.4V14"/></svg>
+      <span><span class="num">248</span> objets rangés</span>
+      <span class="grow"></span>
+      <span><span class="num">412</span> Go</span>
+    </div>
+  </aside>
+
+  <!-- ════════════════ SCENE ════════════════ -->
+  <section class="stage" id="stage" data-detail="false">
+    <div class="main">
+
+      <header class="head">
+        <div class="head-txt">
+          <div class="eyebrow">Atelier ZenRay</div>
+          <h1>ZenRay Assets</h1>
+          <p class="lede">Tout ce qui est fini, mesuré et réutilisable, posé sur une seule étagère. On voit d'abord la chose, la fiche technique vient ensuite.</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>248</b><span>objets</span></div>
+          <div class="stat"><b>7</b><span>rayons</span></div>
+          <div class="stat"><b>2019</b><span>depuis</span></div>
+        </div>
+      </header>
+
+      <div class="tools">
+        <div class="chips" id="chips"></div>
+        <label class="find">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7.2" cy="7.2" r="4.4"/><path d="M10.5 10.5L14 14"/></svg>
+          <input id="find" type="search" placeholder="Chercher un objet">
+        </label>
+      </div>
+
+      <div class="scroll" id="scroll"></div>
+    </div>
+
+    <!-- Fiche : une colonne de la grille, jamais un calque flottant, pour ne
+         pas empiler une surface vitree sur une autre. -->
+    <aside class="detail" id="detail" aria-hidden="true">
+      <div class="detail-in" id="detail-in"></div>
+    </aside>
+  </section>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   Tout est pilote par des donnees. Un gabarit, des jeux de parametres, aucune
+   valeur recopiee : la carte, la fiche et la vignette sont trois instances.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Glyphes de navigation, un dessin par entree ──────────────────────────── */
+const GL = {
+  create:'M2.6 4.6h10.8M2.6 8h10.8M2.6 11.4h6.4',
+  assets:'M8 1.9 14 5v6L8 14.1 2 11V5z M2 5l6 3.1L14 5M8 8.1v6',
+  timer:'M8 4.4V8l2.3 1.7M8 14.2A6.2 6.2 0 1 0 8 1.8a6.2 6.2 0 0 0 0 12.4z',
+  plan:'M3 3.3h10v9.4H3z M3 6.2h10M6 3.3v9.4',
+  goals:'M8 14.2A6.2 6.2 0 1 0 8 1.8a6.2 6.2 0 0 0 0 12.4z M8 11.2A3.2 3.2 0 1 0 8 4.8a3.2 3.2 0 0 0 0 6.4z M8 9.1a1.1 1.1 0 1 0 0-2.2 1.1 1.1 0 0 0 0 2.2z',
+  media:'M2.4 3.6h11.2v8.8H2.4z M6.6 6.4 10.4 8l-3.8 1.6z',
+  notes:'M4 2.4h8v11.2H4z M6 5.4h4M6 8h4M6 10.6h2.6',
+  skills:'M8 2.2 9.7 6l4.1.4-3.1 2.7.95 4-3.65-2.2-3.65 2.2.95-4L2.2 6.4 6.3 6z',
+  audio:'M6 12.2V4.2l6.4-1.4v7.8 M6 12.2a1.9 1.9 0 1 1-3.8 0 1.9 1.9 0 0 1 3.8 0z',
+  shelf:'M2.4 2.8h4v10.4h-4z M7.6 2.8h3.2v10.4H7.6z M11.9 4.1l2.1 9.1',
+  ref:'M2.4 3.4h11.2v9.2H2.4z M2.4 9.6l3.2-3 2.6 2.4 2.6-2.6 2.8 2.6M5.4 6.6a.9.9 0 1 0 0-1.8.9.9 0 0 0 0 1.8z',
+  dashboard:'M2.6 2.9h4.6v4.6H2.6z M8.8 2.9h4.6v2.8H8.8z M2.6 9.1h4.6v4h-4.6z M8.8 7.3h4.6v5.8H8.8z',
+  projects:'M2.4 4.6h4.2l1.3 1.6h5.7v6.6H2.4z',
+  freelance:'M2.4 5.6h11.2v7.2H2.4z M6 5.6V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1.6M2.4 8.8h11.2',
+  design:'M8 13.6c3.1 0 5.6-1.9 5.6-4.4S11.1 2.4 8 2.4 2.4 5.2 2.4 8 4.5 13.6 8 13.6z M5.6 7.2h.01M8 5.6h.01M10.4 7.2h.01M8.6 11.4h1.6',
+  characters:'M8 8a2.7 2.7 0 1 0 0-5.4A2.7 2.7 0 0 0 8 8z M3.2 13.6c0-2.5 2.1-4.1 4.8-4.1s4.8 1.6 4.8 4.1',
+  environments:'M2.2 11.8h11.6 M2.2 11.8 6 5.6l2.4 3.6 1.6-2.2 3.8 4.8',
+  japanese:'M3 3.4h10 M8 3.4v9.4 M4.8 7h6.4 M5.6 10.4h4.8',
+  articles:'M3 3h10v10H3z M5.2 5.6h5.6M5.2 8h5.6M5.2 10.4h3.4',
+  documents:'M4.2 2.4h5L12 5.2v8.4H4.2z M9.2 2.4v3H12',
+  features:'M8 2.4l1.5 3.3 3.6.4-2.7 2.4.75 3.5L8 10.2 4.85 12l.75-3.5L2.9 6.1l3.6-.4z',
+  archives:'M2.4 3.4h11.2v2.8H2.4z M3.4 6.2h9.2v7H3.4z M6.4 8.8h3.2',
+  drive:'M2.4 8.6h11.2v4.2H2.4z M4.4 3.4h7.2l2 5.2H2.4z M4.6 10.7h.01',
+  index:'M2.6 3.4h10.8v9.2H2.6z M5.6 3.4v9.2 M8 6.2h3.4M8 8.8h3.4',
+  trash:'M3.4 4.6h9.2 M6 4.6V3.2h4v1.4 M4.6 4.6l.7 8.4h5.4l.7-8.4'
+};
+function glyphe(k){
+  return '<svg class="gl" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="'+(GL[k]||GL.create)+'"/></svg>';
+}
+
+/* ── La navigation reelle. Le remede a la densite est ici : la zone Create
+      n'est plus une liste de quatorze lignes, elle porte trois sous rubriques
+      de cinq, six et trois, chacune separee par un filet. ─────────────────── */
+const NAV = [
+  { id:'create', label:'Create', ouvert:true, subs:[
+    { label:'Travail', items:[
+      {id:'create', label:'Create', icon:'create'},
+      {id:'assets', label:'Assets', icon:'assets', neuf:true, actif:true},
+      {id:'timer',  label:'Timer',  icon:'timer'},
+      {id:'plan',   label:'Plan',   icon:'plan', tag:'6'},
+      {id:'goals',  label:'Goals',  icon:'goals'}
+    ]},
+    { label:'Bibliothèque', items:[
+      {id:'media',  label:'Media',  icon:'media'},
+      {id:'notes',  label:'Notes',  icon:'notes'},
+      {id:'skills', label:'Skills', icon:'skills', tag:'74'},
+      {id:'audio',  label:'Audio',  icon:'audio'},
+      {id:'shelf',  label:'Shelf',  icon:'shelf'},
+      {id:'ref',    label:'Ref',    icon:'ref'}
+    ]},
+    { label:'Pilotage', items:[
+      {id:'dashboard', label:'Dashboard', icon:'dashboard'},
+      {id:'projects',  label:'Projects',  icon:'projects'},
+      {id:'freelance', label:'Freelance', icon:'freelance'}
+    ]}
+  ]},
+  { id:'gallery', label:'Gallery', ouvert:true, subs:[
+    { items:[
+      {id:'design',       label:'Design',       icon:'design'},
+      {id:'characters',   label:'Characters',   icon:'characters'},
+      {id:'environments', label:'Environments', icon:'environments'}
+    ]}
+  ]},
+  { id:'learn', label:'Learn', ouvert:true, subs:[
+    { items:[ {id:'japanese', label:'Japanese', icon:'japanese', tag:'N4'} ] }
+  ]},
+  { id:'apps', label:'Apps', ouvert:false, subs:[
+    { items:[
+      {id:'articles',  label:'Articles',  icon:'articles'},
+      {id:'documents', label:'Documents', icon:'documents'},
+      {id:'features',  label:'Features',  icon:'features'}
+    ]}
+  ]},
+  { id:'systeme', label:'Système', ouvert:false, subs:[
+    { items:[
+      {id:'archives', label:'Archives', icon:'archives'},
+      {id:'drive',    label:'Drive',    icon:'drive'},
+      {id:'index',    label:'Index',    icon:'index'},
+      {id:'trash',    label:'Trash',    icon:'trash'}
+    ]}
+  ]}
+];
+
+const PINS = [
+  {id:'create', label:'Create', icon:'create'},
+  {id:'assets', label:'Assets', icon:'assets', on:true},
+  {id:'plan',   label:'Plan',   icon:'plan'},
+  {id:'japanese', label:'Japon', icon:'japanese'}
+];
+
+/* ── Les rayons de la vue Assets ──────────────────────────────────────────── */
+const RAYONS = {
+  personnage:  { nom:'Personnages',   a:'#C8834E', b:'#7B3F2E' },
+  environnement:{nom:'Environnements',a:'#5E8C6A', b:'#2C4A47' },
+  objet:       { nom:'Assets 3D',     a:'#7C86B5', b:'#343A5E' },
+  matiere:     { nom:'Matières',      a:'#B77F8E', b:'#5A2F45' },
+  systeme:     { nom:'Systèmes',      a:'#5C93B8', b:'#25445E' },
+  outil:       { nom:'Outils',        a:'#A98C4E', b:'#54401F' }
+};
+
+/* Chaque objet est un jeu de parametres du meme gabarit de carte. */
+const ASSETS = [
+  { id:'kagura', nom:'Kagura, personnage jouable', rayon:'personnage', type:'Personnage 3D', annee:2026,
+    poids:'84 000 triangles', format:'FBX, textures 4K', motif:'buste',
+    court:"Héroïne complète, squelette Unreal et douze formes faciales.",
+    long:"La première silhouette entièrement finie du projet. Le maillage est propre, découpé en quatre matériaux, et le squelette suit la convention Unreal sans retargeting. Douze formes faciales couvrent la parole et l'expression de base, ce qui suffit à une cinématique courte. Reprise telle quelle dans deux prototypes.",
+    tags:['ZBrush','Unreal 5.8','Rig','Cinématique'], usages:3, maj:'12 août 2026' },
+
+  { id:'yanaka', nom:'Rue de Yanaka, module', rayon:'environnement', type:'Kit modulaire', annee:2026,
+    poids:'41 pièces', format:'UASSET', motif:'horizon',
+    court:"Ruelle japonaise en pièces assemblables, matériaux instanciés.",
+    long:"Quarante et une pièces qui se raccordent sur une grille d'un mètre : murs, auvents, distributeurs, câbles, gouttières. Tous les matériaux dérivent d'un seul parent, donc la teinte de la rue entière se règle en un paramètre. Photographié sur place en juin, mesuré au ruban plutôt qu'estimé.",
+    tags:['Modulaire','Photogrammétrie','Tokyo'], usages:2, maj:'29 juillet 2026' },
+
+  { id:'liquidglass', nom:'Liquid Glass, système d\'interface', rayon:'systeme', type:'Système UI', annee:2026,
+    poids:'38 composants', format:'CSS et HTML', motif:'grille',
+    court:"Le verre ZenRay complet, thème clair et thème sombre, jetons compris.",
+    long:"Le matériau de toutes les interfaces ZenRay : verre dégradé, liseré à paramètre unique, élévations, boutons, champs, menus, cartes. Un seul nombre pilote l'intensité du liseré partout à la fois. Deux thèmes vérifiés côte à côte, aucune valeur écrite en dur dans un composant.",
+    tags:['Jetons','Thème','Accessibilité'], usages:9, maj:'21 août 2026' },
+
+  { id:'torii', nom:'Torii de pierre, ensemble', rayon:'objet', type:'Asset 3D', annee:2025,
+    poids:'12 maillages', format:'GLB', motif:'arche',
+    court:"Trois torii usés, cartes de mousse et de lichen séparées.",
+    long:"Trois variantes d'usure sur la même base, plus les fragments cassés qui permettent de composer une ruine. La mousse est une carte indépendante, donc elle se dose sans repasser par la texture de pierre. Quatre niveaux de détail générés et vérifiés à distance de jeu.",
+    tags:['Pierre','Usure','LOD'], usages:4, maj:'3 novembre 2025' },
+
+  { id:'dune', nom:'Dune, transfert de palette', rayon:'matiere', type:'Table de couleur', annee:2025,
+    poids:'33 points', format:'CUBE', motif:'bandes',
+    court:"Étalonnage sable et cuivre, mesuré depuis une image de référence.",
+    long:"Fabriquée par mesure de la couleur moyenne par tranche de luminance sur une image de référence, jamais par une courbe inventée à la main. L'écart contrôlé après application reste sous trois valeurs sur deux cent cinquante cinq. Se pose dans DaVinci comme dans Unreal.",
+    tags:['Étalonnage','Mesuré','Ciné'], usages:6, maj:'18 septembre 2025' },
+
+  { id:'sable', nom:'Sable réactif', rayon:'matiere', type:'Shader', annee:2026,
+    poids:'14 paramètres', format:'HLSL', motif:'ondes',
+    court:"Déplacement par empreinte, tessellation adaptative sous les pas.",
+    long:"Le sable garde la trace du passage et la referme lentement, avec un grain qui roule sur les bords de l'empreinte. La tessellation se resserre uniquement sous le personnage, ce qui garde le coût stable. Quatorze paramètres exposés, aucune constante cachée dans le graphe.",
+    tags:['Shader','Tessellation','Unreal'], usages:2, maj:'26 août 2026' },
+
+  { id:'washi', nom:'Papier washi, pack', rayon:'matiere', type:'Textures', annee:2025,
+    poids:'24 cartes', format:'PNG 4K', motif:'fibres',
+    court:"Fibres scannées, albédo, normale et rugosité pour chaque feuille.",
+    long:"Six feuilles réelles scannées à haute résolution, déclinées en quatre cartes chacune. Les fibres sont détourées proprement, donc le papier se superpose en transparence sans halo. Utilisé pour les cloisons, les lanternes et les interfaces papier du jeu.",
+    tags:['Scan','Papier','Transparence'], usages:5, maj:'7 août 2025' },
+
+  { id:'boucle', nom:'Boucle quinze deux, minuteur', rayon:'outil', type:'Outil', annee:2026,
+    poids:'320 lignes', format:'JavaScript', motif:'noeuds',
+    court:"Quinze minutes de travail, deux de pause, un statut fini à la fin.",
+    long:"L'unité de travail transformée en objet : il compte, il sonne, il exige une clôture explicite avant de repartir. Aucun plafond journalier, parce que ce qui épuise n'est pas le volume mais le bloc qui ne se ferme jamais. Se pose dans n'importe quelle page en une balise.",
+    tags:['Productivité','Autonome','Sans dépendance'], usages:3, maj:'14 août 2026' },
+
+  { id:'gabarit', nom:'Post carré, gabarit', rayon:'systeme', type:'Gabarit', annee:2026,
+    poids:'9 variantes', format:'HTML', motif:'grille',
+    court:"Le gabarit de publication au format carré, calques restés éditables.",
+    long:"Neuf mises en page pour un même contenu, du titre plein cadre à la planche de quatre images. Les calques restent modifiables jusqu'à l'export, et les valeurs artistiques vivent dans un fichier de paramètres séparé du gabarit. Un rendu prend moins d'une seconde.",
+    tags:['Publication','Export','Paramétrable'], usages:12, maj:'2 septembre 2026' },
+
+  { id:'fumee', nom:'Fumée volumétrique', rayon:'objet', type:'Simulation cuite', annee:2025,
+    poids:'240 Mo', format:'VDB', motif:'volume',
+    court:"Simulation Houdini cuite sur quatre-vingts images, prête à poser.",
+    long:"Une colonne de fumée lente, cuite une fois pour toutes, qui se lit en boucle sans rejouer la simulation. La densité et l'absorption restent pilotables à la lecture, donc la même cuisson sert une brume au sol et un panache de toit.",
+    tags:['Houdini','Volume','Cuit'], usages:2, maj:'22 décembre 2025' },
+
+  { id:'avif', nom:'Encodeur AVIF par lot', rayon:'outil', type:'Script', annee:2025,
+    poids:'180 lignes', format:'Python', motif:'noeuds',
+    court:"Conversion parallèle sur seize cœurs, qualité mesurée puis figée.",
+    long:"Trente échantillons ont servi à trouver le point où cent pour cent des fichiers gagnent en taille, et ce point est écrit dans le script plutôt que redécouvert chaque fois. Le lot tourne sur seize cœurs et garde l'original quand le résultat est plus lourd.",
+    tags:['Image','Parallèle','Mesuré'], usages:8, maj:'22 mai 2025' },
+
+  { id:'katana', nom:'Katana, arme fine', rayon:'objet', type:'Asset 3D', annee:2026,
+    poids:'22 000 triangles', format:'FBX', motif:'lame',
+    court:"Lame gravée, fourreau séparé, niveaux de détail complets.",
+    long:"La gravure est portée par une carte de hauteur, pas par la géométrie, ce qui garde le maillage léger sans perdre le reflet. Le fourreau est un objet distinct, attachable à la ceinture ou posé au sol. Point d'attache et centre de gravité déjà placés.",
+    tags:['Arme','Gravure','LOD'], usages:3, maj:'30 août 2026' },
+
+  { id:'oni', nom:'Oni de pierre, personnage', rayon:'personnage', type:'Personnage 3D', annee:2025,
+    poids:'146 000 triangles', format:'FBX', motif:'buste',
+    court:"Adversaire massif, sculpture haute résolution et version jouable.",
+    long:"Sculpté d'abord sans contrainte, puis retopologisé pour le jeu, les deux versions étant conservées : la haute sert au rendu de présentation, la basse au moteur. Les cartes de normale sont cuites depuis la haute, sans erreur de couture visible.",
+    tags:['ZBrush','Retopologie','Boss'], usages:1, maj:'11 octobre 2025' },
+
+  { id:'foret', nom:'Forêt de bambous, dressage', rayon:'environnement', type:'Kit modulaire', annee:2026,
+    poids:'18 pièces', format:'UASSET', motif:'horizon',
+    court:"Bambous animés par le vent, dressage automatique par densité.",
+    long:"Les tiges plient sous un vent partagé par toute la scène, ce qui évite le champ d'objets qui bougent chacun dans son coin. Un seul paramètre de densité peuple une surface entière, et les impostors prennent le relais au loin sans que la transition se voie.",
+    tags:['Végétation','Vent','Instanciation'], usages:2, maj:'5 septembre 2026' },
+
+  { id:'atlas', nom:'Atlas UI, planche de composants', rayon:'systeme', type:'Système UI', annee:2026,
+    poids:'26 planches', format:'HTML', motif:'grille',
+    court:"Chaque composant sur fond clair et fond sombre, dans un même assembleur.",
+    long:"La photographie de l'interface à un instant donné, composant par composant, dans les deux thèmes côte à côte. Sert de contrôle avant livraison : un composant qui ne tient pas sur les deux fonds se voit immédiatement, sans lancer l'application.",
+    tags:['Contrôle','Deux thèmes','Documentation'], usages:4, maj:'21 août 2026' },
+
+  { id:'pluie', nom:'Pluie et flaques', rayon:'matiere', type:'Shader', annee:2026,
+    poids:'9 paramètres', format:'HLSL', motif:'ondes',
+    court:"Mouillage progressif des surfaces, gouttes et anneaux sur les flaques.",
+    long:"Un seul paramètre de mouillage assombrit l'albédo, lisse la rugosité et fait monter l'eau dans les creux, sur toutes les matières à la fois. Les anneaux d'impact naissent sur les zones plates détectées par la normale, donc rien à peindre à la main.",
+    tags:['Météo','Mouillage','Unreal'], usages:2, maj:'1 septembre 2026' }
+];
+
+/* ── Vignettes : dessins abstraits, jamais une fausse capture. Le mot
+      Emplacement reste visible pour qu'aucune image ne soit prise pour vraie. */
+function vignette(a, grande){
+  const r = RAYONS[a.rayon];
+  const uid = 'g_'+a.id+(grande?'_L':'');
+  let forme = '';
+  const m = a.motif;
+  if(m==='buste'){
+    forme = '<circle cx="100" cy="58" r="24" fill="#fff" opacity=".16"/>'
+          + '<path d="M56 122c0-26 20-40 44-40s44 14 44 40z" fill="#fff" opacity=".13"/>'
+          + '<path d="M100 34v88M62 74h76" stroke="#fff" stroke-opacity=".16" stroke-width="1"/>';
+  } else if(m==='horizon'){
+    forme = '<path d="M0 108 44 62l30 32 26-26 40 40 60-44v86H0z" fill="#fff" opacity=".14"/>'
+          + '<path d="M0 122h200" stroke="#fff" stroke-opacity=".22" stroke-width="1"/>'
+          + '<circle cx="152" cy="42" r="15" fill="#fff" opacity=".18"/>';
+  } else if(m==='grille'){
+    forme = '<g fill="#fff" fill-opacity=".14">'
+          + '<rect x="26" y="28" width="60" height="30" rx="8"/><rect x="94" y="28" width="80" height="30" rx="8"/>'
+          + '<rect x="26" y="66" width="80" height="30" rx="8"/><rect x="114" y="66" width="60" height="30" rx="8"/>'
+          + '<rect x="26" y="104" width="148" height="18" rx="8"/></g>';
+  } else if(m==='arche'){
+    forme = '<path d="M40 128V54h120v74" stroke="#fff" stroke-opacity=".2" stroke-width="9" fill="none"/>'
+          + '<rect x="24" y="38" width="152" height="10" rx="4" fill="#fff" opacity=".2"/>'
+          + '<rect x="34" y="60" width="132" height="7" rx="3" fill="#fff" opacity=".16"/>';
+  } else if(m==='bandes'){
+    forme = '<g>'
+          + '<rect x="0" y="0" width="200" height="30" fill="#fff" opacity=".05"/>'
+          + '<rect x="0" y="30" width="200" height="26" fill="#fff" opacity=".10"/>'
+          + '<rect x="0" y="56" width="200" height="24" fill="#fff" opacity=".16"/>'
+          + '<rect x="0" y="80" width="200" height="24" fill="#fff" opacity=".22"/>'
+          + '<rect x="0" y="104" width="200" height="46" fill="#fff" opacity=".30"/></g>';
+  } else if(m==='ondes'){
+    forme = '<g fill="none" stroke="#fff" stroke-width="1.4">'
+          + '<path d="M-6 46q26-16 52 0t52 0 52 0 52 0" stroke-opacity=".22"/>'
+          + '<path d="M-6 70q26-16 52 0t52 0 52 0 52 0" stroke-opacity=".18"/>'
+          + '<path d="M-6 94q26-16 52 0t52 0 52 0 52 0" stroke-opacity=".14"/>'
+          + '<path d="M-6 118q26-16 52 0t52 0 52 0 52 0" stroke-opacity=".10"/></g>'
+          + '<circle cx="128" cy="70" r="26" fill="none" stroke="#fff" stroke-opacity=".2" stroke-width="1.2"/>';
+  } else if(m==='fibres'){
+    let l='';
+    for(let i=0;i<16;i++){ const y=8+i*9; l += '<path d="M-4 '+y+'q50 '+((i%3)-1)*7+' 104 0t104 0" stroke="#fff" stroke-opacity="'+(0.07+(i%4)*0.035).toFixed(3)+'" stroke-width="1.1" fill="none"/>'; }
+    forme = l;
+  } else if(m==='noeuds'){
+    forme = '<g stroke="#fff" stroke-opacity=".24" stroke-width="1.2" fill="none">'
+          + '<path d="M46 44h48v34h60M46 44v62h48"/><path d="M94 78h-24v42h48"/></g>'
+          + '<g fill="#fff" fill-opacity=".24">'
+          + '<circle cx="46" cy="44" r="7"/><circle cx="154" cy="78" r="7"/><circle cx="118" cy="120" r="7"/><circle cx="70" cy="78" r="5"/><circle cx="94" cy="106" r="5"/></g>';
+  } else if(m==='volume'){
+    forme = '<g fill="#fff">'
+          + '<ellipse cx="100" cy="104" rx="58" ry="20" fill-opacity=".10"/>'
+          + '<ellipse cx="94" cy="76" rx="40" ry="26" fill-opacity=".13"/>'
+          + '<ellipse cx="108" cy="50" rx="27" ry="20" fill-opacity=".16"/>'
+          + '<ellipse cx="98" cy="28" rx="16" ry="12" fill-opacity=".19"/></g>';
+  } else if(m==='lame'){
+    forme = '<path d="M30 120 148 30l14 12L48 132z" fill="#fff" opacity=".18"/>'
+          + '<path d="M40 126 152 38" stroke="#fff" stroke-opacity=".3" stroke-width="1.1"/>'
+          + '<rect x="20" y="112" width="30" height="9" rx="4" transform="rotate(-38 35 116)" fill="#fff" opacity=".22"/>';
+  } else {
+    forme = '<rect x="52" y="38" width="96" height="72" rx="10" fill="#fff" opacity=".14"/>';
+  }
+  const label = grande
+    ? '<div class="ph">Emplacement d\'aperçu</div>'
+    : '<div class="ph">Aperçu</div>';
+  return ''
+    + '<svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true">'
+    +   '<defs><linearGradient id="'+uid+'" x1="0" y1="0" x2="1" y2="1">'
+    +     '<stop offset="0" stop-color="'+r.a+'"/><stop offset="1" stop-color="'+r.b+'"/>'
+    +   '</linearGradient></defs>'
+    +   '<rect width="200" height="150" fill="url(#'+uid+')"/>'
+    +   forme
+    + '</svg>'
+    + label;
+}
+
+/* ── Rendu de la sidebar ──────────────────────────────────────────────────── */
+const elNav = document.getElementById('nav');
+const elPins = document.getElementById('pins');
+
+elPins.innerHTML = PINS.map(p =>
+  '<button class="pin" data-on="'+(p.on?'true':'false')+'" title="'+p.label+'">'
+  + glyphe(p.icon) + '<span>'+p.label+'</span></button>'
+).join('');
+
+function rendreNav(){
+  elNav.innerHTML = NAV.map(z => {
+    const total = z.subs.reduce((n,s)=>n+s.items.length,0);
+    const corps = z.subs.map(s => {
+      const titre = s.label ? '<div class="sub-lbl">'+s.label+'</div>' : '';
+      const lignes = s.items.map(it =>
+        '<button class="item" data-id="'+it.id+'" data-on="'+(it.actif?'true':'false')+'" data-nom="'+it.label.toLowerCase()+'">'
+        + glyphe(it.icon)
+        + '<span class="txt">'+it.label+'</span>'
+        + (it.neuf ? '<span class="neuf">neuf</span>' : '')
+        + (it.tag ? '<span class="tag">'+it.tag+'</span>' : '')
+        + '</button>'
+      ).join('');
+      return '<div class="sub">'+titre+lignes+'</div>';
+    }).join('');
+    return '<div class="zone" data-zone="'+z.id+'" data-open="'+(z.ouvert?'true':'false')+'">'
+      + '<button class="zone-head">'
+      +   '<svg class="chev" width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.4 8 10.4l4-4"/></svg>'
+      +   '<span class="lbl">'+z.label+'</span><span class="cnt">'+total+'</span>'
+      + '</button>'
+      + '<div class="zone-body">'+corps+'</div>'
+      + '</div>';
+  }).join('');
+
+  elNav.querySelectorAll('.zone-head').forEach(b => b.addEventListener('click', () => {
+    const z = b.closest('.zone');
+    z.dataset.open = z.dataset.open === 'true' ? 'false' : 'true';
+  }));
+  elNav.querySelectorAll('.item').forEach(b => b.addEventListener('click', () => {
+    elNav.querySelectorAll('.item').forEach(o => o.dataset.on = 'false');
+    b.dataset.on = 'true';
+  }));
+}
+rendreNav();
+
+/* Filtre de navigation : les zones fermees s'ouvrent d'elles memes des qu'une
+   de leurs entrees repond, sinon le filtre mentirait par omission. */
+document.getElementById('navfilter').addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase();
+  elNav.querySelectorAll('.zone').forEach(z => {
+    let vus = 0;
+    z.querySelectorAll('.item').forEach(it => {
+      const ok = !q || it.dataset.nom.includes(q);
+      it.hidden = !ok; if(ok) vus++;
+    });
+    z.querySelectorAll('.sub').forEach(s => {
+      const reste = [...s.querySelectorAll('.item')].some(i => !i.hidden);
+      s.hidden = !reste;
+    });
+    z.hidden = q && vus === 0;
+    if(q && vus) z.dataset.open = 'true';
+  });
+});
+
+/* ── Rendu de la vue Assets ───────────────────────────────────────────────── */
+const elChips = document.getElementById('chips');
+const elScroll = document.getElementById('scroll');
+const elStage = document.getElementById('stage');
+const elDetail = document.getElementById('detail-in');
+
+let filtre = 'tout', requete = '', choisi = null;
+
+const ORDRE = ['personnage','environnement','objet','matiere','systeme','outil'];
+
+function compte(k){ return ASSETS.filter(a => a.rayon === k).length; }
+
+elChips.innerHTML =
+  '<button class="chip" data-k="tout" data-on="true">Tout <span class="n">'+ASSETS.length+'</span></button>'
+  + ORDRE.map(k => '<button class="chip" data-k="'+k+'">'+RAYONS[k].nom+' <span class="n">'+compte(k)+'</span></button>').join('');
+
+elChips.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
+  elChips.querySelectorAll('.chip').forEach(o => o.dataset.on = 'false');
+  c.dataset.on = 'true'; filtre = c.dataset.k; rendreGrille();
+}));
+
+document.getElementById('find').addEventListener('input', e => {
+  requete = e.target.value.trim().toLowerCase(); rendreGrille();
+});
+
+function carte(a){
+  return '<button class="card" data-id="'+a.id+'" data-on="'+(choisi===a.id?'true':'false')+'">'
+    + '<div class="vig">'+vignette(a,false)+'<div class="mark">'+a.nom.charAt(0)+'</div></div>'
+    + '<div class="card-body">'
+    +   '<div class="card-title">'+a.nom+'</div>'
+    +   '<div class="card-meta"><span class="kind">'+a.type+'</span><span class="dot">·</span>'
+    +     '<span class="num">'+a.annee+'</span><span class="dot">·</span>'
+    +     '<span class="num">'+a.poids+'</span></div>'
+    +   '<div class="card-desc">'+a.court+'</div>'
+    + '</div></button>';
+}
+
+function rendreGrille(){
+  const gardes = ASSETS.filter(a => {
+    const okF = filtre === 'tout' || a.rayon === filtre;
+    const okQ = !requete || (a.nom+' '+a.type+' '+a.court+' '+a.tags.join(' ')).toLowerCase().includes(requete);
+    return okF && okQ;
+  });
+
+  if(!gardes.length){
+    elScroll.innerHTML = '<p class="vide">Rien sur cette étagère pour le moment.</p>';
+    return;
+  }
+
+  const cles = filtre === 'tout' ? ORDRE : [filtre];
+  elScroll.innerHTML = cles.map(k => {
+    const lot = gardes.filter(a => a.rayon === k);
+    if(!lot.length) return '';
+    return '<section class="rayon-bloc">'
+      + '<div class="rayon"><h2>'+RAYONS[k].nom+'</h2><span class="cnt">'+lot.length+'</span><span class="rule"></span></div>'
+      + '<div class="grid">'+lot.map(carte).join('')+'</div>'
+      + '</section>';
+  }).join('');
+
+  elScroll.querySelectorAll('.card').forEach(c => c.addEventListener('click', () => ouvrir(c.dataset.id)));
+}
+
+function ouvrir(id){
+  choisi = choisi === id ? null : id;
+  if(!choisi){ fermer(); rendreGrille(); return; }
+  const a = ASSETS.find(x => x.id === id);
+  const r = RAYONS[a.rayon];
+
+  elDetail.innerHTML =
+      '<div class="detail-head">'
+    +   '<span class="k">'+r.nom+'</span>'
+    +   '<button class="icon-btn" id="ferme" title="Fermer la fiche" aria-label="Fermer la fiche">'
+    +     '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>'
+    +   '</button>'
+    + '</div>'
+    + '<div class="detail-scroll">'
+    +   '<div class="detail-vig">'+vignette(a,true)+'</div>'
+    +   '<h3>'+a.nom+'</h3>'
+    +   '<p class="sous">'+a.court+'</p>'
+    +   '<p class="prose">'+a.long+'</p>'
+    +   '<dl class="fiche">'
+    +     '<div><dt>Type</dt><dd>'+a.type+'</dd></div>'
+    +     '<div><dt>Année</dt><dd class="num">'+a.annee+'</dd></div>'
+    +     '<div><dt>Volume</dt><dd class="num">'+a.poids+'</dd></div>'
+    +     '<div><dt>Format</dt><dd>'+a.format+'</dd></div>'
+    +     '<div><dt>Réemplois</dt><dd class="num">'+a.usages+'</dd></div>'
+    +     '<div><dt>Mise à jour</dt><dd>'+a.maj+'</dd></div>'
+    +   '</dl>'
+    +   '<div class="tags">'+a.tags.map(t => '<span class="tag-s">'+t+'</span>').join('')+'</div>'
+    + '</div>'
+    + '<div class="detail-acts">'
+    +   '<button class="btn btn-primary">Réutiliser comme base</button>'
+    +   '<button class="btn btn-quiet">Ouvrir</button>'
+    +   '<button class="btn btn-quiet">Publier</button>'
+    + '</div>';
+
+  elStage.dataset.detail = 'true';
+  document.getElementById('detail').setAttribute('aria-hidden','false');
+  document.getElementById('ferme').addEventListener('click', () => { choisi = null; fermer(); rendreGrille(); });
+  rendreGrille();
+}
+
+function fermer(){
+  elStage.dataset.detail = 'false';
+  document.getElementById('detail').setAttribute('aria-hidden','true');
+}
+
+rendreGrille();
+
+/* ── Bascule de theme, elle repeint toute la page ─────────────────────────── */
+document.getElementById('theme').addEventListener('click', () => {
+  document.documentElement.classList.toggle('zr-dark');
+});
+</script>
+</body>
+</html>

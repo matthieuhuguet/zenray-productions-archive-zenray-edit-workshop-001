@@ -1,0 +1,4 @@
+{
+  "ok": false,
+  "error": "Export exceeds maximumBytes; master retained: /Users/zenray/.claude/tmp/tmp-zenray-edit/OversizedExport/out/masters/slide-1.png"
+}

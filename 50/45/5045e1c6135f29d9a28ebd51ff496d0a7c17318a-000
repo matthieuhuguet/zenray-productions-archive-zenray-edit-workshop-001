@@ -1,0 +1,45 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="assets/ui/fonts.css">
+<style>
+  /* Template for a single text asset, exported as a TRANSPARENT PNG.
+     Copy, rename to N-name.html, change the font / size / text, then:
+
+     chrome --headless=new --disable-gpu --hide-scrollbars \
+       --default-background-color=00000000 \
+       --window-size=1900,400 --screenshot="N-name.png" "file://$PWD/N-name.html"
+
+     The --default-background-color flag is what makes it transparent.
+     Without it the PNG carries an opaque white box that will cover
+     whatever it sits on in the composition.
+
+     Make the frame comfortably larger than the text: a clipped glyph is
+     unrecoverable, empty transparent space costs nothing. */
+
+  @font-face {
+    font-family: 'Display';
+    src: url('file:///Users/zenray/Library/Fonts/Didonesque-Stencil-Bold.otf') format('opentype');
+  }
+
+  html, body { margin: 0; padding: 0; background: transparent; }
+
+  .wrap {
+    width: 1900px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+  }
+
+  .txt {
+    font-family: 'Display', serif;
+    font-size: 200px;
+    letter-spacing: 0.02em;
+    color: #2b2b2b;
+    text-transform: uppercase;
+  }
+</style></head>
+<body>
+  <div class="wrap"><div class="txt">Your Text</div></div>
+</body></html>

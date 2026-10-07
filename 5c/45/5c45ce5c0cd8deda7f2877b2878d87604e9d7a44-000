@@ -1,0 +1,278 @@
+## Pipeline Reel et Shorts 15s : Houdini Viewport, OBS, Audio, Sous-titres Auto-Fit et Export 4K (2026-09-10)
+
+Ce workflow produit en 30 secondes un Reel ou Short de 15 secondes en qualite 4K montrant la variation dynamique de parametres HDA dans le viewport Houdini. Le gabarit visuel reprend la composition eprouvee Black Myth Wukong : arriere-plan floute issu de la video, fenetre 16:9 centree non rognee, titre superieur en serif blanc pur et sous-titres animes bicolores en bas avec anti-rognage automatique.
+
+### REGLE STRICTE DE FORMAT : 9:16 VERTICAL OBLIGATOIRE POUR TOUS LES REELS ET SHORTS (2026-09-11)
+
+Les videos Reels (Instagram) et Shorts (YouTube / TikTok) sont STRICTEMENT au format 9:16 vertical plein ecran :
+- Resolution 4K UHD verticale : 2160x3840 a 60 fps (export master).
+- Format leger alternatif : 1080x1920 a 60 fps.
+- INTERDICTION FORMELLE d exporter les videos Reels ou Shorts au format 4:5 (2160x2700). Le format 4:5 est reserve exclusivement aux carrousels de posts d images fixes du feed. Toute video de ce pipeline est imperativement un Reel / Short en 9:16 (2160x3840).
+
+### Architecture globale du pipeline (les 7 etapes)
+
+1. **Audio Sourcing et Decoupe (ytb-dlp + ffmpeg)** : telechargement avec cookies Chrome, extraction audio, decoupe chirurgicale de 15.0 secondes avec fondus audio entrant et sortant de 1.0 seconde.
+2. **Animation Procedurale des Curseurs (Houdini HOM Python)** : oscillation symetrique min / max / min en triangle ou bezier sur les parametres du HDA, synchronisee sur la playbar.
+3. **Capture d'Ecran Non Intrusive (`screencapture -v -l` de macOS)** : `~/.claude/skills/zenray-houdini/scripts/record_window.sh <app> <secondes> <sortie.mov>` filme la fenetre meme cachee, sans prendre l'ecran de Matthieu. OBS est `_deprecated` depuis le 2026-09-24 (noir pur).
+4. **Redaction Narrative et Extraction 80/20 des Sous-titres** : ecriture du post selon la voix d'artiste technique 3D authentique, puis decoupage mot a mot en 8 repliques sans inventer aucun mot.
+5. **Moteur de Composition Visuelle et Auto-Fit (Pillow + ffmpeg)** : canevas 9:16 vertical (2160x3840 en 4K, ou 1080x1920), titre haut, sous-titres bicolores Jaune / Blanc animes par echelle, boucle de reduction automatique de police pour interdire tout debordement.
+6. **Encodage et Compatibilite Apple Photos / Instagram** : contournement du piege de l'encodeur HEVC hev1 via H.264 avc1 en conteneur .mov pour importation directe dans la pellicule iOS.
+7. **Rangement Strict du Dossier de Livraison** : 4 elements uniques a la racine du dossier client, tous les fichiers auxiliaires ranges dans des sous-dossiers.
+
+### 1. Audio Sourcing et Decoupe chirurgicale 15s
+
+Recherche et telechargement de musiques libres ou de reference via yt-dlp avec cookies Chrome pour eviter les blocages :
+
+```bash
+# Telecharger l'audio complet en MP3
+yt-dlp --cookies-from-browser chrome --default-search "ytsearch1" -x --audio-format mp3 -o '%(title)s.%(ext)s' "Titre ou lien de la musique"
+
+# Decouper exactement 15.0s avec fondu entrant et sortant de 1.0s
+ffmpeg -y -ss 00:00:30.0 -t 15.0 -i "audio_source.mp3" -af "afade=t=in:ss=0:d=1.0,afade=t=out:st=14.0:d=1.0" -c:a libmp3lame -b:a 320k "audio-15s.mp3"
+```
+
+Les fichiers sources complets sont ranges dans `audio/` ou `tmp-downloads/` pour ne jamais polluer la racine.
+
+### 2. Animation Procedurale des Sliders dans Houdini (HOM Python)
+
+Dans Houdini, les curseurs du composant HDA s'animent par script Python via `hou.Keyframe`.
+
+Regles d'animation :
+- Repartition temporelle homogene sur 360 frames (15 secondes a 24 fps) ou 900 frames (15 secondes a 60 fps).
+- Si un HDA possede 4 parametres cles, chaque parametre dispose de 90 frames (montee de 45 frames vers la valeur cible, puis retour de 45 frames a la valeur d'origine).
+- Prevention critique du gel GPU macOS : WindowServer desactive le rafraichissement OpenGL et Qt des fenetres qui ne sont pas au premier plan. Il faut obligatoirement activer Houdini avant de lancer la playbar.
+
+Script Python executable dans la console Python de Houdini :
+
+```python
+import hou
+import os
+
+# 1. Recuperer le noeud de composant
+node = hou.node("/obj/Component_Armature")
+fps = hou.fps()
+total_frames = int(15.0 * fps)
+
+# 2. Configurer la plage de lecture
+hou.playbar.setFrameRange(1, total_frames)
+hou.playbar.setPlaybackRange(1, total_frames)
+hou.playbar.setRealTime(True)
+
+# 3. Animer les parametres de facon symetrique
+params_to_animate = [
+    ("arch_angle", 55.0, 78.0),
+    ("front_gable_height", 2.4, 3.4),
+    ("beam_size", 0.11, 0.16),
+    ("cross_height", 1.2, 1.7)
+]
+
+num_p = len(params_to_animate)
+frames_per_param = total_frames // num_p
+
+for idx, (pname, val_def, val_max) in enumerate(params_to_animate):
+    parm = node.parm(pname)
+    if not parm:
+        continue
+    parm.deleteAllKeyframes()
+    
+    start_f = 1 + idx * frames_per_param
+    mid_f = start_f + (frames_per_param // 2)
+    end_f = start_f + frames_per_param
+    
+    k0 = hou.Keyframe(val_def, hou.frameToTime(start_f))
+    k1 = hou.Keyframe(val_max, hou.frameToTime(mid_f))
+    k2 = hou.Keyframe(val_def, hou.frameToTime(end_f))
+    
+    parm.setKeyframe(k0)
+    parm.setKeyframe(k1)
+    parm.setKeyframe(k2)
+
+# 4. Forcer l'activation de la fenetre pour eviter la veille GPU
+os.system("osascript -e 'tell application "Houdini" to activate'")
+
+# 5. Positionner la tete de lecture et lancer
+hou.setFrame(1)
+hou.playbar.play()
+```
+
+### 3. Capture Non Intrusive et Master Brut 16:9
+
+**2026-09-24 : utiliser `record_window.sh` (screencapture macOS, section 6 ter du skill `zenray-houdini`). Tout le bloc OBS ci-dessous est `_deprecated` : OBS a enregistre du noir pur avec `window_capture` comme avec ScreenCaptureKit. Il reste ici pour l'historique, ne plus l'executer.**
+
+#### _deprecated : OBS Studio
+
+OBS Studio tourne en arriere-plan avec une scene dediee contenant une source `window_capture` verrouillee sur la fenetre principale de Houdini (resolution native Retina, par exemple 3456x2234 a 60 fps).
+
+L'agent pilote l'enregistrement par AppleScript sans modifier l'ecran de Matthieu :
+
+```bash
+# Lancer l'enregistrement
+osascript -e 'tell application "System Events" to tell process "OBS" to click (first button of window 1 whose name is "Start Recording")'
+
+# Arreter l'enregistrement apres 16 secondes
+sleep 16
+osascript -e 'tell application "System Events" to tell process "OBS" to click (first button of window 1 whose name is "Stop Recording")'
+```
+
+Decoupe sans re-encodage (lossless stream copy) pour extraire exactement 15.0 secondes et associer la piste audio 15s :
+
+```bash
+# Decoupe brute et fusion audio
+ffmpeg -y -ss 00:00:00.8 -t 15.0 -i "/Users/zenray/Movies/raw_obs.mkv" -i "audio-15s.mp3" \
+  -map 0:v:0 -map 1:a:0 -c:v copy -c:a aac -b:a 320k "raw/reel-01-armature-raw16x9.mp4"
+```
+
+Le master 16:9 brut reste toujours preserve dans le dossier `raw/`.
+
+### 4. Redaction Narrative et Extraction 80/20 des Sous-titres
+
+La redaction suit la voix d'artiste technique 3D authentique (style Damien Richard) :
+- Ton franc et humble : pas de discours commercial, partage reel d'une erreur de conception ou d'un defi technique resolu.
+- Extraire la substantifique moelle (20% du texte qui produit 80% de l'impact) pour construire les 8 repliques du Reel de 15 secondes.
+- Regle d'or absolue : 100% des mots du sous-titre proviennent du post, sans aucune invention ni reformulation arbitraire.
+
+Cadence des 8 repliques sur 15 secondes :
+- Replique 1 [0.0s a 1.0s] : Accroche rapide (duree 1.0s).
+- Repliques 2 a 8 [1.0s a 15.0s] : Corps et conclusion (7 repliques de 2.0s chacune).
+- Deux lignes par replique :
+  - Ligne 1 : Jaune (`#FFE600`), met en valeur le sujet ou l'action.
+  - Ligne 2 : Blanc pur (`#FFFFFF`), complete l'idee.
+- Typographie : casse standard (Sentence case, pas de tout-en-majuscules agressif), pas d'ombre portee (drop shadow bannie pour garder la purete graphique).
+
+Exemple de decoupage valide (Louisiana Bayou Church) :
+- Replique 1 [0.0s a 1.0s] :
+  - L1 (Jaune) : Procedural modeling of a bayou church
+  - L2 (Blanc) : In Houdini for Unreal Engine rendering
+- Replique 2 [1.0s a 3.0s] :
+  - L1 (Jaune) : Goal was to create a successful
+  - L2 (Blanc) : Parameter-driven hero asset
+- Replique 3 [3.0s a 5.0s] :
+  - L1 (Jaune) : I first designed three separate modules:
+  - L2 (Blanc) : Armature, wood facade, and porch stairs
+- Replique 4 [5.0s a 7.0s] :
+  - L1 (Jaune) : Here is the honest takeaway though:
+  - L2 (Blanc) : I made an asset design mistake
+- Replique 5 [7.0s a 9.0s] :
+  - L1 (Jaune) : 3 completely independent HDA components
+  - L2 (Blanc) : It is counter-productive in practice
+- Replique 6 [9.0s a 11.0s] :
+  - L1 (Jaune) : When adjusting the global scale
+  - L2 (Blanc) : Connections break and alignments fail
+- Replique 7 [11.0s a 13.0s] :
+  - L1 (Jaune) : Best approach is one parent HDA
+  - L2 (Blanc) : Driving modular sub-components inside
+- Replique 8 [13.0s a 15.0s] :
+  - L1 (Jaune) : Clean procedural architecture
+  - L2 (Blanc) : Solves scale and assembly issues
+
+### 5. Moteur de Composition Visuelle et Auto-Fit Anti-Rognage
+
+Le visuel utilise la composition verticale 9:16 (2160x3840 a 60 fps pour une qualite 4K nette sur smartphone) :
+- Arriere-plan floute : la video source est etiree et floutee via `boxblur=40:5,eq=brightness=-0.15`.
+- Fenetre video centrale : la video 16:9 source conserve son ratio natif, etendue a pleine largeur (2160px) et positionnee au centre vertical.
+- Titre haut : police serif (`AnthropicSerif-Regular` ou serif similaire), taille 138px, couleur blanche, position Y=830 (482px au-dessus de la fenetre video, qui occupe Y=1312 a 2527), centree horizontalement.
+- Sous-titres bas : police sans-serif (`Inter` SemiBold 600), taille de base 76px, ligne 1 a Y=2710 et ligne 2 a Y=2810 (juste sous la fenetre video, hors des zones couvertes par l'interface Reels/Shorts en haut et en bas).
+- Animation pop par ligne : echelle de 0.90 a 1.00 en amorti ease-out quad sur 0.20s. Ligne 1 debute a t_debut, Ligne 2 debute a t_debut + 0.35s.
+
+Algorithme critique d'Auto-Fit anti-rognage (Pillow) :
+Pour interdire tout depassement de texte hors de l'ecran, la largeur de chaque ligne est calculee avec `font.getbbox(text)`. Si la largeur excede 86% de la largeur du canevas (1857px pour un canevas de 2160px), une boucle reduit la taille de police par pas de 2px jusqu'a ajustement parfait.
+
+Script Python autonome complet de generation :
+
+```python
+import os
+import subprocess
+from PIL import Image, ImageDraw, ImageFont
+
+W, H = 2160, 3840
+FPS = 60
+MAX_TEXT_W = int(W * 0.86)
+
+TITLE_FONT_PATH = "/Users/zenray/Library/Fonts/AnthropicSerif-Regular.ttf"
+# 2026-09-11 Inter-SemiBold.otf does not exist on this Mac: use the variable font, SemiBold axis.
+# FR : Inter-SemiBold.otf n'existe pas sur ce Mac, on prend la police variable en SemiBold.
+SUB_FONT_PATH = "/Users/zenray/Library/Fonts/InterVariable.ttf"
+SUB_VARIATION = b"SemiBold"
+
+def get_fitted_font(font_path, text, initial_size, max_w):
+    size = initial_size
+    while size > 24:
+        font = ImageFont.truetype(font_path, size)
+        if font_path.endswith("InterVariable.ttf"):
+            font.set_variation_by_name(SUB_VARIATION)
+        bbox = font.getbbox(text)
+        if (bbox[2] - bbox[0]) <= max_w:
+            return font, size
+        size -= 2
+    font = ImageFont.truetype(font_path, size)
+    if font_path.endswith("InterVariable.ttf"):
+        font.set_variation_by_name(SUB_VARIATION)
+    return font, size
+
+def render_cue_overlay(cue, out_png):
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+    
+    # Titre superieur
+    title_font = ImageFont.truetype(TITLE_FONT_PATH, 138)
+    t_bbox = title_font.getbbox(cue["title"])
+    t_x = (W - (t_bbox[2] - t_bbox[0])) // 2
+    draw.text((t_x, 830), cue["title"], font=title_font, fill=(255, 255, 255, 255))
+    
+    # Sous-titres bicolores avec auto-fit
+    f1, _ = get_fitted_font(SUB_FONT_PATH, cue["l1"], 76, MAX_TEXT_W)
+    b1 = f1.getbbox(cue["l1"])
+    x1 = (W - (b1[2] - b1[0])) // 2
+    draw.text((x1, 2710), cue["l1"], font=f1, fill=(255, 230, 0, 255))
+    
+    f2, _ = get_fitted_font(SUB_FONT_PATH, cue["l2"], 76, MAX_TEXT_W)
+    b2 = f2.getbbox(cue["l2"])
+    x2 = (W - (b2[2] - b2[0])) // 2
+    draw.text((x2, 2810), cue["l2"], font=f2, fill=(255, 255, 255, 255))
+    
+    img.save(out_png)
+```
+
+Assemblage final via ffmpeg :
+L'arriere-plan floute et la video centrale sont composes avec les calques de sous-titres animes via le filtre complexe ffmpeg.
+
+### 6. Piege du Codec Apple Photos et Compatibilite Instagram
+
+Probleme majeur identifie le 2026-09-10 :
+L'encodeur HEVC par defaut de ffmpeg (libx265) attribue le tag fourcc hev1. L'application Photos sur iOS refuse d'indexer les fichiers contenant le tag hev1. Lors du transfert AirDrop ou iCloud, la video atterrit dans l'application Fichiers et n'apparait jamais dans le selecteur de Reels de l'application Instagram.
+
+Regle de sortie imperative :
+- Format officiel de livraison : conteneur QuickTime .mov avec flux H.264 avc1 ou HEVC tag hvc1.
+- Le codec H.264 standard en conteneur .mov s'importe instantanement dans la pellicule Camera Roll sans aucune conversion :
+  `-c:v libx264 -pix_fmt yuv420p -movflags +faststart`
+- Upload depuis Mac : le site web instagram.com depuis Chrome ou Safari de bureau accepte directement le fichier 4K .mov ou .mp4 en mode Reel sans avoir besoin d'activer l'emulation mobile dans les outils d'inspection.
+
+Commande ffmpeg d'assemblage definitif :
+
+```bash
+ffmpeg -y -i "raw/reel-01-raw16x9.mp4" -i "audio-15s.mp3" \
+  -filter_complex "[0:v]split=2[bg_in][fg_in]; \
+   [bg_in]scale=2160:3840:force_original_aspect_ratio=increase,crop=2160:3840,boxblur=40:5,eq=brightness=-0.15[bg]; \
+   [fg_in]scale=2160:-2[fg]; \
+   [bg][fg]overlay=0:(H-h)/2[base]; \
+   [base][2:v]overlay=0:0[vfinal]" \
+  -map "[vfinal]" -map 1:a:0 -c:v libx264 -preset fast -crf 18 -pix_fmt yuv420p -movflags +faststart \
+  -c:a aac -b:a 320k "reel-01-armature.mov"
+```
+
+### 7. Rangement Strict du Dossier de Livraison (4 Elements a la Racine)
+
+Pour garantir une clarte absolue et un rendu professionnel immediat pour Matthieu, la racine du dossier de travail (par exemple `~/.claude/tmp/post-3components-zenray-houdini/`) ne doit comporter que **strictement 4 elements** :
+
+1. `post-<nom>.md` : Le carnet source complet contenant le post LinkedIn / Instagram, la description technique et le decoupage des sous-titres.
+2. `reel-01-<nom>.mov` : Premier Reel 4K 15s au format .mov pret a publier.
+3. `reel-02-<nom>.mov` : Deuxieme Reel 4K 15s au format .mov pret a publier.
+4. `reel-03-<nom>.mov` : Troisieme Reel 4K 15s au format .mov pret a publier.
+
+Tous les autres fichiers sont obligatoirement ranges dans des sous-dossiers :
+- `raw/` : captures brutes OBS et masters 16:9 coupes.
+- `mp4/` : versions de secours ou alternatives web.
+- `thumbnails/` : vignettes 9:16 4K (2160x3840) avec bandes noires hex 000.
+- `audio/` : musiques sources et extraits 15s coupes.
+- `scripts/` : scripts Python de calcul et calques de rendu temporaires.
+

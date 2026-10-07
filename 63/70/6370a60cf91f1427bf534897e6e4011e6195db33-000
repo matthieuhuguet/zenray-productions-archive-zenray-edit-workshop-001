@@ -1,0 +1,9 @@
+# Knowledge license roadmap
+
+Reusable six-step editorial infographic derived from the Galerie tokens and editorial-glow-stepper. Added 2026-09-11.
+
+Copy Scripts/ to a new project directory. Supply _params.json with title, eyebrow, subtitle, six steps (number, title, body, result), offerTitle, offerParts, offerNote, metric, metricNote, firstStep, footer, canvas (width, height, scale), and tokens matching tokens.css. Create assets/fonts/ and out/, supply message.txt, then run python3 Scripts/build.py and node Scripts/render.cjs.
+
+The instance keeps all project content outside the definition. Renderer exports ten separate layers and a single composed PNG, checks overflow and font loading, and writes verification.json. Inspect the final PNG visually before delivery. Local Playwright and font dependencies are explicit in Scripts/.
+
+Validated canvas: 1080 × 1350 at scale 3, output 3240 × 4050. No design sliders are included unless requested.

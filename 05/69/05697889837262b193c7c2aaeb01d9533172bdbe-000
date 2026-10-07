@@ -1,0 +1,52 @@
+#!/bin/bash
+# Renders an animated HTML composition to a video, frame by frame.
+#
+#   render-frames.sh <file.html> [seconds] [fps]
+#
+# How it works: the page is rendered N times, each time with a different value
+# injected into --virtual-time-budget, which advances CSS animations
+# deterministically without waiting in real time. Frames are then assembled
+# with ffmpeg.
+#
+# The HTML and its PNG assets stay the source of truth. The video is an export,
+# never something to edit and keep.
+set -euo pipefail
+
+HTML="${1:?usage: render-frames.sh <file.html> [seconds] [fps]}"
+SECS="${2:-3}"
+FPS="${3:-30}"
+
+W=1080
+H=1350
+
+CHROME="$(ls -d "$HOME/Library/Caches/ms-playwright"/chromium-*/chrome-mac-arm64/*.app/Contents/MacOS/* 2>/dev/null | head -1 || true)"
+if [[ -z "$CHROME" || ! -x "$CHROME" ]]; then
+    echo "No headless Chromium found. Install with: npx playwright install chromium"
+    exit 1
+fi
+command -v ffmpeg >/dev/null || { echo "ffmpeg not found (brew install ffmpeg)"; exit 1; }
+
+DIR="$(cd "$(dirname "$HTML")" && pwd)"
+BASE="$(basename "${HTML%.html}")"
+FRAMES="$DIR/.frames-$BASE"
+rm -rf "$FRAMES"; mkdir -p "$FRAMES"
+
+TOTAL=$(( SECS * FPS ))
+STEP=$(( 1000 / FPS ))
+
+echo "Rendering $TOTAL frames at ${FPS}fps..."
+for (( i=0; i<TOTAL; i++ )); do
+    BUDGET=$(( i * STEP + 1 ))
+    printf -v OUT "%s/%05d.png" "$FRAMES" "$i"
+    "$CHROME" --headless=new --disable-gpu --hide-scrollbars \
+        --virtual-time-budget=$BUDGET \
+        --window-size=$W,$H --screenshot="$OUT" \
+        "file://$DIR/$(basename "$HTML")" >/dev/null 2>&1
+done
+
+ffmpeg -y -framerate "$FPS" -i "$FRAMES/%05d.png" \
+    -c:v libx264 -pix_fmt yuv420p -movflags +faststart \
+    "$DIR/$BASE.mp4" >/dev/null 2>&1
+
+rm -rf "$FRAMES"
+echo "Wrote $DIR/$BASE.mp4  (${W}x${H}, ${SECS}s, ${FPS}fps)"

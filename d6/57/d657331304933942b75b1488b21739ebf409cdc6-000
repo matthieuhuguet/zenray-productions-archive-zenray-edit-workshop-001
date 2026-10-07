@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+"""2026-09-03 13:33 JST : reprise sans perte, fixtures conservées pour inspection."""
+import argparse
+import hashlib
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('source', type=Path)
+    parser.add_argument('destination', type=Path)
+    args = parser.parse_args()
+    dest = args.destination.resolve()
+    assert not dest.exists(), 'Utiliser une destination de contrôle neuve.'
+    command = [sys.executable, str(ROOT / 'scripts/zr-hda-instance.py'), str(args.source.resolve()), '--mode', 'light', '--dest', str(dest)]
+    subprocess.run(command, check=True, capture_output=True)
+    # 2026-09-03 : une source peut déjà porter un post, auquel cas il doit être repris.
+    source = args.source.resolve()
+    source_post = (source if source.is_dir() else source.parent) / '_post.json'
+    expected = json.loads(source_post.read_text())['text'] if source_post.exists() else ''
+    assert json.loads((dest / '_post.json').read_text())['text'] == expected
+    for name in ('_params.json', '_crop_params.json'):
+        (dest / name).write_text('{"preuve":"valeurs conservées"}\n')
+    (dest / 'out').mkdir()
+    (dest / 'out/existant.txt').write_text('Sortie existante conservée.\n')
+    (dest / '_post.json').write_text(json.dumps({'text': 'Mon texte modifié\n日本語', 'format': '4:5', 'limit': 2200}))
+    protected = [dest / name for name in ('_post.json', '_params.json', '_crop_params.json', 'out/existant.txt')]
+    before = {path: digest(path) for path in protected}
+    old_html = digest(dest / 'index.html')
+    subprocess.run(command + ['--force'], check=True, capture_output=True)
+    assert {path: digest(path) for path in protected} == before
+    assert any(digest(path) == old_html for path in (dest / '.hda-history').glob('*/index.html'))
+    assert 'Mon texte modifi' in (dest / '_post-data.js').read_text()
+    incoming = dest / 'autre-post.json'
+    incoming.write_text('{"text":"Autre version"}')
+    before_index = digest(dest / '_index.json')
+    result = subprocess.run(command + ['--force', '--post', str(incoming)], capture_output=True, text=True)
+    assert result.returncode != 0 and 'brouillon conservé' in result.stderr
+    assert digest(dest / '_index.json') == before_index
+    assert {path: digest(path) for path in protected} == before
+    report = {'ok': True, 'checks': ['Brouillon source repris ou vide explicite sans texte inventé', 'Post, paramètres et sorties identiques après régénération', 'Ancien code archivé', 'Remplacement de texte refusé avant écriture']}
+    (dest / 'verification.json').write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n')
+    print(json.dumps(report, indent=2, ensure_ascii=False))
+
+
+if __name__ == '__main__':
+    main()

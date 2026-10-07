@@ -1,0 +1,38 @@
+# ZenRay Studio, le gabarit du store (2026-09-11)
+
+Le store de Matthieu, `zenray.studio`, vit ici sous deux états du même design. Le design est la
+direction **Galerie** (`templates/zenray-assets-mockups/02-galerie.html`, retenue le 2026-09-05),
+structurée comme The Gnomon Workshop (hero, sélection, collections, dernières sorties) et Leartes
+Studios (les services à côté de la boutique). Clair par défaut, sombre au bouton soleil, mémorisé
+par visiteur ; `?theme=dark` force un thème pour une capture.
+
+| Dossier | Ce que c'est | Quand s'en servir |
+|---|---|---|
+| `01-maquette-portfolio/` | La maquette validée le 2026-09-10, avec les vraies images du portfolio (Louisiana Bayou en tête, puis Toki Pavilion), prix proposés par le plan, aperçus `apercu-clair.jpg` et `apercu-sombre.jpg` | Référence de ce que le store doit devenir quand les produits existent |
+| `02-store-final/` | La version publiée : même design, aucune image, trois projets Lorem Ipsum (un environnement, un outil Houdini, un matériau), vignettes « Coming soon » | Le gabarit que le site instancie aujourd'hui |
+
+## Où il est en ligne
+
+- Dépôt : `/Users/zenray/Create/Build/Productions/GithubProductions/ZenRayStudio` (privé sur GitHub, `matthieuhuguet/ZenRayStudio`), dossier `site/` = copie de `02-store-final/`.
+- Cloudflare Pages, projet `zenray-studio`, upload direct : https://zenray.studio (et www, et zenray-studio.pages.dev).
+- Domaine `zenray.studio` acheté chez Namecheap le 2026-09-11, DNS chez Cloudflare (serveurs `michelle` et `salvador`), apex et `www` en CNAME proxifié vers `zenray-studio.pages.dev`.
+- matthieuhuguet.com porte l'entrée **Store** à gauche de Works (`STORE_URL` dans `ZenRayWebsite/src/App.jsx`).
+
+## Ajouter un vrai produit, la seule opération qui compte
+
+Le balisage ne bouge jamais : tout passe par la couche de données en bas de `index.html`.
+
+1. Rendu réel en WebP dans `site/assets/<NN>-<slug>.webp` (jamais une image inventée).
+2. Remplacer une entrée Lorem de `PRODUCTS` : `title`, `sub`, `type` (`env`, `tool`, `material`, `prop`), `software`, `store` (Fab ou Gumroad), `price`, `img`, `alt`. Ajouter l'`href` d'achat quand la page Fab ou Gumroad existe.
+3. Mettre son `id` dans `FEATURED` et dans l'`ids` d'une `COLLECTIONS`.
+4. Ajouter Fab et Gumroad dans `FOOT_LINKS` le jour où le premier produit y est en vente (aucun lien mort avant).
+5. Reporter la même modification dans `02-store-final/` si elle change le gabarit, pas si elle ne change que les données.
+6. Déployer : `npx wrangler pages deploy site --project-name zenray-studio --branch main`, puis `curl` la page avec un `?cb=$RANDOM`.
+
+## Pièges déjà payés
+
+- Wrangler 4.131 délègue `pages project create` à Workers et échoue (« Missing entry-point »). La création s'est faite une fois avec `--force` ; ne plus jamais le passer ensuite, le projet existe.
+- Une capture Chrome sans écran à 390 px de large paraît couper le texte à droite : c'est la largeur minimale de la fenêtre headless, pas le site. Mesuré dans un vrai navigateur à 375 px : `scrollWidth` = 375, aucun élément ne déborde.
+- Aucune adresse e-mail publiée : le bouton de contact renvoie vers `matthieuhuguet.com/contact`.
+- Rattacher un domaine acheté ailleurs demande deux gestes dans le compte Cloudflare, que le jeton OAuth de Wrangler ne peut pas faire (zone en lecture seule, DNS inaccessible) : créer la zone, puis ajouter les CNAME `@` et `www` vers `<projet>.pages.dev`. Déclarer les domaines sur le projet Pages par l'API fonctionne, eux restent « pending » jusque-là.
+- Juste après le rattachement, macOS peut garder en cache « domaine inconnu » (jusqu'à 30 min) : `curl` échoue alors que `dig` et `curl --resolve <hôte>:443:<ip>` répondent. Ce n'est pas une panne.

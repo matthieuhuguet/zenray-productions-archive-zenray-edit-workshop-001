@@ -1,0 +1,45 @@
+# 2026-09-11: Build a parameterized roadmap from the editorial stepper family.
+from pathlib import Path
+import json, html, shutil
+root = Path(__file__).resolve().parents[1]
+data = json.loads((root / '_params.json').read_text())
+required = ['title','eyebrow','subtitle','steps','offerTitle','offerParts','offerNote','metric','metricNote','firstStep','footer','canvas','tokens']
+for key in required:
+    if key not in data: raise ValueError('Missing parameter: ' + key)
+fonts = Path('/Users/zenray/.claude/skills/zenray-html-photoshop-pdf-hda-socialmedia-shorts-reel/assets/ui')
+for name in ['InterVariable.woff2','AnthropicSerif-Romans.woff2']:
+    shutil.copy2(fonts / name, root / 'assets/fonts' / name)
+shutil.copy2('/Users/zenray/.claude/skills/zenray-html-photoshop-pdf-hda-socialmedia-shorts-reel/templates/designs/components/editorial-glow-stepper.html',root/'assets/editorial-glow-stepper-reference.html')
+escape = html.escape
+variables = '\n'.join('--'+key+':'+str(value)+';' for key,value in data['tokens'].items())
+variables += '\n--width:'+str(data['canvas']['width'])+'px;--height:'+str(data['canvas']['height'])+'px;'
+(root/'tokens.css').write_text(':root{'+variables+'}\n')
+css = '''
+@font-face{font-family:InterVariable;src:url('assets/fonts/InterVariable.woff2');font-weight:100 900}
+@font-face{font-family:AnthropicSerif;src:url('assets/fonts/AnthropicSerif-Romans.woff2');font-weight:300 800}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:InterVariable;font-weight:var(--bodyWeight)}
+.canvas{width:var(--width);height:var(--height);padding:var(--pad);display:flex;flex-direction:column;gap:var(--gap)}
+p,h1,h2{margin:0}header{height:var(--headerHeight);flex-shrink:0}.eyebrow{font-size:var(--smallSize);color:var(--accent);letter-spacing:.08em;margin-bottom:var(--gap)}
+h1{font:var(--headingWeight) var(--titleSize)/1.18 AnthropicSerif;white-space:pre-line;letter-spacing:-.025em;margin-bottom:var(--gap)}
+.subtitle{font-size:var(--bodySize);color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,1fr);gap:var(--gap);height:var(--gridHeight);flex-shrink:0}
+.card{border:var(--border) solid var(--line);border-radius:var(--radius);padding:var(--cardPad);background:var(--white);display:flex;flex-direction:column;gap:calc(var(--gap)/2)}
+.card-heading{display:flex;align-items:center;gap:calc(var(--gap)/1.5)}.number{font:400 var(--stepSize)/1 AnthropicSerif;color:var(--accent);background:var(--soft);border-radius:calc(var(--radius)/2);padding:calc(var(--gap)/2)}
+h2{font:var(--headingWeight) var(--cardTitleSize)/1.15 AnthropicSerif;letter-spacing:-.02em}.card p{font-size:var(--bodySize);line-height:1.38}.result{margin-top:auto;color:var(--accent);font-size:var(--smallSize);padding-top:calc(var(--gap)/3)}
+.offer{height:var(--offerHeight);background:var(--soft);border-radius:var(--radius);padding:var(--cardPad);display:flex;flex-direction:column;gap:calc(var(--gap)/2);flex-shrink:0}.offer-title{font:var(--headingWeight) var(--cardTitleSize)/1.1 AnthropicSerif}.parts{display:flex;gap:var(--gap);font-size:var(--bodySize)}.parts span+span{border-left:var(--border) solid var(--accent);padding-left:var(--gap)}.note{font-size:var(--smallSize);color:var(--muted);line-height:1.35}
+.metrics{height:var(--metricsHeight);display:flex;align-items:center;gap:var(--gap);border-bottom:var(--border) solid var(--line);flex-shrink:0}.metric{font:400 var(--cardTitleSize)/1.15 AnthropicSerif;flex:1}.metrics .note{flex:1}.footer{display:flex;flex-direction:column;gap:calc(var(--gap)/2)}.first{font-size:var(--bodySize);color:var(--accent)}.source{font-size:var(--footerSize);letter-spacing:.04em;color:var(--muted)}
+'''
+(root/'layout.css').write_text(css)
+cards=[]
+for step in data['steps']:
+    for key in ['number','title','body','result']:
+        if key not in step: raise ValueError('Missing step parameter: '+key)
+    cards.append('<section class="card layer"><div class="card-heading"><span class="number">'+escape(step['number'])+'</span><h2>'+escape(step['title'])+'</h2></div><p>'+escape(step['body'])+'</p><div class="result">'+escape(step['result'])+'</div></section>')
+content='<header class="layer"><p class="eyebrow">'+escape(data['eyebrow'])+'</p><h1>'+escape(data['title'])+'</h1><p class="subtitle">'+escape(data['subtitle'])+'</p></header><div class="grid">'+''.join(cards)+'</div>'
+content+='<section class="offer layer"><p class="offer-title">'+escape(data['offerTitle'])+'</p><div class="parts">'+''.join('<span>'+escape(s)+'</span>' for s in data['offerParts'])+'</div><p class="note">'+escape(data['offerNote'])+'</p></section>'
+content+='<section class="metrics layer"><p class="metric">'+escape(data['metric'])+'</p><p class="note">'+escape(data['metricNote'])+'</p></section><footer class="footer layer"><p class="first">'+escape(data['firstStep'])+'</p><p class="source">'+escape(data['footer'])+'</p></footer>'
+(root/'infographic.html').write_text('<!doctype html><html lang="fr"><meta charset="utf-8"><title>'+escape(data['title'].replace('\n',' '))+'</title><link rel="stylesheet" href="tokens.css"><link rel="stylesheet" href="layout.css"><main class="canvas">'+content+'</main></html>')
+# Keep a readable, portable message for copying into email.
+message=escape((root/'message.txt').read_text())
+(root/'message.html').write_text('<!doctype html><html lang="fr"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Message à Laurence</title><style>body{max-width:760px;margin:40px auto;padding:0 24px;font:18px/1.65 sans-serif;color:#222;background:#fff}article{white-space:pre-wrap}</style><article>'+message+'</article></html>')
+print('Built message and infographic')

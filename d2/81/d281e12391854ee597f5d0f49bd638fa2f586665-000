@@ -1,0 +1,94 @@
+#!/usr/bin/env node
+// Render at final resolution, retain masters and publish verified exports. (7 October 2026, 17:00 Europe/Paris)
+const fs = require('node:fs');
+const path = require('node:path');
+const os = require('node:os');
+const {pathToFileURL} = require('node:url');
+
+function loadPlaywright(runtime) {
+  const roots = [runtime.playwrightRoot, process.env.ZR_PLAYWRIGHT_ROOT, process.cwd(),
+    path.join(os.homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node')].filter(Boolean);
+  for (const root of roots) {
+    try { return require(require.resolve('playwright', {paths:[root]})); } catch(error) {
+      if (error.code !== 'MODULE_NOT_FOUND') throw error;
+    }
+  }
+  throw new Error('Playwright unavailable. Set ZR_PLAYWRIGHT_ROOT to the installed runtime.');
+}
+
+function validate(config) {
+  const {canvas, export: settings} = config;
+  for(const value of [canvas.width, canvas.height, settings.minimumLongEdge, settings.maximumScale, settings.maximumBytes, settings.timeoutMs]) {
+    if(!Number.isInteger(value)||value<=0) throw new Error('Export parameters must be positive integers.');
+  }
+  if(!['png','jpeg'].includes(settings.format)) throw new Error('Unsupported export format.');
+  if(settings.requireAlpha && settings.format!=='png') throw new Error('Alpha requires PNG.');
+  if(!Array.isArray(settings.jpegQualityLevels)||!settings.jpegQualityLevels.length||settings.jpegQualityLevels.some(q=>!Number.isInteger(q)||q<1||q>100)) throw new Error('Invalid JPEG quality levels.');
+  const scale=settings.scale==null?Math.ceil(settings.minimumLongEdge/Math.max(canvas.width,canvas.height)):settings.scale;
+  if(!Number.isInteger(scale)||scale<=0||scale>settings.maximumScale) throw new Error('Scale outside configured limits.');
+  return scale;
+}
+
+async function main() {
+  const args=process.argv.slice(2), index=args.indexOf('--directory');
+  const directory=path.resolve(index>=0?args.splice(index,2)[1]:process.cwd());
+  const config=JSON.parse(fs.readFileSync(path.join(directory,'export.json'),'utf8'));
+  const scale=validate(config);
+  const selected=args.length?args.map(name=>name.endsWith('.html')?name:name+'.html'):fs.readdirSync(directory).filter(name=>/^slide-.*\.html$/.test(name)).sort();
+  if(!selected.length) throw new Error('No compositions selected.');
+  for(const name of selected) if(path.basename(name)!==name||!fs.existsSync(path.join(directory,name))) throw new Error('Missing or invalid composition: '+name);
+  const out=path.join(directory,'out'), masters=path.join(out,'masters');
+  fs.mkdirSync(masters,{recursive:true});
+  const {chromium}=loadPlaywright(config.runtime);
+  const browser=await chromium.launch({headless:true,...(config.runtime.chromiumExecutable?{executablePath:config.runtime.chromiumExecutable}:{})});
+  const report=[];
+  try {
+    for(const name of selected) {
+      const context=await browser.newContext({viewport:config.canvas,deviceScaleFactor:scale});
+      const page=await context.newPage(), errors=[];
+      page.on('pageerror',error=>errors.push(error.message));
+      page.setDefaultTimeout(config.export.timeoutMs);
+      await page.goto(pathToFileURL(path.join(directory,name)).href);
+      await page.evaluate(async ({width,height})=>{
+        document.documentElement.style.setProperty('--canvas-w',width+'px');
+        document.documentElement.style.setProperty('--canvas-h',height+'px');
+        await document.fonts.ready;
+        await Promise.all(Array.from(document.images,image=>image.decode()));
+      },config.canvas);
+      if(errors.length) throw new Error(errors.join('; '));
+      const stem=path.parse(name).name;
+      const master=await page.screenshot({type:'png',omitBackground:config.export.requireAlpha});
+      const width=master.readUInt32BE(16),height=master.readUInt32BE(20);
+      if(width!==config.canvas.width*scale||height!==config.canvas.height*scale) throw new Error('Unexpected master dimensions.');
+      const masterPath=path.join(masters,stem+'.png');
+      fs.writeFileSync(masterPath+'.partial',master);fs.renameSync(masterPath+'.partial',masterPath);
+      if(config.export.requireAlpha) {
+        const alpha=await page.evaluate(async url=>{
+          const bitmap=await createImageBitmap(await(await fetch(url)).blob());
+          const canvas=new OffscreenCanvas(bitmap.width,bitmap.height), context=canvas.getContext('2d');
+          context.drawImage(bitmap,0,0);
+          const pixels=context.getImageData(0,0,bitmap.width,bitmap.height).data;
+          for(let i=3;i<pixels.length;i+=4) if(pixels[i]<255) return true;
+          return false;
+        },'data:image/png;base64,'+master.toString('base64'));
+        if(!alpha) throw new Error('Requested alpha absent; master retained.');
+      }
+      let delivery=master,quality=null;
+      if(config.export.format==='jpeg') for(const candidate of config.export.jpegQualityLevels) {
+        delivery=await page.screenshot({type:'jpeg',quality:candidate});quality=candidate;
+        if(delivery.length<=config.export.maximumBytes) break;
+      }
+      if(delivery.length>config.export.maximumBytes) throw new Error('Export exceeds maximumBytes; master retained: '+masterPath);
+      const destination=path.join(out,stem+(config.export.format==='jpeg'?'.jpg':'.png'));
+      fs.writeFileSync(destination+'.partial',delivery);fs.renameSync(destination+'.partial',destination);
+      report.push({file:destination,master:masterPath,width,height,scale,bytes:delivery.length,format:config.export.format,quality});
+      await context.close();
+    }
+    const result={ok:true,files:report};
+    fs.writeFileSync(path.join(out,'RenderReport.json'),JSON.stringify(result,null,2)+'\n');
+    console.log(JSON.stringify(result,null,2));
+  } finally {await browser.close();}
+}
+
+if(require.main===module) main().catch(error=>{console.error(error.message);process.exit(1);});
+module.exports={validate};

@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "files": [
+    {
+      "file": "/Users/zenray/.claude/tmp/tmp-zenray-edit/RepresentativePortrait/out/slide-1.png",
+      "master": "/Users/zenray/.claude/tmp/tmp-zenray-edit/RepresentativePortrait/out/masters/slide-1.png",
+      "width": 3240,
+      "height": 4050,
+      "scale": 3,
+      "bytes": 128526,
+      "format": "png",
+      "quality": null
+    }
+  ]
+}

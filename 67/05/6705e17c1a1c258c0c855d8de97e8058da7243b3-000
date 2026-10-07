@@ -1,0 +1,329 @@
+# zenray-html-photoshop-pdf
+
+## Modifier un PDF de bout en bout, sans rupture visuelle
+
+Cette annexe s’emploie lorsqu’un PDF existant doit être corrigé puis livré à
+nouveau, notamment si une date, une période, une formulation ou un bloc entier
+doit changer tout en restant cohérent avec le document. Elle complète le mode
+HTML, elle ne le remplace pas : un PDF conserve sa mise en page, ses pages et
+ses éléments déjà composés.
+
+Le résultat attendu est un PDF prêt à l’envoi, un original conservé, un journal
+des styles relevés avant chaque remplacement et des contrôles qui prouvent que
+toutes les occurrences prévues ont été traitées.
+
+## Prompt de départ, à reprendre sans ambiguïté
+
+```text
+Modifie le PDF <chemin absolu> et produis <chemin absolu de sortie>.
+
+Changements attendus :
+- <ancienne information> devient <nouvelle information>.
+- Toute occurrence concernée est recensée avant édition, puis corrigée.
+- Si une date complète change, recalcule aussi le jour de la semaine, la période
+  associée et les dates dépendantes.
+
+Pour chaque ligne cible, avant remplacement, relève : page, boîte, police
+d’origine ou constat raster, graisse, couleur, taille, texte source et texte de
+remplacement.
+
+Le texte modifié utilise Inter. Reprends exactement la graisse, la couleur et
+la taille apparente de la ligne d’origine. Ne modifie jamais un mot isolé :
+réécris la ligne visuelle entière, ou le paragraphe entier s’il est composé sur
+plusieurs lignes. Vérifie à la fin chaque page rendue, l’OCR complet et
+l’absence de toute ancienne occurrence. Conserve l’original intact.
+```
+
+## Contrat de travail
+
+1. L’original ne se modifie jamais. Une copie d’archive horodatée est créée
+   avant toute écriture et son SHA-256 est noté.
+2. Toute occurrence est d’abord inventoriée. Une recherche globale de chiffres
+   ne suffit pas : les périodes scolaires, dates longues, jours de semaine,
+   en-têtes, pieds de page, paragraphes et tableaux se contrôlent aussi.
+3. La granularité d’édition est la ligne visuelle complète. Si l’élément cible
+   se trouve dans une phrase, la phrase entière est réécrite avec une seule
+   fonte et une seule mise en forme.
+4. Tous les ajouts textuels utilisent Inter, sous forme de coupes statiques
+   réelles. Les poids 400, 500, 600 ou 700 correspondent à la graisse relevée,
+   jamais à un gras synthétique.
+5. Une source raster ne possède souvent ni police ni couleur extraites du PDF.
+   Le journal indique alors ce constat, puis relève la famille visuelle, la
+   densité de trait, la couleur mesurée et la taille apparente du texte voisin.
+6. Une sortie n’est livrée qu’après le contrôle visuel de toutes les pages et
+   les contrôles textuels. La preuve, et non une impression visuelle rapide,
+   ferme le travail.
+
+## 1. Préparer un espace de travail et archiver la source
+
+Créer un dossier de travail durable dans le projet, ici `tmp/pdfs/`, qui garde
+les rendus, l’audit et la sortie pendant le contrôle. Ne jamais écrire dans le
+PDF source.
+
+```zsh
+# 2026-08-30, préparation d'une correction PDF traçable
+SOURCE_PDF="/chemin/vers/document.pdf"
+WORK_DIR="/chemin/vers/projet/tmp/pdfs/document-20260830"
+ARCHIVE_PDF="/chemin/vers/document_original_2025.pdf"
+OUTPUT_PDF="$WORK_DIR/document_corrige.pdf"
+AUDIT_JSON="$WORK_DIR/audit-styles.json"
+
+mkdir -p "$WORK_DIR"
+test ! -e "$ARCHIVE_PDF"
+cp -p "$SOURCE_PDF" "$ARCHIVE_PDF"
+shasum -a 256 "$SOURCE_PDF" "$ARCHIVE_PDF"
+cmp -s "$SOURCE_PDF" "$ARCHIVE_PDF"
+```
+
+`test ! -e` empêche d’écraser une archive existante. Si l’archive porte déjà le
+bon hash, la conserver et choisir un nouveau nom explicite plutôt que de la
+remplacer.
+
+Immédiatement avant la première commande qui écrit un PDF, lancer le marqueur
+d’opération prévu par le workflow PDF :
+
+```zsh
+node /Users/zenray/.codex/plugins/cache/openai-primary-runtime/pdf/26.826.12353/skills/pdf/container_tools/mark_artifact_operation_started.mjs --operation-kind edit --expected-output-count 1 --output-format pdf
+```
+
+Cette commande se lance une fois par opération d’édition, après l’inventaire et
+juste avant la première écriture de la sortie.
+
+## 2. Inventorier la nature du PDF avant de toucher au texte
+
+Le choix de la technique dépend du document réel. Un PDF avec une couche de
+texte exploitable se mesure directement. Un PDF scanné est une image : il faut
+alors rendre les pages, relever les styles visuellement et placer des calques
+de correction avec précision.
+
+```zsh
+# 2026-08-30, inventaire non destructif
+pdfinfo "$SOURCE_PDF" | tee "$WORK_DIR/pdfinfo.txt"
+pdfimages -list "$SOURCE_PDF" | tee "$WORK_DIR/images.txt"
+pdftotext -layout "$SOURCE_PDF" "$WORK_DIR/source-text.txt"
+pdftoppm -r 300 -png "$SOURCE_PDF" "$WORK_DIR/source-300/page"
+
+for PAGE_PNG in "$WORK_DIR"/source-300/page-*.png; do
+  tesseract "$PAGE_PNG" stdout -l fra+eng 2>/dev/null
+done > "$WORK_DIR/source-ocr.txt"
+```
+
+Lire `source-text.txt` et `source-ocr.txt`, puis ouvrir chaque PNG rendu avec
+l’outil de vision de l’agent. Aucun moteur OCR ne remplace cette lecture : une
+date dans une signature, une note en petit corps ou un bas de page peut rester
+absente ou mal reconnue.
+
+Relever dans l’inventaire :
+
+| Cas | Décision |
+|---|---|
+| Texte sélectionnable et exact | Mesurer ses propriétés, puis éditer la couche de texte ou réécrire le bloc complet |
+| Texte non sélectionnable, page scannée | Mesurer la ligne sur le rendu et la réécrire comme une surcouche alignée |
+| PDF hybride | Traiter chaque zone selon son propre support, sans supposer que tout le document est homogène |
+| Formulaire AcroForm | Vérifier aussi les champs et widgets, pas seulement leur apparence rendue |
+
+## 3. Construire la table de remplacement avant toute édition
+
+Ne jamais effectuer un remplacement global aveugle de chiffres. La table décrit
+toutes les transformations sémantiques et leur contexte. Elle se construit dans
+l’ordre des pages, avant le premier calque de correction.
+
+| Page | Zone ou ligne entière | Source | Remplacement | Contrôle dépendant |
+|---|---|---|---|---|
+| 1 | Date d’en-tête | `12 juin 2025` | `12 juin 2026` | `vendredi`, calculé depuis la nouvelle date |
+| 1 | Période scolaire | `2025-2026` | `2026-2027` | toutes les bornes de période suivent ce décalage |
+| 3 | Période en phrase | `octobre 2025 à mai 2026` | `octobre 2026 à mai 2027` | mois, année et cohérence de la phrase |
+
+Pour chaque ligne de la table, déterminer le remplacement complet avant de
+l’écrire. Les dépendances à recalculer incluent :
+
+- année simple, année double et années présentes dans un horodatage ;
+- jour de la semaine correspondant à une date déplacée ;
+- dates de début et de fin d’une période ;
+- titres, paragraphes, entêtes, pieds de page, tableaux et mentions répétées ;
+- occurrences numérisées qui ne remontent qu’après rendu ou OCR.
+
+Utiliser une date exacte pour le jour de la semaine. Exemple de contrôle local :
+
+```zsh
+python3 - <<'PY'
+# 2026-08-30, vérification explicite des jours déplacés
+from datetime import date
+for value in (date(2026, 6, 11), date(2026, 6, 12)):
+    print(value.isoformat(), value.strftime('%A'))
+PY
+```
+
+## 4. Relever le style avant chaque remplacement
+
+Avant de masquer ou réécrire une ligne, produire une ligne dans `AUDIT_JSON`.
+Ce journal n’est pas facultatif : il empêche les corrections qui reprennent une
+taille, une couleur ou une graisse au hasard.
+
+```json
+{
+  "page": 1,
+  "bbox_pt": [72.4, 481.1, 315.8, 492.7],
+  "source_text": "Fait à Montpellier, le 10 juin 2025",
+  "replacement_text": "Fait à Montpellier, le 10 juin 2026",
+  "source_font": "Inter",
+  "source_weight": 400,
+  "source_color": "#606060",
+  "source_size_pt": 9.4,
+  "target_font": "Inter",
+  "target_weight": 400,
+  "target_color": "#606060",
+  "target_size_pt": 9.4,
+  "scope": "ligne visuelle entière"
+}
+```
+
+Pour une source raster, aucun nom de police intégré n’est disponible. L’entrée
+reste complète, mais documente ce fait avec une valeur explicite :
+
+```json
+{
+  "source_font": "rasterized sans-serif; exact family unavailable",
+  "source_weight": 400,
+  "source_color": "#606060",
+  "source_size_pt": 9.0
+}
+```
+
+La couleur provient d’un échantillon de l’encre de la ligne ou du texte voisin.
+La graisse se déduit de la coupe visuelle et de la densité du trait. La taille
+se mesure par la boîte de glyphes, le corps adjacent et la hauteur de ligne,
+jamais par une approximation isolée.
+
+## 5. Éditer par lignes complètes, avec Inter
+
+Le PDF de sortie se construit à partir de l’archive propre, jamais à partir
+d’une version déjà surchargée. Pour chaque cible :
+
+1. relever et écrire l’audit de style ;
+2. recouvrir la zone complète de la ligne avec le fond correspondant ;
+3. réécrire tout le texte de la ligne dans Inter ;
+4. employer la même couleur, la même graisse et la même taille apparente ;
+5. conserver l’alignement, les marges, l’interlignage et la position de base ;
+6. passer à la cible suivante seulement lorsque la précédente est inscrite dans
+   l’audit.
+
+Une ligne telle que `Fait à Montpellier, le 10 juin 2025` devient entièrement
+`Fait à Montpellier, le 10 juin 2026`. Remplacer le seul fragment `2025`
+produit une rupture de police et n’est jamais accepté.
+
+La fonte Inter variable est instanciée en coupes statiques pour que la graisse
+soit réelle et reproductible. Le script de référence prépare les coupes et
+contrôle les valeurs d’audit :
+
+```zsh
+# 2026-08-30, exécution du correcteur de référence
+python3 /Users/zenray/.claude/Memory1/Scripts/correct_contrat_artfx.py \
+  "$ARCHIVE_PDF" "$OUTPUT_PDF" --audit "$AUDIT_JSON"
+```
+
+Ce script sert de base lorsque le document possède le même type de structure,
+avec une table de lignes cibles explicite. Pour un nouveau document, copier son
+principe, jamais ses coordonnées : chaque page, chaque ligne et chaque style se
+mesurent dans la source concernée.
+
+Les assertions minimales du script sont les suivantes :
+
+```python
+# 2026-08-30, assertions de fermeture de l'audit PDF
+assert all(row["target_font"] == "Inter" for row in audit)
+assert all(row["scope"] in {"ligne visuelle entière", "paragraphe entier"} for row in audit)
+assert all(row["source_weight"] == row["target_weight"] for row in audit)
+assert all(row["source_color"] == row["target_color"] for row in audit)
+```
+
+## 6. Contrôler la sortie sur chaque page
+
+Un PDF qui s’ouvre n’est pas encore un PDF validé. Les contrôles se font dans
+l’ordre ci-dessous et la livraison s’arrête au premier échec.
+
+```zsh
+# 2026-08-30, rendu et OCR de la sortie finale
+mkdir -p "$WORK_DIR/final-300"
+pdftoppm -r 300 -png "$OUTPUT_PDF" "$WORK_DIR/final-300/page"
+
+for PAGE_PNG in "$WORK_DIR"/final-300/page-*.png; do
+  tesseract "$PAGE_PNG" stdout -l fra+eng 2>/dev/null
+done > "$WORK_DIR/final-ocr.txt"
+
+rg -n -i '2025|2025[[:space:]]*[-/][[:space:]]*2026' "$WORK_DIR/final-ocr.txt"
+test $? -eq 1
+
+pdfinfo "$OUTPUT_PDF" | tee "$WORK_DIR/final-pdfinfo.txt"
+pdffonts "$OUTPUT_PDF" | tee "$WORK_DIR/final-fonts.txt"
+shasum -a 256 "$OUTPUT_PDF" | tee "$WORK_DIR/final.sha256"
+```
+
+`rg` doit ne trouver aucune ancienne occurrence. Le code 1 signifie alors qu’il
+n’y a aucune correspondance et donc que ce test précis est vert. Ajouter les
+anciennes formulations spécifiques au document dans la recherche, car une
+année seule ne couvre pas toujours une période ou une date longue.
+
+Contrôler ensuite chaque PNG de `final-300/` dans l’outil de vision de l’agent.
+Vérifier, page par page :
+
+- aucune ligne n’est tronquée, doublée, décalée ou superposée ;
+- les positions de base et alignements restent continus avec le texte voisin ;
+- Inter présente la bonne graisse, couleur et taille sur chaque correction ;
+- entêtes, pieds de page, tableaux, signatures et numérotation restent nets ;
+- la totalité des 2025, 2025-2026 et formulations dépendantes est absente ;
+- toutes les nouvelles valeurs prévues existent au bon endroit.
+
+Rouvrir aussi le PDF écrit avec une bibliothèque PDF et contrôler ses pages :
+
+```zsh
+python3 - "$OUTPUT_PDF" <<'PY'
+# 2026-08-30, intégrité structurelle minimale de la sortie
+import fitz
+import sys
+
+document = fitz.open(sys.argv[1])
+assert document.page_count > 0
+for number, page in enumerate(document, start=1):
+    rect = page.rect
+    assert rect.width > 0 and rect.height > 0, f"page {number} invalide"
+print(f"{document.page_count} pages relues")
+PY
+```
+
+Si le PDF est un formulaire, appliquer en plus le contrôle des champs AcroForm
+et de leurs widgets : valeur logique, apparence `/AP`, état final des champs et
+rendu des pages. Un widget qui paraît juste sur un PNG peut conserver une valeur
+interne obsolète.
+
+## 7. Publier la sortie seulement après les contrôles verts
+
+La copie de livraison porte un nom explicite. Elle est créée après le dernier
+rendu, jamais avant. L’archive reste immuable et le journal d’audit reste avec
+les fichiers de contrôle.
+
+```zsh
+# 2026-08-30, copie de livraison après validation complète
+DELIVERY_PDF="/chemin/vers/document_2026_inter_corrige.pdf"
+cp -p "$OUTPUT_PDF" "$DELIVERY_PDF"
+shasum -a 256 "$OUTPUT_PDF" "$DELIVERY_PDF"
+cmp -s "$OUTPUT_PDF" "$DELIVERY_PDF"
+```
+
+Conserver au minimum : l’original archivé, le PDF de livraison, `AUDIT_JSON`,
+le rendu source, le rendu final, l’OCR final et les empreintes SHA-256. Ces
+éléments permettent de reprendre une correction, de prouver l’exhaustivité et
+de retrouver le style choisi sans reconstruire le travail.
+
+## Liste de fermeture
+
+- [ ] L’original et son hash sont conservés séparément.
+- [ ] Chaque occurrence est recensée dans la table de remplacement.
+- [ ] Chaque ligne modifiée possède son relevé de police, graisse, couleur et taille.
+- [ ] Chaque texte modifié est en Inter avec la graisse, la couleur et la taille relevées.
+- [ ] Aucun fragment isolé n’est remplacé : chaque ligne ou paragraphe est réécrit en entier.
+- [ ] Les dates liées, périodes et jours de semaine sont cohérents avec les nouvelles valeurs.
+- [ ] Le rendu 300 dpi de toutes les pages est vérifié visuellement.
+- [ ] L’OCR final ne contient plus les anciennes valeurs recherchées.
+- [ ] Le PDF final est rouvert, ses pages sont valides et la copie de livraison a le bon hash.
+

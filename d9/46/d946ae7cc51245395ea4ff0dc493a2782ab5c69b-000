@@ -1,0 +1,156 @@
+/* 2026-09-03 : trois boutons, trois gestes, aucun recouvrement.
+   Export        cuit les JPEG sur place (enregistre les reglages puis lance le cook).
+   Copier params copie le bloc complet, pour le coller a un LLM qui cuira ailleurs.
+   Copier post   copie la legende seule.
+   Aucun telechargement : un fichier de parametres qui atterrit dans Downloads ne sert personne. */
+(function () {
+  'use strict';
+  var peutCuire = false;
+
+  function payload() {
+    return typeof window.ZR_PAYLOAD === 'function' ? window.ZR_PAYLOAD() : null;
+  }
+  function blocComplet() {
+    if (typeof window.ZR_OUTPUT_TEXT === 'function') return window.ZR_OUTPUT_TEXT();
+    var d = payload();
+    return d ? JSON.stringify(d, null, 2) : '';
+  }
+  function textePost() {
+    if (window.ZRPostEditor && typeof window.ZRPostEditor.snapshot === 'function') {
+      return (window.ZRPostEditor.snapshot() || {}).text || '';
+    }
+    var champ = document.getElementById('zr-post-text');
+    return champ ? champ.value : '';
+  }
+  /* Le presse-papier peut etre refuse : pas de geste utilisateur, page sans focus,
+     contexte non securise. Trois voies, dans l'ordre, et la derniere ne peut pas echouer :
+     l'API moderne, puis execCommand, puis la boite de sortie DEJA presente dans les deux
+     gabarits, ouverte avec le texte selectionne pour un Cmd+C. Jamais un simple message
+     d'echec qui laisserait le travail hors de portee. */
+  function boiteDeSecours(texte) {
+    var boite = document.getElementById('outBox') || document.getElementById('batchOut');
+    var zone = document.getElementById('outText') || document.getElementById('batchText');
+    if (!boite || !zone) return false;
+    zone.value = texte;
+    boite.classList.add('shown');
+    zone.focus(); zone.select();
+    return true;
+  }
+  function copierBrut(texte) {
+    var z = document.createElement('textarea');
+    z.value = texte;
+    z.style.position = 'fixed'; z.style.top = '0'; z.style.opacity = '0';
+    document.body.appendChild(z);
+    z.focus(); z.select(); z.setSelectionRange(0, texte.length);
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (_) { ok = false; }
+    z.remove();
+    return ok;
+  }
+  function copier(texte) {
+    if (!texte) return Promise.resolve('vide');
+    var moderne = (navigator.clipboard && navigator.clipboard.writeText)
+      ? navigator.clipboard.writeText(texte).then(function () { return true; }, function () { return false; })
+      : Promise.resolve(false);
+    return moderne.then(function (ok) {
+      if (ok) return 'copie';
+      if (copierBrut(texte)) return 'copie';
+      return boiteDeSecours(texte) ? 'boite' : 'echec';
+    });
+  }
+  function envoyer(route, donnees) {
+    return fetch(route, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(donnees)
+    }).then(function (r) { return r.json(); });
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    var ancien = document.getElementById('copyAllBtn');
+    if (!ancien) return;
+
+    var barre = document.createElement('span');
+    barre.className = 'zr-save-bar';
+
+    function bouton(id, libelle, principal) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.id = id; b.textContent = libelle;
+      if (principal) b.className = 'primary';
+      barre.appendChild(b);
+      return b;
+    }
+    var bExport = bouton('zr-export-btn', 'Export', true);
+    var bParams = bouton('zr-copy-params-btn', 'Copier params');
+    var bPost = bouton('zr-copy-post-btn', 'Copier post');
+    var note = document.createElement('span');
+    note.className = 'zr-save-note';
+    note.setAttribute('role', 'status');
+    barre.appendChild(note);
+    ancien.replaceWith(barre);
+
+    function dire(t) { note.textContent = t; }
+    function flash(b, t) {
+      var avant = b.textContent;
+      b.textContent = t;
+      setTimeout(function () { b.textContent = avant; }, 1400);
+    }
+
+    fetch('/zr-capacites')
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (c) {
+        peutCuire = !!(c && c.cuire);
+        if (!peutCuire) throw new Error('hors serveur');
+        dire('');
+      })
+      .catch(function () {
+        peutCuire = false;
+        bExport.disabled = true;
+        bExport.title = "Relancer l'atelier avec --serve pour cuire ici. Sinon : Copier params, puis lancer le cook.";
+        dire('hors serveur : Export indisponible, les copies fonctionnent');
+      });
+
+    bExport.addEventListener('click', function () {
+      var d = payload();
+      if (!d || !peutCuire) return;
+      bExport.disabled = true;
+      dire('cuisson…');
+      envoyer('/zr-cuire', d)
+        .then(function (r) {
+          dire(r.ok ? r.images + ' images écrites dans out/' : 'échec : ' + (r.erreur || (r.journal || []).join(' ')));
+        })
+        .catch(function (e) { dire('échec : ' + e.message); })
+        .finally(function () { bExport.disabled = false; });
+    });
+
+    bParams.addEventListener('click', function () {
+      var texte = blocComplet();
+      if (!texte) return dire('réglages indisponibles');
+      copier(texte).then(function (etat) {
+        flash(bParams, etat === 'copie' ? 'Copié' : 'À copier');
+        dire(etat === 'copie' ? texte.length + ' caractères copiés, prêts pour un LLM'
+           : etat === 'boite' ? 'texte sélectionné ci-dessous, Cmd+C pour le prendre'
+           : 'copie impossible');
+      });
+    });
+
+    bPost.addEventListener('click', function () {
+      var texte = textePost();
+      if (!texte) return dire('aucun post à copier');
+      copier(texte).then(function (etat) {
+        flash(bPost, etat === 'copie' ? 'Copié' : 'À copier');
+        dire(etat === 'copie' ? Array.from(texte).length + ' caractères de post copiés'
+           : etat === 'boite' ? 'post sélectionné ci-dessous, Cmd+C pour le prendre'
+           : 'copie impossible');
+      });
+    });
+
+    // Les trois boutons du panneau post faisaient double emploi.
+    ['zr-post-copy', 'zr-post-save', 'zr-post-import'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.remove();
+    });
+    var actions = document.querySelector('.zr-post-actions');
+    if (actions && !actions.children.length) actions.remove();
+  });
+})();

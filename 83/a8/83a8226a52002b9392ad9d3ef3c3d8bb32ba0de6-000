@@ -1,0 +1,36 @@
+## Contrat UI prioritaire, Liquid Glass et InterVariable, 2026-09-03
+
+Ce contrat remplace les prescriptions visuelles contradictoires des sections historiques, notamment le fond photo sombre permanent et le panneau Post blanc indépendant. UI désigne toute l’interface visible : barres, panneaux, champs, boutons, menus, onglets, états actifs et fenêtres de copie.
+
+- Référence demandée et retrouvée : `/Users/zenray/.claude/Memory1/Design/ZenRayProgress/UI/10-sidebar.html`, avec ses tokens `g9` dans `_systeme.css`. Reprendre la matière de la sidebar, son fond photographique doux, son liseré et ses deux thèmes. Ne pas inventer un autre verre.
+- Clair par défaut, thème sombre choisi avec un seul bouton, appliqué à toute la page et mémorisé. Une seule définition dans `assets/ui/zr-ui.css`, une seule commande de thème dans `assets/ui/zr-ui.js`. Aucun panneau ne force un thème opposé.
+- Toute interface et le texte du post utilisent `InterVariable`, Regular 400. Embarquer le fichier WOFF2 dans chaque instance et déclarer explicitement `@font-face`. Un nom de famille CSS est un alias libre : `Inter` peut fonctionner quand sa face est déclarée, mais un nom système seul ne prouve jamais le chargement. Vérifier la police effectivement rendue pour une phrase latine via le navigateur, et non simplement la propriété CSS. Les glyphes japonais exigent leur repli japonais ; aucune lettre latine ne doit tomber en Hiragino.
+- Le texte éditable du post est à 13 px CSS maximum, y compris sur écran 4K. Ne pas multiplier la taille CSS par le ratio de pixels de l’écran. Format 4:5 par défaut, texte intégral conservé avec défilement. Les tailles des calques exportés restent indépendantes de ce plafond d’interface.
+- Les gabarits de composition et de texte transparent conservent leur fonction d’export : le wallpaper et le chrome ne s’impriment jamais dans une image. Leur sans utilise aussi la police servie. Les familles artistiques d’un calque restent éditables.
+- Avant propagation : archiver le code remplacé, préserver exactement le bloc d’instance, les identifiants et l’ordre des images, les paramètres, le post, les aperçus et les sorties. Utiliser `scripts/update-ui-instances.py` ; ne pas rescanner les photos pour une mise à jour UI.
+- Contrôler les deux modes d’atelier, les deux thèmes, les panneaux Photos/Post, les états et champs ouverts, le petit écran, le rendu hors ligne, la police réelle et les 13 px. Une compilation ou une propriété `font-family` ne suffit pas à valider le visuel.
+
+
+## Discard d'une photo vers le sous-dossier _deprecated (2026-09-10)
+
+Lors du tri d'un lot de photos dans l'atelier heavy ou light, pouvoir écarter une ou plusieurs images directement depuis l'interface sans quitter le navigateur :
+
+- **Bouton Discard par photo :** dans la barre des variantes (à côté de Dupliquer et Supprimer) et sur chaque vignette du filmstrip (croix en haut à droite). Déplace le fichier physique source dans `<dossier-source>/_deprecated/<fichier>` via la route `POST /zr-discard`.
+- **Raccourci clavier :** touche `Delete` ou `Backspace` sur l'image active (hors champs de texte).
+- **Bouton Écarter tout le reste :** déplace en un clic toutes les autres photos du lot dans `_deprecated` pour ne conserver que la sélection courante.
+- **Mise à jour immédiate :** l'image est retirée de l'ordre actif, de `_index.json` et de `_params.json`. Si l'image avait des bordures liées (openSide) avec ses voisines, le lien est nettoyé proprement.
+- **Tolérance des scripts de cook :** `photo-apply.py` et `crop-apply.py` vérifient automatiquement l'existence du fichier dans `SOURCE_DIR` puis dans `SOURCE_DIR / "_deprecated"` en secours.
+
+
+## Roue chromatique moderne et palette 12 teintes élémentaires (2026-09-10)
+
+Dans l'atelier heavy et l'atelier light, chaque calque de texte ainsi que le panneau Bordure disposent d'une interface de sélection de couleur compacte et moderne sous leur champ de saisie :
+
+- **Roue chromatique Liquid Glass :** pastille circulaire avec dégradé conique complet (`conic-gradient`) et input natif `<input type="color">` invisible au clic, permettant de sélectionner n'importe quelle nuance libre en temps réel.
+- **12 teintes élémentaires (RGB + CMY en full et en pâle) :**
+  - Ligne 1 : Blanc (`#ffffff`) et les 6 teintes pleines vives : Rouge (`#ff3b30`), Jaune (`#f6cf47`), Vert (`#34c759`), Cyan (`#00c7be`), Bleu (`#007aff`), Magenta (`#af52de`).
+  - Ligne 2 : Roue chromatique Liquid Glass et les 6 teintes pâles douces : Rouge pâle (`#ffb3b0`), Jaune pâle (`#ffefa6`), Vert pâle (`#b8f2c8`), Cyan pâle (`#b2f2ef`), Bleu pâle (`#b8d7ff`), Magenta pâle (`#e5bbf8`).
+- **Format ultra compact :** boutons ronds de 18 px avec micro-relief glass, bordure subtile et anneau de mise en valeur sur la couleur active.
+- **Synchronisation bidirectionnelle :** cliquer une puce ou tourner la roue met à jour le champ texte hexadécimal et l'aperçu en direct, et saisir un code hexadécimal met en surbrillance la puce correspondante ou active la roue chromatique. Pour la bordure, les modifications se répercutent automatiquement sur l'image voisine si la bordure est ouverte et liée (`openSide`).
+- **Compatibilité cook et persistance :** le code hexadécimal sélectionné est immédiatement enregistré dans `_params.json` et rendu fidèlement par `photo-apply.py` et `crop-apply.py` via Pillow.
+

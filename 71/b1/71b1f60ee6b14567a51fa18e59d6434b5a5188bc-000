@@ -1,0 +1,155 @@
+/* 2026-09-03 : tokens g9 extraits de la sidebar demandée, même matière dans les deux thèmes. */
+:root {
+  --g9-rim-ratio: 0.20;
+  --g9-fg: rgba(25,27,31,.92);
+  /* Fond du thème (2026-07-22) : sert la paire d'état ACTIF contrastée des boutons toggle (fond = --g9-fg,
+     icône = --g9-bg) -> cercle sombre + icône claire en light, cercle blanc + icône sombre en dark. */
+  --g9-bg: #fff;
+  --g9-muted: rgba(25,27,31,.56);
+  --g9-soft: rgba(25,27,31,.40);
+  --g9-rail: rgba(25,27,31,.16);
+  --g9-fill: rgba(25,27,31,.78);
+  --g9-glass-a: rgba(255,255,255,.76);
+  --g9-glass-b: rgba(229,233,239,.42);
+  --g9-rim-main: rgb(34 37 43 / calc(0.46 * var(--g9-rim-ratio)));
+  --g9-rim-soft: rgb(34 37 43 / calc(0.18 * var(--g9-rim-ratio)));
+  --g9-rim-side: rgb(34 37 43 / calc(0.10 * var(--g9-rim-ratio)));
+  --g9-outer-line: 0 0 0 0 transparent;
+  --g9-elev-a: 0 14px 38px rgba(62,67,78,.13);
+  --g9-elev-b: 0 3px 12px rgba(62,67,78,.08);
+  --g9-timing: 0.35s;
+  --g9-ease: cubic-bezier(.16,1,.3,1);
+  /* Toolbars à contraste renforcé (Create path bar, Create searchbar, sidebar searchbar) : même verre
+     que --g9-glass-a/-b, teinté gris-noir plus sombre pour mieux se détacher du fond. Un seul endroit
+     à retoucher (le % de mix) pour ajuster les 3 surfaces à la fois -- retour Matthieu 2026-07-20. */
+  --g9-toolbar-glass-a: color-mix(in srgb, var(--g9-glass-a) 80%, #1b1d21 20%);
+  --g9-toolbar-glass-b: color-mix(in srgb, var(--g9-glass-b) 80%, #1b1d21 20%);
+}
+html.zr-dark {
+  --g9-fg: #fff;
+  --g9-bg: #1c1c1e;
+  --g9-muted: rgba(255,255,255,.62);
+  --g9-soft: rgba(255,255,255,.46);
+  --g9-rail: rgba(255,255,255,.26);
+  --g9-fill: #fff;
+  --g9-glass-a: rgba(255,255,255,.20);
+  --g9-glass-b: rgba(255,255,255,.065);
+  --g9-rim-main: rgb(255 255 255 / calc(0.72 * var(--g9-rim-ratio)));
+  --g9-rim-soft: rgb(255 255 255 / calc(0.16 * var(--g9-rim-ratio)));
+  --g9-rim-side: rgb(255 255 255 / calc(0.085 * var(--g9-rim-ratio)));
+  --g9-outer-line: 0 0 0 .72px rgb(0 0 0 / calc(0.66 * var(--g9-rim-ratio)));
+  --g9-elev-a: 0 14px 36px rgba(0,0,0,.27);
+  --g9-elev-b: 0 3px 11px rgba(0,0,0,.15);
+  --g9-toolbar-glass-a: color-mix(in srgb, var(--g9-glass-a) 68%, #000 32%);
+  --g9-toolbar-glass-b: color-mix(in srgb, var(--g9-glass-b) 68%, #000 32%);
+}
+
+/* Paramètres communs de l'atelier. Le wallpaper et le verre viennent de l'atlas sidebar. */
+html.zr-hda-ui {
+  color-scheme: light;
+  --zr-ui-gap: 12px;
+  --zr-ui-radius: 22px;
+  --zr-ui-font-size: 13px;
+  --zr-post-font-size: 13px;
+  --zr-police-sans: 'InterVariable', 'Hiragino Sans W4', 'Hiragino Sans', sans-serif;
+  --zr-police-serif: 'AnthropicSerif', 'Hiragino Mincho ProN W3', serif;
+  --zr-post-font: var(--zr-police-sans);
+  --panel-gutter: 412px;
+  --zr-post-width: var(--panel-gutter);
+  --zr-side-a: rgba(255,255,255,.78);
+  --zr-side-b: rgba(226,230,235,.54);
+  --zr-ui-veil: linear-gradient(180deg, rgba(236,239,244,.30), rgba(226,231,240,.42));
+  --zr-ui-base: #e7eaf2;
+  --zr-ui-line: var(--g9-rim-main);
+  --zr-ui-control: linear-gradient(135deg, var(--g9-toolbar-glass-a), var(--g9-toolbar-glass-b));
+  --zr-ui-glass: linear-gradient(135deg, var(--zr-side-a), var(--zr-side-b));
+  --zr-ui-filter: blur(27px) saturate(169%);
+  --zr-ui-shadow: var(--g9-outer-line), inset 0 1px 0 var(--g9-rim-main), inset 0 -1px 0 var(--g9-rim-main), inset 0 2px 0 var(--g9-rim-soft), inset 0 -2px 0 var(--g9-rim-soft), inset 1px 0 0 var(--g9-rim-side), inset -1px 0 0 var(--g9-rim-side), var(--g9-elev-a), var(--g9-elev-b);
+  --zr-ui-selection: rgba(10,132,255,.16);
+  --zr-ui-accent: #007aff; --zr-ui-accent-solid: #007aff; --zr-ui-accent-solid-hover: #0069e0;
+  --zr-ui-warning: #a32b20;
+  --bg: var(--zr-ui-base); --panel: var(--zr-ui-glass); --card: var(--zr-ui-glass);
+  --accent: var(--zr-ui-accent); --text: var(--g9-fg); --muted: var(--g9-muted);
+  --zr-panel-background: var(--zr-ui-glass); --zr-panel-control: var(--zr-ui-control);
+  --zr-panel-text: var(--g9-fg); --zr-panel-muted: var(--g9-muted); --zr-panel-accent: var(--zr-ui-accent);
+  --zr-post-paper: transparent; --zr-post-ink: var(--g9-fg); --zr-post-muted: var(--g9-muted);
+  --zr-post-line: var(--zr-ui-line); --zr-post-warning: var(--zr-ui-warning);
+  --zr-glass-bg: var(--zr-ui-glass); --zr-glass-filter: var(--zr-ui-filter); --zr-glass-shadow: var(--zr-ui-shadow);
+  --zr-radius-sm: 10px; --zr-radius-md: 14px; --zr-radius-lg: 22px;
+  --zr-ui-motion: 225ms cubic-bezier(.16,1,.3,1);
+}
+html.zr-hda-ui.zr-dark {
+  color-scheme: dark;
+  --zr-side-a: rgba(255,255,255,.135); --zr-side-b: rgba(255,255,255,.045);
+  --zr-ui-base: #262624;
+  --zr-ui-veil: linear-gradient(180deg, rgba(31,31,30,.58), rgba(28,28,27,.68));
+  --zr-ui-accent: #409cff; --zr-ui-accent-solid: #0a84ff; --zr-ui-accent-solid-hover: #3a9bff; --zr-ui-warning: #ffb4a6;
+}
+html.zr-hda-ui, html.zr-hda-ui body { background: var(--zr-ui-base); color: var(--g9-fg); font: 400 var(--zr-ui-font-size)/1.5 var(--zr-police-sans); }
+html.zr-hda-ui body { isolation: isolate; min-height: 100vh; }
+html.zr-hda-ui body::before { content: ''; position: fixed; inset: -10%; z-index: -2; pointer-events: none; background: url('./fond.webp') center/cover no-repeat; filter: blur(30px) saturate(118%) brightness(1.04); transform: scale(1.08); }
+html.zr-hda-ui body::after { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: var(--zr-ui-veil); }
+html.zr-hda-ui :is(header.top, .zr-side-glass, .strip, .card, .out-inner) { background: var(--zr-ui-glass); box-shadow: var(--zr-ui-shadow); border: 0; border-radius: var(--zr-ui-radius); backdrop-filter: var(--zr-ui-filter); -webkit-backdrop-filter: var(--zr-ui-filter); }
+html.zr-hda-ui :is(header.top, .zr-photo-panel, .zr-post-tabs, .zr-post-pane, .controls, .out-inner, footer) { color: var(--g9-fg); font-family: var(--zr-police-sans); font-weight: 400; }
+html.zr-hda-ui :is(button, select, textarea, input, label, summary) { font-family: var(--zr-police-sans); font-weight: 400; }
+html.zr-hda-ui :is(header.top h1, .zr-photo-panel h2, .zr-post-pane h2, .out-inner h3) { font: 400 var(--zr-ui-font-size)/1.5 var(--zr-police-sans); }
+html.zr-hda-ui :is(button:where(:not(.swatch):not([data-channel])), select, input[type=text], input[type=number], .out-inner textarea, .batch-out textarea) {
+  background: var(--zr-ui-control); color: var(--g9-fg); border: 1px solid var(--zr-ui-line); border-radius: var(--zr-radius-sm); box-shadow: inset 0 1px 0 var(--g9-rim-soft); font-weight: 400;
+  transition: background var(--zr-ui-motion), color var(--zr-ui-motion), box-shadow var(--zr-ui-motion);
+}
+/* 2026-09-03 : le bouton PRIMAIRE est plein, comme btnPrimaryBg/btnPrimaryText de ZenRayProgress.
+   Translucide, il tombait a 1.29:1 de contraste et paraissait desactive, retour de Matthieu. */
+html.zr-hda-ui :is(button.primary, .zr-post-primary) { background: var(--zr-ui-accent-solid); color: #fff; border-color: transparent; font-weight: 500; }
+html.zr-hda-ui :is(button.primary, .zr-post-primary):hover { background: var(--zr-ui-accent-solid-hover); }
+/* Les ETATS actifs restent translucides : ils signalent une selection, jamais une action principale. */
+html.zr-hda-ui :is(button.active, button[aria-pressed=true], .apply-all.done, .apply-everything.done) { background: var(--zr-ui-selection); color: var(--zr-ui-accent); border-color: var(--zr-ui-line); }
+html.zr-hda-ui button:hover:not(:disabled) { box-shadow: inset 0 0 0 1px var(--g9-rim-main); }
+html.zr-hda-ui :is(button, select, textarea, input):focus-visible { outline: 2px solid var(--zr-ui-accent); outline-offset: 2px; }
+html.zr-hda-ui :is(select option) { background: var(--zr-ui-base); color: var(--g9-fg); }
+html.zr-hda-ui :is(.layer-block, .text-box, .adjustments, .text-controls, .zr-photo-panel .current, .badge) { background: transparent; border-color: var(--zr-ui-line); }
+html.zr-hda-ui :is(.tile, .control-extra .step, .anchor-widget button) { background: var(--zr-ui-control); color: var(--g9-fg); }
+html.zr-hda-ui :is(.tile .pos, .layer-head .idx, .badge .id) { background: var(--zr-ui-selection); color: var(--zr-ui-accent); }
+html.zr-hda-ui :is(.tile.selected, .tile.drop-target) { border-color: var(--zr-ui-accent); }
+html.zr-hda-ui :is(.border-warning, .variant-action.danger:hover) { color: var(--zr-ui-warning); }
+html.zr-hda-ui input[type=range] { accent-color: var(--zr-ui-accent); background: var(--zr-ui-control); border: 1px solid var(--zr-ui-line); border-radius: 999px; padding: 4px; min-height: 22px; }
+html.zr-hda-ui :is(.zr-photo-control output, .tile .pos, .badge .id, .layer-head .idx, .control-extra .step, input[type=number]) { font-family: var(--zr-police-serif); font-weight: 400; }
+html.zr-hda-ui .zr-side-glass { position: fixed; z-index: 39; top: var(--zr-ui-gap); bottom: var(--zr-ui-gap); right: var(--zr-ui-gap); width: var(--zr-post-width); pointer-events: none; }
+html.zr-hda-ui .zr-post-tabs { top: var(--zr-ui-gap); right: var(--zr-ui-gap); border: 0; background: transparent; border-radius: var(--zr-ui-radius) var(--zr-ui-radius) 0 0; }
+html.zr-hda-ui .zr-post-tabs .zr-theme-toggle { flex: 0 0 auto; font-size: 11px; }
+html.zr-hda-ui :is(.zr-post-pane, .zr-photo-panel) { top: calc(var(--zr-ui-gap) + var(--zr-post-tabs-height)); bottom: var(--zr-ui-gap); right: var(--zr-ui-gap); width: var(--zr-post-width); max-height: none; border: 0; background: transparent; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; border-radius: 0 0 var(--zr-ui-radius) var(--zr-ui-radius); overflow: auto; }
+html.zr-hda-ui body.zr-has-post .zr-photo-panel { padding-top: var(--zr-post-gap); }
+html.zr-hda-ui .zr-post-card { background: transparent; }
+html.zr-hda-ui .zr-post-card textarea { font: 400 min(var(--zr-post-font-size), 13px)/1.6 var(--zr-police-sans); background: transparent; color: var(--g9-fg); }
+html.zr-hda-ui .zr-post-card:focus-within { outline-color: var(--zr-ui-accent); }
+html.zr-hda-ui header.top { left: var(--zr-ui-gap); top: var(--zr-ui-gap); right: calc(var(--panel-gutter) + 3 * var(--zr-ui-gap)); gap: 10px; padding: 12px 16px; }
+html.zr-hda-ui .stage { top: calc(var(--top-h, 56px) + 2 * var(--zr-ui-gap)); right: calc(var(--panel-gutter) + 3 * var(--zr-ui-gap)); bottom: calc(var(--strip-height) + 2 * var(--zr-ui-gap)); }
+html.zr-hda-ui .strip { left: var(--zr-ui-gap); right: calc(var(--panel-gutter) + 3 * var(--zr-ui-gap)); bottom: var(--zr-ui-gap); }
+html.zr-hda-ui .zr-post-light header.top { margin: var(--zr-ui-gap) calc(var(--zr-post-width) + 3 * var(--zr-ui-gap)) var(--zr-ui-gap) var(--zr-ui-gap); padding-right: 16px; }
+html.zr-hda-ui body.zr-post-light:is([data-zr-post-open=true], [data-zr-post-open=false]) header.top { margin-right: calc(var(--zr-post-width) + 3 * var(--zr-ui-gap)); padding-right: 16px; }
+html.zr-hda-ui body.zr-post-light :is(#grid, footer) { margin-right: calc(var(--zr-post-width) + 2 * var(--zr-ui-gap)); }
+html.zr-hda-ui .out-box { z-index: 100; }
+html.zr-hda-ui .out-inner { color: var(--g9-fg); }
+html.zr-hda-ui .zr-font-error { position: fixed; bottom: 20px; left: 20px; z-index: 200; padding: 10px; background: var(--zr-ui-base); color: var(--zr-ui-warning); border: 1px solid currentColor; }
+@media (max-width: 800px) {
+  html.zr-hda-ui { --panel-gutter: 0px; --zr-post-width: calc(100vw - 2 * var(--zr-ui-gap)); }
+  html.zr-hda-ui .zr-post-tabs { width: var(--zr-post-width); }
+  html.zr-hda-ui header.top { top: calc(var(--zr-post-tabs-height) + 2 * var(--zr-ui-gap)); right: var(--zr-ui-gap); }
+  html.zr-hda-ui .stage, html.zr-hda-ui .strip { right: var(--zr-ui-gap); }
+  html.zr-hda-ui .stage { top: calc(var(--top-h, 100px) + var(--zr-post-tabs-height) + 3 * var(--zr-ui-gap)); }
+  html.zr-hda-ui body.zr-post-light:is([data-zr-post-open=true], [data-zr-post-open=false]) header.top { margin-right: var(--zr-ui-gap); }
+  html.zr-hda-ui body.zr-post-light :is(#grid, footer) { margin-right: 0; }
+  html.zr-hda-ui body[data-zr-post-open=false] .zr-side-glass { bottom: auto; height: var(--zr-post-tabs-height); }
+  html.zr-hda-ui body[data-zr-post-open=true] :is(.stage, .strip, #grid, header.top) { visibility: hidden; }
+  html.zr-hda-ui body[data-zr-post-open=false] .zr-photo-panel { top: auto; bottom: var(--zr-ui-gap); max-height: 45vh; background: var(--zr-ui-base); }
+}
+@media (prefers-reduced-motion: reduce) { html.zr-hda-ui *, html.zr-hda-ui *::before { animation: none !important; transition: none !important; } }
+@media (prefers-reduced-transparency: reduce) { html.zr-hda-ui :is(.zr-side-glass, header.top, .strip, .card, .out-inner) { background: var(--zr-ui-base); backdrop-filter: none; } }
+html.render.zr-hda-ui body::before, html.render.zr-hda-ui body::after, html.render .zr-side-glass, html.render .zr-theme-toggle { display: none; }
+
+/* Le chevron reste dans le panneau et suit son padding. */
+html.zr-hda-ui .zr-photo-panel summary { list-style-position: inside; }
+
+/* 2026-09-03 : la barre Enregistrer / Cuire remplace les quatre boutons d'avant. */
+html.zr-hda-ui .zr-save-bar { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+html.zr-hda-ui .zr-save-note { color: var(--g9-muted); font-size: 12px; min-height: 1em; }
+html.zr-hda-ui #zr-cook-btn[disabled] { opacity: .55; cursor: not-allowed; }

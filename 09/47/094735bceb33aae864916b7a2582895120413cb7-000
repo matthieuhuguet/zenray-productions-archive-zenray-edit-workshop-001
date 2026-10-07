@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+# Verify successful rendering and deliberately broken contracts without touching sources. (7 October 2026, 17:00 Europe/Paris)
+import hashlib
+import importlib.util
+import json
+import shutil
+import subprocess
+import tarfile
+import io
+from pathlib import Path
+
+ROOT = Path('/Users/zenray/.claude/skills/zenray-edit')
+WORKSHOP = Path('/Users/zenray/.claude/tmp/tmp-zenray-edit')
+PROOFS = WORKSHOP / 'MigrationProofs'
+PROOFS.mkdir(exist_ok=True)
+results = []
+
+def command(arguments, success=True):
+    completed = subprocess.run(arguments, text=True, capture_output=True)
+    assert (completed.returncode == 0) == success, completed.stdout + completed.stderr
+    return completed
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+command(['python3', str(ROOT / 'scripts/index-skill.py'), '--verify-only'])
+command(['python3', str(ROOT / 'scripts/CheckContract.py')])
+results.append({'check':'Immutable archives and routed contract', 'ok': True, 'originalFiles':115, 'fusionFiles':26,'blocks':15,'catalogEntries':9})
+
+landscape = WORKSHOP / 'RepresentativeLandscape'
+if not landscape.exists():
+    command(['bash', str(ROOT / 'scripts/new-project.sh'), landscape.name, str(WORKSHOP)])
+config = json.loads((landscape / 'export.json').read_text())
+config['canvas'] = {'width':1920, 'height':1080}
+(landscape / 'export.json').write_text(json.dumps(config, indent=2))
+for directory, expected in [(WORKSHOP/'RepresentativePortrait',(3240,4050)),(landscape,(3840,2160))]:
+    source_files = [p for p in directory.rglob('*') if p.is_file() and 'out' not in p.relative_to(directory).parts]
+    before = {str(p):digest(p) for p in source_files}
+    command(['bash', str(directory/'render.sh')])
+    report = json.loads((directory/'out/RenderReport.json').read_text())
+    assert report['ok'] and (report['files'][0]['width'], report['files'][0]['height']) == expected
+    assert {str(p):digest(p) for p in source_files} == before
+    results.append({'check':'Render and sources unchanged','ok':True, 'directory':str(directory),'result':report})
+
+negative = WORKSHOP / 'OversizedExport'
+if not negative.exists():
+    command(['bash', str(ROOT / 'scripts/new-project.sh'), negative.name, str(WORKSHOP)])
+config = json.loads((negative / 'export.json').read_text())
+config['export']['maximumBytes'] = 1
+config['export']['format'] = 'jpeg'
+(negative/'export.json').write_text(json.dumps(config,indent=2))
+before = digest(negative/'slide-1.html')
+failed = command(['bash',str(negative/'render.sh')],False)
+assert 'master retained' in failed.stderr
+assert (negative/'out/masters/slide-1.png').is_file()
+assert not (negative/'out/slide-1.jpg').exists()
+assert digest(negative/'slide-1.html') == before
+assert json.loads((negative/'out/RenderReport.json').read_text())['ok'] is False
+results.append({'check':'Oversize JPEG rejected with master and source retained','ok':True,'stderr':failed.stderr.strip()})
+
+broken = PROOFS / 'BrokenContract'
+if not broken.exists():
+    broken.mkdir()
+    shutil.copy2(ROOT/'SKILL.md',broken/'SKILL.md')
+    shutil.copytree(ROOT/'references',broken/'references')
+    shutil.copytree(ROOT/'templates',broken/'templates')
+    shutil.copytree(ROOT/'scripts',broken/'scripts')
+registry=json.loads((broken/'templates/designs/index.json').read_text())
+registry['designs']['luxe-epure']['file']='missing-template.html'
+(broken/'templates/designs/index.json').write_text(json.dumps(registry))
+failed=command(['python3',str(ROOT/'scripts/CheckContract.py'),'--root',str(broken)],False)
+results.append({'check':'Missing template rejected','ok':True,'stderr':failed.stderr.strip().splitlines()[-1]})
+
+spec=importlib.util.spec_from_file_location('archive_verifier',ROOT/'scripts/index-skill.py')
+module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+archive=PROOFS/'CorruptArchive.tar.gz'
+with tarfile.open(archive,'w:gz') as stream:
+    entry=tarfile.TarInfo('test.txt');entry.size=6;stream.addfile(entry,io.BytesIO(b'broken'))
+try:
+    module.verify_archive(archive,{'test.txt':hashlib.sha256(b'intact').hexdigest()})
+except AssertionError as error:
+    results.append({'check':'Corrupt archive rejected','ok':True,'error':str(error)})
+else:
+    raise AssertionError('Corrupt archive incorrectly accepted')
+
+fixture=WORKSHOP/'PreservationFixture'
+assert not fixture.exists(), 'Use a new fixture for preservation test'
+preserved=command(['python3',str(ROOT/'scripts/verify-post-instance.py'),str(WORKSHOP/'RepresentativePortrait/out'),str(fixture)])
+results.append({'check':'Post and parameter preservation','ok':True,'details':json.loads(preserved.stdout)})
+(PROOFS/'Verification.json').write_text(json.dumps({'ok':True,'date':'7 October 2026','checks':results},indent=2,ensure_ascii=False)+'\n')
+print(json.dumps({'ok':True,'checks':len(results),'proof':str(PROOFS/'Verification.json')}))

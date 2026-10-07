@@ -1,0 +1,118 @@
+<!-- Component: pure-pill-liquid-glass -->
+<!-- ID sémantique: pure-pill-liquid-glass -->
+<!-- Capsule dépliable fermée à bord arrondi 999px avec morphing doux vers carte arrondie 20px -->
+
+<style>
+:root {
+  --capsule-r-closed: 999px;
+  --capsule-r-open: 20px;
+  --capsule-pad-y: 12px;
+  --capsule-pad-x: 20px;
+  --capsule-title-size: 15.5px;
+  --capsule-body-size: 14.5px;
+  --capsule-bg-alpha: 0.04;
+  --capsule-border-alpha: 0.12;
+  --capsule-blur: 16px;
+  --points-gap: 10px;
+  --expand-duree: 0.38s;
+  --doux: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.capsule-p1 {
+  width: 100%;
+  border-radius: var(--capsule-r-closed);
+  background: rgba(125, 125, 125, var(--capsule-bg-alpha));
+  border: 1px solid rgba(125, 125, 125, var(--capsule-border-alpha));
+  backdrop-filter: blur(var(--capsule-blur));
+  -webkit-backdrop-filter: blur(var(--capsule-blur));
+  overflow: hidden;
+  transition: border-radius var(--expand-duree) var(--doux), background 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease;
+}
+.capsule-p1:hover {
+  border-color: rgba(125, 125, 125, calc(var(--capsule-border-alpha) + 0.12));
+}
+.capsule-p1.est-ouvert {
+  border-radius: var(--capsule-r-open);
+  background: rgba(125, 125, 125, calc(var(--capsule-bg-alpha) + 0.02));
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.capsule-btn-trigger {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: var(--capsule-pad-y) var(--capsule-pad-x);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+}
+.capsule-p1-text {
+  font-family: var(--serif, Georgia, serif);
+  font-size: var(--capsule-title-size);
+  font-weight: 400;
+  color: var(--encre, #1F1F1E);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+.capsule-p1-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--sans, sans-serif);
+  font-size: 13px;
+  color: var(--encre-2, #6B6B68);
+  flex-shrink: 0;
+}
+.capsule-dots { letter-spacing: 2px; font-weight: 700; opacity: 0.6; }
+.capsule-icon-arrow {
+  width: 14px; height: 14px;
+  transition: transform var(--expand-duree) var(--doux);
+}
+.est-ouvert .capsule-icon-arrow { transform: rotate(180deg); }
+
+.capsule-expand-content {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height var(--expand-duree) var(--doux), opacity 0.28s ease;
+}
+.est-ouvert .capsule-expand-content {
+  max-height: 800px;
+  opacity: 1;
+}
+.capsule-inner-padding {
+  padding: 6px var(--capsule-pad-x) calc(var(--capsule-pad-y) + 8px);
+  border-top: 1px solid rgba(125, 125, 125, calc(var(--capsule-border-alpha) * 0.6));
+}
+</style>
+
+<div class="capsule-p1" id="capsule-demo">
+  <button type="button" class="capsule-btn-trigger" onclick="this.parentElement.classList.toggle('est-ouvert')">
+    <p class="capsule-p1-text">My role : le Tech Art est un multiplicateur...</p>
+    <div class="capsule-p1-toggle">
+      <span class="capsule-dots">...</span>
+      <svg class="capsule-icon-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </div>
+  </button>
+  <div class="capsule-expand-content">
+    <div class="capsule-inner-padding">
+      <p style="font-family: var(--serif); font-size: var(--capsule-body-size); line-height: 1.6; margin: 10px 0;">
+        My role : le Tech Art est un multiplicateur qui relie l'art notamment en 3D, et l'automatisation de systèmes informatiques.
+      </p>
+      <ol style="margin: 10px 0 0; padding-left: 20px; font-family: var(--sans); font-size: var(--capsule-body-size); line-height: 1.6;">
+        <li>Créer des outils accessibles pour les artistes, designers, utilisateurs.</li>
+        <li>Bâtir des systèmes réutilisables.</li>
+        <li>Augmenter les performances sans perdre le visuel.</li>
+      </ol>
+    </div>
+  </div>
+</div>

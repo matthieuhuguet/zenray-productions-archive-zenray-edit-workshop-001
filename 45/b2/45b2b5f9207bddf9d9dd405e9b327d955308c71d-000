@@ -1,0 +1,424 @@
+#!/usr/bin/env python3
+# 2026-08-31, cook zenray-html-hda : _index.json + _crop_params.json -> JPEG finaux dans out/
+# Reproduit exactement le rendu CSS du picker (object-fit:cover + object-position
+# + transform: scale(zoom*safescale) rotate(angle)) par une seule transformation
+# affine directe source -> canevas final, pour que le fichier livré corresponde
+# au pixel pres a ce que Matthieu a vu dans le navigateur. Porte aussi le texte
+# optionnel (police Serif/Sans, 7 graisses reelles Light a Black, taille en
+# px avec auto-fit qui ne depasse jamais le cadre, couleur jaune #f6cf47 ou
+# blanc, ancre haut/milieu/bas x gauche/centre/droite).
+import json
+import math
+import re
+from pathlib import Path
+
+import numpy as np
+from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
+
+HERE = Path(__file__).resolve().parent
+SOURCE_DIR = HERE.parent
+OUT_DIR = HERE / "out"
+
+# Sept graisses reelles AnthropicSerif (memes fichiers statiques que le trio
+# typographique global) ; jamais de gras synthetique. InterVariable rend la
+# meme echelle nativement via son axe wght, un seul fichier pour les sept.
+SERIF_FONT_FILES = {
+    300: "/Users/zenray/Library/Fonts/AnthropicSerif-Light.ttf",
+    400: "/Users/zenray/Library/Fonts/AnthropicSerif-Regular.ttf",
+    500: "/Users/zenray/Library/Fonts/AnthropicSerif-Medium.ttf",
+    600: "/Users/zenray/Library/Fonts/AnthropicSerif-SemiBold.ttf",
+    700: "/Users/zenray/Library/Fonts/AnthropicSerif-Bold.ttf",
+    800: "/Users/zenray/Library/Fonts/AnthropicSerif-ExtraBold.ttf",
+    900: "/Users/zenray/Library/Fonts/AnthropicSerif-Black.ttf",
+}
+SANS_FONT_FILE = "/Users/zenray/Library/Fonts/InterVariable.ttf"
+MIN_FONT_SIZE_PX = 6
+
+
+def affine_coeffs(nw, nh, canvas_w, canvas_h, px, py, zoom, angle_deg):
+    """Coefficients (a,b,c,d,e,f) pour Image.transform(AFFINE) : pour chaque
+    pixel de sortie (bx,by), le pixel source lu est (a*bx+b*by+c, d*bx+e*by+f).
+    Derive directement de la meme chaine que le CSS : object-fit:cover +
+    object-position(px,py) puis transform: scale(zoom*safescale) rotate(angle)
+    autour du centre. `safescale` regonfle la couverture pour qu'aucune
+    rotation ne laisse un coin transparent (meme formule que le JS du picker,
+    a ne jamais faire diverger) :
+        safescale = |cos angle| + max(H/W, W/H) * |sin angle|
+    Angle positif = sens CSS (horaire), coherent avec `rotate(Xdeg)`.
+    """
+    s = max(canvas_w / nw, canvas_h / nh)
+
+    ratio = max(canvas_h / canvas_w, canvas_w / canvas_h)
+    theta = math.radians(angle_deg)
+    safescale = abs(math.cos(theta)) + ratio * abs(math.sin(theta))
+    safescale *= 1.002  # marge anti-arrondi
+
+    z = zoom * safescale
+    cx, cy = canvas_w / 2, canvas_h / 2
+    cos_t, sin_t = math.cos(theta), math.sin(theta)
+
+    # 2026-09-03 : la fenetre visible depend du facteur EFFECTIF, zoom compris.
+    # Calculee avec `s` seul, sa hauteur egalait exactement la source sur l'axe
+    # couvrant : la marge valait zero et Position Y ne bougeait rien, meme en
+    # zoomant. Bug rapporte par Matthieu, corrige des DEUX cotes a la fois.
+    vw = canvas_w / (z * s)
+    vh = canvas_h / (z * s)
+    x0 = max(0.0, nw - vw) * (px / 100)
+    y0 = max(0.0, nh - vh) * (py / 100)
+
+    a = cos_t / (z * s)
+    b = sin_t / (z * s)
+    c = x0 + vw / 2 - (cos_t * cx + sin_t * cy) / (z * s)
+    d = -sin_t / (z * s)
+    e = cos_t / (z * s)
+    f = y0 + vh / 2 + (sin_t * cx - cos_t * cy) / (z * s)
+    return (a, b, c, d, e, f)
+
+
+def parse_weight(val):
+    if isinstance(val, (int, float)):
+        return int(val)
+    if not val:
+        return 400
+    s = str(val).strip().lower()
+    mapping = {
+        "thin": 100, "extralight": 200, "light": 300, "regular": 400,
+        "medium": 500, "semibold": 600, "bold": 700, "extrabold": 800,
+        "ultrabold": 800, "black": 900, "heavy": 900
+    }
+    if s in mapping:
+        return mapping[s]
+    try:
+        return int(float(s))
+    except Exception:
+        return 400
+
+
+def parse_color(val, default=(246, 207, 71, 255)):
+    """Convertit toute couleur hex (#rgb, #rrggbb, #rrggbbaa), rgb/rgba
+    ou tuple en tuple RGBA (r, g, b, a) normalise 0..255."""
+    if not val:
+        return default
+    if isinstance(val, (tuple, list)):
+        if len(val) == 3:
+            return (int(val[0]), int(val[1]), int(val[2]), 255)
+        if len(val) >= 4:
+            a = int(round(val[3] * 255)) if isinstance(val[3], float) and val[3] <= 1.0 else int(val[3])
+            return (int(val[0]), int(val[1]), int(val[2]), a)
+    val_str = str(val).strip()
+    if val_str.startswith("#"):
+        h = val_str.lstrip("#")
+        if len(h) == 3:
+            h = "".join(c * 2 for c in h)
+        if len(h) == 6:
+            return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16), 255)
+        if len(h) == 8:
+            return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16), int(h[6:8], 16))
+    if val_str.lower().startswith("rgba"):
+        m = re.findall(r"[\d.]+", val_str)
+        if len(m) >= 4:
+            r, g, b = int(float(m[0])), int(float(m[1])), int(float(m[2]))
+            alpha_f = float(m[3])
+            a = int(round(alpha_f * 255)) if alpha_f <= 1.0 else int(alpha_f)
+            return (r, g, b, max(0, min(255, a)))
+    if val_str.lower().startswith("rgb"):
+        m = re.findall(r"[\d.]+", val_str)
+        if len(m) >= 3:
+            return (int(float(m[0])), int(float(m[1])), int(float(m[2])), 255)
+    try:
+        from PIL import ImageColor
+        rgb = ImageColor.getrgb(val_str)
+        if len(rgb) == 3:
+            return (rgb[0], rgb[1], rgb[2], 255)
+        if len(rgb) == 4:
+            return rgb
+    except Exception:
+        pass
+    return default
+
+
+def load_font(font_key, weight, size):
+    size = max(1, round(size))
+    weight_num = parse_weight(weight)
+    if font_key == "sans":
+        font = ImageFont.truetype(SANS_FONT_FILE, size)
+        applied = False
+        try:
+            axes = font.get_variation_axes()
+            coords = []
+            for ax in axes:
+                name = ax.get("name", b"").decode("utf-8", errors="ignore").lower() if isinstance(ax.get("name"), (bytes, bytearray)) else str(ax.get("name", "")).lower()
+                if "weight" in name or "wght" in name:
+                    w = max(ax.get("minimum", 100), min(ax.get("maximum", 900), weight_num))
+                    coords.append(float(w))
+                else:
+                    coords.append(float(ax.get("default", 14)))
+            if coords:
+                font.set_variation_by_axes(coords)
+                applied = True
+        except Exception:
+            pass
+        if not applied:
+            try:
+                name_map = {
+                    100: "Thin", 200: "ExtraLight", 300: "Light", 400: "Regular",
+                    500: "Medium", 600: "SemiBold", 700: "Bold", 800: "ExtraBold", 900: "Black"
+                }
+                closest = min(name_map.keys(), key=lambda k: abs(k - weight_num))
+                font.set_variation_by_name(name_map[closest])
+            except Exception:
+                pass
+        return font
+    nearest = min(SERIF_FONT_FILES, key=lambda w: abs(w - weight_num))
+    return ImageFont.truetype(SERIF_FONT_FILES[nearest], size)
+
+
+def position_for(bbox, h_anchor, v_anchor, canvas_w, canvas_h, margin_x, margin_y):
+    """Coin haut-gauche (x,y) du texte pour dessiner `bbox` a l'ancre donnee.
+    Meme convention que le CSS (text-align + top/middle/bottom + marge 6%)."""
+    text_w, text_h = bbox[2] - bbox[0], bbox[3] - bbox[1]
+    if h_anchor == "left":
+        x = margin_x - bbox[0]
+    elif h_anchor == "right":
+        x = canvas_w - margin_x - text_w - bbox[0]
+    else:
+        x = (canvas_w - text_w) / 2 - bbox[0]
+    if v_anchor == "top":
+        y = margin_y - bbox[1]
+    elif v_anchor == "middle":
+        y = (canvas_h - text_h) / 2 - bbox[1]
+    else:
+        y = canvas_h - margin_y - text_h - bbox[1]
+    return x, y
+
+
+def draw_captions(canvas, text_cfgs, canvas_w, canvas_h):
+    """Dessine 0 a N calques de texte, dans l'ordre donne (T1 puis T2 puis T3).
+    Accepte aussi l'ancien format mono-calque (un dict au lieu d'une liste)."""
+    if not text_cfgs:
+        return canvas
+    if isinstance(text_cfgs, dict):
+        text_cfgs = [text_cfgs]
+    for text_cfg in text_cfgs:
+        canvas = draw_caption(canvas, text_cfg, canvas_w, canvas_h)
+    return canvas
+
+
+def apply_grain(canvas, amount):
+    """Ajoute le grain deterministe choisi dans le picker light."""
+    strength = max(0.0, min(100.0, float(amount))) / 100.0
+    if not strength:
+        return canvas
+    width, height = canvas.size
+    ys = (np.arange(height, dtype=np.float32) + 0.5) / height
+    xs = (np.arange(width, dtype=np.float32) + 0.5) / width
+    cells = np.floor(xs[None, :] * 4096.0) * 127.1 + np.floor(ys[:, None] * 4096.0) * 311.7
+    noise = np.mod(np.sin(cells) * 43758.5453123, 1.0)
+    pixels = np.asarray(canvas, dtype=np.float32) / 255.0
+    pixels = np.clip(pixels + ((noise - 0.5) * strength * 0.16)[..., None], 0.0, 1.0)
+    return Image.fromarray(np.rint(pixels * 255).astype(np.uint8), "RGB")
+
+
+def draw_shadow_layer(canvas_size, value, font, x, y, canvas_w, shadow_cfg):
+    """Ombre portee : Size (rayon du flou) et Strength (densite, 0-100).
+
+    2026-09-03, bug mesure et corrige. L'ancienne version dessinait UN tampon a
+    alpha 200 puis le floutait : a Size 43 sur un canevas de 3240, l'encre
+    s'etalait tant que l'alpha du pic tombait a 95 sur 255, donc invisible sur
+    une photo claire. L'apercu montrait une ombre que le fichier livre n'avait
+    pas, exactement ce que ce skill interdit.
+
+    La densite s'obtient en RECOMPOSANT le meme calque floute sur lui-meme :
+    alpha_total = 1 - (1 - a)^n. Le degrade est conserve, la montee est
+    monotone, et n se deduit de Strength. Distance et Spread ne sont plus
+    exposes ; un ancien fichier qui les porte encore reste lu, son Spread
+    servant seulement a garder son rendu d'alors."""
+    shadow = Image.new("RGBA", canvas_size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(shadow)
+    if shadow_cfg is None:
+        draw.text((x, y), value, font=font, fill=(0, 0, 0, 200))
+        return shadow.filter(ImageFilter.GaussianBlur(canvas_w * 0.004))
+    if not shadow_cfg.get("enabled", True):
+        return shadow
+
+    size_px = max(0.0, float(shadow_cfg.get("size", 40)))
+    strength = max(0.0, min(100.0, float(shadow_cfg.get("strength", 40))))
+    if strength <= 0.01:
+        return shadow
+    # Compatibilite : les fichiers d'avant portent distance/spread.
+    spread_pct = max(0.0, min(100.0, float(shadow_cfg.get("spread", 0))))
+    distance_px = float(shadow_cfg.get("distance", 0))
+    spread_px = size_px * (spread_pct / 100.0)
+    blur_px = size_px * (1.0 - spread_pct / 100.0)
+
+    points = 1 if spread_px < 0.05 else 12
+    for i in range(points):
+        angle = (i / points) * 2 * math.pi if points > 1 else 0.0
+        dx = spread_px * math.cos(angle) if points > 1 else 0.0
+        dy = distance_px + (spread_px * math.sin(angle) if points > 1 else 0.0)
+        draw.text((x + dx, y + dy), value, font=font, fill=(0, 0, 0, 255))
+    if blur_px > 0.05:
+        shadow = shadow.filter(ImageFilter.GaussianBlur(blur_px))
+
+    passes = max(1, int(round(strength / 10.0)))
+    dense = shadow
+    for _ in range(passes - 1):
+        dense = Image.alpha_composite(dense, shadow)
+    return dense
+
+def hex_to_rgb(value):
+    rgba = parse_color(value, default=(196, 195, 185, 255))
+    return (rgba[0], rgba[1], rgba[2])
+
+
+def draw_border(canvas, cfg, canvas_w, canvas_h):
+    """Bordure exterieure, sur 3 ou 4 cotes selon `openSide`, avec coins internes
+    arrondis selon `radius` (par defaut egal a `thickness` pour un raccord propre).
+    Bande PLEINE, jamais floutee, posee au-dessus de la photo et EN DESSOUS du texte,
+    comme dans l'apercu. Le cote OUVERT (gauche ou droite) reste net et droit, sans
+    arrondi ni trait, pour que deux images posees cote a cote se lisent comme une
+    seule bande continue. Les coins internes fermes sont arrondis pour adoucir la
+    jonction photo/cadre. `enabled=False` ou absence de cle laisse le canevas intact."""
+    if not cfg or not cfg.get("enabled"):
+        return canvas
+    thickness = max(0.0, float(cfg.get("thickness", 6)))
+    if thickness <= 0:
+        return canvas
+    t = round(thickness)
+    raw_radius = cfg.get("radius")
+    if raw_radius is not None:
+        radius = max(0.0, float(raw_radius))
+    else:
+        radius = float(t)
+    r = round(radius)
+    r = min(r, max(0, (canvas_w - t) // 2), max(0, (canvas_h - 2 * t) // 2))
+
+    color = hex_to_rgb(cfg.get("color", "#c4c3b9"))
+    open_side = cfg.get("openSide", "none")
+
+    border_img = Image.new("RGB", (canvas_w, canvas_h), color)
+    scale = 2
+    sw, sh = canvas_w * scale, canvas_h * scale
+    st, sr = t * scale, r * scale
+    mask_hi = Image.new("L", (sw, sh), 255)
+    d = ImageDraw.Draw(mask_hi)
+
+    if open_side == "right":
+        xy = [st, st, sw, sh - st]
+        corners = (True, False, False, True)
+    elif open_side == "left":
+        xy = [0, st, sw - st, sh - st]
+        corners = (False, True, True, False)
+    else:
+        xy = [st, st, sw - st, sh - st]
+        corners = (True, True, True, True)
+
+    if sr > 0:
+        d.rounded_rectangle(xy, radius=sr, fill=0, corners=corners)
+    else:
+        d.rectangle(xy, fill=0)
+
+    mask = mask_hi.resize((canvas_w, canvas_h), Image.Resampling.BILINEAR)
+    canvas.paste(border_img, (0, 0), mask=mask)
+    return canvas
+
+
+def draw_caption(canvas, text_cfg, canvas_w, canvas_h):
+    if not text_cfg or not text_cfg.get("value", "").strip():
+        return canvas
+    if "enabled" in text_cfg and not text_cfg.get("enabled"):
+        return canvas
+    value = text_cfg["value"].strip()
+    font_key = text_cfg.get("font", "serif")
+    weight = parse_weight(text_cfg.get("weight", 400))
+    color_rgba = parse_color(text_cfg.get("color"), default=(246, 207, 71, 255))
+    v_anchor, h_anchor = (text_cfg.get("anchor") or "bottom-center").split("-")
+    margin_x, margin_y = canvas_w * 0.06, canvas_h * 0.06
+    max_width = canvas_w * 0.88
+
+    # Auto-fit : jamais l'inverse. Part de la taille demandee (px, dans
+    # l'espace du canevas de sortie, meme convention que le curseur JS) et la
+    # retrecit tant que la boite de texte deborde la largeur padee OU les
+    # bords memes du cadre (0..canvas_w, 0..canvas_h). La police ne sort
+    # jamais du cadre pour "cropper" le texte, elle s'adapte a la taille
+    # maximale qui tient.
+    font_size = round(text_cfg.get("size_px", 200))
+    probe = ImageDraw.Draw(canvas)
+
+    def fits(bbox):
+        text_w = bbox[2] - bbox[0]
+        if text_w > max_width:
+            return False
+        x, y = position_for(bbox, h_anchor, v_anchor, canvas_w, canvas_h, margin_x, margin_y)
+        left, top = x + bbox[0], y + bbox[1]
+        right, bottom = x + bbox[2], y + bbox[3]
+        return left >= 0 and top >= 0 and right <= canvas_w and bottom <= canvas_h
+
+    font = load_font(font_key, weight, font_size)
+    bbox = probe.textbbox((0, 0), value, font=font)
+    while not fits(bbox) and font_size > MIN_FONT_SIZE_PX:
+        font_size -= 2
+        font = load_font(font_key, weight, font_size)
+        bbox = probe.textbbox((0, 0), value, font=font)
+
+    x, y = position_for(bbox, h_anchor, v_anchor, canvas_w, canvas_h, margin_x, margin_y)
+
+    canvas = canvas.convert("RGBA")
+    shadow = draw_shadow_layer(canvas.size, value, font, x, y, canvas_w, text_cfg.get("shadow"))
+    canvas = Image.alpha_composite(canvas, shadow)
+    ImageDraw.Draw(canvas).text((x, y), value, font=font, fill=color_rgba)
+    return canvas.convert("RGB")
+
+
+def main():
+    index = json.loads((HERE / "_index.json").read_text())
+    params = json.loads((HERE / "_crop_params.json").read_text())
+    by_id = {img["id"]: img for img in index["images"]}
+
+    fmt = params["format"]
+    canvas_w = fmt["w"] * fmt["factor"]
+    canvas_h = fmt["h"] * fmt["factor"]
+
+    OUT_DIR.mkdir(exist_ok=True)
+    written = []
+    for p in params["images"]:
+        if p.get("discarded"):
+            continue
+        entry = by_id.get(p["id"])
+        if entry is None:
+            raise SystemExit(f"id {p['id']} absent de _index.json")
+        src_path = Path(entry["path"])
+        if not src_path.exists():
+            src_path = SOURCE_DIR / entry["file"]
+        if not src_path.exists():
+            src_path = SOURCE_DIR / "_deprecated" / entry["file"]
+        assert src_path.exists(), f"source introuvable : {src_path}"
+
+        im = Image.open(src_path)
+        im = ImageOps.exif_transpose(im)  # aligne sur ce qu'affiche un navigateur (EXIF)
+        im = im.convert("RGB")
+        nw, nh = im.size
+
+        coeffs = affine_coeffs(nw, nh, canvas_w, canvas_h, p["x"], p["y"], p["zoom"], p.get("rotate", 0))
+        out = im.transform((canvas_w, canvas_h), Image.AFFINE, data=coeffs, resample=Image.BICUBIC)
+        out = apply_grain(out, p.get("grain", 0))
+        out = draw_border(out, p.get("border"), canvas_w, canvas_h)
+        out = draw_captions(out, p.get("text"), canvas_w, canvas_h)
+
+        out_path = OUT_DIR / f'{p["id"]}-{Path(entry["file"]).stem}.jpg'
+        quality = 95
+        out.save(out_path, "JPEG", quality=quality, optimize=True)
+        size_mb = out_path.stat().st_size / 1_048_576
+        while size_mb > 8 and quality > 60:
+            quality -= 5
+            out.save(out_path, "JPEG", quality=quality, optimize=True)
+            size_mb = out_path.stat().st_size / 1_048_576
+
+        written.append(out_path)
+        print(f"{out_path.name}: {out.size[0]}x{out.size[1]}  q{quality}  {size_mb:.2f} Mo")
+
+    print(f"\n{len(written)} images ecrites dans {OUT_DIR}")
+
+
+if __name__ == "__main__":
+    main()

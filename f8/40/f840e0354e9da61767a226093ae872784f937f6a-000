@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en" class="">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZenRay Studio, marketplace mockup</title>
+<style>
+/* 2026-09-10, ZenRay Studio storefront mockup, derived from
+   templates/zenray-assets-mockups/02-galerie.html (the retained Galerie direction).
+   Structure borrowed from The Gnomon Workshop (hero, featured, collections, latest releases)
+   and Leartes Studios (services next to the marketplace).
+   FR : maquette de la vitrine zenray.studio, dérivée du gabarit Galerie retenu le 2026-09-05. */
+
+/* Served fonts, never expected from the system: a font fallback is always silent.
+   FR : polices servies, un repli de police ne se signale jamais. */
+@font-face{font-family:'Inter';src:url('fonts/InterVariable.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap;}
+@font-face{font-family:'AnthropicSerif';src:url('fonts/AnthropicSerif-Romans.woff2') format('woff2');font-weight:300 800;font-style:normal;font-display:swap;}
+@font-face{font-family:'AnthropicSerif';src:url('fonts/AnthropicSerif-Italics.woff2') format('woff2');font-weight:300 800;font-style:italic;font-display:swap;}
+
+/* The parameter interface: every value lives here and nowhere else. */
+:root{
+  /* Type trio: Inter 400 for chrome, AnthropicSerif 350 for titles, 400 for every number. */
+  --zr-font-sans:'Inter','Hiragino Sans W4',-apple-system,Arial,sans-serif;
+  --zr-font-serif:'AnthropicSerif','Hiragino Mincho ProN W3',Georgia,serif;
+  --zr-weight-sans:400;
+  --zr-weight-serif:350;
+  --zr-weight-numbers:400;
+
+  /* Interface scale: one number drives the whole chrome. */
+  --ui-base:14px;
+  --ui-3xs:calc(var(--ui-base)*0.69);
+  --ui-2xs:calc(var(--ui-base)*0.77);
+  --ui-xs:calc(var(--ui-base)*0.85);
+  --ui-sm:calc(var(--ui-base)*0.92);
+  --ui-md:var(--ui-base);
+
+  /* Editorial scale, derived from the reading size. */
+  --body:17px;
+  --title-hero:clamp(40px, 5.2vw, 74px);
+  --title-1:calc(var(--body)*2.0);
+  --title-2:calc(var(--body)*1.36);
+  --title-3:calc(var(--body)*1.1);
+
+  /* Paper and ink, the Galerie matter. */
+  --paper:#FBFAF7;
+  --paper-2:#F4F2ED;
+  --ink:#22211E;
+  --ink-2:rgba(34,33,30,0.62);
+  --ink-3:rgba(34,33,30,0.40);
+  --rule:rgba(34,33,30,0.13);
+  --rule-strong:rgba(34,33,30,0.24);
+  --brand:#9A5B3C;
+  --hover:rgba(34,33,30,0.045);
+  --shadow-card:0 1px 0 var(--rule), 0 14px 34px -20px rgba(40,36,28,0.42);
+  --shadow-card-hover:0 1px 0 var(--rule), 0 26px 52px -22px rgba(40,36,28,0.44);
+  --btn-bg:#22211E;
+  --btn-ink:#FBFAF7;
+
+  /* Hero: the image keeps its colours, two gradients carry the text. */
+  --hero-height:min(80vh, 780px);
+  --hero-min:460px;
+  --hero-ink:#FFFFFF;
+  --hero-ink-2:rgba(255,255,255,0.82);
+  --hero-rule:rgba(255,255,255,0.55);
+  --hero-btn-bg:#FFFFFF;
+  --hero-btn-ink:#22211E;
+  --veil-radial:rgba(0,0,0,0.46);
+  --veil-linear:rgba(0,0,0,0.34);
+  --hero-focus:50% 42%;
+
+  /* Rhythm and geometry. */
+  --page-max:1280px;
+  --page-pad:clamp(20px, 4vw, 56px);
+  --header-h:68px;
+  --section-gap:96px;
+  --radius-card:6px;
+  --radius-btn:999px;
+  --grid-gap:52px 30px;
+  --t:.34s;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+
+/* Dark theme: the same tokens, redefined. Light is the default, one button switches. */
+html.dark{
+  --paper:#1E1D1B;
+  --paper-2:#242320;
+  --ink:#EDEBE6;
+  --ink-2:rgba(237,235,230,0.62);
+  --ink-3:rgba(237,235,230,0.38);
+  --rule:rgba(237,235,230,0.13);
+  --rule-strong:rgba(237,235,230,0.24);
+  --brand:#C58A66;
+  --hover:rgba(237,235,230,0.055);
+  --shadow-card:0 1px 0 var(--rule), 0 16px 40px -22px rgba(0,0,0,0.72);
+  --shadow-card-hover:0 1px 0 var(--rule), 0 28px 56px -22px rgba(0,0,0,0.78);
+  --btn-bg:#EDEBE6;
+  --btn-ink:#1E1D1B;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--zr-font-sans);font-weight:var(--zr-weight-sans);font-size:var(--ui-md);
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--t) var(--ease), color var(--t) var(--ease);
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+.n{font-family:var(--zr-font-serif);font-weight:var(--zr-weight-numbers);font-variant-numeric:lining-nums tabular-nums}
+.wrap{max-width:var(--page-max);margin:0 auto;padding:0 var(--page-pad)}
+
+/* ── Header ── */
+.top{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--rule);
+  transition:background var(--t) var(--ease)}
+.top-in{height:var(--header-h);display:flex;align-items:center;gap:30px}
+.brand{font-family:var(--zr-font-serif);font-weight:var(--zr-weight-serif);font-size:var(--title-3);
+  letter-spacing:-0.015em;line-height:1;white-space:nowrap}
+.brand em{font-style:italic;color:var(--ink-2)}
+.main-nav{display:flex;gap:24px}
+.main-nav a{color:var(--ink-2);font-size:var(--ui-sm);padding:4px 0;transition:color var(--t) var(--ease)}
+.main-nav a:hover{color:var(--ink)}
+.search{margin-left:auto;display:flex;align-items:center;gap:8px;min-width:150px;max-width:250px;flex:1 1 auto;
+  border-bottom:1px solid var(--rule);padding:5px 2px;transition:border-color var(--t) var(--ease)}
+.search:focus-within{border-bottom-color:var(--ink-3)}
+.search svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:var(--ink-3);stroke-width:1.4}
+.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--ink);
+  font-family:var(--zr-font-sans);font-size:var(--ui-sm)}
+.search input::placeholder{color:var(--ink-3)}
+.bare{width:32px;height:32px;display:grid;place-items:center;border:0;border-radius:8px;background:transparent;
+  color:var(--ink-3);cursor:pointer;transition:color var(--t) var(--ease), background var(--t) var(--ease)}
+.bare:hover{background:var(--hover);color:var(--ink)}
+.bare svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.btn{display:inline-flex;align-items:center;height:38px;padding:0 18px;border:0;border-radius:var(--radius-btn);
+  background:var(--btn-bg);color:var(--btn-ink);font-family:var(--zr-font-sans);font-weight:var(--zr-weight-sans);
+  font-size:var(--ui-sm);white-space:nowrap;cursor:pointer;transition:transform var(--t) var(--ease)}
+.btn:hover{transform:translateY(-1px)}
+
+/* ── Hero ── */
+.hero{position:relative;height:var(--hero-height);min-height:var(--hero-min);overflow:hidden;background:var(--ink)}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:var(--hero-focus)}
+.hero-veil{position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 18% 82%, var(--veil-radial) 0%, rgba(0,0,0,0.10) 55%, rgba(0,0,0,0) 78%),
+    linear-gradient(180deg, rgba(0,0,0,0.16) 0%, rgba(0,0,0,0) 28%, rgba(0,0,0,0) 52%, var(--veil-linear) 100%)}
+.hero-text{position:absolute;left:0;right:0;bottom:clamp(40px, 9vh, 92px);color:var(--hero-ink)}
+.kicker{font-size:var(--ui-3xs);text-transform:uppercase;letter-spacing:.24em;margin:0 0 20px;color:var(--hero-ink-2)}
+.hero h1{font-family:var(--zr-font-serif);font-weight:var(--zr-weight-serif);font-size:var(--title-hero);
+  line-height:1.04;letter-spacing:-0.025em;margin:0 0 22px;max-width:15ch}
+.hero h1 em{font-style:italic;color:var(--hero-ink-2)}
+.lede{font-family:var(--zr-font-serif);font-weight:var(--zr-weight-serif);font-size:calc(var(--body)*1.04);
+  line-height:1.6;max-width:50ch;margin:0 0 30px;color:var(--hero-ink-2)}
+.hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px 26px}
+.hero .btn{background:var(--hero-btn-bg);color:var(--hero-btn-ink)}
+.link-hero{color:var(--hero-ink);font-size:var(--ui-sm);padding:4px 0;box-shadow:inset 0 -1px 0 var(--hero-rule)}
+.hero-credit{position:absolute;right:var(--page-pad);bottom:18px;margin:0;color:var(--hero-ink-2);
+  font-size:var(--ui-2xs);letter-spacing:.06em}
+
+/* ── Sections ── */
+.section{padding-top:var(--section-gap)}
+.section-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 18px;margin:0 0 34px;padding-bottom:16px;
+  border-bottom:1px solid var(--rule)}
+.section-kicker{width:100%;font-size:var(--ui-3xs);text-transform:uppercase;letter-spacing:.2em;color:var(--brand)}
+.section-title{font-family:var(--zr-font-serif);font-weight:var(--zr-weight-serif);font-size:var(--title-1);
+  letter-spacing:-0.02em;line-height:1.1;margin:0}
+.section-link{margin-left:auto;color:var(--ink-2);font-size:var(--ui-sm);padding:3px 0;
+  box-shadow:inset 0 -1px 0 var(--rule-strong);transition:color var(--t) var(--ease), box-shadow var(--t) var(--ease)}
+.section-link:hover{color:var(--brand);box-shadow:inset 0 -1px 0 var(--brand)}
+
+/* The plate: an image block that lifts on hover, shared by every card family. */
+.plate{position:relative;display:block;width:100%;overflow:hidden;border-radius:var(--radius-card);background:var(--paper-2);
+  box-shadow:var(--shadow-card);transition:transform var(--t) var(--ease), box-shadow var(--t) var(--ease)}
+.plate img{width:100%;height:100%;object-fit:cover}
+a:hover > .plate, .card:hover .plate{transform:translateY(-4px);box-shadow:var(--shadow-card-hover)}
+.featured > a, .collection, .post{display:flex;flex-direction:column;min-width:0}
+.type{font-size:var(--ui-3xs);text-transform:uppercase;letter-spacing:.18em;color:var(--ink-3)}
+
+/* ── Featured strip ── */
+.featured{display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:var(--grid-gap)}
+.featured .plate{aspect-ratio:4/3}
+.featured-legend{display:flex;flex-direction:column;gap:6px;padding:16px 2px 0}
+.featured-title{font-family:var(--zr-font-serif);font-weight:var(--zr-weight-serif);font-size:var(--title-2);
+  letter-spacing:-0.02em;line-height:1.15}
+.view{align-self:flex-start;color:var(--ink-2);font-size:var(--ui-sm);padding:2px 0;
+  box-shadow:inset 0 -1px 0 var(--rule-strong)}
+
+/* ── Collections ── */
+.collections{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:var(--grid-gap)}
+.collection .plate{aspect-ratio:16/10}
+.collection-body{padding:18px 2px 0;display:flex;flex-direction:column;gap:8px}
+.collection-title{font-family:var(--zr-font-serif);font-weight:var(--zr-weight-serif);font-size:var(--title-2);
+  letter-spacing:-0.02em;line-height:1.15;margin:0}
+.collection-text{font-family:var(--zr-font-serif);font-weight:var(--zr-weight-serif);font-size:calc(var(--body)*0.94);
+  line-height:1.6;color:var(--ink-2);margin:0}
+.stats{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:var(--ui-sm);color:var(--ink-3)}
+.stats .sep{opacity:.5}
+
+/* ── Filters, text and never buttons ── */
+.filters{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 22px;margin:0 0 38px}
+.filter{border:0;background:transparent;cursor:pointer;padding:3px 0;color:var(--ink-3);
+  font-family:var(--zr-font-sans);font-size:var(--ui-sm);display:inline-flex;align-items:baseline;gap:6px;
+  transition:color var(--t) var(--ease)}
+.filter:hover{color:var(--ink)}
+.filter[data-on="1"]{color:var(--ink);box-shadow:inset 0 -1px 0 0 var(--brand)}
+.filter .n{font-size:var(--ui-2xs);color:var(--ink-3)}
+
+/* ── Latest releases ── */
+.grid{display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:var(--grid-gap)}
+.card{display:flex;flex-direction:column;gap:0}
+.card .plate{aspect-ratio:16/10}
+.card-body{padding:14px 2px 0;display:flex;flex-direction:column;gap:5px}
+.card-title{font-family:var(--zr-font-serif);font-weight:var(--zr-weight-serif);font-size:var(--title-3);
+  letter-spacing:-0.015em;line-height:1.2}
+.card-sub{font-size:var(--ui-sm);color:var(--ink-2)}
+.card-foot{display:flex;align-items:baseline;gap:10px;margin-top:6px;padding-top:9px;border-top:1px solid var(--rule)}
+.price{font-size:var(--ui-md);color:var(--ink)}
+.store{margin-left:auto;font-size:var(--ui-xs);color:var(--ink-3)}
+.empty{grid-column:1 / -1;color:var(--ink-3);font-family:var(--zr-font-serif);font-weight:var(--zr-weight-serif);
+  font-size:var(--title-3);padding:30px 0}
+
+/* ── Services band ── */
+.band{margin-top:var(--section-gap);background:var(--paper-2);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  transition:background var(--t) var(--ease)}
+.band .section{padding:var(--section-gap) 0}
+.services{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:var(--grid-gap)}
+.service{display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:1px solid var(--rule-strong)}
+.service-index{font-size:var(--title-3);color:var(--brand)}
+.service-title{font-family:var(--zr-font-serif);font-weight:var(--zr-weight-serif);font-size:var(--title-2);
+  letter-spacing:-0.02em;margin:0}
+.service-text{font-family:var(--zr-font-serif);font-weight:var(--zr-weight-serif);font-size:calc(var(--body)*0.94);
+  line-height:1.6;color:var(--ink-2);margin:0}
+.band-cta{display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px;margin-top:44px}
+.band-note{color:var(--ink-3);font-size:var(--ui-sm)}
+
+/* ── Journal ── */
+.journal{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:var(--grid-gap)}
+.post .plate{aspect-ratio:16/9}
+.post-body{padding:16px 2px 0;display:flex;flex-direction:column;gap:7px}
+.post-title{font-family:var(--zr-font-serif);font-weight:var(--zr-weight-serif);font-size:var(--title-2);
+  letter-spacing:-0.02em;line-height:1.2}
+.post-where{font-size:var(--ui-sm);color:var(--ink-3)}
+
+/* ── Tools strip and footer ── */
+.tools{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin-top:var(--section-gap);padding:22px 0;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);color:var(--ink-2);font-size:var(--ui-sm)}
+.tools .label{font-size:var(--ui-3xs);text-transform:uppercase;letter-spacing:.2em;color:var(--ink-3);margin-right:6px}
+.tools .sep{color:var(--ink-3)}
+.foot{display:flex;flex-wrap:wrap;align-items:baseline;gap:14px 26px;padding:40px 0 30px}
+.foot .brand{font-size:var(--title-3)}
+.foot-links{display:flex;flex-wrap:wrap;gap:8px 20px}
+.foot-links a{color:var(--ink-2);font-size:var(--ui-sm)}
+.foot-links a:hover{color:var(--ink)}
+.foot-copy{margin-left:auto;color:var(--ink-3);font-size:var(--ui-xs)}
+.mockup-note{margin:0 0 80px;padding-top:18px;border-top:1px solid var(--rule);max-width:78ch;
+  font-size:var(--ui-sm);line-height:1.7;color:var(--ink-3)}
+.mockup-note b{font-weight:var(--zr-weight-sans);color:var(--ink-2)}
+
+@media (max-width:1100px){
+  .featured, .grid{grid-template-columns:repeat(2, minmax(0,1fr))}
+  .collections, .services, .journal{grid-template-columns:minmax(0,1fr)}
+  .main-nav{display:none}
+}
+@media (max-width:620px){
+  .featured, .grid{grid-template-columns:minmax(0,1fr)}
+  .search{display:none}
+  .top .btn{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important;scroll-behavior:auto !important}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#top">ZenRay <em>Studio</em></a>
+    <nav class="main-nav" id="mainNav" aria-label="Main"></nav>
+    <label class="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8L21 21"/></svg>
+      <input type="search" id="searchInput" placeholder="Search assets and tools" aria-label="Search assets and tools">
+    </label>
+    <button class="bare" id="btnTheme" title="Switch theme" aria-label="Switch theme">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"/></svg>
+    </button>
+    <a class="btn" href="#services">Hire the studio</a>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero" aria-label="Featured environment">
+    <img class="hero-img" src="assets/02-bayou-church.webp" alt="A wooden church on a sand flat with an alligator in the foreground, rendered in Unreal Engine 5">
+    <div class="hero-veil"></div>
+    <div class="hero-text">
+      <div class="wrap">
+        <p class="kicker">ZenRay Studio</p>
+        <h1>Environments for Unreal,<br><em>tools for Houdini.</em></h1>
+        <p class="lede">Game-ready assets and procedural tools by technical artist Matthieu Huguet.
+          Buy them on Fab and Gumroad, or have them built for your project.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#latest">Explore the assets</a>
+          <a class="link-hero" href="#services">Work with the studio</a>
+        </div>
+      </div>
+    </div>
+    <p class="hero-credit">Louisiana Bayou · Unreal Engine 5</p>
+  </section>
+
+  <div class="wrap">
+
+    <section class="section" id="featured" aria-labelledby="featuredTitle">
+      <div class="section-head">
+        <span class="section-kicker">Featured</span>
+        <h2 class="section-title" id="featuredTitle">From the studio</h2>
+      </div>
+      <div class="featured" id="featuredGrid"></div>
+    </section>
+
+    <section class="section" id="collections" aria-labelledby="collectionsTitle">
+      <div class="section-head">
+        <span class="section-kicker">Collections</span>
+        <h2 class="section-title" id="collectionsTitle">Start with a collection</h2>
+        <a class="section-link" href="#latest">All assets</a>
+      </div>
+      <div class="collections" id="collectionsGrid"></div>
+    </section>
+
+    <section class="section" id="latest" aria-labelledby="latestTitle">
+      <div class="section-head">
+        <span class="section-kicker">Latest releases</span>
+        <h2 class="section-title" id="latestTitle">New in the store</h2>
+      </div>
+      <nav class="filters" id="filters" aria-label="Filter by type"></nav>
+      <div class="grid" id="latestGrid"></div>
+    </section>
+
+  </div>
+
+  <div class="band" id="services">
+    <div class="wrap">
+      <section class="section" aria-labelledby="servicesTitle">
+        <div class="section-head">
+          <span class="section-kicker">Services</span>
+          <h2 class="section-title" id="servicesTitle">Built for your project</h2>
+        </div>
+        <div class="services" id="servicesGrid"></div>
+        <div class="band-cta">
+          <a class="btn" href="#contact">Tell me about your project</a>
+          <span class="band-note">Remote, from Aix-en-Provence, then from Tokyo in 2027.</span>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <section class="section" id="journal" aria-labelledby="journalTitle">
+      <div class="section-head">
+        <span class="section-kicker">Journal</span>
+        <h2 class="section-title" id="journalTitle">How the tools are made</h2>
+        <a class="section-link" href="#journal">All breakdowns</a>
+      </div>
+      <div class="journal" id="journalGrid"></div>
+    </section>
+
+    <div class="tools" id="toolsStrip"></div>
+
+    <footer class="foot" id="contact">
+      <span class="brand">ZenRay <em>Studio</em></span>
+      <nav class="foot-links" id="footLinks" aria-label="Elsewhere"></nav>
+      <span class="foot-copy">© <span class="n">2026</span> ZenRay Studio</span>
+    </footer>
+
+    <p class="mockup-note">
+      <b>Maquette de design, direction Galerie, pour zenray.studio.</b> Images réelles de ton portfolio,
+      aucune image inventée ; les prix sont les propositions du plan, à valider ; les liens d'achat sont inactifs.
+      Structure empruntée à The Gnomon Workshop (ouverture, sélection, collections, dernières sorties) et à Leartes
+      (les services à côté de la boutique). Cette note disparaît avant toute mise en ligne.
+    </p>
+
+  </div>
+</main>
+
+<script>
+/* The data layer. One definition, N instances: every block below is rendered from these tables.
+   Data strings use double quotes only (a stray apostrophe once killed a whole mockup script).
+   FR : une définition, N instances ; chaînes en guillemets doubles uniquement. */
+
+const STUDIO = "ZenRay Studio";
+
+const NAV = [
+  { label: "Assets", href: "#latest" },
+  { label: "Collections", href: "#collections" },
+  { label: "Services", href: "#services" },
+  { label: "Journal", href: "#journal" }
+];
+
+const TYPES = {
+  env: "Environment",
+  tool: "Houdini tool",
+  material: "Material",
+  prop: "Prop"
+};
+
+const PRODUCTS = [
+  { id: "bayou", title: "Bayou Church", sub: "Procedural wooden church kit", type: "env",
+    software: "Houdini to Unreal", store: "Fab", price: "$39", img: "assets/02-bayou-church.webp",
+    alt: "Clay render of a wooden church on a sand flat, an alligator in the foreground" },
+  { id: "toki", title: "Toki Pavilion", sub: "Japanese temple environment", type: "env",
+    software: "Unreal Engine 5", store: "Fab", price: "$59", img: "assets/01-toki-pavilion.webp",
+    alt: "A five-storey Japanese pagoda at sunset seen from a wooden terrace" },
+  { id: "rock", title: "Rock Generator", sub: "Procedural rock HDA", type: "tool",
+    software: "Houdini", store: "Gumroad", price: "€29", img: "assets/03-rock-generator.webp",
+    alt: "A procedural grey rock with sharp fractured facets" },
+  { id: "cliff", title: "Cliff Material", sub: "Layered cliff surface", type: "material",
+    software: "Substance Designer", store: "Fab", price: "$19", img: "assets/04-cliff-material.webp",
+    alt: "A cube wrapped in a layered grey cliff material" },
+  { id: "wheel", title: "Water Wheel", sub: "Wooden mill wheel", type: "prop",
+    software: "Unreal Engine 5", store: "Fab", price: "$19", img: "assets/05-water-wheel.webp",
+    alt: "A wooden water wheel with water pouring over it" },
+  { id: "stairs", title: "Stairs Component", sub: "Parametric stairs HDA", type: "tool",
+    software: "Houdini", store: "Gumroad", price: "€24", img: "assets/06-stairs-component.webp", focus: "0% 50%",
+    alt: "Title card of the HDA Stairs Component beside a wooden stair" },
+  { id: "pampa", title: "Pampa Grass", sub: "Procedural grass HDA", type: "tool",
+    software: "Houdini", store: "Gumroad", price: "€19", img: "assets/07-pampa-grass.webp",
+    alt: "Procedural pampa grass strands on a dark grid" },
+  { id: "planter", title: "Versailles Planter", sub: "Parametric planter HDA", type: "tool",
+    software: "Houdini", store: "Gumroad", price: "€19", img: "assets/08-versailles-planter.webp",
+    alt: "A Versailles planter box next to its Houdini node graph" }
+];
+
+const FEATURED = ["bayou", "rock", "toki", "cliff"];
+
+const COLLECTIONS = [
+  { title: "Japan, rebuilt in 3D", ids: ["toki"], img: "assets/09-toki-rooftops.webp",
+    alt: "Temple rooftops over a red autumn forest at sunset",
+    text: "Places captured in Japan and rebuilt as Unreal environments. The series continues from Tokyo in 2027." },
+  { title: "Procedural Houdini tools", ids: ["rock", "stairs", "pampa", "planter", "bayou"], img: "assets/03-rock-generator.webp",
+    alt: "A procedural grey rock with sharp fractured facets",
+    text: "Houdini digital assets for rocks, stairs, grass, planters and whole buildings." },
+  { title: "Unreal environments and props", ids: ["toki", "bayou", "wheel"], img: "assets/05-water-wheel.webp",
+    alt: "A wooden water wheel with water pouring over it",
+    text: "Scenes and props packaged for Unreal Engine 5, from a temple to a water mill." }
+];
+
+const SERVICES = [
+  { title: "Environment sprint", text: "Five days, one procedural environment built in Houdini and delivered in Unreal, ready to integrate." },
+  { title: "Custom Houdini tool", text: "A documented digital asset designed around your pipeline: scattering, modular kits, vegetation." },
+  { title: "Technical art on demand", text: "Remote technical art for Unreal Engine and Houdini, booked by the day." }
+];
+
+const JOURNAL = [
+  { title: "Scattering assets from Houdini to Unreal", img: "assets/10-scattering.webp",
+    alt: "Houdini viewport and Unreal viewport side by side with scattered trees" },
+  { title: "Organic texturing with Point VOP", img: "assets/11-point-vop.webp",
+    alt: "A procedurally textured rock with the words Organic texturing with Point VOP" },
+  { title: "Procedural shutters in Houdini", img: "assets/12-shutters.webp",
+    alt: "Procedural wooden shutters with the title Procedural shutters in Houdini" }
+];
+
+const TOOLS = ["Houdini", "Unreal Engine 5", "Substance Designer", "ZBrush"];
+
+const FOOT_LINKS = ["Fab store", "Gumroad", "Instagram", "LinkedIn", "matthieuhuguet.com", "Legal notice"];
+
+/* ── Templates ── */
+const byId = (id) => PRODUCTS.find((p) => p.id === id);
+
+function plate(src, alt, eager, focus){
+  const pos = focus ? ` style="object-position:${focus}"` : "";
+  return `<span class="plate"><img src="${src}" alt="${alt}"${pos} ${eager ? "" : "loading=\"lazy\""} decoding="async"></span>`;
+}
+
+function productCard(p){
+  return `
+    <a class="card" href="#latest" data-id="${p.id}" aria-label="${p.title}, ${TYPES[p.type]}, ${p.price} on ${p.store}">
+      ${plate(p.img, p.alt, false, p.focus)}
+      <span class="card-body">
+        <span class="type">${TYPES[p.type]} · ${p.software}</span>
+        <span class="card-title">${p.title}</span>
+        <span class="card-sub">${p.sub}</span>
+        <span class="card-foot"><span class="price n">${p.price}</span><span class="store">on ${p.store}</span></span>
+      </span>
+    </a>`;
+}
+
+function renderNav(){
+  document.getElementById("mainNav").innerHTML = NAV.map((n) => `<a href="${n.href}">${n.label}</a>`).join("");
+}
+
+function renderFeatured(){
+  document.getElementById("featuredGrid").innerHTML = FEATURED.map(byId).map((p) => `
+    <a href="#latest" data-id="${p.id}">
+      ${plate(p.img, p.alt, false, p.focus)}
+      <span class="featured-legend">
+        <span class="type">${TYPES[p.type]}</span>
+        <span class="featured-title">${p.title}</span>
+        <span class="view">View</span>
+      </span>
+    </a>`).join("");
+}
+
+function renderCollections(){
+  document.getElementById("collectionsGrid").innerHTML = COLLECTIONS.map((c) => {
+    const items = c.ids.map(byId);
+    const software = [...new Set(items.map((p) => p.software))].join(", ");
+    const count = items.length;
+    return `
+      <a class="collection" href="#latest">
+        ${plate(c.img, c.alt, false)}
+        <span class="collection-body">
+          <span class="type">Collection</span>
+          <h3 class="collection-title">${c.title}</h3>
+          <p class="collection-text">${c.text}</p>
+          <span class="stats"><span><span class="n">${count}</span> ${count > 1 ? "assets" : "asset"}</span><span class="sep">·</span><span>${software}</span></span>
+        </span>
+      </a>`;
+  }).join("");
+}
+
+let activeType = "all";
+let query = "";
+
+function renderFilters(){
+  const count = (key) => key === "all" ? PRODUCTS.length : PRODUCTS.filter((p) => p.type === key).length;
+  const keys = ["all", ...Object.keys(TYPES)].filter((k) => count(k) > 0);
+  const label = (k) => k === "all" ? "All" : TYPES[k] + "s";
+  const host = document.getElementById("filters");
+  host.innerHTML = keys.map((k) => `
+    <button class="filter" data-key="${k}" data-on="${k === activeType ? "1" : "0"}">${label(k)}<span class="n">${count(k)}</span></button>`).join("");
+  host.querySelectorAll(".filter").forEach((b) => b.addEventListener("click", () => {
+    activeType = b.dataset.key;
+    host.querySelectorAll(".filter").forEach((x) => x.dataset.on = x === b ? "1" : "0");
+    renderLatest();
+  }));
+}
+
+function renderLatest(){
+  const q = query.trim().toLowerCase();
+  const list = PRODUCTS.filter((p) =>
+    (activeType === "all" || p.type === activeType) &&
+    (!q || (p.title + " " + p.sub + " " + p.software).toLowerCase().includes(q)));
+  document.getElementById("latestGrid").innerHTML = list.length
+    ? list.map(productCard).join("")
+    : `<p class="empty">Nothing matches “${q}” yet.</p>`;
+}
+
+function renderServices(){
+  document.getElementById("servicesGrid").innerHTML = SERVICES.map((s, i) => `
+    <div class="service">
+      <span class="service-index n">0${i + 1}</span>
+      <h3 class="service-title">${s.title}</h3>
+      <p class="service-text">${s.text}</p>
+    </div>`).join("");
+}
+
+function renderJournal(){
+  document.getElementById("journalGrid").innerHTML = JOURNAL.map((j) => `
+    <a class="post" href="#journal">
+      ${plate(j.img, j.alt, false)}
+      <span class="post-body">
+        <span class="type">Breakdown</span>
+        <span class="post-title">${j.title}</span>
+        <span class="post-where">Read on matthieuhuguet.com</span>
+      </span>
+    </a>`).join("");
+}
+
+function renderTools(){
+  document.getElementById("toolsStrip").innerHTML =
+    `<span class="label">Built with</span>` + TOOLS.map((t) => `<span>${t}</span>`).join(`<span class="sep">·</span>`);
+  document.getElementById("footLinks").innerHTML = FOOT_LINKS.map((l) => `<a href="#contact">${l}</a>`).join("");
+}
+
+/* ── Theme: light by default, one button, remembered when storage allows it ── */
+const THEME_KEY = "zrs:theme";
+function applyTheme(t){ document.documentElement.classList.toggle("dark", t === "dark"); }
+/* ?theme=dark forces a theme for a shared preview or a headless capture; the button still wins after.
+   FR : ?theme=dark force un thème pour un aperçu partagé ou une capture sans écran. */
+const urlTheme = new URLSearchParams(location.search).get("theme");
+try { applyTheme(urlTheme || localStorage.getItem(THEME_KEY) || "light"); } catch (e) { applyTheme(urlTheme || "light"); }
+document.getElementById("btnTheme").addEventListener("click", () => {
+  const next = document.documentElement.classList.contains("dark") ? "light" : "dark";
+  applyTheme(next);
+  try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+});
+
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  query = e.target.value;
+  renderLatest();
+  if (query) document.getElementById("latest").scrollIntoView({ block: "start" });
+});
+
+renderNav(); renderFeatured(); renderCollections(); renderFilters(); renderLatest();
+renderServices(); renderJournal(); renderTools();
+</script>
+</body>
+</html>

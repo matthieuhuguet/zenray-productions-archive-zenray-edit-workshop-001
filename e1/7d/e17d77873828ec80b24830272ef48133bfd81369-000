@@ -1,0 +1,113 @@
+#!/usr/bin/env node
+// 2026-09-03 13:30 JST : navigateur isolé, aucune session personnelle utilisée.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const { pathToFileURL } = require('node:url');
+const { chromium } = require(require.resolve('playwright', { paths: [process.cwd()] }));
+
+(async () => {
+  const instances = process.argv.slice(2);
+  assert.equal(instances.length, 2, 'Fournir les dossiers heavy puis light.');
+  const browser = await chromium.launch({ headless: true });
+  const checks = [];
+  try {
+    for (const [index, directory] of instances.entries()) {
+      const mode = index === 0 ? 'heavy' : 'light';
+      const context = await browser.newContext({ viewport: { width: 1440, height: 960 }, acceptDownloads: true });
+      await context.addInitScript(() => {
+        Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: async text => { window.copiedPost = text; } } });
+      });
+      const page = await context.newPage();
+      const errors = [];
+      page.on('pageerror', error => errors.push(error.message));
+      await page.goto(pathToFileURL(path.join(directory, 'index.html')).href);
+      await page.waitForFunction(() => window.ZRPostEditor);
+      await page.evaluate(() => document.fonts.ready);
+      const original = JSON.parse(fs.readFileSync(path.join(directory, '_post.json'), 'utf8'));
+      const editor = page.getByRole('textbox', { name: 'Texte du post', exact: true });
+      assert.equal(await editor.inputValue(), original.text);
+      const copyBounds = await page.locator('#copyAllBtn').boundingBox();
+      const paneBounds = await page.locator('#zr-post-pane').boundingBox();
+      assert.ok(copyBounds.x + copyBounds.width <= paneBounds.x, 'Copier TOUT doit rester visible à côté du post.');
+      const geometry = await page.locator('.zr-post-card').boundingBox();
+      assert.ok(Math.abs(geometry.width / geometry.height - 0.8) < 0.002);
+      assert.equal(await editor.evaluate(el => getComputedStyle(el).fontWeight), '400');
+      assert.equal(await editor.evaluate(el => getComputedStyle(el).fontSize), '13px');
+      assert.ok(await page.evaluate(() => Array.from(document.fonts).some(f => f.family === 'InterVariable' && f.status === 'loaded')));
+      checks.push(mode + ' : texte préparé, Inter servie, carte 4:5');
+
+      const edited = '🤍 下田\n\nTexte conservé. <script>window.injected=true</script>';
+      await editor.fill(edited);
+      assert.ok((await page.locator('#zr-post-count').innerText()).startsWith(Array.from(edited).length + ' /'));
+      assert.equal(await page.evaluate(() => window.injected), undefined);
+      await page.reload();
+      await page.waitForFunction(() => window.ZRPostEditor);
+      assert.equal(await editor.inputValue(), edited);
+      const imageFormat = await page.locator('#fmtSelect').inputValue();
+      await page.locator('#zr-post-format').selectOption('9:16');
+      assert.equal(await page.locator('#fmtSelect').inputValue(), imageFormat);
+      await editor.fill('a'.repeat(original.limit + 1));
+      assert.equal(await page.locator('#zr-post-overflow').innerText(), '1 en trop');
+      assert.equal((await editor.inputValue()).length, original.limit + 1);
+      await editor.fill(edited);
+      checks.push(mode + ' : édition, Unicode, reprise, dépassement sans coupe, format indépendant');
+
+      await page.getByRole('button', { name: 'Copier le post', exact: true }).click();
+      assert.equal(await page.evaluate(() => window.copiedPost), edited);
+      const downloadPromise = page.waitForEvent('download');
+      await page.getByRole('button', { name: 'Exporter', exact: true }).click();
+      const download = await downloadPromise;
+      const stream = await download.createReadStream();
+      const chunks = [];
+      for await (const chunk of stream) chunks.push(chunk);
+      assert.equal(JSON.parse(Buffer.concat(chunks).toString()).text, edited);
+      const imported = { ...original, text: 'Version importée\n日本語' };
+      await page.locator('#zr-post-file').setInputFiles({ name: '_post.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(imported)) });
+      await page.waitForFunction(text => window.ZRPostEditor.snapshot().text === text, imported.text);
+      await page.locator('#zr-post-file').setInputFiles({ name: 'invalid.json', mimeType: 'application/json', buffer: Buffer.from('{"format":"4:5"}') });
+      await page.waitForFunction(() => document.querySelector('.zr-post-status').textContent.startsWith('Import impossible'));
+      assert.equal(await editor.inputValue(), imported.text);
+      assert.ok(await page.evaluate(() => Object.keys(localStorage).some(key => key.includes(':before-import:'))));
+      checks.push(mode + ' : copie, export et import exacts, import invalide sans perte');
+
+      await page.getByRole('button', { name: 'Photos', exact: true }).click();
+      assert.equal(await page.locator('#zr-post-pane').isVisible(), false);
+      if (mode === 'heavy') assert.equal(await page.locator('.zr-photo-panel').isVisible(), true);
+      await page.locator('#copyAllBtn').click();
+      const output = await page.locator(mode === 'heavy' ? '#outText' : '#batchText').inputValue();
+      assert.equal(JSON.parse(output.slice(output.indexOf('{'))).post.text, imported.text);
+      // Fermer l'ancien panneau de copie pour la capture, sans changer ses données.
+      await page.evaluate(() => document.querySelector('#outBox, #batchOut')?.classList.remove('shown'));
+      await page.getByRole('button', { name: 'Post', exact: true }).click();
+      assert.equal(await editor.inputValue(), imported.text);
+      await page.evaluate(() => { navigator.clipboard.writeText = async () => { throw new Error('refus'); }; });
+      await page.getByRole('button', { name: 'Copier le post', exact: true }).click();
+      assert.ok((await page.locator('.zr-post-status').innerText()).includes('sélectionné'));
+      checks.push(mode + ' : transition, copie complète avec légende, refus du presse-papier visible');
+
+      await editor.fill(original.text);
+      await page.locator('#zr-post-format').selectOption('4:5');
+      await page.evaluate(() => { document.activeElement.blur(); document.querySelector('#zr-post-text').scrollTop = 0; });
+      await page.screenshot({ path: path.join(directory, 'apercu.png'), animations: 'disabled' });
+      await page.setViewportSize({ width: 390, height: 844 });
+      const bounds = await page.locator('#zr-post-pane').boundingBox();
+      assert.ok(bounds.x >= 0 && bounds.x + bounds.width <= 391);
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      assert.equal(await page.locator('#zr-post-pane').evaluate(el => getComputedStyle(el).animationName), 'none');
+      assert.deepEqual(errors, [], 'Erreurs JavaScript');
+      checks.push(mode + ' : petit écran, animations réduites, aucune erreur JavaScript');
+      await context.close();
+    }
+    const context = await browser.newContext();
+    await context.addInitScript(() => { Storage.prototype.setItem = () => { throw new Error('stockage refusé'); }; });
+    const page = await context.newPage();
+    await page.goto(pathToFileURL(path.join(instances[0], 'index.html')).href);
+    await page.getByRole('textbox', { name: 'Texte du post', exact: true }).fill('Brouillon préservé à l’écran');
+    assert.ok((await page.locator('.zr-post-status').innerText()).includes('indisponible'));
+    checks.push('Stockage refusé : erreur visible et export disponible');
+    const report = { ok: true, checks };
+    fs.writeFileSync(path.join(path.dirname(instances[0]), 'verification.json'), JSON.stringify(report, null, 2) + '\n');
+    console.log(JSON.stringify(report, null, 2));
+  } finally { await browser.close(); }
+})().catch(error => { console.error(error); process.exitCode = 1; });

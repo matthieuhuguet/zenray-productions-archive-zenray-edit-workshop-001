@@ -1,0 +1,18 @@
+@import url('./assets/ui/fonts.css');
+/* Single definition of composition tokens; dimensions are supplied by export.json. (7 October 2026, 17:00 Europe/Paris) */
+:root {
+  --canvas-w: 1080px; --canvas-h: 1350px;
+  --ink: #2b2b2b; --ink-soft: #6b6b6b; --ink-faint: #8a8a8a; --rule: #e6e6e6;
+  --accent-warn: #c94f3a; --accent-ok: #2f8f5b; --accent-gold: #b3862c;
+  --paper: #ffffff; --pad: 72px;
+  --interface-weight: 400; --editorial-weight: 350; --number-weight: 400;
+  --eyebrow-size: 22px; --eyebrow-tracking: 0.14em; --headline-leading: 1.06;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: var(--canvas-w); height: var(--canvas-h); overflow: hidden; background: var(--paper); }
+.canvas { width: var(--canvas-w); height: var(--canvas-h); padding: var(--pad); display:flex; flex-direction:column; align-items:center; overflow:hidden; }
+.spacer { flex:1 1 auto; }
+.eyebrow { font-family:var(--zr-police-sans); font-weight:var(--interface-weight); font-size:var(--eyebrow-size); letter-spacing:var(--eyebrow-tracking); text-transform:uppercase; }
+.headline { font-family:var(--zr-police-serif); font-weight:var(--editorial-weight); color:var(--ink); text-align:center; line-height:var(--headline-leading); }
+.body { font-family:var(--zr-police-sans); font-weight:var(--interface-weight); color:var(--ink); }
+.number { font-family:var(--zr-police-serif); font-weight:var(--number-weight); }

@@ -1,0 +1,60 @@
+@import url('./assets/ui/fonts.css');
+/* ============================================================
+   Effet « nuageux » sur Anthropic Sans
+   ------------------------------------------------------------
+   Reproduit le traitement du carton titre CUBA / VIÑALES : une
+   grotesque très grasse, blanche, dont les bords ne sont pas nets
+   mais légèrement mangés, comme imprimés dans la brume.
+
+   Trois couches, dans cet ordre :
+
+   1. feTurbulence + feDisplacementMap  : ronge le contour de
+      façon organique. C'est ce qui donne le grain, pas un flou.
+   2. feGaussianBlur très léger          : adoucit ce que le
+      déplacement a rendu trop dentelé.
+   3. drop-shadow blanche diffuse        : le halo de brume, qui
+      détache le texte d'un fond photo sans le cerner d'un trait.
+
+   Régler --cloud-scale pour l'intensité du grignotage, et
+   --cloud-freq pour sa finesse. Au-delà de 4 environ, les lettres
+   commencent à se désagréger.
+   ============================================================ */
+
+
+:root {
+  --cloud-scale: 2.5;
+  --cloud-freq: 0.022;
+  --ink: #ffffff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { background: transparent; }
+
+.wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.cloudy {
+  color: var(--ink);
+  filter: url(#cloud) drop-shadow(0 0 26px rgba(255,255,255,0.30));
+}
+
+/* Le titre : grasse, serrée, capitales. */
+.title {
+  font-family: var(--zr-police-sans);
+  font-weight: 900;
+  letter-spacing: -0.015em;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+/* Les lignes secondaires : fines, très espacées, comme sur la référence. */
+.meta {
+  font-family: var(--zr-police-sans);
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+}

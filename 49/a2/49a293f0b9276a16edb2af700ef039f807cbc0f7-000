@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+"""2026-09-03 : propager les templates en préservant exactement les données des instances."""
+import argparse
+import hashlib
+import json
+import re
+import shutil
+from datetime import datetime
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+BLOCK = re.compile(r'/\* @zr-instance:start \*/.*?/\* @zr-instance:end \*/', re.S)
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def update(folder, mode):
+    page = folder / 'index.html'
+    if not page.is_file():
+        return {'path': str(folder), 'status': 'absent'}
+    old = page.read_text()
+    match = BLOCK.search(old)
+    if not match:
+        raise ValueError(f'Bloc d’instance manquant : {page}')
+    template = (ROOT / f'templates/hda-{mode}/index.html').read_text()
+    replacement = BLOCK.sub(lambda _: match[0], template)
+    if re.search(r'__ZR_[A-Z_]+__', replacement):
+        raise ValueError(f'Paramètre non résolu : {page}')
+    # Les sorties et fichiers annexes sont protégés, y compris quand ils ne sont pas connus du script.
+    protected = {p: digest(p) for p in folder.rglob('*') if p.is_file()
+                 and not any(part in ('assets', '.hda-history') for part in p.relative_to(folder).parts)
+                 and p != page and p.name not in ('photo-apply.py', 'crop-apply.py')}
+    history = folder / '.hda-history' / ('ui-' + datetime.now().strftime('%Y%m%d-%H%M%S-%f'))
+    history.mkdir(parents=True)
+    shutil.copy2(page, history / page.name)
+    if (folder / 'assets').is_dir():
+        shutil.copytree(folder / 'assets', history / 'assets')
+    for asset in ['ui', 'post-editor', 'photo-controls']:
+        shutil.copytree(ROOT / 'assets' / asset, folder / 'assets' / asset, dirs_exist_ok=True)
+    if not (folder / '_post-data.js').exists():
+        post_file = folder / '_post.json'
+        post = json.loads(post_file.read_text()) if post_file.exists() else {'text': '', 'format': '4:5', 'limit': 2200}
+        data = {'project': folder.name, 'post': post, 'revision': hashlib.sha256(json.dumps(post, sort_keys=True).encode()).hexdigest()}
+        (folder / '_post-data.js').write_text('window.ZR_POST_DATA = ' + json.dumps(data, ensure_ascii=True) + ';\n')
+    page.write_text(replacement)
+    assert BLOCK.search(page.read_text())[0] == match[0]
+    for path, expected in protected.items():
+        assert path.is_file() and digest(path) == expected, f'Donnée modifiée : {path}'
+    return {'path': str(folder), 'status': 'updated', 'mode': mode, 'protected': len(protected), 'backup': str(history)}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('paths', nargs='*', type=Path)
+    parser.add_argument('--all', action='store_true', help='Toutes les instances enregistrées encore présentes.')
+    args = parser.parse_args()
+    entries = {}
+    for line in (ROOT / 'instances/INDEX.md').read_text().splitlines():
+        if not line.startswith('| 20'):
+            continue
+        parts = [part.strip() for part in line.split('|')]
+        entries[Path(parts[5].strip('`')).expanduser()] = parts[2]
+    targets = entries if args.all else {p.expanduser(): entries.get(p.expanduser(), 'heavy' if 'heavy' in p.name else 'light') for p in args.paths}
+    if not targets:
+        parser.error('Fournir une instance ou --all.')
+    print(json.dumps([update(folder, mode) for folder, mode in targets.items()], ensure_ascii=False, indent=2))
+
+
+if __name__ == '__main__':
+    main()

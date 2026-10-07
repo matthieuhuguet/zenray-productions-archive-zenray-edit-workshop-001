@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+# Verify archives independently of routed current documentation. (7 October 2026, 17:00 Europe/Paris)
+import argparse
+import hashlib
+import json
+import tarfile
+from pathlib import Path
+ROOT = Path(__file__).resolve().parent.parent
+
+def verify_archive(archive_path, expected, prefix=False):
+    with tarfile.open(archive_path, 'r:gz') as archive:
+        count = 0
+        for name, value in expected.items():
+            for relative, digest in (value.items() if prefix else [(name, value)]):
+                member = f'{name}/{relative}' if prefix else relative
+                stream = archive.extractfile(member)
+                assert stream is not None, f'Missing member: {member}'
+                assert hashlib.sha256(stream.read()).hexdigest() == digest, f'Archive digest mismatch: {member}'
+                count += 1
+    return count
+
+def verify():
+    legacy = ROOT / 'references/legacy'
+    manifest = json.loads((legacy / 'OriginalBundleManifest.json').read_text())
+    count = verify_archive(legacy / 'OriginalBundle.tar.gz', manifest)
+    fusion = ROOT / 'references/fusion-sources'
+    previous = verify_archive(fusion / 'originaux.tar.gz', json.loads((fusion / 'manifest.json').read_text()), True)
+    assert hashlib.sha256((legacy / 'OriginalSkill.md').read_bytes()).hexdigest() == manifest['SKILL.md']
+    print(json.dumps({'ok': True, 'originalBundleFiles': count, 'previousFusionFiles': previous}))
+
+def build_index():
+    routes = json.loads((ROOT / 'references/Routes.json').read_text())
+    rows = ['# Références de ZenRay Edit (7 October 2026)', '', 'Lire ActiveContract.md et le mode demandé ; les blocs legacy sont historiques. (7 October 2026)', '', '| Référence | Lignes originales | Date |', '|---|---|---|']
+    for block in routes['blocks']:
+        local_path = block['path'].removeprefix('references/')
+        rows.append(f"| [{block['name']}]({local_path}) | {block['startLine']} à {block['endLine']} | 7 October 2026 |")
+    (ROOT / 'references/INDEX.md').write_text('\n'.join(rows) + '\n')
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--verify-only', action='store_true')
+    parser.add_argument('--check-originals', action='store_true')
+    options = parser.parse_args()
+    verify()
+    if not options.verify_only:
+        build_index()

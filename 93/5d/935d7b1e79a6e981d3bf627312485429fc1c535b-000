@@ -1,0 +1,18 @@
+#!/bin/bash
+# Instantiate inside the explicitly supplied Assets workshop. (7 October 2026, 17:00 Europe/Paris)
+set -euo pipefail
+[[ $# -eq 2 ]] || { echo 'usage: new-project.sh <name> <Assets-workshop>'; exit 1; }
+INSTANCE_NAME="$1"
+[[ "$INSTANCE_NAME" != '.' && "$INSTANCE_NAME" != '..' && "$INSTANCE_NAME" != */* ]] || { echo 'Invalid instance name'; exit 1; }
+SKILL_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+WORKSHOP_ROOT="$(cd "$2" && pwd)"
+INSTANCE_ROOT="$WORKSHOP_ROOT/$INSTANCE_NAME"
+[[ ! -e "$INSTANCE_ROOT" ]] || { echo 'Instance exists; refusing overwrite'; exit 1; }
+mkdir -p "$INSTANCE_ROOT/assets" "$INSTANCE_ROOT/Scripts"
+cp -R "$SKILL_ROOT/assets/ui" "$INSTANCE_ROOT/assets/ui"
+cp "$SKILL_ROOT/templates/_canvas.css" "$SKILL_ROOT/templates/render.sh" "$SKILL_ROOT/templates/slide-1.html" "$SKILL_ROOT/templates/export.json" "$INSTANCE_ROOT/"
+cp "$SKILL_ROOT/templates/text-asset.html" "$INSTANCE_ROOT/1-title.html"
+cp "$SKILL_ROOT/scripts/RenderComposition.cjs" "$INSTANCE_ROOT/Scripts/"
+chmod +x "$INSTANCE_ROOT/render.sh"
+printf '# %s (7 October 2026)\n\nSources are preserved; export.json centralizes rendering parameters. Run ./render.sh. (7 October 2026)\n' "$INSTANCE_NAME" > "$INSTANCE_ROOT/README.md"
+printf 'Created %s\nOpen slide-1.html in the agent internal browser.\n' "$INSTANCE_ROOT"

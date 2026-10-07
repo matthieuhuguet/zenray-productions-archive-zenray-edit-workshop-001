@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="fr" class="">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZenRay Assets, direction Galerie</title>
+<style>
+  /* Polices SERVIES par le gabarit, jamais attendues du systeme : un repli de police
+     ne se signale jamais, seul l'oeil le voit. Les deux familles sont VARIABLES, donc
+     trois faces couvrent toutes les graisses employees ici. */
+  @font-face{font-family:'Inter';src:url('fonts/InterVariable.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap;}
+  @font-face{font-family:'AnthropicSerif';src:url('fonts/AnthropicSerif-Romans.woff2') format('woff2');font-weight:300 800;font-style:normal;font-display:swap;}
+  @font-face{font-family:'AnthropicSerif';src:url('fonts/AnthropicSerif-Italics.woff2') format('woff2');font-weight:300 800;font-style:italic;font-display:swap;}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   MAQUETTE, direction GALERIE. Aucun fichier du produit n'est touché.
+   Modele mental : catalogue d'une maison d'edition, salle d'un musee.
+   Beaucoup de vide, une colonne de lecture, serif dominant sur les titres,
+   tres peu d'elements d'interface visibles a la fois.
+   Les jetons --zr-* reprennent le systeme reel de ZenRayProgress.
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Polices installees sur ce Mac, chargees en file:// pour un rendu juste au double clic ── */
+
+
+
+
+
+
+
+
+/* ── L'interface de parametres, un seul endroit pour toutes les valeurs ── */
+:root{
+  /* familles et graisses, la loi du trio */
+  --zr-police-sans:'Inter','Inter Variable','Hiragino Sans W4',-apple-system,Arial,sans-serif;
+  --zr-police-serif:'AnthropicSerif','Hiragino Mincho ProN W3',Georgia,'Times New Roman',serif;
+  --zr-poids-sans:400;
+  --zr-poids-serif:350;
+  --zr-poids-nombres:400;
+
+  /* echelle d'interface, un seul nombre commande tout le chrome */
+  --zr-ui-base:14px;
+  --zr-ui-3xs:calc(var(--zr-ui-base)*0.69);
+  --zr-ui-2xs:calc(var(--zr-ui-base)*0.77);
+  --zr-ui-xs:calc(var(--zr-ui-base)*0.85);
+  --zr-ui-sm:calc(var(--zr-ui-base)*0.92);
+  --zr-ui-md:var(--zr-ui-base);
+  --zr-ui-lg:calc(var(--zr-ui-base)*1.08);
+
+  /* echelle editoriale, derivee du corps de lecture */
+  --gal-corps:17px;
+  --gal-titre-1:calc(var(--gal-corps)*2.35);
+  --gal-titre-2:calc(var(--gal-corps)*1.52);
+  --gal-titre-3:calc(var(--gal-corps)*1.18);
+
+  /* surfaces, reprises du systeme ZenRayProgress */
+  --zr-bg-window:#EDEDEB;
+  --zr-bg-content:#FDFDFC;
+  --zr-r-chip:7px;
+  --zr-r-control:10px;
+  --zr-r-panel:14px;
+  --zr-r-window:22px;
+  --zr-accent:#0A84FF;
+
+  /* la matiere GALERIE, papier et encre, aucune surface vitree empilee */
+  --gal-mur:#EFEEEA;            /* le mur de la salle, derriere la fenetre */
+  --gal-papier:#FBFAF7;         /* la page */
+  --gal-papier-2:#F4F2ED;       /* la colonne du sommaire */
+  --gal-encre:#22211E;
+  --gal-encre-2:rgba(34,33,30,0.62);
+  --gal-encre-3:rgba(34,33,30,0.40);
+  --gal-filet:rgba(34,33,30,0.13);
+  --gal-filet-fort:rgba(34,33,30,0.24);
+  --gal-marque:#9A5B3C;         /* sienne, le seul accent, employe au filet */
+  --gal-survol:rgba(34,33,30,0.045);
+  --gal-ombre:0 18px 60px -22px rgba(40,36,28,0.34), 0 2px 6px rgba(40,36,28,0.06);
+
+  /* les planches, emplacements et non fausses captures */
+  --plate-s:16%;
+  --plate-l1:93%;
+  --plate-l2:85%;
+  --plate-lh:58%;
+  --plate-trait:rgba(34,33,30,0.30);
+
+  /* rythme */
+  --gal-nav:262px;
+  --gal-rail:56px;
+  --gal-colonne:760px;
+  --gal-temps:.34s;
+  --gal-courbe:cubic-bezier(.16,1,.3,1);
+}
+
+html.dark{
+  --zr-bg-window:#232220;
+  --zr-bg-content:#1F1F1E;
+  --gal-mur:#181816;
+  --gal-papier:#1E1D1B;
+  --gal-papier-2:#232220;
+  --gal-encre:#EDEBE6;
+  --gal-encre-2:rgba(237,235,230,0.62);
+  --gal-encre-3:rgba(237,235,230,0.38);
+  --gal-filet:rgba(237,235,230,0.13);
+  --gal-filet-fort:rgba(237,235,230,0.24);
+  --gal-marque:#C58A66;
+  --gal-survol:rgba(237,235,230,0.055);
+  --gal-ombre:0 22px 70px -24px rgba(0,0,0,0.66), 0 2px 8px rgba(0,0,0,0.30);
+  --plate-s:14%;
+  --plate-l1:22%;
+  --plate-l2:16%;
+  --plate-lh:42%;
+  --plate-trait:rgba(237,235,230,0.24);
+  --zr-accent:#409CFF;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--gal-mur);
+  color:var(--gal-encre);
+  font-family:var(--zr-police-sans);
+  font-weight:var(--zr-poids-sans);
+  font-size:var(--zr-ui-md);
+  -webkit-font-smoothing:antialiased;
+  display:grid;
+  place-items:center;
+  padding:26px;
+  transition:background var(--gal-temps) var(--gal-courbe), color var(--gal-temps) var(--gal-courbe);
+}
+/* halo tres doux du mur, aucune photo, aucun reseau */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,0.55), rgba(255,255,255,0) 62%);
+}
+html.dark body::before{background:radial-gradient(120% 90% at 50% 0%, rgba(255,255,255,0.05), rgba(255,255,255,0) 62%)}
+
+.n{font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres);font-variant-numeric:lining-nums tabular-nums}
+
+/* ══════════════ Le cadre d'application ══════════════ */
+.app{
+  position:relative;z-index:1;
+  width:min(1440px,100%);height:min(920px,calc(100vh - 52px));
+  display:grid;grid-template-columns:var(--gal-nav) 1fr;
+  background:var(--gal-papier);
+  border-radius:var(--zr-r-window);
+  box-shadow:var(--gal-ombre);
+  overflow:hidden;
+  transition:grid-template-columns var(--gal-temps) var(--gal-courbe), background var(--gal-temps) var(--gal-courbe);
+}
+.app[data-nav="rail"]{grid-template-columns:var(--gal-rail) 1fr}
+
+/* ══════════════ Le sommaire, colonne de gauche ══════════════
+   La sidebar n'est pas un tableau de bord, c'est le sommaire d'un catalogue.
+   Elle s'efface en un filet vertical quand on ne s'en sert pas. */
+.nav{
+  position:relative;
+  background:var(--gal-papier-2);
+  border-right:1px solid var(--gal-filet);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.nav-tete{
+  height:64px;flex:0 0 auto;
+  display:flex;align-items:center;gap:10px;
+  padding:0 20px;
+}
+.marque{
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:var(--gal-titre-3);letter-spacing:-0.015em;line-height:1;
+  color:var(--gal-encre);white-space:nowrap;
+}
+.marque em{font-style:italic;color:var(--gal-encre-2)}
+
+.nav-corps{flex:1 1 auto;overflow-y:auto;padding:6px 14px 24px}
+.nav-corps::-webkit-scrollbar{width:8px}
+.nav-corps::-webkit-scrollbar-thumb{background:var(--gal-filet-fort);border-radius:8px;border:2px solid transparent;background-clip:content-box}
+.nav-corps::-webkit-scrollbar-track{background:transparent}
+
+/* Une rubrique, ouverte ou fermee. Une seule ouverte a la fois. */
+.zone{border-top:1px solid var(--gal-filet)}
+.zone:first-child{border-top:none}
+.zone-tete{
+  width:100%;display:flex;align-items:baseline;gap:10px;
+  padding:13px 8px 12px;border:0;background:transparent;cursor:pointer;
+  text-align:left;color:var(--gal-encre-2);
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:var(--zr-ui-lg);letter-spacing:-0.01em;
+  transition:color var(--gal-temps) var(--gal-courbe);
+}
+.zone-tete:hover{color:var(--gal-encre)}
+.zone[data-open="1"] .zone-tete{color:var(--gal-encre)}
+.zone-tete .compte{
+  margin-left:auto;font-size:var(--zr-ui-xs);color:var(--gal-encre-3);
+  transition:opacity var(--gal-temps) var(--gal-courbe);
+}
+.zone[data-open="1"] .zone-tete .compte{opacity:0}
+.zone-liste{display:none;padding:0 0 12px}
+.zone[data-open="1"] .zone-liste{display:block}
+
+/* Le sous chapitre, la piece maitresse du redesign :
+   il coupe la file de quatorze entrees en deux ensembles nommes. */
+.sous-titre{
+  display:flex;align-items:center;gap:9px;
+  padding:11px 8px 7px;
+  font-size:var(--zr-ui-3xs);text-transform:uppercase;letter-spacing:.16em;
+  color:var(--gal-encre-3);
+}
+.sous-titre::after{content:"";flex:1;height:1px;background:var(--gal-filet)}
+
+.item{
+  position:relative;display:flex;align-items:center;gap:9px;
+  width:100%;min-height:31px;padding:0 8px 0 12px;
+  border:0;background:transparent;cursor:pointer;text-align:left;
+  color:var(--gal-encre-2);
+  font-family:var(--zr-police-sans);font-size:var(--zr-ui-md);font-weight:400;
+  letter-spacing:-0.012em;border-radius:var(--zr-r-chip);
+  transition:color var(--gal-temps) var(--gal-courbe), background var(--gal-temps) var(--gal-courbe);
+}
+.item:hover{background:var(--gal-survol);color:var(--gal-encre)}
+.item::before{
+  content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:2px;height:0;border-radius:2px;background:var(--gal-marque);
+  transition:height var(--gal-temps) var(--gal-courbe);
+}
+.item[aria-current="page"]{color:var(--gal-encre);font-weight:500}
+.item[aria-current="page"]::before{height:15px}
+.item .badge{
+  margin-left:auto;font-size:var(--zr-ui-2xs);color:var(--gal-encre-3);
+}
+.item.neuf .badge{color:var(--gal-marque)}
+
+.nav-pied{
+  flex:0 0 auto;padding:14px 22px 18px;border-top:1px solid var(--gal-filet);
+  display:flex;align-items:center;gap:12px;
+}
+.bare{
+  width:30px;height:30px;display:grid;place-items:center;
+  border:0;border-radius:var(--zr-r-chip);background:transparent;cursor:pointer;
+  color:var(--gal-encre-3);
+  transition:color var(--gal-temps) var(--gal-courbe), background var(--gal-temps) var(--gal-courbe);
+}
+.bare:hover{background:var(--gal-survol);color:var(--gal-encre)}
+.bare svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.pied-note{font-size:var(--zr-ui-2xs);color:var(--gal-encre-3);margin-left:auto}
+
+/* Le sommaire efface : un rail de 56px, les cinq chapitres a la verticale. */
+.rail{display:none;flex-direction:column;align-items:center;gap:4px;padding:18px 0;height:100%}
+.app[data-nav="rail"] .nav-tete,
+.app[data-nav="rail"] .nav-corps,
+.app[data-nav="rail"] .nav-pied{display:none}
+.app[data-nav="rail"] .rail{display:flex}
+.rail-chapitre{
+  writing-mode:vertical-rl;
+  padding:12px 6px;border:0;background:transparent;cursor:pointer;
+  color:var(--gal-encre-3);
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:var(--zr-ui-sm);letter-spacing:.10em;
+  border-radius:var(--zr-r-chip);
+  transition:color var(--gal-temps) var(--gal-courbe), background var(--gal-temps) var(--gal-courbe);
+}
+.rail-chapitre:hover{color:var(--gal-encre);background:var(--gal-survol)}
+.rail-chapitre[data-on="1"]{color:var(--gal-marque)}
+.rail .bare{margin-top:auto}
+
+/* ══════════════ La salle, colonne de droite ══════════════ */
+.salle{position:relative;display:flex;flex-direction:column;min-width:0;background:var(--gal-papier)}
+
+.barre{
+  flex:0 0 auto;height:64px;display:flex;align-items:center;gap:14px;
+  padding:0 30px 0 22px;border-bottom:1px solid var(--gal-filet);
+}
+.fil{display:flex;align-items:baseline;gap:9px;color:var(--gal-encre-3);font-size:var(--zr-ui-sm);min-width:0}
+.fil b{font-weight:400;color:var(--gal-encre)}
+.recherche{
+  margin-left:auto;display:flex;align-items:center;gap:8px;
+  min-width:180px;max-width:280px;flex:1 1 auto;
+  border-bottom:1px solid var(--gal-filet);padding:5px 2px;
+  transition:border-color var(--gal-temps) var(--gal-courbe);
+}
+.recherche:focus-within{border-bottom-color:var(--gal-encre-3)}
+.recherche svg{width:14px;height:14px;flex:0 0 auto;fill:none;stroke:var(--gal-encre-3);stroke-width:1.4}
+.recherche input{
+  flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--gal-encre);
+  font-family:var(--zr-police-sans);font-size:var(--zr-ui-sm);
+}
+.recherche input::placeholder{color:var(--gal-encre-3)}
+
+.scene{flex:1 1 auto;overflow-y:auto;position:relative}
+.scene::-webkit-scrollbar{width:10px}
+.scene::-webkit-scrollbar-thumb{background:var(--gal-filet-fort);border-radius:8px;border:3px solid transparent;background-clip:content-box}
+.scene::-webkit-scrollbar-track{background:transparent}
+
+.dedans{padding:0 clamp(30px,5vw,72px) 96px}
+
+/* ── Le cartouche d'ouverture, une colonne de lecture et beaucoup de vide ── */
+.ouverture{max-width:var(--gal-colonne);padding:78px 0 8px}
+.sur-titre{
+  font-size:var(--zr-ui-3xs);text-transform:uppercase;letter-spacing:.24em;
+  color:var(--gal-marque);margin:0 0 26px;
+}
+.ouverture h1{
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:var(--gal-titre-1);line-height:1.06;letter-spacing:-0.025em;
+  margin:0 0 26px;color:var(--gal-encre);
+}
+.ouverture h1 em{font-style:italic;color:var(--gal-encre-2)}
+.chapeau{
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:calc(var(--gal-corps)*1.06);line-height:1.62;letter-spacing:-0.005em;
+  color:var(--gal-encre-2);margin:0;max-width:60ch;
+}
+.releve{
+  display:flex;flex-wrap:wrap;gap:34px;margin:44px 0 0;
+  padding:20px 0 0;border-top:1px solid var(--gal-filet);
+}
+.releve div{display:flex;flex-direction:column;gap:5px}
+.releve dt, .releve .etq{font-size:var(--zr-ui-3xs);text-transform:uppercase;letter-spacing:.16em;color:var(--gal-encre-3)}
+.releve .val{font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres);font-size:var(--gal-titre-3);letter-spacing:-0.01em}
+
+/* ── Le filtre, du texte, jamais des boutons ── */
+.filtres{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 22px;
+  margin:56px 0 8px;padding-bottom:18px;border-bottom:1px solid var(--gal-filet);
+}
+.filtre{
+  border:0;background:transparent;cursor:pointer;padding:3px 0;
+  color:var(--gal-encre-3);
+  font-family:var(--zr-police-sans);font-size:var(--zr-ui-sm);letter-spacing:-0.01em;
+  display:inline-flex;align-items:baseline;gap:6px;
+  transition:color var(--gal-temps) var(--gal-courbe);
+}
+.filtre:hover{color:var(--gal-encre)}
+.filtre[data-on="1"]{color:var(--gal-encre);box-shadow:inset 0 -1px 0 0 var(--gal-marque)}
+.filtre .n{font-size:var(--zr-ui-2xs);color:var(--gal-encre-3)}
+.vues{margin-left:auto;display:flex;align-items:center;gap:16px}
+.vue{
+  border:0;background:transparent;cursor:pointer;padding:3px 0;
+  color:var(--gal-encre-3);font-size:var(--zr-ui-sm);
+  transition:color var(--gal-temps) var(--gal-courbe);
+}
+.vue:hover{color:var(--gal-encre)}
+.vue[data-on="1"]{color:var(--gal-encre);box-shadow:inset 0 -1px 0 0 var(--gal-filet-fort)}
+
+/* ── La collection. Deux pieces par rangee, elles respirent. ── */
+.collection{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:82px 58px;margin:62px 0 0;
+}
+.collection[data-vue="ample"]{grid-template-columns:minmax(0,1fr);gap:96px}
+.collection[data-vue="ample"] .piece{max-width:var(--gal-colonne)}
+
+.piece{
+  display:flex;flex-direction:column;gap:0;
+  border:0;background:transparent;padding:0;cursor:pointer;text-align:left;
+  color:inherit;
+}
+.planche{
+  position:relative;width:100%;aspect-ratio:4/3;border-radius:6px;overflow:hidden;
+  box-shadow:0 1px 0 var(--gal-filet), 0 14px 34px -20px rgba(40,36,28,0.42);
+  transition:transform var(--gal-temps) var(--gal-courbe), box-shadow var(--gal-temps) var(--gal-courbe);
+}
+html.dark .planche{box-shadow:0 1px 0 var(--gal-filet), 0 16px 40px -22px rgba(0,0,0,0.7)}
+.piece:hover .planche{transform:translateY(-4px);box-shadow:0 1px 0 var(--gal-filet), 0 26px 52px -22px rgba(40,36,28,0.44)}
+.planche svg{display:block;width:100%;height:100%}
+.planche .tampon{
+  position:absolute;left:12px;bottom:10px;
+  font-size:var(--zr-ui-3xs);text-transform:uppercase;letter-spacing:.18em;
+  color:var(--gal-encre-3);
+}
+.planche .cote{
+  position:absolute;right:12px;bottom:9px;
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres);
+  font-size:var(--zr-ui-xs);color:var(--gal-encre-3);
+}
+
+/* La legende, sobre, jamais une fiche technique */
+.legende{padding:20px 2px 0}
+.legende h2{
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:var(--gal-titre-2);line-height:1.2;letter-spacing:-0.02em;
+  margin:0 0 8px;color:var(--gal-encre);
+}
+.legende h2 em{font-style:italic;color:var(--gal-encre-2);font-size:.82em}
+.cartel{
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:5px 10px;
+  font-size:var(--zr-ui-sm);color:var(--gal-encre-3);margin:0 0 12px;
+}
+.cartel .sep{opacity:.5}
+.notice-courte{
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:calc(var(--gal-corps)*0.94);line-height:1.6;color:var(--gal-encre-2);
+  margin:0;max-width:52ch;
+}
+
+/* ══════════════ La notice, le cartel developpe ══════════════
+   Surface opaque posee dans la salle, aucun verre empile, aucun ancetre filtrant. */
+.notice{
+  position:absolute;inset:0;z-index:5;
+  background:var(--gal-papier);
+  overflow-y:auto;display:none;
+}
+.notice[data-on="1"]{display:block;animation:monte .38s cubic-bezier(.16,1,.3,1)}
+@keyframes monte{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.notice::-webkit-scrollbar{width:10px}
+.notice::-webkit-scrollbar-thumb{background:var(--gal-filet-fort);border-radius:8px;border:3px solid transparent;background-clip:content-box}
+.retour{
+  display:inline-flex;align-items:center;gap:9px;margin:34px 0 0;
+  border:0;background:transparent;cursor:pointer;padding:4px 0;
+  color:var(--gal-encre-3);font-size:var(--zr-ui-sm);
+  transition:color var(--gal-temps) var(--gal-courbe);
+}
+.retour:hover{color:var(--gal-encre)}
+.notice-corps{
+  display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
+  gap:clamp(34px,4vw,68px);align-items:start;margin:40px 0 0;
+}
+.notice-planche{border-radius:8px;overflow:hidden;box-shadow:0 20px 52px -26px rgba(40,36,28,0.5)}
+.notice-planche svg{display:block;width:100%;height:auto}
+.notice-texte{padding-top:4px;max-width:56ch}
+.notice-texte h1{
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:calc(var(--gal-corps)*2.0);line-height:1.1;letter-spacing:-0.025em;
+  margin:14px 0 10px;
+}
+.notice-texte h1 em{font-style:italic;color:var(--gal-encre-2);font-size:.72em;display:block;margin-top:8px}
+.notice-texte p{
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:var(--gal-corps);line-height:1.68;color:var(--gal-encre-2);margin:0 0 16px;
+}
+.caract{margin:32px 0 0;border-top:1px solid var(--gal-filet)}
+.caract .ligne{
+  display:flex;align-items:baseline;gap:18px;
+  padding:11px 0;border-bottom:1px solid var(--gal-filet);
+}
+.caract .cle{
+  flex:0 0 132px;font-size:var(--zr-ui-3xs);text-transform:uppercase;letter-spacing:.16em;
+  color:var(--gal-encre-3);
+}
+.caract .valeur{font-size:var(--zr-ui-md);color:var(--gal-encre)}
+.actions{display:flex;flex-wrap:wrap;gap:10px 26px;margin:32px 0 0}
+.action{
+  border:0;background:transparent;cursor:pointer;padding:6px 0;
+  color:var(--gal-encre);font-family:var(--zr-police-sans);font-size:var(--zr-ui-sm);
+  letter-spacing:-0.01em;box-shadow:inset 0 -1px 0 0 var(--gal-filet-fort);
+  transition:box-shadow var(--gal-temps) var(--gal-courbe), color var(--gal-temps) var(--gal-courbe);
+}
+.action:hover{box-shadow:inset 0 -1px 0 0 var(--gal-marque);color:var(--gal-marque)}
+.emplois{margin:36px 0 0;padding-top:18px;border-top:1px solid var(--gal-filet)}
+.emplois .etq{font-size:var(--zr-ui-3xs);text-transform:uppercase;letter-spacing:.16em;color:var(--gal-encre-3)}
+.emplois ul{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.emplois li{
+  font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:calc(var(--gal-corps)*0.92);color:var(--gal-encre-2);
+}
+.notice-fin{height:90px}
+
+/* Note de maquette, discrete, en bas de la salle */
+.note-maquette{
+  max-width:var(--gal-colonne);margin:96px 0 0;padding-top:20px;
+  border-top:1px solid var(--gal-filet);
+  font-size:var(--zr-ui-sm);line-height:1.7;color:var(--gal-encre-3);
+}
+.note-maquette b{font-weight:500;color:var(--gal-encre-2)}
+
+@media (max-width:1180px){
+  .collection{grid-template-columns:minmax(0,1fr);gap:76px}
+  .notice-corps{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app" data-nav="sommaire">
+
+  <!-- ══════════ Le sommaire ══════════ -->
+  <aside class="nav">
+
+    <div class="nav-tete">
+      <span class="marque">ZenRay <em>Progress</em></span>
+    </div>
+
+    <div class="nav-corps" id="navCorps"></div>
+
+    <div class="nav-pied">
+      <button class="bare" id="btnRail" title="Effacer le sommaire" aria-label="Effacer le sommaire">
+        <svg viewBox="0 0 24 24"><path d="M14 6l-6 6 6 6"/><path d="M19 4v16"/></svg>
+      </button>
+      <button class="bare" id="btnTheme" title="Basculer le theme" aria-label="Basculer le theme">
+        <svg viewBox="0 0 24 24" id="icoTheme"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"/></svg>
+      </button>
+      <span class="pied-note">Sommaire</span>
+    </div>
+
+    <div class="rail" id="rail">
+      <button class="bare" id="btnSommaire" title="Ouvrir le sommaire" aria-label="Ouvrir le sommaire">
+        <svg viewBox="0 0 24 24"><path d="M10 6l6 6-6 6"/><path d="M5 4v16"/></svg>
+      </button>
+      <div id="railChapitres" style="display:flex;flex-direction:column;gap:2px;margin-top:10px"></div>
+      <button class="bare" id="btnTheme2" title="Basculer le theme" aria-label="Basculer le theme">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"/></svg>
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- ══════════ La salle ══════════ -->
+  <section class="salle">
+
+    <div class="barre">
+      <div class="fil"><span>Create</span><span class="sep">/</span><b>ZenRay Assets</b></div>
+      <label class="recherche">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.4"/><path d="M15.8 15.8L21 21"/></svg>
+        <input type="search" placeholder="Rechercher dans la collection">
+      </label>
+    </div>
+
+    <div class="scene" id="scene">
+      <div class="dedans">
+
+        <header class="ouverture">
+          <p class="sur-titre">Collection ZenRay</p>
+          <h1>Tout ce qui est fini,<br><em>et prêt à resservir.</em></h1>
+          <p class="chapeau">
+            Douze années de travail rangées comme une collection plutôt que comme une arborescence.
+            Chaque pièce porte son cartel, sa provenance et ses conditions de réemploi, de sorte
+            qu'on retrouve un environnement, un shader ou un système d'interface en le reconnaissant
+            à l'œil, sans ouvrir un seul dossier.
+          </p>
+          <div class="releve">
+            <div><span class="etq">Pièces</span><span class="val n">128</span></div>
+            <div><span class="etq">Familles</span><span class="val n">9</span></div>
+            <div><span class="etq">Réemplois</span><span class="val n">341</span></div>
+            <div><span class="etq">Dernier dépôt</span><span class="val n">3 sept.</span></div>
+          </div>
+        </header>
+
+        <nav class="filtres" id="filtres"></nav>
+
+        <div class="collection" id="collection" data-vue="deux"></div>
+
+        <p class="note-maquette">
+          <b>Maquette de design, direction Galerie.</b> Aucun fichier du produit n'est touché, aucune image
+          n'est inventée : chaque planche est un emplacement dessiné, jamais une fausse capture. La zone
+          Create est coupée en deux ensembles nommés, Atelier et Conduite, qui gardent l'ordre existant des
+          entrées et remplacent la file de quatorze lignes par deux séries de sept.
+        </p>
+
+      </div>
+    </div>
+
+    <!-- La notice developpee, posee dans la salle -->
+    <div class="notice" id="notice">
+      <div class="dedans" id="noticeDedans"></div>
+    </div>
+
+  </section>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════════════════
+   L'interface de parametres. Une definition, N instances : la navigation et la
+   collection descendent toutes les deux d'un gabarit unique nourri par ces tables.
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+const NAV = [
+  { id:'create', titre:'Create', groupes:[
+      { nom:'Atelier',  items:['Create','Assets','Media','Notes','Audio','Shelf','Ref'] },
+      { nom:'Conduite', items:['Timer','Plan','Goals','Skills','Dashboard','Projects','Freelance'] }
+  ]},
+  { id:'gallery', titre:'Gallery', groupes:[ { nom:null, items:['Design','Characters','Environments'] } ]},
+  { id:'learn',   titre:'Learn',   groupes:[ { nom:null, items:['Japanese'] } ]},
+  { id:'apps',    titre:'Apps',    groupes:[ { nom:null, items:['Articles','Documents','Features'] } ]},
+  { id:'systeme', titre:'Système', groupes:[ { nom:null, items:['Archives','Drive','Index','Trash'] } ]}
+];
+
+const COURANT = 'Assets';
+const NEUFS = { 'Assets':'nouveau' };
+
+const FAMILLES = [
+  { cle:'tout',    nom:'Toute la collection' },
+  { cle:'env',     nom:'Environnements' },
+  { cle:'perso',   nom:'Personnages' },
+  { cle:'ui',      nom:'Systèmes d’interface' },
+  { cle:'outil',   nom:'Outils et scripts' },
+  { cle:'shader',  nom:'Shaders' },
+  { cle:'lut',     nom:'Étalonnages' },
+  { cle:'texture', nom:'Textures' },
+  { cle:'gabarit', nom:'Gabarits' }
+];
+
+const PIECES = [
+  { id:1, cote:'ZR.128', titre:'Yorishiro', sous:'sanctuaire flottant', fam:'env', famNom:'Environnement',
+    annee:'2026', format:'Unreal 5.8', poids:'4,2 Go', h:38, mark:'arc',
+    court:'Un sanctuaire suspendu au-dessus de la brume, éclairé pour la nuit et taillé pour tourner à soixante images par seconde.',
+    long:['Le lieu est né d’un plan unique tenu pendant une minute, sans coupe, pour vérifier que la brume, la pierre mouillée et les lanternes tiennent ensemble quand la caméra bouge lentement.',
+          'Il se réemploie surtout par morceaux : le jeu de rochers, la trame de brume volumétrique et le réglage d’éclairage nocturne partent séparément dans d’autres scènes, sans emporter le sanctuaire lui même.'],
+    caract:[['Famille','Environnement'],['Moteur','Unreal Engine 5.8'],['Poids','4,2 Go'],['Pièces internes','34 assets'],['Licence','Usage ZenRay, commercial'],['Dernière révision','2026, août']],
+    emplois:['ZenRayShards, séquence d’ouverture','Devlog du 21 août, plan large','Portfolio 2026, planche 3'] },
+
+  { id:2, cote:'ZR.121', titre:'Kagerou', sous:'garde du seuil', fam:'perso', famNom:'Personnage',
+    annee:'2026', format:'ZBrush et Unreal', poids:'1,8 Go', h:12, mark:'triangle',
+    court:'Un corps complet, sculpté puis retopologié, livré avec son squelette et trois jeux de tissus.',
+    long:['La sculpture est partie d’une silhouette lisible de dos, condition que le personnage devait tenir avant tout détail d’armure.',
+          'Le maillage propre et le squelette se réemploient tels quels : changer la tête et les tissus suffit à obtenir un second garde sans refaire une seule heure de sculpture.'],
+    caract:[['Famille','Personnage'],['Chaîne','ZBrush, Maya, Unreal'],['Poids','1,8 Go'],['Polygones','86 400 en jeu'],['Squelette','Compatible MetaHuman'],['Dernière révision','2026, juillet']],
+    emplois:['ZenRayShards, adversaire du chapitre 1','Planche de portfolio, tirage A2'] },
+
+  { id:3, cote:'ZR.118', titre:'Liquid Glass', sous:'matériau d’interface', fam:'ui', famNom:'Système d’interface',
+    annee:'2026', format:'CSS', poids:'38 Ko', h:205, mark:'grille',
+    court:'Le verre translucide de toutes les surfaces ZenRay, réduit à un seul jeu de jetons et deux classes.',
+    long:['Le matériau tient dans un fichier : un jeu de jetons pour le fond, le liseré, l’ombre et le rayon, puis deux classes qui les consomment.',
+          'Un seul nombre commande l’intensité du liseré partout à la fois, ce qui évite de traquer une valeur au cas par cas dans chaque composant.'],
+    caract:[['Famille','Système d’interface'],['Langage','CSS'],['Poids','38 Ko'],['Jetons exposés','24'],['Thèmes','Clair et sombre'],['Dernière révision','2026, septembre']],
+    emplois:['ZenRayProgress, toute l’interface','matthieuhuguet.com, cartes d’article','Atelier social, panneaux'] },
+
+  { id:4, cote:'ZR.096', titre:'Nishi', sous:'étalonnage crépuscule', fam:'lut', famNom:'Étalonnage',
+    annee:'2025', format:'.cube 33³', poids:'2,1 Mo', h:24, mark:'bandes',
+    court:'Une table de correction tirée d’une vraie photographie de fin de jour, mesurée plutôt qu’inventée.',
+    long:['La courbe n’a pas été dessinée à la main : la couleur moyenne a été relevée par tranche de luminance sur une image de référence, puis transposée en table.',
+          'Elle s’applique aussi bien à une capture de jeu qu’à une vidéo, ce qui donne une même signature de couleur au jeu et à ses devlogs.'],
+    caract:[['Famille','Étalonnage'],['Format','.cube, grille 33'],['Poids','2,1 Mo'],['Écart mesuré','moins de 3 sur 255'],['Source','photographie de référence'],['Dernière révision','2025, novembre']],
+    emplois:['Devlogs, étalonnage par défaut','ZenRayShards, séquences de nuit'] },
+
+  { id:5, cote:'ZR.114', titre:'Kintsugi', sous:'shader de fracture', fam:'shader', famNom:'Shader',
+    annee:'2026', format:'HLSL', poids:'640 Ko', h:44, mark:'fissure',
+    court:'Une fracture qui court sur la surface et se remplit d’or, pilotée par un seul paramètre de progression.',
+    long:['Tout l’effet tient sur une valeur de zéro à un : la fissure s’ouvre, la lumière s’infiltre, puis l’or prend. Le reste est exposé en paramètres, jamais écrit en dur.',
+          'Il sert au combat comme à l’interface, la même progression pouvant animer un objet cassé ou une barre de vie.'],
+    caract:[['Famille','Shader'],['Langage','HLSL'],['Poids','640 Ko'],['Paramètres exposés','11'],['Coût mesuré','0,4 ms en 1440p'],['Dernière révision','2026, juin']],
+    emplois:['ZenRayShards, destruction des éclats','Interface, transition de menu'] },
+
+  { id:6, cote:'ZR.101', titre:'Sunaba', sous:'atelier de tri média', fam:'outil', famNom:'Outil',
+    annee:'2026', format:'Node', poids:'12 fichiers', h:150, mark:'points',
+    court:'Le tri de milliers de médias par simples références, sans jamais déplacer un octet.',
+    long:['L’outil range des références de cent soixante dix octets au lieu des fichiers eux mêmes, si bien qu’une sélection de dix mille images se fait en quelques secondes.',
+          'Il se rebranche sur n’importe quelle bibliothèque : seul le lecteur d’index change, le reste de la chaîne est identique.'],
+    caract:[['Famille','Outil'],['Exécution','Node'],['Poids','12 fichiers'],['Débit mesuré','9 800 éléments par minute'],['Sortie','JSON et code de retour'],['Dernière révision','2026, août']],
+    emplois:['ZenRayProgress, espaces de sélection','Préparation des planches de portfolio'] },
+
+  { id:7, cote:'ZR.087', titre:'Washi', sous:'papiers et fibres', fam:'texture', famNom:'Textures',
+    annee:'2025', format:'16 bits', poids:'3,4 Go', h:32, mark:'fibre',
+    court:'Quarante papiers japonais numérisés à plat, en fibres visibles, sans aucune répétition apparente.',
+    long:['Les feuilles ont été numérisées à plat puis nettoyées une par une, la fibre restant visible jusqu’au grossissement le plus fort.',
+          'Elles servent de matière de fond autant que de surface en trois dimensions, ce qui en fait la famille la plus réemployée de la collection.'],
+    caract:[['Famille','Textures'],['Profondeur','16 bits'],['Poids','3,4 Go'],['Feuilles','40 numérisations'],['Raccord','sans répétition visible'],['Dernière révision','2025, mai']],
+    emplois:['Site, fond des articles','ZenRayShards, matière des cloisons','Carrousels sociaux'] },
+
+  { id:8, cote:'ZR.125', titre:'Hanabi', sous:'système de particules', fam:'env', famNom:'Environnement',
+    annee:'2026', format:'Niagara', poids:'210 Mo', h:5, mark:'etoile',
+    court:'Braises, poussière et éclats, un seul système réglé par la taille de la scène.',
+    long:['Un même système couvre les trois échelles, la poussière d’une pièce close, la braise d’un feu et l’éclat d’une explosion, la taille de la scène servant de paramètre d’entrée.',
+          'Le budget est borné : au delà d’un nombre de particules donné, le système réduit lui même son émission plutôt que de faire tomber le nombre d’images.'],
+    caract:[['Famille','Environnement'],['Système','Niagara'],['Poids','210 Mo'],['Variantes','3 échelles'],['Budget','borné par paramètre'],['Dernière révision','2026, août']],
+    emplois:['ZenRayShards, combats','Devlog du 28 août'] },
+
+  { id:9, cote:'ZR.077', titre:'Tera', sous:'gabarit de carrousel', fam:'gabarit', famNom:'Gabarit',
+    annee:'2026', format:'HTML', poids:'74 Ko', h:96, mark:'cadre',
+    court:'Un gabarit unique qui rend une planche, une page ou un carrousel selon le jeu de valeurs qu’on lui donne.',
+    long:['La forme est fixe, les valeurs varient : titre, image, texte et format sortent tous en paramètres, et rien n’est écrit en dur dans la définition.',
+          'Le même fichier a produit vingt six visuels de communication sans qu’une seule ligne de sa structure ne change.'],
+    caract:[['Famille','Gabarit'],['Langage','HTML'],['Poids','74 Ko'],['Formats','4:5, 1:1, 16:9'],['Instances produites','26'],['Dernière révision','2026, septembre']],
+    emplois:['Publications sociales','Planches de portfolio','Couvertures d’article'] },
+
+  { id:10, cote:'ZR.069', titre:'Ame', sous:'ciel volumétrique', fam:'env', famNom:'Environnement',
+    annee:'2025', format:'Unreal', poids:'890 Mo', h:212, mark:'arc',
+    court:'Un ciel de pluie complet, du nuage bas à la goutte sur la caméra, réglé sur une seule heure du jour.',
+    long:['Le ciel a été calibré sur une heure précise, la fin d’après midi, et tout le reste en découle : la couleur de l’eau, la brillance des pierres, la portée de la brume.',
+          'Décaler cette heure suffit à obtenir un autre temps sans retoucher un seul matériau, ce qui en fait un réglage plutôt qu’un décor.'],
+    caract:[['Famille','Environnement'],['Moteur','Unreal Engine'],['Poids','890 Mo'],['Heure calibrée','17 h 40'],['Coût mesuré','2,1 ms'],['Dernière révision','2025, décembre']],
+    emplois:['ZenRayShards, chapitre 2','Essais de direction artistique'] },
+
+  { id:11, cote:'ZR.123', titre:'Kumo', sous:'rig facial', fam:'perso', famNom:'Personnage',
+    annee:'2026', format:'Unreal', poids:'520 Mo', h:260, mark:'triangle',
+    court:'Un visage complet, gréé et testé sur une prise réelle, prêt à recevoir n’importe quelle captation.',
+    long:['Le rig a été validé sur une prise réelle plutôt que sur une pose : c’est le seul contrôle qui dise si la bouche tient à la parole rapide.',
+          'Il se pose sur n’importe quelle tête aux mêmes proportions, ce qui rend la deuxième captation beaucoup moins coûteuse que la première.'],
+    caract:[['Famille','Personnage'],['Moteur','Unreal Engine'],['Poids','520 Mo'],['Contrôles','142'],['Validation','prise réelle'],['Dernière révision','2026, août']],
+    emplois:['ZenRayShards, dialogues','Essais de captation faciale'] },
+
+  { id:12, cote:'ZR.058', titre:'Enso', sous:'jeu d’icônes', fam:'ui', famNom:'Système d’interface',
+    annee:'2025', format:'SVG', poids:'96 Ko', h:178, mark:'cercle',
+    court:'Cent quatre icônes dessinées sur une même grille, au même trait, lisibles jusqu’à seize pixels.',
+    long:['Toutes reposent sur la même grille et la même épaisseur de trait, ce qui les rend interchangeables sans qu’aucune ne saute à l’œil.',
+          'Le trait est un paramètre, non une valeur figée, si bien que le jeu entier s’épaissit d’un seul geste quand une interface le demande.'],
+    caract:[['Famille','Système d’interface'],['Format','SVG'],['Poids','96 Ko'],['Icônes','104'],['Grille','24 sur 24'],['Dernière révision','2025, octobre']],
+    emplois:['ZenRayProgress, tout le chrome','Site, navigation','Atelier social'] }
+];
+
+/* ══════════ La planche, un emplacement dessine et jamais une fausse capture ══════════ */
+function planche(p, grand){
+  const id = 'p' + p.id + (grand ? 'g' : '');
+  const marques = {
+    arc:      `<path d="M120 330 A 200 200 0 0 1 520 330" style="fill:none;stroke:var(--plate-trait);stroke-width:1.2"/>
+               <path d="M180 330 A 140 140 0 0 1 460 330" style="fill:none;stroke:var(--plate-trait);stroke-width:1.2;opacity:.6"/>`,
+    triangle: `<path d="M320 150 L470 350 L170 350 Z" style="fill:none;stroke:var(--plate-trait);stroke-width:1.2"/>
+               <path d="M320 210 L410 330 L230 330 Z" style="fill:none;stroke:var(--plate-trait);stroke-width:1.2;opacity:.55"/>`,
+    grille:   `<g style="stroke:var(--plate-trait);stroke-width:1.1;opacity:.85">
+                 <rect x="200" y="160" width="240" height="160" fill="none"/>
+                 <line x1="200" y1="213" x2="440" y2="213"/><line x1="200" y1="266" x2="440" y2="266"/>
+                 <line x1="280" y1="160" x2="280" y2="320"/><line x1="360" y1="160" x2="360" y2="320"/>
+               </g>`,
+    bandes:   `<g style="stroke:var(--plate-trait);stroke-width:1.2">
+                 <line x1="180" y1="180" x2="460" y2="180"/><line x1="180" y1="220" x2="460" y2="220" style="opacity:.8"/>
+                 <line x1="180" y1="260" x2="460" y2="260" style="opacity:.6"/><line x1="180" y1="300" x2="460" y2="300" style="opacity:.4"/>
+               </g>`,
+    fissure:  `<path d="M250 140 L300 220 L262 250 L340 340" style="fill:none;stroke:var(--plate-trait);stroke-width:1.4"/>
+               <path d="M300 220 L380 200 M262 250 L200 300" style="fill:none;stroke:var(--plate-trait);stroke-width:1.1;opacity:.6"/>`,
+    points:   `<g style="fill:var(--plate-trait)">
+                 ${Array.from({length:24},(_,i)=>`<circle cx="${222+(i%6)*36}" cy="${186+Math.floor(i/6)*36}" r="${2.2+(i%3)*0.9}"/>`).join('')}
+               </g>`,
+    fibre:    `<g style="fill:none;stroke:var(--plate-trait);stroke-width:1">
+                 ${Array.from({length:7},(_,i)=>`<path d="M170 ${168+i*26} C 270 ${152+i*26}, 380 ${188+i*26}, 470 ${166+i*26}" style="opacity:${0.85-i*0.08}"/>`).join('')}
+               </g>`,
+    etoile:   `<g style="stroke:var(--plate-trait);stroke-width:1.1">
+                 ${Array.from({length:12},(_,i)=>{const a=i*Math.PI/6;return `<line x1="${320+Math.cos(a)*46}" y1="${250+Math.sin(a)*46}" x2="${320+Math.cos(a)*118}" y2="${250+Math.sin(a)*118}" style="opacity:${i%2?0.5:0.9}"/>`}).join('')}
+               </g>`,
+    cadre:    `<g style="fill:none;stroke:var(--plate-trait);stroke-width:1.2">
+                 <rect x="212" y="150" width="196" height="200"/><rect x="238" y="176" width="144" height="120" style="opacity:.55"/>
+               </g>`,
+    cercle:   `<circle cx="320" cy="250" r="104" style="fill:none;stroke:var(--plate-trait);stroke-width:1.3"/>
+               <circle cx="320" cy="250" r="62" style="fill:none;stroke:var(--plate-trait);stroke-width:1.1;opacity:.55"/>`
+  };
+  return `
+  <svg viewBox="0 0 640 480" preserveAspectRatio="xMidYMid slice" role="img"
+       aria-label="Emplacement de planche pour ${p.titre}" style="--h:${p.h}">
+    <defs>
+      <linearGradient id="grad${id}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" style="stop-color:hsl(var(--h) var(--plate-s) var(--plate-l1))"/>
+        <stop offset="1" style="stop-color:hsl(calc(var(--h) + 22) var(--plate-s) var(--plate-l2))"/>
+      </linearGradient>
+      <pattern id="hach${id}" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <line x1="0" y1="0" x2="0" y2="9" style="stroke:hsl(var(--h) 18% var(--plate-lh));stroke-width:.6;opacity:.30"/>
+      </pattern>
+    </defs>
+    <rect width="640" height="480" fill="url(#grad${id})"/>
+    <rect width="640" height="480" fill="url(#hach${id})"/>
+    <rect x="22" y="22" width="596" height="436" fill="none"
+          style="stroke:var(--plate-trait);stroke-width:1;stroke-dasharray:2 7;opacity:.7"/>
+    ${marques[p.mark] || marques.cercle}
+  </svg>`;
+}
+
+/* ══════════ Le sommaire ══════════ */
+function rendreNav(){
+  const hote = document.getElementById('navCorps');
+  hote.innerHTML = NAV.map(z => {
+    const total = z.groupes.reduce((n,g)=>n+g.items.length,0);
+    const ouvert = z.id === 'create' ? '1' : '0';
+    const listes = z.groupes.map(g => `
+      ${g.nom ? `<div class="sous-titre">${g.nom}</div>` : ''}
+      ${g.items.map(it => `
+        <button class="item ${NEUFS[it] ? 'neuf' : ''}"
+                ${it === COURANT ? 'aria-current="page"' : ''}>
+          <span>${it}</span>
+          ${NEUFS[it] ? `<span class="badge">${NEUFS[it]}</span>` : ''}
+        </button>`).join('')}
+    `).join('');
+    return `
+      <div class="zone" data-open="${ouvert}" data-id="${z.id}">
+        <button class="zone-tete">${z.titre}<span class="compte n">${total}</span></button>
+        <div class="zone-liste">${listes}</div>
+      </div>`;
+  }).join('');
+
+  hote.querySelectorAll('.zone-tete').forEach(b => {
+    b.addEventListener('click', () => {
+      const zone = b.closest('.zone');
+      const etait = zone.dataset.open === '1';
+      hote.querySelectorAll('.zone').forEach(z => z.dataset.open = '0');
+      zone.dataset.open = etait ? '0' : '1';
+      majRail();
+    });
+  });
+  hote.querySelectorAll('.item').forEach(b => {
+    b.addEventListener('click', () => {
+      hote.querySelectorAll('.item').forEach(x => x.removeAttribute('aria-current'));
+      b.setAttribute('aria-current','page');
+    });
+  });
+
+  document.getElementById('railChapitres').innerHTML = NAV.map(z =>
+    `<button class="rail-chapitre" data-id="${z.id}" data-on="${z.id==='create'?'1':'0'}">${z.titre}</button>`
+  ).join('');
+  document.querySelectorAll('.rail-chapitre').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.zone').forEach(z => z.dataset.open = z.dataset.id === b.dataset.id ? '1' : '0');
+      document.getElementById('app').dataset.nav = 'sommaire';
+      majRail();
+    });
+  });
+}
+function majRail(){
+  const ouverte = document.querySelector('.zone[data-open="1"]');
+  const id = ouverte ? ouverte.dataset.id : null;
+  document.querySelectorAll('.rail-chapitre').forEach(b => b.dataset.on = b.dataset.id === id ? '1' : '0');
+}
+
+/* ══════════ Les filtres ══════════ */
+let filtreActif = 'tout';
+function rendreFiltres(){
+  const hote = document.getElementById('filtres');
+  const compte = c => c === 'tout' ? PIECES.length : PIECES.filter(p => p.fam === c).length;
+  hote.innerHTML = FAMILLES.filter(f => compte(f.cle) > 0).map(f =>
+    `<button class="filtre" data-cle="${f.cle}" data-on="${f.cle===filtreActif?'1':'0'}">
+       ${f.nom}<span class="n">${compte(f.cle)}</span>
+     </button>`).join('')
+    + `<span class="vues">
+         <button class="vue" data-vue="deux" data-on="1">Deux par rangée</button>
+         <button class="vue" data-vue="ample" data-on="0">Pleine page</button>
+       </span>`;
+  hote.querySelectorAll('.filtre').forEach(b => b.addEventListener('click', () => {
+    filtreActif = b.dataset.cle;
+    hote.querySelectorAll('.filtre').forEach(x => x.dataset.on = x === b ? '1' : '0');
+    rendreCollection();
+  }));
+  hote.querySelectorAll('.vue').forEach(b => b.addEventListener('click', () => {
+    hote.querySelectorAll('.vue').forEach(x => x.dataset.on = x === b ? '1' : '0');
+    document.getElementById('collection').dataset.vue = b.dataset.vue;
+  }));
+}
+
+/* ══════════ La collection ══════════ */
+function rendreCollection(){
+  const hote = document.getElementById('collection');
+  const lot = PIECES.filter(p => filtreActif === 'tout' || p.fam === filtreActif);
+  hote.innerHTML = lot.map(p => `
+    <div class="piece" data-id="${p.id}" role="button" tabindex="0" aria-label="Ouvrir la notice de ${p.titre}">
+      <span class="planche">
+        ${planche(p,false)}
+        <span class="tampon">Emplacement</span>
+        <span class="cote">${p.cote}</span>
+      </span>
+      <span class="legende">
+        <h2>${p.titre} <em>${p.sous}</em></h2>
+        <span class="cartel">
+          <span>${p.famNom}</span><span class="sep">·</span>
+          <span class="n">${p.annee}</span><span class="sep">·</span>
+          <span>${p.format}</span><span class="sep">·</span>
+          <span class="n">${p.poids}</span>
+        </span>
+        <span class="notice-courte">${p.court}</span>
+      </span>
+    </div>`).join('');
+  hote.querySelectorAll('.piece').forEach(b => {
+    b.addEventListener('click', () => ouvrirNotice(Number(b.dataset.id)));
+    b.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); ouvrirNotice(Number(b.dataset.id)); }
+    });
+  });
+}
+
+/* ══════════ La notice, le cartel developpe ══════════ */
+function ouvrirNotice(id){
+  const p = PIECES.find(x => x.id === id);
+  const hote = document.getElementById('noticeDedans');
+  hote.innerHTML = `
+    <button class="retour" id="btnRetour">
+      <span aria-hidden="true">&#8592;</span> Retour à la collection
+    </button>
+    <div class="notice-corps">
+      <div class="notice-planche">${planche(p,true)}</div>
+      <div class="notice-texte">
+        <p class="sur-titre">${p.famNom} <span class="n" style="letter-spacing:.06em">${p.cote}</span></p>
+        <h1>${p.titre}<em>${p.sous}</em></h1>
+        ${p.long.map(t => `<p>${t}</p>`).join('')}
+        <div class="caract">
+          ${p.caract.map(([c,v]) => `
+            <div class="ligne"><span class="cle">${c}</span>
+              <span class="valeur ${/[0-9]/.test(v) ? 'n' : ''}">${v}</span></div>`).join('')}
+        </div>
+        <div class="actions">
+          <button class="action">Ouvrir dans Unreal</button>
+          <button class="action">Dupliquer comme base</button>
+          <button class="action">Copier le chemin</button>
+          <button class="action">Publier sur le site</button>
+        </div>
+        <div class="emplois">
+          <span class="etq">Déjà employé dans</span>
+          <ul>${p.emplois.map(e => `<li>${e}</li>`).join('')}</ul>
+        </div>
+      </div>
+    </div>
+    <div class="notice-fin"></div>`;
+  document.getElementById('notice').dataset.on = '1';
+  document.getElementById('notice').scrollTop = 0;
+  document.getElementById('btnRetour').addEventListener('click', fermerNotice);
+}
+function fermerNotice(){ document.getElementById('notice').dataset.on = '0'; }
+
+/* ══════════ Chrome ══════════ */
+function basculerTheme(){ document.documentElement.classList.toggle('dark'); }
+document.getElementById('btnTheme').addEventListener('click', basculerTheme);
+document.getElementById('btnTheme2').addEventListener('click', basculerTheme);
+document.getElementById('btnRail').addEventListener('click', () => {
+  document.getElementById('app').dataset.nav = 'rail'; majRail();
+});
+document.getElementById('btnSommaire').addEventListener('click', () => {
+  document.getElementById('app').dataset.nav = 'sommaire';
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') fermerNotice(); });
+
+rendreNav(); rendreFiltres(); rendreCollection(); majRail();
+</script>
+</body>
+</html>

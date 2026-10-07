@@ -1,0 +1,337 @@
+(function () {
+  "use strict";
+
+  const DEFAULTS = Object.freeze({
+    vignette: 0,
+    grain: 0,
+    selective: [
+      { hue: 0, saturation: 0, luminance: 0 },
+      { hue: 0, saturation: 0, luminance: 0 },
+      { hue: 0, saturation: 0, luminance: 0 },
+      { hue: 0, saturation: 0, luminance: 0 },
+      { hue: 0, saturation: 0, luminance: 0 },
+      { hue: 0, saturation: 0, luminance: 0 }
+    ],
+    levels: { inputBlack: 0, midtone: 50, inputWhite: 100, outputBlack: 0, outputWhite: 100 },
+    blackAndWhite: 0,
+    saturation: 0,
+    vibrance: 0,
+    brilliance: 0,
+    exposure: 0,
+    highlights: 0,
+    shadows: 0,
+    brightness: 0,
+    contrast: 0,
+    blackPoint: 0,
+    filter: "Original",
+    filterStrength: 100
+  });
+
+  const FILTERS = Object.freeze([
+    "Original",
+    "Vivid",
+    "Vivid Warm",
+    "Vivid Cool",
+    "Dramatic",
+    "Dramatic Warm",
+    "Dramatic Cool",
+    "Mono",
+    "Silvertone",
+    "Noir"
+  ]);
+
+  const VERTEX_SHADER = `#version 300 es
+    in vec2 a_position;
+    out vec2 v_uv;
+    void main() {
+      v_uv = a_position * 0.5 + 0.5;
+      gl_Position = vec4(a_position, 0.0, 1.0);
+    }
+  `;
+
+  const FRAGMENT_SHADER = `#version 300 es
+    precision highp float;
+    uniform sampler2D u_image;
+    uniform float u_vignette;
+    uniform float u_grain;
+    uniform vec3 u_selective[6];
+    uniform vec4 u_levels;
+    uniform float u_outputWhite;
+    uniform float u_blackAndWhite;
+    uniform float u_saturation;
+    uniform float u_vibrance;
+    uniform vec4 u_lightA;
+    uniform vec3 u_lightB;
+    uniform int u_filter;
+    uniform float u_filterStrength;
+    in vec2 v_uv;
+    out vec4 outColor;
+
+    float luma(vec3 color) {
+      return dot(color, vec3(0.2126, 0.7152, 0.0722));
+    }
+
+    vec3 rgbToHsv(vec3 color) {
+      vec4 k = vec4(0.0, -0.3333333333, 0.6666666667, -1.0);
+      vec4 p = mix(vec4(color.bg, k.wz), vec4(color.gb, k.xy), step(color.b, color.g));
+      vec4 q = mix(vec4(p.xyw, color.r), vec4(color.r, p.yzx), step(p.x, color.r));
+      float d = q.x - min(q.w, q.y);
+      float e = 1.0e-10;
+      return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+    }
+
+    vec3 hsvToRgb(vec3 color) {
+      vec3 p = abs(fract(color.xxx + vec3(0.0, 0.6666666667, 0.3333333333)) * 6.0 - 3.0);
+      return color.z * mix(vec3(1.0), clamp(p - 1.0, 0.0, 1.0), color.y);
+    }
+
+    float hueDistance(float a, float b) {
+      float difference = abs(a - b);
+      return min(difference, 1.0 - difference);
+    }
+
+    float grainNoise(vec2 uv) {
+      vec2 cell = floor(uv * vec2(4096.0));
+      return fract(sin(dot(cell, vec2(127.1, 311.7))) * 43758.5453123);
+    }
+
+    vec3 applySelective(vec3 color) {
+      vec3 hsv = rgbToHsv(color);
+      float centers[6] = float[6](0.0, 0.1666667, 0.3333333, 0.5, 0.6666667, 0.8333333);
+      for (int index = 0; index < 6; index++) {
+        float weight = smoothstep(0.19, 0.0, hueDistance(hsv.x, centers[index])) * smoothstep(0.05, 0.25, hsv.y);
+        hsv.x = fract(hsv.x + u_selective[index].x * weight * 0.12 + 1.0);
+        hsv.y = clamp(hsv.y + u_selective[index].y * weight * 0.55, 0.0, 1.0);
+        hsv.z = clamp(hsv.z + u_selective[index].z * weight * 0.38, 0.0, 1.0);
+      }
+      return hsvToRgb(hsv);
+    }
+
+    vec3 adjustSaturation(vec3 color, float amount) {
+      float gray = luma(color);
+      return mix(vec3(gray), color, max(0.0, 1.0 + amount));
+    }
+
+    vec3 preset(vec3 color, int filterId) {
+      float gray = luma(color);
+      if (filterId == 1) return adjustSaturation((color - 0.5) * 1.08 + 0.5, 0.20);
+      if (filterId == 2) return adjustSaturation((color - 0.5) * 1.07 + 0.5 + vec3(0.035, 0.012, -0.025), 0.18);
+      if (filterId == 3) return adjustSaturation((color - 0.5) * 1.07 + 0.5 + vec3(-0.025, 0.005, 0.035), 0.18);
+      if (filterId == 4) return adjustSaturation((color - 0.5) * 1.22 + 0.5, -0.08);
+      if (filterId == 5) return adjustSaturation((color - 0.5) * 1.21 + 0.5 + vec3(0.045, 0.012, -0.035), -0.05);
+      if (filterId == 6) return adjustSaturation((color - 0.5) * 1.21 + 0.5 + vec3(-0.035, 0.004, 0.045), -0.05);
+      if (filterId == 7) return vec3(gray);
+      if (filterId == 8) return vec3(gray) * vec3(1.06, 1.02, 0.92) + vec3(0.015, 0.01, 0.0);
+      if (filterId == 9) {
+        float noir = smoothstep(0.18, 0.82, gray);
+        return vec3(noir);
+      }
+      return color;
+    }
+
+    void main() {
+      vec2 textureUv = vec2(v_uv.x, 1.0 - v_uv.y);
+      vec3 source = texture(u_image, textureUv).rgb;
+      vec3 color = source;
+
+      float inputBlack = u_levels.x;
+      float midtone = u_levels.y;
+      float inputWhite = max(inputBlack + 0.001, u_levels.z);
+      float outputBlack = u_levels.w;
+      color = clamp((color - inputBlack) / (inputWhite - inputBlack), 0.0, 1.0);
+      float gamma = exp2((0.5 - midtone) * 3.0);
+      color = pow(max(color, vec3(0.00001)), vec3(gamma));
+      color = mix(vec3(outputBlack), vec3(u_outputWhite), color);
+
+      color = applySelective(color);
+
+      float brilliance = u_lightA.x;
+      float exposure = u_lightA.y;
+      float highlights = u_lightA.z;
+      float shadows = u_lightA.w;
+      float brightness = u_lightB.x;
+      float contrast = u_lightB.y;
+      float blackPoint = u_lightB.z;
+      float luminosity = luma(color);
+
+      color *= exp2(exposure * 2.0);
+      color += brilliance * (0.25 - pow(luminosity - 0.5, 2.0)) * 0.55;
+      color += highlights * smoothstep(0.45, 1.0, luminosity) * 0.32;
+      color += shadows * (1.0 - smoothstep(0.0, 0.55, luminosity)) * 0.32;
+      color += brightness * 0.30;
+      color = (color - 0.5) * (1.0 + contrast * 0.90) + 0.5;
+      color -= blackPoint * (1.0 - smoothstep(0.0, 0.55, luminosity)) * 0.35;
+
+      color = adjustSaturation(color, u_saturation * 0.85);
+      vec3 hsv = rgbToHsv(clamp(color, 0.0, 1.0));
+      float vibranceMask = 1.0 - hsv.y;
+      hsv.y = clamp(hsv.y + u_vibrance * vibranceMask * 0.75, 0.0, 1.0);
+      color = hsvToRgb(hsv);
+
+      color = mix(color, vec3(luma(color)), u_blackAndWhite);
+      color = mix(color, preset(color, u_filter), u_filterStrength);
+
+      float radius = distance(v_uv, vec2(0.5)) / 0.70710678;
+      float vignetteMask = smoothstep(0.34, 1.0, radius);
+      color *= 1.0 - vignetteMask * u_vignette * 0.78;
+      color += vec3((grainNoise(v_uv) - 0.5) * u_grain * 0.16);
+      outColor = vec4(clamp(color, 0.0, 1.0), 1.0);
+    }
+  `;
+
+  function cloneDefaults() {
+    return JSON.parse(JSON.stringify(DEFAULTS));
+  }
+
+  function compile(gl, type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      const message = gl.getShaderInfoLog(shader);
+      gl.deleteShader(shader);
+      throw new Error(`Shader photo invalide : ${message}`);
+    }
+    return shader;
+  }
+
+  function program(gl) {
+    const result = gl.createProgram();
+    gl.attachShader(result, compile(gl, gl.VERTEX_SHADER, VERTEX_SHADER));
+    gl.attachShader(result, compile(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER));
+    gl.linkProgram(result);
+    if (!gl.getProgramParameter(result, gl.LINK_STATUS)) {
+      const message = gl.getProgramInfoLog(result);
+      gl.deleteProgram(result);
+      throw new Error(`Pipeline photo invalide : ${message}`);
+    }
+    return result;
+  }
+
+  function percentage(value) {
+    return Number(value) / 100;
+  }
+
+  class ZRPhotoAdjustments {
+    constructor(canvas) {
+      if (!(canvas instanceof HTMLCanvasElement)) throw new TypeError("Un canvas HTML est requis");
+      this.canvas = canvas;
+      this.gl = canvas.getContext("webgl2", {
+        alpha: false,
+        antialias: false,
+        depth: false,
+        preserveDrawingBuffer: true,
+        premultipliedAlpha: false
+      });
+      if (!this.gl) throw new Error("WebGL 2 est requis pour les réglages photo");
+      this.program = program(this.gl);
+      this.values = cloneDefaults();
+      this.texture = this.gl.createTexture();
+      this.ready = false;
+      this.locations = {};
+      this.setupGeometry();
+      this.setupTexture();
+    }
+
+    setupGeometry() {
+      const gl = this.gl;
+      gl.useProgram(this.program);
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
+      const location = gl.getAttribLocation(this.program, "a_position");
+      if (location < 0) throw new Error("Attribut a_position introuvable");
+      gl.enableVertexAttribArray(location);
+      gl.vertexAttribPointer(location, 2, gl.FLOAT, false, 0, 0);
+    }
+
+    setupTexture() {
+      const gl = this.gl;
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, this.texture);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      gl.pixelStorei(gl.UNPACK_COLORSPACE_CONVERSION_WEBGL, gl.NONE);
+      gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+      gl.uniform1i(this.location("u_image"), 0);
+    }
+
+    location(name) {
+      if (!(name in this.locations)) {
+        const location = this.gl.getUniformLocation(this.program, name);
+        if (location === null) throw new Error(`Uniforme photo introuvable : ${name}`);
+        this.locations[name] = location;
+      }
+      return this.locations[name];
+    }
+
+    setImage(image) {
+      if (!(image instanceof HTMLImageElement || image instanceof ImageBitmap || image instanceof HTMLCanvasElement)) {
+        throw new TypeError("Image, ImageBitmap ou canvas requis");
+      }
+      const width = image.naturalWidth || image.width;
+      const height = image.naturalHeight || image.height;
+      if (!width || !height) throw new Error("L’image doit être chargée avant setImage")
+      this.canvas.width = width;
+      this.canvas.height = height;
+      const gl = this.gl;
+      gl.viewport(0, 0, width, height);
+      gl.bindTexture(gl.TEXTURE_2D, this.texture);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+      this.ready = true;
+      this.render();
+    }
+
+    set(values) {
+      this.values = Object.assign(cloneDefaults(), values || {});
+      this.values.levels = Object.assign({}, DEFAULTS.levels, values && values.levels);
+      this.values.selective = DEFAULTS.selective.map((fallback, index) =>
+        Object.assign({}, fallback, values && values.selective && values.selective[index])
+      );
+      this.render();
+    }
+
+    render() {
+      if (!this.ready) return;
+      const gl = this.gl;
+      const value = this.values;
+      const level = value.levels;
+      gl.useProgram(this.program);
+      gl.uniform1f(this.location("u_vignette"), percentage(value.vignette));
+      gl.uniform1f(this.location("u_grain"), percentage(value.grain));
+      gl.uniform3fv(this.location("u_selective[0]"), new Float32Array(value.selective.flatMap(item => [
+        percentage(item.hue), percentage(item.saturation), percentage(item.luminance)
+      ])));
+      gl.uniform4f(this.location("u_levels"), level.inputBlack / 100, level.midtone / 100, level.inputWhite / 100, level.outputBlack / 100);
+      gl.uniform1f(this.location("u_outputWhite"), level.outputWhite / 100);
+      gl.uniform1f(this.location("u_blackAndWhite"), percentage(value.blackAndWhite));
+      gl.uniform1f(this.location("u_saturation"), percentage(value.saturation));
+      gl.uniform1f(this.location("u_vibrance"), percentage(value.vibrance));
+      gl.uniform4f(this.location("u_lightA"), percentage(value.brilliance), percentage(value.exposure), percentage(value.highlights), percentage(value.shadows));
+      gl.uniform3f(this.location("u_lightB"), percentage(value.brightness), percentage(value.contrast), percentage(value.blackPoint));
+      const filterId = FILTERS.indexOf(value.filter);
+      if (filterId < 0) throw new Error(`Filtre inconnu : ${value.filter}`);
+      gl.uniform1i(this.location("u_filter"), filterId);
+      gl.uniform1f(this.location("u_filterStrength"), percentage(value.filterStrength));
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
+
+    exportBlob(type = "image/png", quality) {
+      return new Promise((resolve, reject) => {
+        this.canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("Export du canvas impossible")), type, quality);
+      });
+    }
+
+    static defaults() {
+      return cloneDefaults();
+    }
+
+    static filters() {
+      return [...FILTERS];
+    }
+  }
+
+  window.ZRPhotoAdjustments = ZRPhotoAdjustments;
+})();

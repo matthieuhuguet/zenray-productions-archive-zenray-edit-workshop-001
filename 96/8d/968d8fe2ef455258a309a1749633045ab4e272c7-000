@@ -1,0 +1,19 @@
+## ZenRay Studio, le store : design consigné et site en ligne (2026-09-11)
+
+Les trois entités de Matthieu ne se confondent pas : **ZenRayWebsite** est matthieuhuguet.com, le
+blog et portfolio ; **ZenRayStudio** est le store, `zenray.studio`, qui doit rapporter 10 000 à
+15 000 € en trois mois pour le retour au Japon ; **ZenRayProgress** est le drive, dashboard et
+fichiers. Ce skill porte le DESIGN du store, son dépôt porte le site.
+
+Le gabarit vit dans `templates/zenray-studio/`, sous deux états d'un même design, et son
+`README.md` fait foi pour tout le reste (mise en ligne, ajout d'un produit, pièges) :
+
+| État | Chemin | Contenu |
+|---|---|---|
+| Maquette validée | `templates/zenray-studio/01-maquette-portfolio/` | images réelles, aperçus clair et sombre |
+| Version publiée | `templates/zenray-studio/02-store-final/` | même design, zéro image, trois projets Lorem Ipsum |
+
+Registre des designs : `templates/designs/index.json`, entrée `zenray-studio-store-galerie`.
+En ligne : https://zenray.studio (projet Cloudflare Pages `zenray-studio`, upload direct). Dépôt : `Productions/GithubProductions/ZenRayStudio`. Un vrai produit remplace une entrée
+Lorem dans la couche de données, jamais dans le balisage.
+

@@ -1,0 +1,573 @@
+#!/usr/bin/env python3
+"""Cree une instance d'outil zenray-html-hda depuis un gabarit, sans regenerer
+une seule ligne de HTML.
+
+Pourquoi ce script existe. Les premieres instances ont ete ecrites a la main,
+liste d'images comprise, ce qui coutait plus de 30 000 tokens et plusieurs
+minutes par projet. C'etait une faute HDA : la definition (le gabarit) doit
+etre unique, et le projet ne doit etre qu'un jeu de parametres. Ici, le seul
+bloc qui depend du projet est `@zr-instance` dans le HTML, et ce script l'ecrit.
+
+Usage
+    zr-hda-instance.py <dossier-images> [--mode light|heavy] [--project NOM]
+                       [--format 4:5] [--dest DOSSIER] [--open] [--force]
+
+Exemples
+    # Cadrage d'un lot de photos, format 4:5, ouverture dans Chrome
+    zr-hda-instance.py ~/.claude/tmp/mon-post --open
+
+    # Retouche + reorder d'un out/ deja cadre (poupee russe)
+    zr-hda-instance.py ~/.claude/tmp/mon-post/zenray-html-hda-mon-post/out \\
+        --mode heavy --open
+"""
+import argparse
+import hashlib
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import time
+from datetime import datetime
+from pathlib import Path
+
+SKILL = Path(__file__).resolve().parent.parent
+TEMPLATES = SKILL / "templates"
+INSTANCES_INDEX = SKILL / "instances" / "INDEX.md"
+
+IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".webp", ".tif", ".tiff", ".heic", ".JPG", ".JPEG", ".PNG"}
+FORMATS = {"4:5", "1:1", "9:16", "16:9", "1:2", "3:4", "2:3", "4:3", "source"}
+FORMAT_RATIOS = {
+    "4:5": 0.8, "1:1": 1.0, "9:16": 0.5625, "16:9": 1.7778,
+    "1:2": 0.5, "3:4": 0.75, "2:3": 0.6667, "4:3": 1.3333,
+}
+
+
+def measure(path):
+    """Dimensions en pixels. Pillow si dispo, sinon `sips`, natif macOS."""
+    try:
+        from PIL import Image
+        with Image.open(path) as im:
+            return im.size
+    except Exception:
+        try:
+            out = subprocess.run(["sips", "-g", "pixelWidth", "-g", "pixelHeight", str(path)],
+                                 capture_output=True, text=True, check=True).stdout
+            w = int(re.search(r"pixelWidth:\s*(\d+)", out).group(1))
+            h = int(re.search(r"pixelHeight:\s*(\d+)", out).group(1))
+            return w, h
+        except Exception:
+            return 0, 0
+
+
+POST_FORMATS = {key for key in FORMATS if key not in {'source', '1:2'}}
+POST_DEFAULTS = {'text': '', 'format': '4:5', 'limit': 2200}
+
+
+def load_post(path):
+    """2026-09-03 13:26 JST : ne jamais réécrire un brouillon existant."""
+    if path is None:
+        return dict(POST_DEFAULTS)
+    content = path.read_text(encoding='utf-8')
+    value = json.loads(content) if path.suffix.lower() == '.json' else {'text': content}
+    if not isinstance(value, dict):
+        raise ValueError('post : objet JSON attendu')
+    post = {**POST_DEFAULTS, **value}
+    if not isinstance(post['text'], str):
+        raise ValueError('post.text : texte attendu')
+    if post['format'] not in POST_FORMATS:
+        raise ValueError('post.format : format non reconnu')
+    if type(post['limit']) is not int or post['limit'] < 1:
+        raise ValueError('post.limit : entier positif attendu')
+    return post
+
+
+def prepare_post(source_dir, dest, requested):
+    existing = dest / '_post.json'
+    candidate = requested or (source_dir / '_post.json' if (source_dir / '_post.json').exists() else None)
+    if existing.exists():
+        saved = load_post(existing)
+        if requested and load_post(requested) != saved:
+            raise ValueError('_post.json existe : brouillon conservé. Importer la nouvelle version dans l’atelier ou choisir une nouvelle destination.')
+        return saved
+    return load_post(candidate)
+
+
+def build_previews(images, dest, max_width=1400, quality=82):
+    """Ecrit `_previews.js`, un dictionnaire id -> data URI JPEG reduite.
+
+    Pourquoi c'est indispensable et pas un confort. WebGL REFUSE une texture
+    issue d'une origine opaque, ce qu'est tout fichier ouvert en `file://` : le
+    cadre central du mode heavy restait noir alors que les vignettes (de
+    simples `<img>`, qui n'ont pas cette restriction) s'affichaient. Servir en
+    localhost reglait le probleme mais ajoutait une dependance fragile, un
+    process qui doit tourner ; des qu'il s'arrete, l'outil redevient noir. Une
+    data URI, elle, est TOUJOURS same-origin : l'instance fonctionne alors en
+    double-cliquant le fichier, sans serveur, sans reseau, definitivement.
+
+    L'apercu est reduit a `max_width` : l'ecran n'affiche jamais plus de
+    quelques centaines de pixels, et le cook Python travaille de toute facon
+    sur les ORIGINAUX pleine resolution lus depuis `_index.json`. La qualite
+    finale n'est donc pas affectee, seul le poids du HTML l'est.
+    """
+    from base64 import b64encode
+    from io import BytesIO
+
+    try:
+        from PIL import Image, ImageOps
+    except ImportError:
+        print("Pillow absent : previews non embarquees, le mode heavy exigera un service local")
+        return None
+
+    entries = []
+    total = 0
+    for image in images:
+        with Image.open(image["path"]) as raw:
+            preview = ImageOps.exif_transpose(raw).convert("RGB")
+        if preview.width > max_width:
+            height = round(preview.height * max_width / preview.width)
+            preview = preview.resize((max_width, height), Image.LANCZOS)
+        buffer = BytesIO()
+        preview.save(buffer, "JPEG", quality=quality, optimize=True)
+        payload = b64encode(buffer.getvalue()).decode("ascii")
+        total += len(payload)
+        entries.append(f'  "{image["id"]}": "data:image/jpeg;base64,{payload}"')
+
+    body = ",\n".join(entries)
+    (dest / "_previews.js").write_text(
+        "// Apercus embarques, generes par zr-hda-instance.py.\n"
+        "// Une data URI est same-origin : WebGL l'accepte meme en file://, ce qu'il\n"
+        "// refuse pour un fichier local. C'est ce qui rend l'instance autonome.\n"
+        "// Le rendu FINAL n'utilise jamais ces apercus : le cook lit les originaux.\n"
+        f"window.ZR_PREVIEWS = {{\n{body}\n}};\n"
+    )
+    return total
+
+
+def collect_images(source_dir, only=None):
+    files = [only] if only else sorted(
+        (p for p in source_dir.iterdir()
+         if p.is_file() and p.suffix in IMAGE_SUFFIXES and not p.name.startswith(".")),
+        key=lambda p: p.name.lower(),
+    )
+    images = []
+    for position, path in enumerate(files, start=1):
+        width, height = measure(path)
+        images.append({
+            "id": f"{position:02d}",
+            "file": path.name,
+            "path": str(path),
+            "width": width,
+            "height": height,
+        })
+    return images
+
+
+def render_template(mode, dest, project, source_dir, images, target_format, post):
+    template_dir = TEMPLATES / f"hda-{mode}"
+    if not template_dir.is_dir():
+        raise SystemExit(f"gabarit introuvable : {template_dir}")
+
+    dest.mkdir(parents=True, exist_ok=True)
+    for item in template_dir.iterdir():
+        target = dest / item.name
+        if item.is_dir():
+            shutil.copytree(item, target, dirs_exist_ok=True)
+        else:
+            shutil.copy2(item, target)
+
+    html_path = dest / "index.html"
+    html = html_path.read_text()
+
+    # Le JS porte l'id, le nom ET les dimensions REELLES de l'original : ce sont
+    # elles qui servent a l'auto-fit du texte et au choix du nombre d'ancres,
+    # jamais celles de l'apercu reduit, sans quoi une taille en px annoncee ne
+    # correspondrait pas au JPEG final.
+    light_images = [
+        {"id": i["id"], "file": i["file"], "w": i["width"], "h": i["height"]}
+        for i in images
+    ]
+    payload = json.dumps(light_images, indent=4, ensure_ascii=False)
+    payload = payload.replace("\n", "\n  ")
+
+    # Chemin RELATIF, jamais `file://` absolu. Deux raisons, la seconde est
+    # bloquante : un chemin relatif marche aussi bien en file:// qu'en http, et
+    # surtout WebGL REFUSE une texture issue d'une origine opaque, ce qu'est
+    # tout fichier ouvert en file://. Avec `file://`, le canvas du mode heavy
+    # restait vide alors que les vignettes s'affichaient (elles, ne passent pas
+    # par texImage2D). En relatif plus service local, tout est same-origin.
+    relative = os.path.relpath(source_dir, dest)
+    substitutions = {
+        "__ZR_PROJECT__": project,
+        "__ZR_SOURCE_DIR__": relative.rstrip("/") + "/",
+        "__ZR_IMAGES__": payload,
+        "__ZR_DEFAULT_FORMAT__": target_format,
+    }
+    for key, value in substitutions.items():
+        html = html.replace(key, value)
+
+    leftover = sorted(set(re.findall(r"__ZR_[A-Z_]+__", html)))
+    if leftover:
+        raise SystemExit(f"parametres non substitues : {leftover}")
+    html_path.write_text(html)
+
+    shutil.copytree(SKILL / 'assets/post-editor', dest / 'assets/post-editor', dirs_exist_ok=True)
+    shutil.copytree(SKILL / 'assets/ui', dest / 'assets/ui', dirs_exist_ok=True)
+    post_path = dest / '_post.json'
+    if not post_path.exists():
+        post_path.write_text(json.dumps(post, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    post_json = json.dumps(post, ensure_ascii=False, sort_keys=True)
+    data = {'project': project, 'post': post, 'revision': hashlib.sha256(post_json.encode()).hexdigest()}
+    (dest / '_post-data.js').write_text('window.ZR_POST_DATA = ' + json.dumps(data, ensure_ascii=True) + ';\n', encoding='utf-8')
+
+    (dest / "_index.json").write_text(json.dumps(
+        {"dossier_source": str(source_dir), "images": images}, indent=2, ensure_ascii=False) + "\n")
+
+    params_path = dest / "_params.json"
+    source_params = source_dir / "_params.json"
+    if not params_path.exists() and source_params.exists():
+        shutil.copy2(source_params, params_path)
+
+    if params_path.exists():
+        try:
+            pdata = json.loads(params_path.read_text(encoding="utf-8"))
+            (dest / "_params.js").write_text(
+                "window.ZR_PARAMS = " + json.dumps(pdata, ensure_ascii=False) + ";\n", encoding="utf-8"
+            )
+        except Exception:
+            (dest / "_params.js").write_text("window.ZR_PARAMS = null;\n", encoding="utf-8")
+    elif not (dest / "_params.js").exists():
+        (dest / "_params.js").write_text("window.ZR_PARAMS = null;\n", encoding="utf-8")
+
+    # Le mode heavy lit des pixels (WebGL), donc il lui faut des apercus
+    # same-origin pour fonctionner en file://. Le light n'affiche que des
+    # `<img>`, qui n'ont pas cette restriction : inutile de l'alourdir.
+    if mode == "heavy":
+        weight = build_previews(images, dest)
+        if weight:
+            print(f"apercus embarques : {weight / 1_048_576:.1f} Mo en data URI, "
+                  f"l'instance fonctionne sans serveur")
+    return html_path
+
+
+def register(dest, mode, project, count, source_dir):
+    INSTANCES_INDEX.parent.mkdir(parents=True, exist_ok=True)
+    if not INSTANCES_INDEX.exists():
+        INSTANCES_INDEX.write_text(
+            "# Instances zenray-html-hda\n\n"
+            "Registre append-only des outils crees depuis `templates/`. Une ligne par\n"
+            "instance : la relire coute quelques dizaines de tokens, la recreer a la main\n"
+            "en coutait plus de trente mille.\n\n"
+            "| Date | Mode | Projet | Images | Dossier |\n"
+            "|---|---|---|---|---|\n"
+        )
+    stamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+    line = f"| {stamp} | {mode} | {project} | {count} | `{dest}` |\n"
+    with INSTANCES_INDEX.open("a") as handle:
+        handle.write(line)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Cree une instance d'outil zenray-html-hda.")
+    parser.add_argument("source", type=Path, help="dossier d'images ou image unique")
+    parser.add_argument("--mode", choices=("light", "heavy"), default="light",
+                        help="light = cadrage et texte ; heavy = reorder, photo et texte")
+    parser.add_argument("--project", default=None, help="nom parlant (defaut : nom du dossier source)")
+    parser.add_argument("--format", dest="target_format", default="4:5", choices=sorted(FORMATS),
+                        help="format cible du mode light (defaut 4:5)")
+    parser.add_argument("--dest", type=Path, default=None, help="dossier de l'instance")
+    parser.add_argument("--open", action="store_true", help="emit the URL for opening in the agent internal browser")
+    parser.add_argument("--serve", action="store_true",
+                        help="forcer le service local (automatique en mode heavy, que WebGL impose)")
+    parser.add_argument("--force", action="store_true", help="ecraser une instance existante")
+    parser.add_argument("--post", type=Path, help="brouillon préparé .txt, .md ou .json, sans réécriture automatique")
+    args = parser.parse_args()
+    args.format_given = any(a.startswith("--format") for a in sys.argv[1:])
+
+    source_path = args.source.expanduser().resolve()
+    if source_path.is_dir():
+        source_dir, only = source_path, None
+    elif source_path.is_file() and source_path.suffix in IMAGE_SUFFIXES:
+        source_dir, only = source_path.parent, source_path
+    else:
+        raise SystemExit(f"source image ou dossier introuvable : {source_path}")
+
+    project = args.project or (source_path.stem if only else source_dir.name)
+    dest = (args.dest.expanduser().resolve() if args.dest
+            else source_dir / f"zenray-html-hda-{project}")
+    if args.mode == "heavy" and not args.dest:
+        dest = source_dir / f"zenray-html-hda-{project}-heavy"
+
+    if dest.exists() and not args.force:
+        raise SystemExit(f"l'instance existe deja : {dest}\nrelancer avec --force pour l'ecraser")
+
+    images = collect_images(source_dir, only)
+    if not images:
+        raise SystemExit(f"aucune image trouvee dans {source_dir}")
+
+    # Le cadrage se met en route TOUT SEUL quand il est utile, et reste neutre
+    # sinon. Un lot deja passe par une etape de cadrage a toutes ses images au
+    # meme rapport : le recadrer une seconde fois n'aurait pas de sens, donc le
+    # format demarre sur « source ». Un lot brut, aux rapports melanges ou
+    # differents de la cible, demarre sur le format demande.
+    target_format = args.target_format
+    if args.mode == "heavy" and not args.format_given:
+        ratios = {round(i["width"] / i["height"], 4) for i in images if i["height"]}
+        wanted = FORMAT_RATIOS.get(args.target_format)
+        already = len(ratios) == 1 and wanted and abs(ratios.pop() - wanted) < 0.01
+        target_format = "source" if already else args.target_format
+
+    try:
+        post = prepare_post(source_dir, dest, args.post.expanduser().resolve() if args.post else None)
+    except (OSError, ValueError) as error:
+        raise SystemExit(str(error)) from error
+    if dest.exists():
+        history = dest / '.hda-history' / datetime.now().strftime('%Y%m%d-%H%M%S-%f')
+        history.mkdir(parents=True)
+        for previous in ('index.html', '_index.json', '_previews.js', '_post-data.js', 'assets', 'photo-apply.py', 'crop-apply.py'):
+            path = dest / previous
+            if path.is_dir():
+                shutil.copytree(path, history / previous)
+            elif path.exists():
+                shutil.copy2(path, history / previous)
+    html_path = render_template(args.mode, dest, project, source_dir, images, target_format, post)
+    # 2026-09-02, une regeneration ne cree pas une seconde instance dans le
+    # registre : elle met a niveau la definition, les reglages locaux restent.
+    if not args.force:
+        register(dest, args.mode, project, len(images), dest)
+
+    print(f"instance {args.mode} creee : {dest}")
+    print(f"{len(images)} images indexees, format {args.target_format}")
+    for image in images[:3]:
+        print(f"  {image['id']}  {image['file']}  {image['width']}x{image['height']}")
+    if len(images) > 3:
+        print(f"  ... et {len(images) - 3} autres")
+    if args.mode == "heavy":
+        print(f"\ninstance servie automatiquement : les boutons Export/Enregistrer/Cuire "
+              f"ecrivent directement dans {dest.name}/out")
+    else:
+        print(f"\nregler dans le navigateur, copier, coller dans "
+              f"{dest.name}/_crop_params.json, puis : python3 crop-apply.py")
+
+    # Le mode heavy EXIGE http, et pas seulement pour l'ouverture : WebGL refuse
+    # une texture file:// (origine opaque), et les boutons Export/Enregistrer/
+    # Cuire ont besoin des routes /zr-enregistrer et /zr-cuire, qui n'existent
+    # que si un serveur tourne. Donc le mode heavy sert TOUJOURS, meme sans
+    # --serve ni --open : un bouton Export qui ne peut jamais ecrire sur le
+    # disque est un bouton casse, pas un mode degrade acceptable. Le mode light
+    # reste en file:// par defaut, --serve y reste un choix explicite.
+    if args.mode == "heavy" or args.serve:
+        serve(dest, source_dir, html_path, open_requested=args.open)
+    elif args.open:
+        print(json.dumps({"openUrl": html_path.as_uri(), "browser": "internal"}))
+
+
+def serve(dest, source_dir, html_path, open_requested=True):
+    """Sert le dossier PARENT (celui des images) pour que l'outil et ses images
+    partagent la meme origine, puis ouvre Chrome sur l'instance."""
+    import http.server
+    import socketserver
+    import threading
+
+    root = source_dir
+    relative = os.path.relpath(html_path, root)
+
+    instance_dir = Path(html_path).parent
+    cook_script = "photo-apply.py" if (instance_dir / "photo-apply.py").exists() else "crop-apply.py"
+    params_name = "_params.json" if cook_script == "photo-apply.py" else "_crop_params.json"
+
+    class Handler(http.server.SimpleHTTPRequestHandler):
+        """Deux routes en plus du service de fichiers, et deux seulement : ecrire les reglages,
+        et lancer le cook. Aucun chemin ne vient du client, donc rien d'arbitraire ne s'execute."""
+
+        def __init__(self, *a, **kw):
+            super().__init__(*a, directory=str(root), **kw)
+
+        def log_message(self, *a):
+            pass
+
+        def _json(self, code, payload):
+            body = json.dumps(payload, ensure_ascii=False).encode()
+            self.send_response(code)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+
+        def do_GET(self):
+            if self.path.rstrip("/") == "/zr-capacites":
+                # L'outil DEMANDE ce que l'hote sait faire, au lieu de le supposer.
+                return self._json(200, {"enregistrer": True, "cuire": True, "discard": True, "restore": True, "cook": cook_script})
+            # Si le fichier demande est dans _deprecated, le servir depuis _deprecated
+            rel = self.path.lstrip("/").split("?")[0]
+            if rel and not (root / rel).exists() and (root / "_deprecated" / rel).is_file():
+                self.path = "/_deprecated/" + rel
+            return super().do_GET()
+
+        def do_POST(self):
+            route = self.path.split("?")[0].rstrip("/")
+            if route not in ("/zr-enregistrer", "/zr-cuire", "/zr-discard", "/zr-restore"):
+                return self._json(404, {"ok": False, "erreur": "route inconnue"})
+            try:
+                taille = int(self.headers.get("Content-Length") or 0)
+                if taille <= 0 or taille > 64 * 1024 * 1024:
+                    raise ValueError("corps absent ou demesure")
+                donnees = json.loads(self.rfile.read(taille).decode("utf-8"))
+            except Exception as err:
+                return self._json(400, {"ok": False, "erreur": str(err)})
+
+            if route == "/zr-discard":
+                items = donnees.get("items")
+                if not items:
+                    file_name = donnees.get("file")
+                    image_id = donnees.get("id")
+                    if not file_name:
+                        return self._json(400, {"ok": False, "erreur": "nom de fichier manquant"})
+                    items = [{"id": image_id, "file": file_name}]
+
+                dep_dir = root / "_deprecated"
+                dep_dir.mkdir(parents=True, exist_ok=True)
+
+                deplaces = []
+                ids_ecartes = set()
+                files_ecartes = set()
+
+                for item in items:
+                    fname = item.get("file")
+                    iid = item.get("id")
+                    if not fname:
+                        continue
+                    if iid:
+                        ids_ecartes.add(iid)
+                    files_ecartes.add(fname)
+
+                    src_file = root / fname
+                    target = dep_dir / fname
+                    if src_file.exists():
+                        shutil.move(str(src_file), str(target))
+                        deplaces.append(fname)
+                    elif target.exists():
+                        deplaces.append(fname)
+
+                index_path = instance_dir / "_index.json"
+                if index_path.exists():
+                    try:
+                        idx_data = json.loads(index_path.read_text(encoding="utf-8"))
+                        for img in idx_data.get("images", []):
+                            if img.get("file") in files_ecartes or img.get("id") in ids_ecartes:
+                                img["discarded"] = True
+                        index_path.write_text(json.dumps(idx_data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                    except Exception:
+                        pass
+
+                cible = instance_dir / params_name
+                if cible.exists():
+                    try:
+                        pdata = json.loads(cible.read_text(encoding="utf-8"))
+                        if "images" in pdata:
+                            for iid in ids_ecartes:
+                                if iid in pdata["images"]:
+                                    pdata["images"][iid]["discarded"] = True
+                        cible.write_text(json.dumps(pdata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                    except Exception:
+                        pass
+
+                return self._json(200, {"ok": True, "deplaces": deplaces, "discarded": True})
+
+            if route == "/zr-restore":
+                items = donnees.get("items")
+                if not items:
+                    file_name = donnees.get("file")
+                    image_id = donnees.get("id")
+                    if not file_name:
+                        return self._json(400, {"ok": False, "erreur": "nom de fichier manquant"})
+                    items = [{"id": image_id, "file": file_name}]
+
+                dep_dir = root / "_deprecated"
+                restaures = []
+                ids_restaures = set()
+                files_restaures = set()
+
+                for item in items:
+                    fname = item.get("file")
+                    iid = item.get("id")
+                    if not fname:
+                        continue
+                    if iid:
+                        ids_restaures.add(iid)
+                    files_restaures.add(fname)
+
+                    src_file = dep_dir / fname
+                    target = root / fname
+                    if src_file.exists():
+                        shutil.move(str(src_file), str(target))
+                        restaures.append(fname)
+                    elif target.exists():
+                        restaures.append(fname)
+
+                index_path = instance_dir / "_index.json"
+                if index_path.exists():
+                    try:
+                        idx_data = json.loads(index_path.read_text(encoding="utf-8"))
+                        for img in idx_data.get("images", []):
+                            if img.get("file") in files_restaures or img.get("id") in ids_restaures:
+                                img["discarded"] = False
+                        index_path.write_text(json.dumps(idx_data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                    except Exception:
+                        pass
+
+                cible = instance_dir / params_name
+                if cible.exists():
+                    try:
+                        pdata = json.loads(cible.read_text(encoding="utf-8"))
+                        if "images" in pdata:
+                            for iid in ids_restaures:
+                                if iid in pdata["images"]:
+                                    pdata["images"][iid]["discarded"] = False
+                        cible.write_text(json.dumps(pdata, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                    except Exception:
+                        pass
+
+                return self._json(200, {"ok": True, "restaures": restaures, "discarded": False})
+
+            if not isinstance(donnees, dict) or "images" not in donnees:
+                return self._json(400, {"ok": False, "erreur": "bloc de reglages invalide"})
+
+            cible = instance_dir / params_name
+            # Le travail precedent n'est jamais efface en silence.
+            if cible.exists():
+                archive = instance_dir / ".hda-history"
+                archive.mkdir(exist_ok=True)
+                shutil.copy2(cible, archive / f"{params_name}.{time.strftime('%Y%m%d-%H%M%S')}")
+            cible.write_text(json.dumps(donnees, ensure_ascii=False, indent=2), encoding="utf-8")
+
+            if route == "/zr-enregistrer":
+                return self._json(200, {"ok": True, "fichier": str(cible), "action": "enregistre"})
+
+            rendu = subprocess.run([sys.executable, cook_script], cwd=str(instance_dir),
+                                   capture_output=True, text=True)
+            sorties = sorted((instance_dir / "out").glob("*.jpg")) if (instance_dir / "out").exists() else []
+            return self._json(200 if rendu.returncode == 0 else 500, {
+                "ok": rendu.returncode == 0,
+                "action": "cuit",
+                "images": len(sorties),
+                "journal": (rendu.stdout or rendu.stderr or "").strip().splitlines()[-6:],
+            })
+
+    with socketserver.TCPServer(("127.0.0.1", 0), Handler) as httpd:
+        port = httpd.server_address[1]
+        url = f"http://127.0.0.1:{port}/{relative}"
+        threading.Thread(target=httpd.serve_forever, daemon=True).start()
+        if open_requested:
+            print(json.dumps({"openUrl": url, "browser": "internal"}))
+        print(f"\nservi sur {url}")
+        print("laisser cette commande tourner tant que l'outil est ouvert ; Ctrl+C pour arreter")
+        try:
+            threading.Event().wait()
+        except KeyboardInterrupt:
+            print("\nserveur arrete")
+
+
+if __name__ == "__main__":
+    sys.exit(main())

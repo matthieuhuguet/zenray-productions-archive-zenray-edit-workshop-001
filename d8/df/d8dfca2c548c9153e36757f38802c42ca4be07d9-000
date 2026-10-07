@@ -1,0 +1,5 @@
+#!/bin/bash
+# Render with one configuration and preserve the master. (7 October 2026, 17:00 Europe/Paris)
+set -euo pipefail
+INSTANCE_ROOT="$(cd "$(dirname "$0")" && pwd)"
+exec node "$INSTANCE_ROOT/Scripts/RenderComposition.cjs" --directory "$INSTANCE_ROOT" "$@"

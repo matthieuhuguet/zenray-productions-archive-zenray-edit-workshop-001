@@ -1,0 +1,1571 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>zenray-html-hda</title>
+<link rel="stylesheet" href="assets/ui/fonts.css">
+<script src="assets/ui/zr-ui.js"></script>
+<style>
+  /* Sept graisses reelles AnthropicSerif (memes fichiers statiques que le
+     trio typographique global), une seule famille CSS : le navigateur
+     choisit le fichier via font-weight. */
+  /* InterVariable couvre nativement tout l'axe wght 100-900, une seule face. */
+
+  :root {
+
+    --fmt-ratio: 4 / 5;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background:
+      radial-gradient(1200px 780px at 12% -8%, var(--zr-ui-line), transparent 62%),
+      radial-gradient(980px 720px at 92% 108%, rgba(90,120,190,.13), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font: 400 13px/1.45 var(--zr-police-sans);
+  }
+  header.top {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+    padding: 14px 22px; background: var(--panel);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 8px 24px rgba(0,0,0,.35);
+  }
+  header.top h1 { font-family: var(--zr-police-serif); font-size: 18px;
+    font-weight: var(--zr-poids-serif); margin: 0; white-space: nowrap; }
+  header.top .sub { color: var(--muted); font-size: 11.5px; }
+  .field { display: flex; align-items: center; gap: 6px; }
+  .field label { color: var(--muted); font-size: 11.5px; }
+  select, input[type=text], input[type=number] {
+    background: #0f0f11; color: var(--text); border: 1px solid rgba(255,255,255,.14);
+    border-radius: 6px; padding: 5px 8px; font: inherit;
+  }
+  .spacer { flex: 1; }
+  button.primary {
+    background: var(--accent); color: #1a1a1a; border: none; border-radius: 7px;
+    padding: 9px 16px; font: 600 12.5px inherit; cursor: pointer; white-space: nowrap;
+  }
+  button.primary:active { transform: translateY(1px); }
+  .batch-out {
+    width: 100%; margin-top: 10px; display: none;
+  }
+  .batch-out.shown { display: block; }
+  .batch-out textarea {
+    width: 100%; min-height: 108px; resize: vertical;
+    background: #0f0f11; color: var(--accent); border: 1px solid rgba(255,255,255,.14);
+    border-radius: 8px; padding: 10px 12px; font: 400 11.5px/1.55 var(--zr-police-sans);
+  }
+
+  main {
+    display: grid; gap: 22px; padding: 22px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+
+  .card {
+    background: var(--card); border-radius: 12px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,.06);
+    box-shadow: 0 10px 26px rgba(0,0,0,.28);
+  }
+
+  .badge {
+    display: flex; align-items: baseline; gap: 8px;
+    padding: 10px 12px; background: rgba(255,255,255,.03);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .badge .id {
+    background: var(--accent); color: #1a1a1a; font: 400 12px var(--zr-police-serif);
+    border-radius: 5px; padding: 2px 7px; letter-spacing: .02em;
+  }
+  .badge .name {
+    font: 400 12px var(--zr-police-sans);
+    color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .badge .dims { margin-left: auto; color: var(--muted); font-size: 10.5px; white-space: nowrap; }
+
+  .crop-frame {
+    position: relative; overflow: hidden; background: #000;
+    aspect-ratio: var(--fmt-ratio);
+    container-type: inline-size;
+  }
+  .crop-frame img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: var(--px, 50%) var(--py, 50%);
+    /* 2026-09-03 : object-position repartit la marge de `cover` AVANT le scale, donc au zoom
+       la marge nouvelle n'est pas redistribuee et Position Y ne bouge rien. Cette translation
+       compense exactement cet ecart ; elle vaut zero au zoom 1, donc aucune regression. */
+    transform: translate(var(--tx, 0px), var(--ty, 0px))
+      scale(calc(var(--zoom, 1) * var(--safescale, 1))) rotate(var(--angle, 0deg));
+    transform-origin: center;
+    user-select: none; -webkit-user-drag: none;
+  }
+  .grain-overlay {
+    position: absolute; inset: 0; pointer-events: none;
+    opacity: calc(var(--grain, 0) / 100 * .34);
+    mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.58'/%3E%3C/svg%3E");
+  }
+  /* Grille de composition 3x3, cachee par defaut, submenu Affichage. Aucun
+     calcul de contraste en JS : mix-blend-mode: difference inverse localement
+     la ligne blanche contre chaque pixel qu'elle recouvre, blanche sur fond
+     sombre, noire sur fond clair, grise sur fond moyen, sans echantillonner
+     l'image. Le meme bloc que le mode heavy, copie tel quel : les deux
+     doivent toujours changer ensemble. */
+  .zr-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    display: none; mix-blend-mode: difference;
+    background-image:
+      linear-gradient(to right,
+        transparent calc(33.3333% - var(--zr-grid-thickness, 1px) / 2),
+        #fff calc(33.3333% - var(--zr-grid-thickness, 1px) / 2),
+        #fff calc(33.3333% + var(--zr-grid-thickness, 1px) / 2),
+        transparent calc(33.3333% + var(--zr-grid-thickness, 1px) / 2)),
+      linear-gradient(to right,
+        transparent calc(66.6667% - var(--zr-grid-thickness, 1px) / 2),
+        #fff calc(66.6667% - var(--zr-grid-thickness, 1px) / 2),
+        #fff calc(66.6667% + var(--zr-grid-thickness, 1px) / 2),
+        transparent calc(66.6667% + var(--zr-grid-thickness, 1px) / 2)),
+      linear-gradient(to bottom,
+        transparent calc(33.3333% - var(--zr-grid-thickness, 1px) / 2),
+        #fff calc(33.3333% - var(--zr-grid-thickness, 1px) / 2),
+        #fff calc(33.3333% + var(--zr-grid-thickness, 1px) / 2),
+        transparent calc(33.3333% + var(--zr-grid-thickness, 1px) / 2)),
+      linear-gradient(to bottom,
+        transparent calc(66.6667% - var(--zr-grid-thickness, 1px) / 2),
+        #fff calc(66.6667% - var(--zr-grid-thickness, 1px) / 2),
+        #fff calc(66.6667% + var(--zr-grid-thickness, 1px) / 2),
+        transparent calc(66.6667% + var(--zr-grid-thickness, 1px) / 2));
+  }
+  body.zr-grid-on .zr-grid { display: block; }
+  .zr-grid-menu { margin-left: 8px; }
+  .zr-grid-menu summary { cursor: pointer; color: var(--muted); font-size: 11.5px; list-style: none; }
+  .zr-grid-menu summary::-webkit-details-marker { display: none; }
+  .zr-grid-menu[open] summary { color: var(--text); }
+  .zr-grid-menu .field { margin-top: 6px; }
+
+  .text-overlays { position: absolute; inset: 0; pointer-events: none; }
+  .text-overlay {
+    position: absolute; left: 0; right: 0;
+    padding: 0 6%;
+    pointer-events: none; display: none;
+    line-height: 1.15; white-space: nowrap;
+  }
+  .text-overlay.shown { display: block; }
+  .text-overlay.font-serif { font-family: 'AnthropicSerif', 'Hiragino Mincho ProN W3', serif; }
+  .text-overlay.font-sans { font-family: 'InterVariable', 'Hiragino Sans W4', sans-serif; }
+  .text-overlay.anchor-v-top    { top: 6%; }
+  .text-overlay.anchor-v-middle { top: 50%; transform: translateY(-50%); }
+  .text-overlay.anchor-v-bottom { bottom: 6%; }
+  .text-overlay.anchor-h-left   { text-align: left; }
+  .text-overlay.anchor-h-center { text-align: center; }
+  .text-overlay.anchor-h-right  { text-align: right; }
+
+  .controls { padding: 12px 14px 14px; }
+  .slider-row { margin-bottom: 9px; }
+  .slider-row:last-of-type { margin-bottom: 12px; }
+  .slider-row .row-label {
+    display: flex; justify-content: space-between; margin-bottom: 3px;
+    font-size: 11px; color: var(--muted);
+  }
+  .slider-row .row-label b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+  input[type=range] {
+    width: 100%; accent-color: var(--accent);
+  }
+
+  /* Crans de pourcentage et propagation au lot */
+  .control-extra { display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+  .control-extra .step {
+    min-width: 22px; padding: 1px 5px; border-radius: 5px;
+    border: 1px solid rgba(255,255,255,.14); background: #2b2c2f;
+    color: var(--muted); font: 400 11px var(--zr-police-serif); cursor: pointer;
+  }
+  .control-extra .step.minor { min-width: 18px; padding: 0 4px; font-size: 8.5px; opacity: .62; }
+  .control-extra .step:hover { color: var(--text); border-color: rgba(255,255,255,.3); }
+  .apply-all {
+    margin-left: auto; padding: 2px 8px; border-radius: 5px;
+    border: 1px solid var(--zr-ui-line); background: transparent;
+    color: var(--accent); font: 600 9.5px inherit; cursor: pointer; white-space: nowrap;
+  }
+  .apply-all.done { background: var(--accent); color: #17140f; }
+  button.apply-everything {
+    width: 100%; min-height: 30px; margin-bottom: 10px;
+    border: 1px solid var(--zr-ui-line); border-radius: 8px;
+    background: transparent; color: var(--accent);
+    font: 600 11px inherit; cursor: pointer;
+  }
+  button.apply-everything.done { background: var(--accent); color: #17140f; }
+
+  /* Calques de texte, aucun par defaut, jusqu'a trois par image */
+  .layer-block {
+    margin-bottom: 9px; padding: 9px; border-radius: 10px;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+  }
+  .layer-head {
+    display: flex; align-items: center; gap: 7px; margin-bottom: 7px;
+    font-size: 11px; color: var(--muted);
+  }
+  .layer-head .idx {
+    background: var(--accent); color: #17140f; border-radius: 4px; padding: 1px 6px;
+    font: 400 12px var(--zr-police-serif);
+  }
+  .layer-head button {
+    margin-left: auto; background: transparent; border: 1px solid rgba(255,255,255,.2);
+    color: var(--muted); border-radius: 6px; padding: 3px 8px;
+    font: 600 10.5px inherit; cursor: pointer;
+  }
+  .layer-block input[type=text] { width: 100%; margin-bottom: 8px; }
+  .layer-block .row2 { display: flex; gap: 8px; margin-bottom: 8px; }
+  .layer-block .row2 select { flex: 1; min-width: 0; }
+  .layer-block .size-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .layer-block .size-row input[type=number] { width: 76px; }
+  .layer-block .size-effective { font-size: 10.5px; color: var(--muted); }
+  .layer-block .size-effective.adjusted { color: var(--accent); }
+  .layer-block .fx-row { margin-bottom: 8px; }
+  .fx-toggle {
+    width: 100%; margin-bottom: 6px; padding: 5px 8px; border-radius: 7px;
+    border: 1px solid rgba(255,255,255,.16); background: transparent; color: var(--muted);
+    font: 600 10.5px InterVariable, sans-serif; cursor: pointer; text-align: left;
+  }
+  .fx-toggle.on { border-color: var(--zr-ui-line); color: var(--accent); }
+  .fx-grid { display: flex; gap: 6px; }
+  .fx-grid.disabled { opacity: .38; pointer-events: none; }
+  .fx-field { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .fx-field span:first-child { font-size: 9.5px; color: var(--muted); }
+  .fx-field input[type=number] { width: 100%; }
+  .fx-field .fx-unit { font-size: 9px; color: var(--muted); }
+  .fx-field input[type=text] { width: 100%; min-height: 26px; padding: 3px 6px; border: 0; border-radius: 6px; background: #3a3a3a; color: #fff; font: 400 11.5px var(--zr-police-sans); }
+  .border-block { margin-bottom: 12px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); }
+  .border-side-row { display: flex; gap: 6px; margin-top: 6px; }
+  .border-side-row.disabled { opacity: .38; pointer-events: none; }
+  .border-side-row button {
+    flex: 1; min-width: 0; padding: 6px 4px; border-radius: 7px;
+    border: 1px solid rgba(255,255,255,.16); background: transparent; color: var(--muted);
+    font: 600 9.5px InterVariable, sans-serif; cursor: pointer;
+  }
+  .border-side-row button.active { background: var(--accent); border-color: var(--accent); color: #17140f; }
+  .border-warning {
+    display: none; margin-top: 7px; padding: 6px 8px; border-radius: 7px;
+    background: rgba(220,90,60,.18); border: 1px solid rgba(220,90,60,.4);
+    color: #ffb199; font: 600 10.5px InterVariable, sans-serif;
+  }
+  .border-warning.shown { display: block; }
+  .border-strip { position: absolute; }
+  .swatches-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 18px);
+    grid-gap: 5px;
+    align-items: center;
+  }
+  .swatches-grid.disabled { opacity: .38; pointer-events: none; }
+  .layer-block .swatches-grid { margin-bottom: 9px; }
+  .border-swatches { margin: 8px 0 3px; }
+  button.add-layer {
+    width: 100%; min-height: 32px; margin-bottom: 12px;
+    border: 1px dashed var(--zr-ui-line); border-radius: 9px;
+    background: transparent; color: var(--accent);
+    font: 600 11.5px inherit; cursor: pointer;
+  }
+  button.add-layer:disabled { opacity: .35; cursor: default; }
+  .swatch {
+    width: 18px; height: 18px; border-radius: 999px; cursor: pointer;
+    box-sizing: border-box; padding: 0; margin: 0;
+    border: 1px solid rgba(255,255,255,.24);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 1px 2px rgba(0,0,0,.25);
+    transition: transform .12s cubic-bezier(.16,1,.3,1), box-shadow .12s ease;
+    position: relative; outline: none;
+  }
+  .swatch:hover {
+    transform: scale(1.18); border-color: rgba(255,255,255,.7); z-index: 2;
+  }
+  .swatch.active {
+    box-shadow: 0 0 0 2px var(--accent), inset 0 1px 0 rgba(255,255,255,.5);
+    transform: scale(1.08); z-index: 1;
+  }
+  .swatch-wheel {
+    width: 18px; height: 18px; border-radius: 999px;
+    background: radial-gradient(circle at center, rgba(255,255,255,.75) 0%, rgba(255,255,255,.25) 18%, transparent 22%),
+                conic-gradient(from 0deg, #ff3b30, #f6cf47, #34c759, #00c7be, #007aff, #af52de, #ff3b30);
+    border: 1px solid rgba(255,255,255,.45);
+    box-shadow: inset 0 1px 1px rgba(255,255,255,.6), 0 1px 3px rgba(0,0,0,.28);
+    cursor: pointer; position: relative; overflow: hidden;
+    transition: transform .12s cubic-bezier(.16,1,.3,1), box-shadow .12s ease;
+    box-sizing: border-box;
+  }
+  .swatch-wheel:hover {
+    transform: scale(1.18); border-color: #fff; box-shadow: 0 0 6px rgba(255,255,255,.4);
+  }
+  .swatch-wheel.active {
+    box-shadow: 0 0 0 2px var(--accent), inset 0 1px 1px rgba(255,255,255,.8);
+    transform: scale(1.08);
+  }
+  .swatch-wheel input[type="color"] {
+    position: absolute; inset: -10px; width: 40px; height: 40px; opacity: 0; cursor: pointer;
+  }
+
+  .anchor-block { margin-bottom: 10px; }
+  .anchor-label { font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+  .anchor-widget {
+    display: grid; grid-template-columns: repeat(3, 18px); grid-template-rows: repeat(3, 18px);
+    gap: 3px;
+  }
+  .anchor-widget[data-mode="3"] { grid-template-columns: 18px; }
+  .anchor-widget[data-mode="3"] button[data-anchor$="-left"],
+  .anchor-widget[data-mode="3"] button[data-anchor$="-right"] { display: none; }
+  .anchor-widget button {
+    width: 18px; height: 18px; padding: 0; border-radius: 4px;
+    border: 1px solid rgba(255,255,255,.16); background: #0f0f11; cursor: pointer;
+  }
+  .anchor-widget button.active { background: var(--accent); border-color: var(--accent); }
+
+  .card-actions { display: flex; align-items: center; gap: 8px; }
+  button.copy {
+    flex: 0 0 auto; background: transparent; color: var(--accent);
+    border: 1px solid var(--accent); border-radius: 7px; padding: 7px 12px;
+    font: 600 11.5px inherit; cursor: pointer;
+  }
+  button.copy:active { transform: translateY(1px); }
+  button.discard-btn {
+    flex: 0 0 auto; background: transparent; color: #ff9f9f;
+    border: 1px solid rgba(238,112,112,.4); border-radius: 7px; padding: 7px 10px;
+    font: 600 11px inherit; cursor: pointer;
+  }
+  button.discard-btn:hover { background: rgba(238,112,112,.15); border-color: #ee7070; }
+  button.discard-btn:active { transform: translateY(1px); }
+  .copy-echo {
+    flex: 1; min-width: 0; font: 400 11px var(--zr-police-sans);
+    color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .copy-echo.done { color: var(--accent); }
+
+  footer {
+    padding: 10px 22px 34px; color: var(--muted); font-size: 11px;
+  }
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="assets/post-editor/zr-post-editor.css">
+<link rel="stylesheet" href="assets/ui/zr-ui.css">
+</head>
+<body>
+
+<header class="top">
+  <h1>zenray-html-hda · <span id="projectLabel"></span></h1>
+  <span class="sub" id="countLabel">9 photos</span>
+
+  <div class="field">
+    <label for="fmtSelect">Format</label>
+    <select id="fmtSelect"></select>
+  </div>
+  <span class="sub" id="resLabel"></span>
+
+  <details class="zr-grid-menu">
+    <summary>Affichage</summary>
+    <label class="field"><input type="checkbox" id="gridToggle"> Grille 3×3 (composition)</label>
+  </details>
+
+  <div class="spacer"></div>
+  <button class="primary" id="copyAllBtn">Copier TOUT (photos + post)</button>
+
+  <div class="batch-out" id="batchOut">
+    <textarea id="batchText" readonly></textarea>
+  </div>
+</header>
+
+<main id="grid"></main>
+
+<footer>
+  Cadre = format cible (object-fit: cover). Zoom &gt; 1 grossit au-delà de la
+  couverture minimale ; X et Y déplacent la zone gardée ; Rotation redresse
+  l'horizon (comme Straighten dans Photos), le cadre se regonfle tout seul
+  pour ne jamais laisser un coin transparent. Texte optionnel, désactivé par
+  défaut, avec sa propre ancre (3 positions en portrait ou carré, 9 en
+  horizontal), 7 graisses réelles de Light à Black, et une taille demandée en
+  px : si le texte ne tient pas dans le cadre à cette taille, il rétrécit
+  tout seul jusqu'à tenir, jamais l'inverse, il ne dépasse jamais le cadre.
+  Chaque bouton « copier » renvoie l'id ET le nom de fichier avant les
+  valeurs, pour ne jamais confondre deux photos. Rien n'est recadré ici : cet
+  outil choisit le cadrage, `crop-apply.py` produit le JPEG final.
+</footer>
+
+<script>
+(function () {
+  // 2026-08-31, outil zenray-html-hda du skill zenray-html-photoshop-pdf
+  /* @zr-instance:start */
+  // BLOC D'INSTANCE : ecrit par scripts/zr-hda-instance.py, jamais a la main.
+  // C'est le SEUL endroit du gabarit qui depend du projet ; tout le reste est
+  // identique d'une instance a l'autre, ce qui permet de creer un nouvel outil
+  // sans regenerer une ligne de HTML.
+  var PROJECT = "__ZR_PROJECT__";
+  var SOURCE_DIR = "__ZR_SOURCE_DIR__";
+  var IMAGES = __ZR_IMAGES__;
+  var DEFAULT_FORMAT = "__ZR_DEFAULT_FORMAT__";
+  /* @zr-instance:end */
+
+  // Loi de format et de résolution du skill : facteur = plus petit entier
+  // qui atteint 3840px sur le grand côté, plafonné à 4.
+  var FORMATS = {
+    "4:5":  { w: 1080, h: 1350, factor: 3 },
+    "1:1":  { w: 1080, h: 1080, factor: 4 },
+    "9:16": { w: 1080, h: 1920, factor: 2 },
+    "16:9": { w: 1920, h: 1080, factor: 2 },
+    "1:2":  { w: 1080, h: 2160, factor: 2 },
+    "3:4":  { w: 1080, h: 1440, factor: 3 },
+    "2:3":  { w: 1080, h: 1620, factor: 3 },
+    "4:3":  { w: 1440, h: 1080, factor: 3 }
+  };
+
+  // Ancres de texte : 9 valeurs canoniques (vertical-horizontal). Un format
+  // portrait ou carre n'expose que la colonne du centre (3 ancres) ; un
+  // format horizontal (largeur > hauteur) expose les 9.
+  var ANCHORS = [
+    "top-left", "top-center", "top-right",
+    "middle-left", "middle-center", "middle-right",
+    "bottom-left", "bottom-center", "bottom-right"
+  ];
+  function isLandscapeFormat(key) {
+    var f = FORMATS[key];
+    return f.w > f.h;
+  }
+  function clampAnchorToCenter(anchor) {
+    return anchor.split("-")[0] + "-center";
+  }
+
+  // Sept graisses reelles, memes noms que le trio typographique ZenRay
+  // (AnthropicSerif) ; InterVariable les rend nativement par son axe wght.
+  var WEIGHTS = [
+    [300, "Light"], [400, "Regular"], [500, "Medium"], [600, "SemiBold"],
+    [700, "Bold"], [800, "ExtraBold / UltraBold"], [900, "Black / Heavy"]
+  ];
+  var DEFAULT_SIZE_PX = 200;
+  var MIN_SIZE_PX = 6;
+  var MAX_LAYERS = 3;
+  // Ancre par defaut differente pour chaque calque : deux textes ajoutes coup
+  // sur coup ne doivent pas se superposer au meme endroit.
+  var DEFAULT_ANCHOR_BY_INDEX = ["bottom-center", "top-center", "middle-center"];
+
+  function newLayer(index) {
+    return {
+      value: "", font: "serif", weight: 400,
+      sizePx: DEFAULT_SIZE_PX, effectiveSizePx: DEFAULT_SIZE_PX,
+      color: "#f6cf47", anchor: DEFAULT_ANCHOR_BY_INDEX[index] || "bottom-center",
+      shadow: { enabled: true, size: 40, strength: 40 }
+    };
+  }
+
+  // Conversion vers l'unite cqw, la meme que la taille de police : le calcul
+  // reste independant du zoom d'apercu et suit la resolution de sortie.
+  function toCqw(px, cw) { return (px / cw * 100) + "cqw"; }
+
+  // Ombre portee sophistiquee, sans reglage d'angle : Distance decale toujours
+  // vers le bas. Spread (%) reprend le comportement Photoshop, du flou pur (0)
+  // au tampon net (100), en tamponnant le texte sur un cercle de rayon
+  // `size*spread/100` puis en floutant par le reste (`size*(1-spread/100)`),
+  // le meme algorithme que le cook Python, pour que l'apercu ne mente jamais.
+  function buildTextShadow(layer, cw) {
+    var s = layer.shadow;
+    if (!s || !s.enabled) return "none";
+    var size = Math.max(0, s.size == null ? 40 : s.size);
+    var strength = Math.max(0, Math.min(100, s.strength == null ? 40 : s.strength));
+    if (strength <= 0.01) return "none";
+    // Compatibilite : un ancien calque porte encore distance/spread.
+    var spreadPct = Math.max(0, Math.min(100, s.spread || 0));
+    var spreadPx = size * (spreadPct / 100);
+    var blurPx = size * (1 - spreadPct / 100);
+    var distancePx = s.distance || 0;
+    var color = "rgba(0,0,0,.65)";
+    var points = spreadPx > 0.05 ? 12 : 1;
+    var base = [];
+    for (var i = 0; i < points; i++) {
+      var angle = points > 1 ? (i / points) * Math.PI * 2 : 0;
+      var dx = points > 1 ? spreadPx * Math.cos(angle) : 0;
+      var dy = distancePx + (points > 1 ? spreadPx * Math.sin(angle) : 0);
+      base.push(toCqw(dx, cw) + " " + toCqw(dy, cw) + " " + toCqw(blurPx, cw) + " " + color);
+    }
+    // La densite vient de la REPETITION du meme voile, exactement comme le cook
+    // recompose son calque : alpha = 1 - (1 - a)^n, degrade conserve.
+    var passes = Math.max(1, Math.round(strength / 10));
+    var parts = [];
+    for (var p = 0; p < passes; p++) parts = parts.concat(base);
+    return parts.join(", ");
+  }
+
+  // Crans de pourcentage : 0, 25, 50, 75 et 100 pour cent de la PLAGE du
+  // parametre, jamais une valeur absolue. Le cran du milieu est donc toujours
+  // le neutre (0 pour une rotation de -45 a 45), ce qui rend les crans
+  // lisibles d'une ligne a l'autre. 25 et 75 sont dessines plus petits.
+  var STEP_MARKS = [0, 25, 50, 75, 100];
+  function steppedValue(min, max, percent) {
+    return Number(min) + (Number(max) - Number(min)) * (percent / 100);
+  }
+
+  // Registre des curseurs par cle de parametre, pour qu'un clic « à toutes »
+  // recopie la valeur dans toutes les cartes. La copie est PONCTUELLE : rien
+  // n'est lie ensuite, chaque image reste modifiable seule.
+  var CONTROLS = {};
+  function registerControl(key, setter) {
+    (CONTROLS[key] = CONTROLS[key] || []).push(setter);
+  }
+  function applyKeyToAll(key, value) {
+    (CONTROLS[key] || []).forEach(function (setter) { setter(value); });
+  }
+  function flash(button) {
+    button.classList.add("done");
+    setTimeout(function () { button.classList.remove("done"); }, 700);
+  }
+
+  var state = { format: DEFAULT_FORMAT };
+  function defaultBorder() { return { enabled: false, color: "#c4c3b9", thickness: 6, radius: 6, openSide: "none" }; }
+  IMAGES.forEach(function (img) {
+    img.zoom = 1; img.px = 50; img.py = 50; img.rotate = 0; img.grain = 0;
+    img.textLayers = [];
+    img.border = defaultBorder();
+    img._els = {};
+  });
+
+  var root = document.documentElement;
+  var grid = document.getElementById("grid");
+  var fmtSelect = document.getElementById("fmtSelect");
+  var resLabel = document.getElementById("resLabel");
+  var countLabel = document.getElementById("countLabel");
+
+  Object.keys(FORMATS).forEach(function (key) {
+    var opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = key;
+    if (key === DEFAULT_FORMAT) opt.selected = true;
+    fmtSelect.appendChild(opt);
+  });
+
+  // Facteur anti-coin-transparent : agrandit la couverture pour qu'une
+  // rotation de `angle` degrés ne laisse jamais voir le fond du cadre.
+  // k = |cos| + max(H/W, W/H) * |sin|, exact pour un cadre W x H tourné
+  // sur lui-même. Même formule côté crop-apply.py, à ne jamais faire diverger.
+  /* Ecart mesure en pixels d'ECRAN entre ce que fait object-position et la fenetre reellement
+     voulue : cw * (z - 1) * (px/100 - 0.5). Nul au zoom 1, croissant avec le zoom. */
+  function applyPan(img) {
+    var el = img._els && img._els.imgEl;
+    if (!el) return;
+    var f = FORMATS[state.format];
+    var z = (img.zoom || 1) * safeScale(img.rotate || 0, f.w, f.h) * 1.002;
+    var box = el.parentElement ? el.parentElement.getBoundingClientRect() : { width: f.w, height: f.h };
+    var cw = box.width || f.w, ch = box.height || f.h;
+    el.style.setProperty("--tx", (-cw * (z - 1) * ((img.px || 50) / 100 - 0.5)) + "px");
+    el.style.setProperty("--ty", (-ch * (z - 1) * ((img.py || 50) / 100 - 0.5)) + "px");
+  }
+
+  function safeScale(angleDeg, fw, fh) {
+    var rad = angleDeg * Math.PI / 180;
+    var ratio = Math.max(fh / fw, fw / fh);
+    return Math.abs(Math.cos(rad)) + ratio * Math.abs(Math.sin(rad));
+  }
+
+  function canvasSize() {
+    var f = FORMATS[state.format];
+    return { w: f.w * f.factor, h: f.h * f.factor };
+  }
+
+  // Mesure hors-DOM (Canvas 2D), une seule ligne, exactement comme
+  // ImageDraw.textbbox côté crop-apply.py. Ne JAMAIS mesurer la boîte
+  // `.text-overlay` elle-même : `left:0;right:0` l'étire à toute la largeur
+  // du cadre quel que soit le texte, donc son scrollWidth ne dit rien de la
+  // largeur réelle du texte (bug constaté et corrigé le 2026-09-01).
+  var FONT_FAMILY_CSS = {
+    serif: "'AnthropicSerif', 'Hiragino Mincho ProN W3', serif",
+    sans: "'InterVariable', 'Hiragino Sans W4', sans-serif"
+  };
+  var measureCtx = document.createElement("canvas").getContext("2d");
+  function measureAt(value, fontKey, weight, px) {
+    measureCtx.font = weight + " " + px + "px " + FONT_FAMILY_CSS[fontKey];
+    var m = measureCtx.measureText(value);
+    var ascent = m.actualBoundingBoxAscent || px * 0.8;
+    var descent = m.actualBoundingBoxDescent || px * 0.2;
+    return { width: m.width, height: ascent + descent };
+  }
+
+  // Même géométrie que crop-apply.py : marge 6% des deux côtés, ancre
+  // haut/milieu/bas x gauche/centre/droite, jamais hors du cadre
+  // 0..canvasW / 0..canvasH (le cadre lui-même, pas seulement la marge).
+  function textFits(m, hAnchor, vAnchor, canvasW, canvasH, marginX, marginY) {
+    if (m.width > canvasW * 0.88) return false;
+    var x = hAnchor === "left" ? marginX : hAnchor === "right" ? canvasW - marginX - m.width : (canvasW - m.width) / 2;
+    var y = vAnchor === "top" ? marginY : vAnchor === "middle" ? (canvasH - m.height) / 2 : canvasH - marginY - m.height;
+    return x >= 0 && y >= 0 && x + m.width <= canvasW && y + m.height <= canvasH;
+  }
+
+  // Auto-fit : jamais l'inverse. Part de la taille demandée (px, dans
+  // l'espace du canevas de sortie) et la rétrécit tant qu'elle déborde la
+  // largeur padée OU les bords mêmes du cadre, jusqu'à la plus grande taille
+  // qui tient. La police ne sort jamais du cadre pour « cropper » le texte.
+  function fitTextSize(value, fontKey, weight, anchor, desiredPx, canvasW, canvasH) {
+    var parts = anchor.split("-");
+    var vAnchor = parts[0], hAnchor = parts[1];
+    var marginX = canvasW * 0.06, marginY = canvasH * 0.06;
+    var px = desiredPx;
+    var m = measureAt(value, fontKey, weight, px);
+    var guard = 0;
+    while (guard++ < 200 && px > MIN_SIZE_PX && !textFits(m, hAnchor, vAnchor, canvasW, canvasH, marginX, marginY)) {
+      px = Math.max(MIN_SIZE_PX, px - Math.max(1, px * 0.03));
+      m = measureAt(value, fontKey, weight, px);
+    }
+    return Math.max(MIN_SIZE_PX, Math.round(px));
+  }
+
+  function applyFormat() {
+    var f = FORMATS[state.format];
+    var parts = state.format.split(":");
+    root.style.setProperty("--fmt-ratio", parts[0] + " / " + parts[1]);
+    var outW = f.w * f.factor, outH = f.h * f.factor;
+    resLabel.textContent = f.w + "×" + f.h + " ×" + f.factor + " → sortie " + outW + "×" + outH;
+    IMAGES.forEach(function (img) {
+      if (!img._els.imgEl) return;
+      img._els.imgEl.style.setProperty("--safescale", safeScale(img.rotate, f.w, f.h));
+      applyPan(img);
+      if (img._els.setAnchorMode) img._els.setAnchorMode();
+      if (img._els.refreshOverlay) img._els.refreshOverlay();
+      refreshBorder(img);
+    });
+  }
+  fmtSelect.addEventListener("change", function () {
+    state.format = fmtSelect.value;
+    applyFormat();
+  });
+
+  document.title = "zenray-html-hda · " + PROJECT;
+  document.getElementById("projectLabel").textContent = PROJECT;
+  countLabel.textContent = IMAGES.length + " photos";
+
+  function lineFor(img) {
+    var f = FORMATS[state.format];
+    var line = "[" + img.id + "] " + img.file + " · zoom=" + img.zoom.toFixed(2) +
+      " rotate=" + img.rotate.toFixed(1) + "deg" +
+      " grain=" + Math.round(img.grain) + "%" +
+      " x=" + Math.round(img.px) + "% y=" + Math.round(img.py) + "% format=" +
+      state.format + "(" + f.w + "x" + f.h + ")";
+    var bd = img.border || { enabled: false, color: "#c4c3b9", thickness: 6, openSide: "none" };
+    if (bd.enabled) {
+      line += "\n    Bordure on couleur=" + bd.color + " epaisseur=" + bd.thickness +
+        "px cote_ouvert=" + bd.openSide;
+    }
+    img.textLayers.forEach(function (layer, index) {
+      if (!layer.value.trim()) return;
+      var s = layer.shadow || { enabled: true, distance: 0, spread: 0, size: 10 };
+      line += "\n    T" + (index + 1) +
+        ' text="' + layer.value.trim().replace(/"/g, "'") + '"' +
+        " font=" + layer.font + " weight=" + layer.weight +
+        " size=" + layer.effectiveSizePx + "px" +
+        " color=" + layer.color + " anchor=" + layer.anchor +
+        " shadow=" + (s.enabled ? "on" : "off") +
+        " distance=" + s.distance + "px spread=" + s.spread + "% size=" + s.size + "px";
+    });
+    return line;
+  }
+
+  function copyText(text) {
+    var ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) {}
+    ta.remove();
+    return ok;
+  }
+
+  // Voisin d'une carte dans le lot, offset -1 = precedente, +1 = suivante.
+  // IMAGES garde ici un ordre fixe (pas de glisser-deposer en mode light).
+  function neighborImg(index, offset) {
+    var j = index + offset;
+    return j >= 0 && j < IMAGES.length ? IMAGES[j] : null;
+  }
+
+  var borderWarningTimer = null;
+  function showBorderWarning(img, msg) {
+    var el = img._els.borderWarning;
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add("shown");
+    clearTimeout(borderWarningTimer);
+    borderWarningTimer = setTimeout(function () { el.classList.remove("shown"); }, 3200);
+  }
+
+  // Meme mecanisme que le mode heavy : lien PAIRE et reciproque entre deux
+  // cartes voisines, on/off toujours couple, avertissement si le voisin
+  // n'existe pas (premiere ou derniere image du lot).
+  function setOpenSide(img, index, side) {
+    var b = img.border;
+    var prevSide = b.openSide;
+    function detach(fromSide) {
+      if (fromSide === "none") return;
+      var partner = neighborImg(index, fromSide === "left" ? -1 : 1);
+      var expected = fromSide === "left" ? "right" : "left";
+      if (partner && partner.border.openSide === expected) partner.border.openSide = "none";
+    }
+    if (side === "none") {
+      detach(prevSide);
+      b.openSide = "none";
+      buildBorderPanel(img, index);
+      refreshBorder(img);
+      return;
+    }
+    var partner = neighborImg(index, side === "left" ? -1 : 1);
+    if (!partner) {
+      showBorderWarning(img, side === "left"
+        ? "Pas d'image precedente : impossible de relier a gauche."
+        : "Pas d'image suivante : impossible de relier a droite.");
+      return;
+    }
+    if (prevSide !== "none" && prevSide !== side) detach(prevSide);
+    b.enabled = true;
+    b.openSide = side;
+    partner.border.enabled = true;
+    partner.border.openSide = side === "left" ? "right" : "left";
+    partner.border.color = b.color;
+    partner.border.thickness = b.thickness;
+    partner.border.radius = b.radius !== undefined ? b.radius : b.thickness;
+    buildBorderPanel(img, index);
+    refreshBorder(img);
+    buildBorderPanel(partner, IMAGES.indexOf(partner));
+    refreshBorder(partner);
+  }
+
+  function refreshBorder(img) {
+    var host = img._els.borderHost;
+    if (!host) return;
+    host.innerHTML = "";
+    var b = img.border;
+    if (!b || !b.enabled || b.thickness <= 0) return;
+    var canvas = canvasSize();
+    var cw = canvas.w;
+    var ch = canvas.h;
+    var t = b.thickness;
+    var rawR = b.radius !== undefined ? b.radius : b.thickness;
+    var r = Math.max(0, Math.min(rawR, (cw - t) / 2, (ch - 2 * t) / 2));
+
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 " + cw + " " + ch);
+    svg.setAttribute("preserveAspectRatio", "none");
+    svg.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none;";
+
+    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("fill-rule", "evenodd");
+    path.setAttribute("fill", b.color);
+
+    var d = "M 0 0 H " + cw + " V " + ch + " H 0 Z ";
+    if (b.openSide === "right") {
+      if (r > 0) {
+        d += "M " + (t + r) + " " + t + " H " + cw + " V " + (ch - t) + " H " + (t + r) + " A " + r + " " + r + " 0 0 1 " + t + " " + (ch - t - r) + " V " + (t + r) + " A " + r + " " + r + " 0 0 1 " + (t + r) + " " + t + " Z";
+      } else {
+        d += "M " + t + " " + t + " H " + cw + " V " + (ch - t) + " H " + t + " Z";
+      }
+    } else if (b.openSide === "left") {
+      if (r > 0) {
+        d += "M 0 " + t + " H " + (cw - t - r) + " A " + r + " " + r + " 0 0 1 " + (cw - t) + " " + (t + r) + " V " + (ch - t - r) + " A " + r + " " + r + " 0 0 1 " + (cw - t - r) + " " + (ch - t) + " H 0 Z";
+      } else {
+        d += "M 0 " + t + " H " + (cw - t) + " V " + (ch - t) + " H 0 Z";
+      }
+    } else {
+      if (r > 0) {
+        d += "M " + (t + r) + " " + t + " H " + (cw - t - r) + " A " + r + " " + r + " 0 0 1 " + (cw - t) + " " + (t + r) + " V " + (ch - t - r) + " A " + r + " " + r + " 0 0 1 " + (cw - t - r) + " " + (ch - t) + " H " + (t + r) + " A " + r + " " + r + " 0 0 1 " + t + " " + (ch - t - r) + " V " + (t + r) + " A " + r + " " + r + " 0 0 1 " + (t + r) + " " + t + " Z";
+      } else {
+        d += "M " + t + " " + t + " H " + (cw - t) + " V " + (ch - t) + " H 0 Z";
+      }
+    }
+    path.setAttribute("d", d);
+    svg.appendChild(path);
+    host.appendChild(svg);
+  }
+
+  function buildBorderPanel(img, index) {
+    var host = img._els.borderControls;
+    if (!host) return;
+    host.innerHTML = "";
+    var b = img.border;
+
+    var toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "fx-toggle" + (b.enabled ? " on" : "");
+    toggle.textContent = "Bordure : " + (b.enabled ? "activee" : "desactivee");
+    toggle.addEventListener("click", function () {
+      b.enabled = !b.enabled;
+      if (!b.enabled && b.openSide !== "none") {
+        var partner = neighborImg(index, b.openSide === "left" ? -1 : 1);
+        if (partner) {
+          partner.border.enabled = false;
+          partner.border.openSide = "none";
+          buildBorderPanel(partner, IMAGES.indexOf(partner));
+          refreshBorder(partner);
+        }
+        b.openSide = "none";
+      }
+      buildBorderPanel(img, index);
+      refreshBorder(img);
+    });
+    host.appendChild(toggle);
+
+    var grid = document.createElement("div");
+    grid.className = "fx-grid" + (b.enabled ? "" : " disabled");
+
+    var colorField = document.createElement("label");
+    colorField.className = "fx-field";
+    var colorName = document.createElement("span");
+    colorName.textContent = "Couleur";
+    var colorInput = document.createElement("input");
+    colorInput.type = "text";
+    colorInput.value = b.color;
+    colorInput.addEventListener("input", function () {
+      var v = colorInput.value.trim();
+      if (!/^#[0-9a-fA-F]{3,8}$/.test(v)) return;
+      b.color = v;
+      updateBorderActiveColor(v);
+      var partner = b.openSide !== "none" ? neighborImg(index, b.openSide === "left" ? -1 : 1) : null;
+      if (partner) { partner.border.color = v; refreshBorder(partner); }
+      refreshBorder(img);
+    });
+    colorField.appendChild(colorName); colorField.appendChild(colorInput);
+    grid.appendChild(colorField);
+
+    var thickField = document.createElement("label");
+    thickField.className = "fx-field";
+    var thickName = document.createElement("span");
+    thickName.textContent = "Épaisseur";
+    var thickInput = document.createElement("input");
+    thickInput.type = "number";
+    thickInput.min = "0"; thickInput.max = "80"; thickInput.step = "1";
+    thickInput.value = String(b.thickness);
+    thickInput.addEventListener("input", function () {
+      var v = parseFloat(thickInput.value);
+      if (!isFinite(v) || v < 0) return;
+      b.thickness = v;
+      var partner = b.openSide !== "none" ? neighborImg(index, b.openSide === "left" ? -1 : 1) : null;
+      if (partner) { partner.border.thickness = v; refreshBorder(partner); }
+      refreshBorder(img);
+    });
+    var thickUnit = document.createElement("span");
+    thickUnit.className = "fx-unit";
+    thickUnit.textContent = "px";
+    thickField.appendChild(thickName); thickField.appendChild(thickInput); thickField.appendChild(thickUnit);
+    grid.appendChild(thickField);
+
+    var radiusField = document.createElement("label");
+    radiusField.className = "fx-field";
+    var radiusName = document.createElement("span");
+    radiusName.textContent = "Arrondi";
+    var radiusInput = document.createElement("input");
+    radiusInput.type = "number";
+    radiusInput.min = "0"; radiusInput.max = "120"; radiusInput.step = "1";
+    radiusInput.value = String(b.radius !== undefined ? b.radius : b.thickness);
+    radiusInput.addEventListener("input", function () {
+      var v = parseFloat(radiusInput.value);
+      if (!isFinite(v) || v < 0) return;
+      b.radius = v;
+      var partner = b.openSide !== "none" ? neighborImg(index, b.openSide === "left" ? -1 : 1) : null;
+      if (partner) { partner.border.radius = v; refreshBorder(partner); }
+      refreshBorder(img);
+    });
+    var radiusUnit = document.createElement("span");
+    radiusUnit.className = "fx-unit";
+    radiusUnit.textContent = "px";
+    radiusField.appendChild(radiusName); radiusField.appendChild(radiusInput); radiusField.appendChild(radiusUnit);
+    grid.appendChild(radiusField);
+
+    host.appendChild(grid);
+
+    // 2026-09-10 : 12 outputs (RGB + CMY en full et pale) + Blanc + Roue chromatique Liquid Glass
+    var borderSwatches = document.createElement("div");
+    borderSwatches.className = "swatches-grid border-swatches" + (b.enabled ? "" : " disabled");
+    borderSwatches.setAttribute("aria-label", "Palette de couleurs de bordure");
+
+    var PALETTE = [
+      // Ligne 1 : Blanc + 6 Full vifs (RGB + CMY)
+      { hex: "#ffffff", title: "Blanc #ffffff" },
+      { hex: "#ff3b30", title: "Rouge #ff3b30" },
+      { hex: "#f6cf47", title: "Jaune #f6cf47" },
+      { hex: "#34c759", title: "Vert #34c759" },
+      { hex: "#00c7be", title: "Cyan #00c7be" },
+      { hex: "#007aff", title: "Bleu #007aff" },
+      { hex: "#af52de", title: "Magenta #af52de" },
+      // Ligne 2 : Roue chromatique + 6 Pales doux (RGB + CMY)
+      null,
+      { hex: "#ffb3b0", title: "Rouge pâle #ffb3b0" },
+      { hex: "#ffefa6", title: "Jaune pâle #ffefa6" },
+      { hex: "#b8f2c8", title: "Vert pâle #b8f2c8" },
+      { hex: "#b2f2ef", title: "Cyan pâle #b2f2ef" },
+      { hex: "#b8d7ff", title: "Bleu pâle #b8d7ff" },
+      { hex: "#e5bbf8", title: "Magenta pâle #e5bbf8" }
+    ];
+
+    var swatchButtons = [];
+    var wheelBtn = null;
+    var colorPickerInput = null;
+
+    function updateBorderActiveColor(c) {
+      var isPreset = false;
+      swatchButtons.forEach(function (sb) {
+        var match = sb.dataset.hex.toLowerCase() === c.toLowerCase();
+        sb.classList.toggle("active", match);
+        if (match) isPreset = true;
+      });
+      if (wheelBtn) {
+        wheelBtn.classList.toggle("active", !isPreset);
+        wheelBtn.title = "Roue chromatique : " + c;
+        if (colorPickerInput && /^#[0-9a-fA-F]{6}$/.test(c)) {
+          colorPickerInput.value = c;
+        }
+      }
+    }
+
+    PALETTE.forEach(function (item) {
+      if (item === null) {
+        wheelBtn = document.createElement("div");
+        wheelBtn.className = "swatch-wheel" + (b.color && !PALETTE.some(function (p) { return p && p.hex.toLowerCase() === (b.color || "").toLowerCase(); }) ? " active" : "");
+        wheelBtn.title = "Roue chromatique : " + (b.color || "#ffffff");
+        colorPickerInput = document.createElement("input");
+        colorPickerInput.type = "color";
+        colorPickerInput.value = /^#[0-9a-fA-F]{6}$/.test(b.color) ? b.color : "#ffffff";
+        colorPickerInput.addEventListener("input", function (e) {
+          var val = e.target.value;
+          b.color = val;
+          colorInput.value = val;
+          updateBorderActiveColor(val);
+          var partner = b.openSide !== "none" ? neighborImg(index, b.openSide === "left" ? -1 : 1) : null;
+          if (partner) { partner.border.color = val; refreshBorder(partner); }
+          refreshBorder(img);
+        });
+        wheelBtn.appendChild(colorPickerInput);
+        borderSwatches.appendChild(wheelBtn);
+        return;
+      }
+
+      var sw = document.createElement("button");
+      sw.type = "button";
+      sw.className = "swatch" + ((b.color || "").toLowerCase() === item.hex.toLowerCase() ? " active" : "");
+      sw.style.background = item.hex;
+      sw.dataset.hex = item.hex;
+      sw.title = item.title;
+      sw.addEventListener("click", function () {
+        b.color = item.hex;
+        colorInput.value = item.hex;
+        updateBorderActiveColor(item.hex);
+        var partner = b.openSide !== "none" ? neighborImg(index, b.openSide === "left" ? -1 : 1) : null;
+        if (partner) { partner.border.color = item.hex; refreshBorder(partner); }
+        refreshBorder(img);
+      });
+      swatchButtons.push(sw);
+      borderSwatches.appendChild(sw);
+    });
+
+    updateBorderActiveColor(b.color);
+
+    host.appendChild(borderSwatches);
+
+    var sideRow = document.createElement("div");
+    sideRow.className = "border-side-row" + (b.enabled ? "" : " disabled");
+    [["none", "Complet"], ["left", "Ouvert · precedente"], ["right", "Ouvert · suivante"]].forEach(function (pair) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.side = pair[0];
+      btn.textContent = pair[1];
+      if (b.openSide === pair[0]) btn.classList.add("active");
+      btn.addEventListener("click", function () { setOpenSide(img, index, pair[0]); });
+      sideRow.appendChild(btn);
+    });
+    host.appendChild(sideRow);
+
+    var warning = document.createElement("div");
+    warning.className = "border-warning";
+    img._els.borderWarning = warning;
+    host.appendChild(warning);
+  }
+
+  IMAGES.forEach(function (img, cardIndex) {
+    var card = document.createElement("div");
+    card.className = "card";
+
+    var badge = document.createElement("div");
+    badge.className = "badge";
+    badge.innerHTML =
+      '<span class="id">' + img.id + '</span>' +
+      '<span class="name">' + img.file + '</span>' +
+      '<span class="dims">' + img.w + '×' + img.h + '</span>';
+    card.appendChild(badge);
+
+    var frame = document.createElement("div");
+    frame.className = "crop-frame";
+    var el = document.createElement("img");
+    el.src = SOURCE_DIR + encodeURIComponent(img.file).replace(/%2F/g, "/");
+    el.alt = img.file;
+    el.style.setProperty("--zoom", img.zoom);
+    el.style.setProperty("--px", img.px + "%");
+    el.style.setProperty("--py", img.py + "%");
+    applyPan(img);
+    el.style.setProperty("--angle", img.rotate + "deg");
+    el.style.setProperty("--safescale", safeScale(img.rotate, FORMATS[state.format].w, FORMATS[state.format].h));
+    frame.appendChild(el);
+    img._els.imgEl = el;
+
+    var grainOverlay = document.createElement("div");
+    grainOverlay.className = "grain-overlay";
+    frame.appendChild(grainOverlay);
+    frame.style.setProperty("--grain", img.grain);
+    img._els.frame = frame;
+
+    var borderHost = document.createElement("div");
+    borderHost.className = "text-overlays"; // meme positionnement absolu, juste un conteneur
+    frame.appendChild(borderHost);
+    img._els.borderHost = borderHost;
+
+    var overlayHost = document.createElement("div");
+    overlayHost.className = "text-overlays";
+    frame.appendChild(overlayHost);
+    img._els.overlayHost = overlayHost;
+
+    var gridOverlay = document.createElement("div");
+    gridOverlay.className = "zr-grid";
+    gridOverlay.setAttribute("aria-hidden", "true");
+    frame.appendChild(gridOverlay);
+
+    card.appendChild(frame);
+
+    var controls = document.createElement("div");
+    controls.className = "controls";
+
+    function sliderRow(key, labelText, min, max, step, value, decimals, onInput) {
+      var row = document.createElement("div");
+      row.className = "slider-row";
+      var lbl = document.createElement("div");
+      lbl.className = "row-label";
+      var valSpan = document.createElement("b");
+      valSpan.textContent = value.toFixed(decimals);
+      lbl.innerHTML = "<span>" + labelText + "</span>";
+      lbl.appendChild(valSpan);
+      row.appendChild(lbl);
+      var input = document.createElement("input");
+      input.type = "range";
+      input.min = min; input.max = max; input.step = step; input.value = value;
+
+      function commit(v) {
+        input.value = v;
+        valSpan.textContent = Number(v).toFixed(decimals);
+        onInput(Number(v));
+      }
+      input.addEventListener("input", function () { commit(parseFloat(input.value)); });
+      row.appendChild(input);
+
+      var extra = document.createElement("div");
+      extra.className = "control-extra";
+      STEP_MARKS.forEach(function (percent) {
+        var mark = document.createElement("button");
+        mark.type = "button";
+        mark.className = "step" + (percent === 25 || percent === 75 ? " minor" : "");
+        mark.textContent = percent;
+        mark.title = percent + " % de la plage";
+        mark.addEventListener("click", function () { commit(steppedValue(min, max, percent)); });
+        extra.appendChild(mark);
+      });
+      var toAll = document.createElement("button");
+      toAll.type = "button";
+      toAll.className = "apply-all";
+      toAll.textContent = "à toutes";
+      toAll.title = "Appliquer CE réglage à toutes les photos, maintenant. Les images restent indépendantes ensuite.";
+      toAll.addEventListener("click", function () {
+        applyKeyToAll(key, parseFloat(input.value));
+        flash(toAll);
+      });
+      extra.appendChild(toAll);
+      row.appendChild(extra);
+
+      registerControl(key, commit);
+      return row;
+    }
+
+    controls.appendChild(sliderRow("zoom", "Zoom", 1, 3, 0.01, img.zoom, 2, function (v) {
+      img.zoom = v; el.style.setProperty("--zoom", v); applyPan(img);
+    }));
+    controls.appendChild(sliderRow("px", "Position X", 0, 100, 1, img.px, 0, function (v) {
+      img.px = v; el.style.setProperty("--px", v + "%"); applyPan(img);
+    }));
+    controls.appendChild(sliderRow("py", "Position Y", 0, 100, 1, img.py, 0, function (v) {
+      img.py = v; el.style.setProperty("--py", v + "%"); applyPan(img);
+    }));
+    controls.appendChild(sliderRow("rotate", "Rotation °", -45, 45, 0.5, img.rotate, 1, function (v) {
+      img.rotate = v;
+      el.style.setProperty("--angle", v + "deg");
+      el.style.setProperty("--safescale", safeScale(v, FORMATS[state.format].w, FORMATS[state.format].h));
+      applyPan(img);
+    }));
+    controls.appendChild(sliderRow("grain", "Grain", 0, 100, 1, img.grain, 0, function (v) {
+      img.grain = v; frame.style.setProperty("--grain", v);
+    }));
+
+    var borderBlock = document.createElement("div");
+    borderBlock.className = "border-block";
+    img._els.borderControls = borderBlock;
+    controls.appendChild(borderBlock);
+    buildBorderPanel(img, cardIndex);
+    refreshBorder(img);
+
+    // Copie INTEGRALE de cette carte vers toutes les autres : cadrage et
+    // calques de texte. Copie profonde, jamais une reference partagee, donc
+    // chaque image reste modifiable seule apres le clic.
+    var applyEverything = document.createElement("button");
+    applyEverything.type = "button";
+    applyEverything.className = "apply-everything";
+    applyEverything.textContent = "Appliquer TOUT ce réglage à toutes";
+    applyEverything.title = "Cadrage et textes de cette photo recopiés sur toutes, maintenant. Les images restent indépendantes ensuite.";
+    applyEverything.addEventListener("click", function () {
+      var textCopy = JSON.parse(JSON.stringify(img.textLayers));
+      IMAGES.forEach(function (other) {
+        if (other.id === img.id) return;
+        other.zoom = img.zoom; other.px = img.px; other.py = img.py; other.rotate = img.rotate; other.grain = img.grain;
+        other.textLayers = JSON.parse(JSON.stringify(textCopy));
+        if (other._els.imgEl) {
+          other._els.imgEl.style.setProperty("--zoom", other.zoom);
+          other._els.imgEl.style.setProperty("--px", other.px + "%");
+          other._els.imgEl.style.setProperty("--py", other.py + "%");
+          applyPan(other);
+          other._els.imgEl.style.setProperty("--angle", other.rotate + "deg");
+          other._els.imgEl.style.setProperty("--safescale",
+            safeScale(other.rotate, FORMATS[state.format].w, FORMATS[state.format].h));
+        }
+        if (other._els.frame) other._els.frame.style.setProperty("--grain", other.grain);
+        if (other._els.rebuildLayers) other._els.rebuildLayers();
+        if (other._els.refreshOverlay) other._els.refreshOverlay();
+      });
+      // Les curseurs des autres cartes doivent afficher la nouvelle valeur.
+      applyKeyToAll("zoom", img.zoom); applyKeyToAll("px", img.px);
+      applyKeyToAll("py", img.py); applyKeyToAll("rotate", img.rotate); applyKeyToAll("grain", img.grain);
+      flash(applyEverything);
+    });
+    controls.appendChild(applyEverything);
+
+    // Calques de texte, aucun par defaut, jusqu'a trois par image (2026-09-01).
+    var layerList = document.createElement("div");
+    layerList.className = "layer-list";
+    controls.appendChild(layerList);
+
+    var addLayerBtn = document.createElement("button");
+    addLayerBtn.type = "button";
+    addLayerBtn.className = "add-layer";
+    controls.appendChild(addLayerBtn);
+
+    var layerReadouts = [];
+
+    function refreshOverlay() {
+      // Redessine TOUS les calques de l'image, et met a jour les mentions de
+      // taille ajustee. La taille demandee reste un point de depart : c'est la
+      // taille effective, celle qui tient dans le cadre, qui est affichee et
+      // copiee.
+      var canvas = canvasSize();
+      overlayHost.innerHTML = "";
+      img.textLayers.forEach(function (layer) {
+        var effective = layer.value
+          ? fitTextSize(layer.value, layer.font, layer.weight, layer.anchor, layer.sizePx, canvas.w, canvas.h)
+          : layer.sizePx;
+        layer.effectiveSizePx = effective;
+        if (!layer.value.trim()) return;
+        var parts = layer.anchor.split("-");
+        var el = document.createElement("div");
+        el.className = "text-overlay shown font-" + layer.font +
+          " anchor-v-" + parts[0] + " anchor-h-" + parts[1];
+        el.style.color = layer.color;
+        el.style.fontWeight = layer.weight;
+        el.style.fontSize = (effective / canvas.w * 100) + "cqw";
+        el.style.textShadow = buildTextShadow(layer, canvas.w);
+        el.textContent = layer.value;
+        overlayHost.appendChild(el);
+      });
+      layerReadouts.forEach(function (entry) {
+        var layer = img.textLayers[entry.index];
+        if (!layer) return;
+        var adjusted = layer.effectiveSizePx !== layer.sizePx;
+        entry.node.textContent = adjusted
+          ? ("affiché " + layer.effectiveSizePx + "px (ajusté pour tenir dans le cadre)")
+          : "";
+        entry.node.classList.toggle("adjusted", adjusted);
+      });
+    }
+
+    function buildLayerPanel() {
+      layerList.innerHTML = "";
+      layerReadouts = [];
+      img.textLayers.forEach(function (layer, index) {
+        var block = document.createElement("div");
+        block.className = "layer-block";
+
+        var head = document.createElement("div");
+        head.className = "layer-head";
+        var idx = document.createElement("span");
+        idx.className = "idx";
+        idx.textContent = "T" + (index + 1);
+        var title = document.createElement("span");
+        title.textContent = "Texte";
+        var remove = document.createElement("button");
+        remove.type = "button";
+        remove.textContent = "Supprimer";
+        remove.addEventListener("click", function () {
+          img.textLayers.splice(index, 1);
+          buildLayerPanel();
+          refreshOverlay();
+        });
+        head.appendChild(idx); head.appendChild(title); head.appendChild(remove);
+        block.appendChild(head);
+
+        var textInput = document.createElement("input");
+        textInput.type = "text";
+        textInput.placeholder = "Texte à poser sur la photo…";
+        textInput.value = layer.value;
+        textInput.addEventListener("input", function () {
+          layer.value = textInput.value; refreshOverlay();
+        });
+        block.appendChild(textInput);
+
+        var row2 = document.createElement("div");
+        row2.className = "row2";
+        var fontSelect = document.createElement("select");
+        ["serif", "sans"].forEach(function (v) {
+          var o = document.createElement("option"); o.value = v;
+          o.textContent = v === "serif" ? "Serif" : "Sans";
+          fontSelect.appendChild(o);
+        });
+        fontSelect.value = layer.font;
+        fontSelect.addEventListener("change", function () {
+          layer.font = fontSelect.value; refreshOverlay();
+        });
+        var weightSelect = document.createElement("select");
+        WEIGHTS.forEach(function (w) {
+          var o = document.createElement("option"); o.value = w[0]; o.textContent = w[1];
+          weightSelect.appendChild(o);
+        });
+        weightSelect.value = String(layer.weight);
+        weightSelect.addEventListener("change", function () {
+          layer.weight = parseInt(weightSelect.value, 10); refreshOverlay();
+        });
+        row2.appendChild(fontSelect); row2.appendChild(weightSelect);
+        block.appendChild(row2);
+
+        var sizeRow = document.createElement("div");
+        sizeRow.className = "size-row";
+        var sizeInput = document.createElement("input");
+        sizeInput.type = "number";
+        sizeInput.min = String(MIN_SIZE_PX);
+        sizeInput.max = "4000";
+        sizeInput.step = "2";
+        sizeInput.value = String(layer.sizePx);
+        sizeInput.addEventListener("input", function () {
+          var v = parseFloat(sizeInput.value);
+          if (!isFinite(v) || v <= 0) return;
+          layer.sizePx = v; refreshOverlay();
+        });
+        var sizeUnit = document.createElement("span");
+        sizeUnit.textContent = "px";
+        sizeUnit.style.color = "var(--muted)";
+        sizeUnit.style.fontSize = "11px";
+        var sizeEffective = document.createElement("span");
+        sizeEffective.className = "size-effective";
+        layerReadouts.push({ index: index, node: sizeEffective });
+        sizeRow.appendChild(sizeInput); sizeRow.appendChild(sizeUnit); sizeRow.appendChild(sizeEffective);
+        block.appendChild(sizeRow);
+
+        // Ombre portee : un bouton on/off, puis Distance/Spread/Size, la meme
+        // trilogie que Photoshop sans l'angle (voir buildTextShadow plus haut).
+        var shadowRow = document.createElement("div");
+        shadowRow.className = "fx-row";
+        var shadowToggle = document.createElement("button");
+        shadowToggle.type = "button";
+        shadowToggle.className = "fx-toggle" + (layer.shadow.enabled ? " on" : "");
+        shadowToggle.textContent = "Ombre portee : " + (layer.shadow.enabled ? "activee" : "desactivee");
+        var shadowGrid = document.createElement("div");
+        shadowGrid.className = "fx-grid" + (layer.shadow.enabled ? "" : " disabled");
+        shadowToggle.addEventListener("click", function () {
+          layer.shadow.enabled = !layer.shadow.enabled;
+          shadowToggle.classList.toggle("on", layer.shadow.enabled);
+          shadowToggle.textContent = "Ombre portee : " + (layer.shadow.enabled ? "activee" : "desactivee");
+          shadowGrid.classList.toggle("disabled", !layer.shadow.enabled);
+          refreshOverlay();
+        });
+        shadowRow.appendChild(shadowToggle);
+        [
+          ["distance", "Distance", "px", 0, 200],
+          ["spread", "Spread", "%", 0, 100],
+          ["size", "Size", "px", 0, 200]
+        ].forEach(function (spec) {
+          var key = spec[0], label = spec[1], unit = spec[2], min = spec[3], max = spec[4];
+          var field = document.createElement("label");
+          field.className = "fx-field";
+          var name = document.createElement("span");
+          name.textContent = label;
+          var input = document.createElement("input");
+          input.type = "number";
+          input.min = String(min); input.max = String(max); input.step = "1";
+          input.value = String(layer.shadow[key]);
+          input.addEventListener("input", function () {
+            var v = parseFloat(input.value);
+            if (!isFinite(v)) return;
+            layer.shadow[key] = Math.max(min, Math.min(max, v));
+            refreshOverlay();
+          });
+          var u = document.createElement("span");
+          u.className = "fx-unit";
+          u.textContent = unit;
+          field.appendChild(name); field.appendChild(input); field.appendChild(u);
+          shadowGrid.appendChild(field);
+        });
+        shadowRow.appendChild(shadowGrid);
+        block.appendChild(shadowRow);
+
+        // 2026-09-10 : 12 outputs (RGB + CMY en full et pale) + Blanc + Roue chromatique Liquid Glass
+        var swatchesGrid = document.createElement("div");
+        swatchesGrid.className = "swatches-grid";
+        swatchesGrid.setAttribute("aria-label", "Palette de couleurs et roue chromatique");
+
+        var PALETTE = [
+          // Ligne 1 : Blanc + 6 Full vifs (RGB + CMY)
+          { hex: "#ffffff", title: "Blanc #ffffff" },
+          { hex: "#ff3b30", title: "Rouge #ff3b30" },
+          { hex: "#f6cf47", title: "Jaune #f6cf47" },
+          { hex: "#34c759", title: "Vert #34c759" },
+          { hex: "#00c7be", title: "Cyan #00c7be" },
+          { hex: "#007aff", title: "Bleu #007aff" },
+          { hex: "#af52de", title: "Magenta #af52de" },
+          // Ligne 2 : Roue chromatique + 6 Pales doux (RGB + CMY)
+          null,
+          { hex: "#ffb3b0", title: "Rouge pâle #ffb3b0" },
+          { hex: "#ffefa6", title: "Jaune pâle #ffefa6" },
+          { hex: "#b8f2c8", title: "Vert pâle #b8f2c8" },
+          { hex: "#b2f2ef", title: "Cyan pâle #b2f2ef" },
+          { hex: "#b8d7ff", title: "Bleu pâle #b8d7ff" },
+          { hex: "#e5bbf8", title: "Magenta pâle #e5bbf8" }
+        ];
+
+        var swatchButtons = [];
+        var wheelBtn = null;
+        var colorPickerInput = null;
+
+        function updateActiveColor(c) {
+          var isPreset = false;
+          swatchButtons.forEach(function (sb) {
+            var match = sb.dataset.hex.toLowerCase() === (c || "").toLowerCase();
+            sb.classList.toggle("active", match);
+            if (match) isPreset = true;
+          });
+          if (wheelBtn) {
+            wheelBtn.classList.toggle("active", !isPreset);
+            wheelBtn.title = "Roue chromatique : " + c;
+            if (colorPickerInput && /^#[0-9a-fA-F]{6}$/.test(c)) {
+              colorPickerInput.value = c;
+            }
+          }
+        }
+
+        PALETTE.forEach(function (item) {
+          if (item === null) {
+            wheelBtn = document.createElement("div");
+            wheelBtn.className = "swatch-wheel" + (layer.color && !PALETTE.some(function (p) { return p && p.hex.toLowerCase() === (layer.color || "").toLowerCase(); }) ? " active" : "");
+            wheelBtn.title = "Roue chromatique : " + (layer.color || "#f6cf47");
+            colorPickerInput = document.createElement("input");
+            colorPickerInput.type = "color";
+            colorPickerInput.value = /^#[0-9a-fA-F]{6}$/.test(layer.color) ? layer.color : "#f6cf47";
+            var handleColorChange = function (e) {
+              layer.color = e.target.value;
+              updateActiveColor(layer.color);
+              refreshOverlay();
+            };
+            colorPickerInput.addEventListener("input", handleColorChange);
+            colorPickerInput.addEventListener("change", handleColorChange);
+            wheelBtn.append(colorPickerInput);
+            swatchesGrid.append(wheelBtn);
+            return;
+          }
+
+          var sw = document.createElement("button");
+          sw.type = "button";
+          sw.className = "swatch" + ((layer.color || "#f6cf47").toLowerCase() === item.hex.toLowerCase() ? " active" : "");
+          sw.style.background = item.hex;
+          sw.dataset.hex = item.hex;
+          sw.title = item.title;
+          sw.addEventListener("click", function () {
+            layer.color = item.hex;
+            updateActiveColor(layer.color);
+            refreshOverlay();
+          });
+          swatchButtons.push(sw);
+          swatchesGrid.append(sw);
+        });
+        block.appendChild(swatchesGrid);
+
+        var anchorBlock = document.createElement("div");
+        anchorBlock.className = "anchor-block";
+        var anchorLabel = document.createElement("div");
+        anchorLabel.className = "anchor-label";
+        anchorLabel.textContent = "Position";
+        anchorBlock.appendChild(anchorLabel);
+        var anchorWidget = document.createElement("div");
+        anchorWidget.className = "anchor-widget";
+        anchorWidget.dataset.mode = isLandscapeFormat(state.format) ? "9" : "3";
+        var anchorButtons = ANCHORS.map(function (a) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.dataset.anchor = a;
+          b.title = a;
+          if (a === layer.anchor) b.classList.add("active");
+          b.addEventListener("click", function () {
+            layer.anchor = a;
+            anchorButtons.forEach(function (btn) {
+              btn.classList.toggle("active", btn.dataset.anchor === a);
+            });
+            refreshOverlay();
+          });
+          anchorWidget.appendChild(b);
+          return b;
+        });
+        anchorBlock.appendChild(anchorWidget);
+        block.appendChild(anchorBlock);
+
+        layerList.appendChild(block);
+      });
+
+      addLayerBtn.disabled = img.textLayers.length >= MAX_LAYERS;
+      addLayerBtn.textContent = img.textLayers.length >= MAX_LAYERS
+        ? "+ Ajouter un texte (3 maximum)"
+        : "+ Ajouter un texte";
+    }
+
+    addLayerBtn.addEventListener("click", function () {
+      if (img.textLayers.length >= MAX_LAYERS) return;
+      img.textLayers.push(newLayer(img.textLayers.length));
+      buildLayerPanel();
+      refreshOverlay();
+    });
+
+    // Un format portrait ou carre n'expose que la colonne du centre : au
+    // changement de format, une ancre laterale devenue invalide est ramenee sur
+    // son equivalent centre, sur TOUS les calques.
+    function setAnchorMode() {
+      var landscape = isLandscapeFormat(state.format);
+      var changed = false;
+      img.textLayers.forEach(function (layer) {
+        if (!landscape && layer.anchor.indexOf("-center") === -1) {
+          layer.anchor = clampAnchorToCenter(layer.anchor);
+          changed = true;
+        }
+      });
+      layerList.querySelectorAll(".anchor-widget").forEach(function (widget) {
+        widget.dataset.mode = landscape ? "9" : "3";
+      });
+      if (changed) buildLayerPanel();
+    }
+    img._els.setAnchorMode = setAnchorMode;
+
+    // Pas d'appel de refreshOverlay ici : le cadre n'est pas encore attache au
+    // DOM, donc clientWidth vaudrait 0. Le premier rendu part du applyFormat()
+    // final, une fois toutes les cartes posees dans la page.
+    img._els.refreshOverlay = refreshOverlay;
+    img._els.rebuildLayers = buildLayerPanel;
+
+    buildLayerPanel();
+
+    var actions = document.createElement("div");
+    actions.className = "card-actions";
+    var copyBtn = document.createElement("button");
+    copyBtn.className = "copy";
+    copyBtn.textContent = "Copier les paramètres";
+    var echo = document.createElement("span");
+    echo.className = "copy-echo";
+    echo.textContent = "id " + img.id + " · " + img.file;
+    copyBtn.addEventListener("click", function () {
+      var line = lineFor(img);
+      var ok = copyText(line);
+      echo.textContent = (ok ? "copié : " : "à copier à la main : ") + line;
+      echo.className = "copy-echo done";
+    });
+    actions.appendChild(copyBtn);
+
+    // 2026-09-10 : Discard d'une photo vers le sous-dossier _deprecated
+    var discardBtn = document.createElement("button");
+    discardBtn.type = "button";
+    discardBtn.className = "discard-btn";
+    discardBtn.textContent = "Discard";
+    discardBtn.title = "Déplacer dans le sous-dossier _deprecated et retirer de la grille";
+    discardBtn.addEventListener("click", function () {
+      if (!confirm("Déplacer " + img.file + " dans _deprecated et la retirer de l'atelier ?")) return;
+      fetch("/zr-discard", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: img.id, file: img.file })
+      }).then(function (r) { return r.ok ? r.json() : null; })
+      .finally(function () {
+        card.remove();
+        var idx = IMAGES.indexOf(img);
+        if (idx !== -1) IMAGES.splice(idx, 1);
+        countLabel.textContent = IMAGES.length + " photos";
+      });
+    });
+    actions.appendChild(discardBtn);
+    actions.appendChild(echo);
+    controls.appendChild(actions);
+
+    card.appendChild(controls);
+    grid.appendChild(card);
+  });
+
+  // Un seul constructeur de bloc, partage par le bouton et par zr-save.js.
+  // Champs alignes sur ce que crop-apply.py lit : id, zoom, x, y, rotate, grain, text, border.
+  function payload() {
+    var f = FORMATS[state.format];
+    return {
+      project: PROJECT,
+      format: { key: state.format, w: f.w, h: f.h, factor: f.factor },
+      images: IMAGES.map(function (img) {
+        return {
+          id: img.id, file: img.file,
+          zoom: img.zoom, x: img.px, y: img.py, rotate: img.rotate,
+          grain: img.grain,
+          border: img.border,
+          text: img.textLayers || []
+        };
+      }),
+      post: window.ZRPostEditor ? window.ZRPostEditor.snapshot() : null
+    };
+  }
+  function outputText() {
+    var f = FORMATS[state.format];
+    var header = "CADRAGE ZENRAY-HTML-HDA · " + PROJECT + " · format " + state.format +
+      "(" + f.w + "x" + f.h + ") ×" + f.factor + " → " + (f.w * f.factor) + "x" + (f.h * f.factor);
+    return header + "\n\n" + IMAGES.map(lineFor).join("\n") + "\n\n" +
+      JSON.stringify(payload(), null, 2);
+  }
+  window.ZR_PAYLOAD = payload;
+  window.ZR_OUTPUT_TEXT = outputText;
+
+  // Grille 3x3, cachee par defaut : un seul toggle sur <body>, la regle CSS
+  // body.zr-grid-on .zr-grid decide seule de l'affichage sur TOUTES les
+  // cartes du lot, jamais un style pose carte par carte. Outil d'atelier,
+  // jamais dans le rendu final.
+  document.getElementById("gridToggle").addEventListener("change", function (e) {
+    document.body.classList.toggle("zr-grid-on", e.target.checked);
+  });
+
+  document.getElementById("copyAllBtn").addEventListener("click", function () {
+    var f = FORMATS[state.format];
+    var header = "CADRAGE ZENRAY-HTML-HDA · " + PROJECT + " · format " + state.format +
+      "(" + f.w + "x" + f.h + ") ×" + f.factor + " → " + (f.w * f.factor) + "x" + (f.h * f.factor);
+    var lines = IMAGES.map(lineFor);
+    var text = header + "\n\n" + lines.join("\n");
+    if (window.ZRPostEditor) text += "\n\n" + JSON.stringify({ post: window.ZRPostEditor.snapshot() }, null, 2);
+    var ok = copyText(text);
+    var box = document.getElementById("batchOut");
+    var area = document.getElementById("batchText");
+    area.value = (ok ? "copié dans le presse-papier :\n\n" : "copie refusée, sélectionne à la main :\n\n") + text;
+    box.classList.add("shown");
+  });
+
+  applyFormat();
+})();
+</script>
+
+<script src="_post-data.js"></script>
+<script src="assets/post-editor/zr-post-editor.js"></script>
+<script src="assets/ui/zr-save.js"></script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+## Contrat actif socialmedia, fusion du 2026-09-03
+
+Ce contrat est le point d'entrée actuel. Les sections précédentes et les annexes suivantes restent
+conservées intégralement ; leurs chemins et leurs anciennes répartitions entre skills sont historiques.
+Lire `references/INDEX.md`, puis les seules sections utiles. Ne jamais charger les cinq mille lignes
+pour une correction locale. L'index se régénère par `python3 scripts/index-skill.py`.
+
+### Un seul point d'entrée, aucune suppression sans validation
+
+Le nom actif est `zenray-html-photoshop-pdf-hda-socialmedia`.
+Il réunit la composition HTML/PDF, le texte social, les traductions, les hashtags et le vignettage.
+La fusion se fait par ajout : les sources complètes et leurs empreintes se trouvent dans
+`references/fusion-sources/`. Le corps HDA est conservé mot pour mot ; seul le frontmatter de la
+nouvelle copie change pour porter le nouveau nom et son routage. Les deux autres SKILL.md sont
+ajoutés intégralement plus bas, scripts compris dans la bibliothèque.
+
+Les anciens dossiers `zenray-html-photoshop-pdf-hda`, `zenray-social-media` et `post-vignette` restent
+intacts. Leur suppression ou leur déplacement attend une validation explicite de Matthieu portant
+sur les noms précis. Ne pas assimiler l'autorisation de fusionner à celle de supprimer. Aucune règle
+historique de nettoyage, de doublon ou de régénération n'autorise une suppression pendant cette migration.
+
+Toute nouvelle règle sociale ou photo s'ajoute désormais ICI, puis se synchronise par
+`~/.claude/skills/skill-sync/scripts/sync-skill.sh zenray-html-photoshop-pdf-hda-socialmedia`.
+La chronologie reste dans `Memory/SocialMedia/SocialMedia1.md` et le journal global ; aucune
+chronologie parallèle ne se crée. Toute lecture de ces sources reste ciblée par leur index.
+
+### Ordre des règles et chemins intégrés
+
+La demande actuelle et la dernière version de Matthieu priment sur les recettes anciennes.
+Les renvois au skill social, à social-media, au skill HDA et à post-vignette se résolvent désormais
+DANS ce même dossier, sans nouveau passage par un autre skill.
+
+| Renvoi ancien | Destination actuelle |
+|---|---|
+| Style, correction, hashtags, traductions | Annexe intégrale zenray-social-media, ci-dessous |
+| Composition, PDF, calques, crop, retouche | Corps HDA conservé, ci-dessus |
+| Vignettage doux | Annexe intégrale post-vignette et `scripts/vignette.sh` |
+| Poids maximal Instagram sans effet | `scripts/instagram_maxq.py` |
+| Génération de l'atelier | `scripts/zr-hda-instance.py` et `templates/hda-light` / `templates/hda-heavy` |
+| Maquettes de direction ZenRay Assets | `templates/zenray-assets-mockups/` et son README |
+| Post éditable | `assets/post-editor/` et `references/post-editor.md` |
+| Index global des skills | Régénéré par skill-sync, jamais modifié à la main |
+| Icônes d'app pour illustrer un visuel | Section « Icônes : thesvg.org et SF Symbols », ci-dessous |
+
+Les contradictions historiques connues se tranchent ici, sans retirer leur trace :
+
+- La correction du texte de Matthieu touche seulement la grammaire. Ni coupe, ni réorganisation,
+  ni ajout de détail. Ses suppressions restent supprimées dans TOUTES les langues.
+- Le français est la source. Quand trois langues sont demandées, l'ordre de publication est
+  EN, puis JP, puis FR, avec une seule ligne de drapeaux en tête. L'ancien ordre EN/FR/JP est dépassé.
+- Les hashtags d'un post photo Japon utilisent `#japan_photo_now`, pas `#japan` seul, cinq maximum
+  sauf demande précise contraire, et le lieu exact en kanji après vérification. Aucun tag de marque.
+- Pour un premier jet expressément demandé, les chiffres de coût peuvent être utiles. Une ancienne
+  règle de suppression des chiffres d'inventaire n'autorise jamais à couper un texte fourni.
+- Les anciennes tailles de sortie 2160×2700 cèdent aux règles de sortie HDA plus récentes : 4:5
+  graphique 3240×4050 par défaut. La préparation de photos au poids maximal garde la définition,
+  le profil, la chroma et les originaux, sauf transformation explicitement demandée.
+- Le vignettage est complémentaire et optionnel. Ne jamais l'appliquer au seul motif qu'il est inclus.
+  La recette double gradient ne s'empile pas sur le curseur vignette du mode heavy : choisir l'effet
+  demandé et partir de l'original, jamais cumuler silencieusement les deux traitements.
+- Un batch déjà demandé ne déclenche pas une nouvelle question « batch ou individuel ». Employer
+  l'instance existante si elle correspond au lot ; sinon instancier une fois, mode heavy pour les
+  réglages photo et l'ordre, mode light pour le cadrage simple. Ne jamais demander trois choix déjà donnés.
+- L'éditeur de post demandé ici reste disponible sans panneau de design supplémentaire. Les curseurs
+  de design d'un site ou d'un mockup ne s'ajoutent que sur demande explicite.
+- Ne jamais ouvrir le navigateur personnel. Les anciennes commandes `--open` sont conservées comme
+  historique, mais les contrôles agent se font dans un navigateur isolé ou par commandes locales.
+
+### Icônes : thesvg.org et SF Symbols (2026-09-03)
+
+Deux sources, deux natures, jamais confondues. **thesvg.org héberge des LOGOS DE MARQUE**, pas des
+pictogrammes génériques (pas de microphone, pas de cadenas, pas de nuage) : le catalogue annonce
+« Free Brand SVG Icons ». **SF Symbols est un jeu de pictogrammes GÉNÉRIQUES** fourni par Apple, sous
+licence qui restreint son usage à l'indication de compatibilité avec les plateformes Apple : à ne
+pas redistribuer comme élément de marque sur un visuel commercial, mais utilisable sans souci pour un
+document personnel ou interne comme celui-ci.
+
+**thesvg.org, le pattern d'URL de téléchargement direct**, trouvé en lisant le HTML de la page
+d'accueil (`curl -sL "https://thesvg.org/" | grep -o '/icons/[a-z0-9-]*/[a-z]*\.svg'`) :
+
+```
+https://thesvg.org/icons/<slug>/default.svg
+https://thesvg.org/icons/<slug>/light.svg
+https://thesvg.org/icons/<slug>/dark.svg
+```
+
+`<slug>` est le nom de la marque en minuscules, tiret si besoin (`openai`, `apple`, `claude`). Toujours
+tester le fichier reçu avant de l'utiliser : un slug absent du catalogue répond en `404` mais Next.js
+sert quand même une page HTML de ~49 Ko sous ce nom, donc **vérifier le code HTTP ET la taille**, pas
+seulement l'existence du fichier :
+
+```bash
+for slug in openai apple claude; do
+  code=$(curl -s -o /tmp/icon_$slug.svg -w "%{http_code}" "https://thesvg.org/icons/$slug/default.svg")
+  echo "$slug -> $code, $(wc -c < /tmp/icon_$slug.svg) octets"
+done
+```
+
+Les SVG reçus portent souvent `fill="#fff"` (pensés pour un fond sombre). Pour les poser sur un fond
+clair façon flyer, remplacer le fill par `currentColor` et fixer la couleur du texte parent :
+
+```bash
+sed -i '' 's/fill="#fff"/fill="currentColor"/' assets/icons/openai.svg
+```
+
+**SF Symbols, quand l'app est installée** (`ls /Applications | grep -i "SF Symbols"`) : pas de CLI
+stable pour exporter un symbole en SVG, le geste est manuel dans l'app, `File > Export Symbol > SVG`,
+un symbole à la fois. Quand l'app est absente (cas de ce Mac au 2026-09-03), ne jamais improviser un
+raccourci système ou une police privée pour singer un symbole : dessiner à la main un pictogramme
+géométrique monochrome, au trait unique, dans le même esprit visuel (simple, épuré, sans détail
+inutile), et le documenter comme dessin maison plutôt que comme SF Symbol.
+
+**Ce que cela impose pour illustrer un post ou une infographie qui compare des outils.** Chercher
+d'abord le logo de marque sur thesvg.org pour chaque produit nommé (ChatGPT/OpenAI, Apple, Claude et
+autres). Pour un outil sans logo dans ce catalogue (Wispr Flow, Vibe, Parakeet, un concept générique
+comme « cloud » ou « micro »), ne jamais forcer un logo introuvable : dessiner un pictogramme simple
+inline, dans le même style monochrome que le reste de la composition, plutôt que d'inventer une icône
+qui ressemblerait à une marque sans en être une.
+
+### Parcours unique du brief au post éditable
+
+1. Retrouver le lot et sa dernière instance dans `instances/INDEX.md`. Chercher le post déjà préparé
+   par l'index de `Memory/SocialMedia/SocialMedia1.md` et son archive `Memory/Posts/`. La dernière
+   version de Matthieu devient la source, jamais un ancien brouillon trouvé plus vite.
+2. Déduire plateforme, langues et nombre d'images de la demande et de l'existant. Poser une question
+   seulement si une donnée réellement manquante empêche d'écrire juste. À défaut de texte ou de sujet,
+   ouvrir un brouillon vide explicite ; ne pas inventer une visite, un lieu ni une anecdote personnelle.
+3. Lire les règles de style et le dernier post comparable par leur index. Corriger la grammaire du
+   texte fourni. Traduire seulement les langues demandées, en conservant détails, coupes et ordre.
+   Vérifier noms propres et nouveaux faits à la source officielle quand ils doivent être ajoutés.
+4. Préparer la légende AVANT d'ouvrir l'atelier. Le budget Instagram de travail est 2200 caractères,
+   cible 2000 ; compter exactement. Si le texte dépasse, le signaler et proposer les coupes à valider,
+   sans troncature automatique. Préparer `_post.json` avec `text`, `format` et `limit` ou un `.txt`.
+5. Passer ce fichier à `scripts/zr-hda-instance.py` par `--post`. Un `_post.json` dans le dossier des
+   images est trouvé automatiquement. Les deux gabarits chargent le MÊME éditeur : Inter servie,
+   fond blanc, texte noir, aperçu 4:5 par défaut, post visible dès l'ouverture, Photos à un clic.
+   Le choix de format du post ne recadre aucune image. Les longs textes défilent dans la carte.
+6. Matthieu règle ses images et écrit directement dans le post. Le brouillon s'enregistre localement
+   à chaque saisie. « Copier le post » copie seulement la légende ; « Copier TOUT » inclut le texte
+   avec l'ordre et les réglages. Exporter / Importer transporte `_post.json` sans copier à la main.
+7. Reprendre les valeurs réellement exportées. Les modifications faites dans l'éditeur deviennent
+   la nouvelle référence ; aucun ancien passage supprimé ne revient à la génération suivante.
+   La régénération préserve les paramètres, les sorties et le post existants.
+8. Lancer le cook photo seulement quand le traitement est demandé et les valeurs fixées. Pour un
+   plafond seul, employer instagram_maxq ; pour la recette vignette demandée, employer vignette.sh.
+   Une seule passe de traitement depuis l'original, sans forcer d'effet ni de conversion supplémentaire.
+9. Vérifier la légende entière, les langues et la taille, puis les sorties photo réellement produites.
+   Livrer l'atelier et les exports. La publication et sa promotion restent des gestes distincts, à
+   exécuter seulement sur autorisation explicite, jamais au titre d'un bouton Copier.
+
+Le navigateur n'héberge pas un modèle de rédaction. « Généré automatiquement » signifie que l'agent
+prépare le texte en appliquant CE parcours, puis l'injecte avant de rendre l'atelier à Matthieu.
+Pas de bouton trompeur, de clé d'API exigée ni de requête silencieuse pendant la saisie.
+
+### Commande unique et vérification
+
+```zsh
+python3 ~/.claude/skills/zenray-html-photoshop-pdf-hda-socialmedia-shorts-reel/scripts/zr-hda-instance.py   /chemin/du/lot --mode heavy --project mon-post   --post /chemin/du/brouillon.txt   --dest /Users/zenray/.claude/tmp/tmp-mon-post/atelier
+```
+
+Ne pas utiliser `--open`. Le fichier `index.html` reste ouvrable manuellement, même sans serveur.
+Avant de mettre à niveau une instance, sauvegarder les fichiers de code qui seront remplacés ;
+`--force` le fait dans `.hda-history/` et garde les paramètres ainsi que toutes les sorties.
+Un `--post` différent du `_post.json` existant échoue avant écriture : utiliser l'import visible,
+qui archive le brouillon précédent, ou une destination distincte.
+
+Contrôles reproductibles : `python3 scripts/index-skill.py --check-originals` vérifie la conservation
+avant suppression autorisée ; `python3 scripts/index-skill.py --verify-only` reste rejouable après.
+Le contrôle navigateur de `scripts/verify-post-editor.cjs` vérifie les deux modes, l'édition, le
+compteur Unicode, l'export et la reprise. Aucun accès à la session personnelle de Matthieu.
+
+Définition de l'éditeur et paramètres : `references/post-editor.md`.
+
+
+### Automatisation des corrections et synchronisation du post (2026-09-05)
+
+Cette section gouverne toute correction ou mise à jour d'un post généré ou édité :
+
+1. **Règle P0 absolue : correction grammaticale stricte sans toucher au style**.
+   Quand Matthieu écrit, propose une correction ou colle un texte dans le chat ou l'éditeur, l'agent ne touche JAMAIS à sa voix, son style, son rythme, ses répétitions ou ses images. Seules l'orthographe, les accords grammaticaux, la conjugaison et la ponctuation factuelle (comme une double virgule de saisie) sont rectifiées. Dans le doute, conserver SA version.
+2. **Synchronisation automatique et purge de révision du cache (`localStorage`)**.
+   Chaque fois que l'agent redéploie une correction ou un nouveau texte sur disque, une empreinte sha256 (`revision`) est inscrite dans `_post-data.js`. L'éditeur HTML (`zr-post-editor.js`) compare cette valeur à celle du navigateur. Dès qu'une nouvelle révision est détectée, l'ancien brouillon local est archivé dans le stockage (`:archive:<revision>`) et la nouvelle version déployée s'affiche immédiatement dans la zone de texte au rechargement de la page (⌘R). Matthieu n'a plus à importer manuellement le fichier ni à purger son navigateur : le texte corrigé est visible instantanément.
+3. **Recalibrage automatique des traductions (EN / JA / FR)**.
+   La version française de Matthieu est la source de vérité. L'anglais et le japonais sont immédiatement recalibrés pour refléter toutes ses modifications et nuances, en respectant impérativement le plafond strict des 2200 caractères Instagram (budget cible ~2150 caractères avec les 5 hashtags).
+4. **Interdiction absolue des tirets cadratins (P0)**.
+   Le tiret cadratin (code U+2014), le demi-cadratin (code U+2013) et le double tiret employé comme ponctuation sont strictement interdits dans les légendes, le code, les fichiers JSON et la documentation.
+
+

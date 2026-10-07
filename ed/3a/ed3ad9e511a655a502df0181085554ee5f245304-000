@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>ZenRayProgress, quatre redesigns de sidebar</title>
+<style>
+  /* Polices SERVIES par le gabarit, jamais attendues du systeme : un repli de police
+     ne se signale jamais, seul l'oeil le voit. Les deux familles sont VARIABLES, donc
+     trois faces couvrent toutes les graisses employees ici. */
+  @font-face{font-family:'Inter';src:url('fonts/InterVariable.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap;}
+  @font-face{font-family:'AnthropicSerif';src:url('fonts/AnthropicSerif-Romans.woff2') format('woff2');font-weight:300 800;font-style:normal;font-display:swap;}
+  @font-face{font-family:'AnthropicSerif';src:url('fonts/AnthropicSerif-Italics.woff2') format('woff2');font-weight:300 800;font-style:italic;font-display:swap;}
+
+  
+  
+  
+
+  :root{
+    --fond:#EDEDEB; --carte:#FDFDFC; --encre:#1F1F1E; --encre-douce:#6b6b68;
+    --trait:0.5px solid rgba(0,0,0,0.12); --accent:#0A84FF; --r-panel:14px;
+    --ombre:0 8px 30px rgba(0,0,0,0.10);
+    --sans:'Inter','Inter Variable','Hiragino Sans W4',-apple-system,Arial,sans-serif;
+    --serif:'AnthropicSerif','Hiragino Mincho ProN W3',Georgia,serif;
+  }
+  html,body{margin:0;background:var(--fond);color:var(--encre);font-family:var(--sans);font-weight:400;-webkit-font-smoothing:antialiased;}
+  .page{max-width:1100px;margin:0 auto;padding:72px 32px 96px;}
+  h1{font-family:var(--serif);font-weight:350;font-size:42px;letter-spacing:-0.02em;margin:0 0 10px;line-height:1.1;}
+  .chapo{font-size:15px;color:var(--encre-douce);max-width:64ch;line-height:1.65;margin:0 0 8px;}
+  .rappel{font-size:13.5px;color:var(--encre-douce);max-width:64ch;line-height:1.7;margin:0 0 44px;}
+  .grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:20px;}
+  a.carte{display:block;text-decoration:none;color:inherit;background:var(--carte);border-radius:var(--r-panel);
+    box-shadow:var(--ombre),inset 0 0 0 0.5px rgba(255,255,255,0.6);padding:0 0 22px;overflow:hidden;
+    transition:transform .16s ease, box-shadow .16s ease;}
+  a.carte:hover{transform:translateY(-3px);box-shadow:0 16px 44px rgba(0,0,0,0.14);}
+  .bandeau{height:104px;display:flex;align-items:flex-end;padding:14px 20px;}
+  .b1{background:linear-gradient(135deg,#dfe9f5,#f6f1ea);}
+  .b2{background:linear-gradient(135deg,#fbfbfa,#eceae5);}
+  .b3{background:linear-gradient(135deg,#1c1c1a,#3a352c);}
+  .num{font-family:var(--serif);font-weight:400;font-size:34px;line-height:1;opacity:.5;}
+  .b3 .num{color:#fff;opacity:.62;}
+  .corps{padding:18px 20px 0;}
+  h2{font-family:var(--serif);font-weight:350;font-size:22px;margin:0 0 4px;letter-spacing:-0.01em;}
+  .etiquette{font-size:11.5px;text-transform:uppercase;letter-spacing:0.09em;color:var(--accent);margin:0 0 12px;}
+  .corps p{font-size:13.5px;line-height:1.62;color:var(--encre-douce);margin:0 0 10px;}
+  .fait{font-size:12.5px;line-height:1.6;color:var(--encre);border-top:var(--trait);padding-top:12px;margin:12px 0 0;}
+  .fait b{font-weight:500;}
+  .note{margin-top:52px;padding:20px 22px;background:var(--carte);border-radius:var(--r-panel);
+    box-shadow:inset 0 0 0 0.5px rgba(0,0,0,0.07);font-size:13px;line-height:1.7;color:var(--encre-douce);}
+  .note b{color:var(--encre);font-weight:500;}
+  .note + .note{margin-top:14px;}
+  a.carte.vedette{margin:0 0 20px;}
+  a.carte.vedette .bandeau{height:132px;justify-content:space-between;align-items:flex-end;}
+  a.carte.vedette .corps{max-width:74ch;}
+  .b4{background:linear-gradient(140deg,#e8d7c8,#f4efe7 58%,#dfe4ea);}
+  .tag{font-size:11px;text-transform:uppercase;letter-spacing:0.11em;color:#A8552F;padding-bottom:5px;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Quatre redesigns, une nouvelle nav</h1>
+  <p class="chapo">Quatre directions distinctes pour la sidebar gauche de ZenRayProgress, chacune portant aussi la vue de la nouvelle entrée <b>ZenRay Assets</b>, placée juste après Create.</p>
+  <p class="rappel">Le problème commun : la zone Create porte treize entrées d'affilée, où l'œil ne trouve plus rien. Chacune le traite autrement, et c'est là que se joue le choix. Toutes reprennent les jetons réels du produit, verre, ombres, rayons, et le trio typographique, Inter pour l'interface, AnthropicSerif pour les titres et pour tous les nombres.</p>
+
+  <a class="carte vedette" href="04-salon.html">
+    <div class="bandeau b4"><span class="num">04</span><span class="tag">la synthèse</span></div>
+    <div class="corps">
+      <p class="etiquette">Salon</p>
+      <h2>Entre l'atelier et le musée</h2>
+      <p>Ce que tu as demandé après avoir vu les trois premières : la matière et les repères de l'Atelier, la respiration et le serif de la Galerie. Le lieu d'exposition habité plutôt que la vitrine ou l'établi.</p>
+      <p class="fait"><b>De l'Atelier :</b> le verre, les sous-groupes de la sidebar, les compteurs, les filtres, le panneau de détail avec licence et réemplois.</p>
+      <p class="fait"><b>De la Galerie :</b> le titre serif deux tons, les grandes marges, la retenue du chrome, des pièces assez grandes pour qu'on les regarde.</p>
+      <p class="fait"><b>Ce qui lui est propre :</b> l'accent quitte le bleu système pour le corail chaud du site, et chaque pièce d'une même famille reçoit sa propre lumière.</p>
+    </div>
+  </a>
+
+  <div class="grille">
+
+    <a class="carte" href="01-atelier.html">
+      <div class="bandeau b1"><span class="num">01</span></div>
+      <div class="corps">
+        <p class="etiquette">Atelier</p>
+        <h2>Liquid Glass, poussé</h2>
+        <p>La plus fidèle au système existant, donc la plus vite déployable. Les assets en cartes vitrées à grande vignette, rangés par famille.</p>
+        <p class="fait"><b>Sa réponse aux treize entrées :</b> Create se scinde en trois sous-groupes nommés, Travail, Bibliothèques, Pilotage, et un champ filtre la navigation entière.</p>
+        <p class="fait"><b>À choisir si</b> tu veux que ça parte en production cette semaine sans rupture visuelle.</p>
+      </div>
+    </a>
+
+    <a class="carte" href="02-galerie.html">
+      <div class="bandeau b2"><span class="num">02</span></div>
+      <div class="corps">
+        <p class="etiquette">Galerie</p>
+        <h2>Éditorial, luxe, épuré</h2>
+        <p>Le catalogue d'une maison d'édition plutôt qu'un tableau de bord. Titre en serif deux tons, beaucoup de vide, grandes pièces. Montre moins, mais on regarde vraiment.</p>
+        <p class="fait"><b>Sa réponse aux treize entrées :</b> deux sous-groupes seulement, Atelier et Conduite, et les quatre autres zones restent repliées tant qu'on ne les ouvre pas.</p>
+        <p class="fait"><b>À choisir si</b> ZenRay Assets doit d'abord tenir devant un studio ou un client.</p>
+      </div>
+    </a>
+
+    <a class="carte" href="03-studio.html">
+      <div class="bandeau b3"><span class="num">03</span></div>
+      <div class="corps">
+        <p class="etiquette">Studio</p>
+        <h2>Dense, sombre, réutilisable</h2>
+        <p>La bibliothèque d'un vrai studio, sombre par défaut, parce que c'est ainsi qu'on regarde de la 3D. Filtres empilés par type, moteur et année, et un panneau d'inspection qui donne la licence et les projets où la pièce a déjà servi.</p>
+        <p class="fait"><b>Sa réponse aux treize entrées :</b> sidebar compacte à repères visuels, pensée pour tenir vingt-cinq entrées sans fatiguer.</p>
+        <p class="fait"><b>À choisir si</b> retrouver et réutiliser au quotidien prime sur la vitrine.</p>
+      </div>
+    </a>
+
+  </div>
+
+  <p class="note"><b>Ce sont des maquettes, pas du code de production.</b> Rien n'a été touché dans le dépôt ZenRayProgress. Chaque page s'ouvre en double-cliquant, sans serveur, et porte sa bascule de thème.</p>
+
+  <p class="note"><b>Ce qui a été vérifié, dans un navigateur isolé.</b> Les trois pages rendent leur contenu, la bascule de thème repeint réellement les deux thèmes, les polices se chargent, aucun tiret cadratin ne subsiste et aucune monospace ne s'affiche. Les vignettes sont des emplacements déclarés : aucun rendu n'a été inventé, puisqu'il n'y en avait aucun de disponible.</p>
+
+</div>
+</body>
+</html>

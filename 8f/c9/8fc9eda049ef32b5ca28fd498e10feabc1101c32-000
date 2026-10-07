@@ -1,0 +1,14 @@
+
+@font-face{font-family:InterVariable;src:url('assets/fonts/InterVariable.woff2');font-weight:100 900}
+@font-face{font-family:AnthropicSerif;src:url('assets/fonts/AnthropicSerif-Romans.woff2');font-weight:300 800}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:InterVariable;font-weight:var(--bodyWeight)}
+.canvas{width:var(--width);height:var(--height);padding:var(--pad);display:flex;flex-direction:column;gap:var(--gap)}
+p,h1,h2{margin:0}header{height:var(--headerHeight);flex-shrink:0}.eyebrow{font-size:var(--smallSize);color:var(--accent);letter-spacing:.08em;margin-bottom:var(--gap)}
+h1{font:var(--headingWeight) var(--titleSize)/1.18 AnthropicSerif;white-space:pre-line;letter-spacing:-.025em;margin-bottom:var(--gap)}
+.subtitle{font-size:var(--bodySize);color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,1fr);gap:var(--gap);height:var(--gridHeight);flex-shrink:0}
+.card{border:var(--border) solid var(--line);border-radius:var(--radius);padding:var(--cardPad);background:var(--white);display:flex;flex-direction:column;gap:calc(var(--gap)/2)}
+.card-heading{display:flex;align-items:center;gap:calc(var(--gap)/1.5)}.number{font:400 var(--stepSize)/1 AnthropicSerif;color:var(--accent);background:var(--soft);border-radius:calc(var(--radius)/2);padding:calc(var(--gap)/2)}
+h2{font:var(--headingWeight) var(--cardTitleSize)/1.15 AnthropicSerif;letter-spacing:-.02em}.card p{font-size:var(--bodySize);line-height:1.38}.result{margin-top:auto;color:var(--accent);font-size:var(--smallSize);padding-top:calc(var(--gap)/3)}
+.offer{height:var(--offerHeight);background:var(--soft);border-radius:var(--radius);padding:var(--cardPad);display:flex;flex-direction:column;gap:calc(var(--gap)/2);flex-shrink:0}.offer-title{font:var(--headingWeight) var(--cardTitleSize)/1.1 AnthropicSerif}.parts{display:flex;gap:var(--gap);font-size:var(--bodySize)}.parts span+span{border-left:var(--border) solid var(--accent);padding-left:var(--gap)}.note{font-size:var(--smallSize);color:var(--muted);line-height:1.35}
+.metrics{height:var(--metricsHeight);display:flex;align-items:center;gap:var(--gap);border-bottom:var(--border) solid var(--line);flex-shrink:0}.metric{font:400 var(--cardTitleSize)/1.15 AnthropicSerif;flex:1}.metrics .note{flex:1}.footer{display:flex;flex-direction:column;gap:calc(var(--gap)/2)}.first{font-size:var(--bodySize);color:var(--accent)}.source{font-size:var(--footerSize);letter-spacing:.04em;color:var(--muted)}

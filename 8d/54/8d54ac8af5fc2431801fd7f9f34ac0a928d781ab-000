@@ -1,0 +1,107 @@
+#!/usr/bin/env python3
+# Create the routed skill without modifying either source. (7 October 2026, 17:00 Europe/Paris)
+import hashlib
+import json
+import shutil
+import tarfile
+from pathlib import Path
+
+source = Path('/Users/zenray/.claude/skills/zenray-html-photoshop-pdf-hda-socialmedia-shorts-reel')
+target = source.parent / 'zenray-edit'
+assert not target.exists(), 'Refusing to overwrite an existing skill'
+shutil.copytree(source, target)
+legacy = target / 'references/legacy'
+legacy.mkdir()
+files = {str(p.relative_to(source)): hashlib.sha256(p.read_bytes()).hexdigest() for p in source.rglob('*') if p.is_file()}
+with tarfile.open(legacy / 'OriginalBundle.tar.gz', 'w:gz') as archive:
+    for relative in sorted(files):
+        archive.add(source / relative, arcname=relative)
+(legacy / 'OriginalBundleManifest.json').write_text(json.dumps(files, indent=2) + '\n')
+shutil.copy2(source / 'SKILL.md', legacy / 'OriginalSkill.md')
+shutil.copy2(source.parent / 'edit-text/SKILL.md', legacy / 'EditText.md')
+lines = (source / 'SKILL.md').read_text().splitlines(keepends=True)
+ranges = [(1,585,'CompositionFoundation'),(586,863,'ShortsPipeline'),(864,882,'StudioLibrary'),(883,1347,'CompositionRecipes'),(1348,2668,'PhotoWorkflow'),(2669,3141,'ParameterPanels'),(3142,3470,'PdfEditing'),(3471,5004,'NativeUiReference'),(5005,5192,'PostEditorContract'),(5193,5467,'SocialText'),(5468,5550,'VignetteWorkflow'),(5551,6023,'EditorCorrections'),(6024,6087,'DesignLibrary'),(6088,6123,'UiContract'),(6124,len(lines),'ShortsCorrections')]
+routes = []
+for start, end, name in ranges:
+    relative = f'references/legacy/{name}.md'
+    (target / relative).write_text(''.join(lines[start - 1:end]))
+    routes.append({'name': name, 'path': relative, 'startLine': start, 'endLine': end})
+(target / 'references/Routes.json').write_text(json.dumps({'sourceSha256': files['SKILL.md'], 'lineCount': len(lines), 'blocks': routes}, indent=2) + '\n')
+(target / 'SKILL.md').write_text('''---
+name: zenray-edit
+description: Créer et éditer textes, photos, compositions HTML, carrousels, PDF et shorts avec templates paramétriques réutilisables et sources conservées ; correction grammaticale fidèle par défaut, projets et exports liés à ZenRay Assets V2.
+---
+
+# ZenRay Edit (7 October 2026)
+
+Atelier de création et d’édition, de la demande à un média vérifié et modifiable. Lire [ActiveContract.md](references/ActiveContract.md), puis seulement les références du mode utile. (7 October 2026)
+
+- Reprendre l’identité Assets existante, son contexte et son feedback avec zenray-assets-v2 ; travailler dans l’atelier ou les sources effectivement liées. Une conversation ne se réattribue jamais implicitement. (7 October 2026)
+- Pour un texte de Matthieu, corriger uniquement grammaire, orthographe, conjugaison et transcription manifestement erronée. Conserver vocabulaire, rythme, ordre, répétitions et contenu ; réécriture, réorganisation et traduction exigent une demande explicite. Lire [TextEditing.md](references/TextEditing.md). (7 October 2026)
+- Chercher un gabarit avant de construire : `node scripts/zr-design.mjs list`, puis `get <id>`. Instancier la définition existante ; paramètres globaux, de famille et d’instance distincts. (7 October 2026)
+- Images et post : `python3 scripts/zr-hda-instance.py <source> --dest <atelier/instance> --mode light --post <draft>`. Heavy sert une URL locale pour WebGL ; ouvrir cette URL uniquement dans le navigateur interne. `--force` conserve textes, réglages et sorties, avec historique de code. (7 October 2026)
+- Composition : `scripts/new-project.sh <name> <atelier>` puis `<instance>/render.sh`. Le fichier export.json centralise dimensions, facteur, format et limites ; un facteur absent atteint au moins 3840 pixels sur le grand côté. Les sources et le master sont conservés même si une livraison échoue. (7 October 2026)
+- Avant traitement média lourd, appliquer ffmpeg-hardware-check ; utiliser PDF, Houdini ou téléchargement seulement si le mode le nécessite. Aucun script historique externe absent ne vaut capacité vérifiée. (7 October 2026)
+- Vérifier dimensions, poids, codec/durée et alpha selon le média, regarder le rendu réel en navigateur isolé ; fournir sources et exports identifiés. Archiver via Assets V2 et vérifier le cloud avant de l’annoncer ; publication publique seulement dans le périmètre autorisé. (7 October 2026)
+
+## Modes et références ciblées (7 October 2026)
+
+| Mode | Références | Date |
+|---|---|---|
+| Correction et rédaction | TextEditing.md ; legacy/EditText.md pour historique | 7 October 2026 |
+| Photo et cadrage | legacy/PhotoWorkflow.md ; legacy/EditorCorrections.md ; post-editor.md | 7 October 2026 |
+| Composition et carrousel | legacy/CompositionFoundation.md ; legacy/CompositionRecipes.md | 7 October 2026 |
+| Template depuis référence | template-creator.md ; legacy/DesignLibrary.md | 7 October 2026 |
+| PDF | legacy/PdfEditing.md, puis skill PDF si nécessaire | 7 October 2026 |
+| Reel et short | legacy/ShortsPipeline.md ; legacy/ShortsCorrections.md | 7 October 2026 |
+| UI paramétrique | legacy/ParameterPanels.md ; legacy/UiContract.md ; legacy/NativeUiReference.md si besoin natif | 7 October 2026 |
+| Post social et vignette | legacy/SocialText.md ; legacy/VignetteWorkflow.md ; legacy/PostEditorContract.md | 7 October 2026 |
+
+Les 15 blocs historiques, les corpus d’origine et leur provenance restent consultables par [INDEX.md](references/INDEX.md). Les anciennes consignes sont des recettes historiques ; ActiveContract.md gouverne les commandes actuelles et tranche leurs contradictions. (7 October 2026)
+
+## Preuves et contrôles (7 October 2026)
+
+- `python3 scripts/index-skill.py --verify-only` vérifie les archives historiques et leurs empreintes ; `python3 scripts/CheckContract.py` vérifie routes, catalogue, entrées actives et configuration d’export. (7 October 2026)
+- `python3 scripts/verify-post-instance.py <images> <fixture-neuve>` vérifie la reprise sans perte. Les vérificateurs navigateur exigent Playwright disponible dans le runtime, tournent isolés et produisent leurs captures dans la fixture. (7 October 2026)
+- Distinguer contrôles structurels, rendu réellement mesuré et cloud réellement vérifié ; une preuve ne couvre que ce qu’elle inspecte. (7 October 2026)
+''')
+(target / 'references/ActiveContract.md').write_text('''# Contrat actif (7 October 2026)
+
+- Ce contrat prime sur les recettes historiques. L’instruction actuelle de Matthieu garde priorité ; aucun nouveau projet par prompt, aucun identifiant de session inventé. (7 October 2026)
+- Assets V2 fournit chemins et identité ; Memory1 garde le texte durable, les binaires et exports restent dans les sources liées. Le compte rendu et la preuve cloud sont deux résultats distincts. (7 October 2026)
+- Grammaire seule par défaut, sans fusion de répétitions ni nouvel ordre ni langues ajoutées. Les propositions demandées sont identifiées et leurs ajouts signalés ; aucun vécu, logistique ou auteur inventé. (7 October 2026)
+- Interface : InterVariable 400, AnthropicSerif 350 pour éditorial et 400 pour nombres, AnthropicMono pour code ; fonts embarquées. Les accents artistiques explicitement choisis restent possibles, les licences sont respectées. (7 October 2026)
+- Curseurs supplémentaires sur demande explicite ; les contrôles propres à l’atelier existant restent utilisables. Paramètres regroupés, 8 au maximum par catégorie, sources et réglages toujours conservés. (7 October 2026)
+- Format : demande explicite, sinon référence mesurée, sinon clarification utile. export.json permet un facteur entier explicite ; par défaut le grand côté atteint au moins 3840 px, sans agrandissement d’un ancien bitmap. (7 October 2026)
+- Un rendu absent, trop lourd, de mauvaises dimensions ou ne respectant pas alpha/durée/codec échoue explicitement. Les conversions ne suppriment pas le seul master et n’annoncent pas de réussite si la limite n’est pas satisfaite. (7 October 2026)
+- Aucun navigateur personnel ; les scripts renvoient URL/path, l’agent ouvre le navigateur interne. Chromium headless Playwright dispose d’un contexte isolé. (7 October 2026)
+- Externes historiques non inclus : export-png.sh, backup-memory.sh, render_mikiri_flash.py. Chercher dans sources liées ou déclarer leur absence ; les exports actuels fournis passent par render.sh et RenderComposition.cjs. (7 October 2026)
+- Publication publique et promotion sont des actions distinctes de l’archivage privé Assets, exécutées seulement si autorisées. (7 October 2026)
+''')
+(target / 'references/TextEditing.md').write_text('''# Texte fidèle (7 October 2026)
+
+- Correction ordinaire : orthographe, accords, conjugaison, ponctuation manquante et erreur manifeste de reconnaissance vocale ; conserver tous les mots lorsqu’aucune faute ne justifie leur changement. (7 October 2026)
+- Ne pas modifier le style, le vocabulaire, l’ordre des phrases, répétitions ou degré d’insistance. Une ambiguïté n’autorise pas à inventer un complément. (7 October 2026)
+- Réécriture, raccourcissement, réorganisation de dictée, variantes ou traduction : seulement selon la demande explicite. Dans une réorganisation autorisée, chaque idée a sa place et toute rectification de Matthieu remplace la version antérieure. (7 October 2026)
+- Ajouts signalés et retirables, aucune idée glissée dans sa parole ; une traduction ne remplace pas l’original et suit les langues demandées. (7 October 2026)
+- Contrôle : comparer original et sortie, vérifier chaque changement et chaque idée ; pas de tiret cadratin, demi-cadratin ou double tiret de ponctuation. Les textes corrigés ne sont pas modifiés par l’éditeur ou l’instanciation. (7 October 2026)
+- Protocole historique conservé dans legacy/EditText.md ; ses propositions et traductions automatiques ne priment pas sur ce contrat fidèle. (7 October 2026)
+''')
+registry_path = target / 'templates/designs/index.json'
+old_registry = json.loads(registry_path.read_text())
+paths = {'luxe-epure': 'zenray-assets-mockups/02-galerie.html','atelier-liquid-glass':'zenray-assets-mockups/01-atelier.html','studio-sombre':'zenray-assets-mockups/03-studio.html','salon-synthese':'zenray-assets-mockups/04-salon.html','all-in-one-capsule':'zenray-assets-mockups/05-capsules-hda.html#p4'}
+designs={}
+translations={'nom':'name','domaine':'domain','fichier':'file','sourceOrigine':'origin','composants':'components','maquette':'mockup','enLigne':'url','depot':'repository'}
+for identifier, item in old_registry['designs'].items():
+    converted={translations.get(k,k):v for k,v in item.items()}
+    converted['file']=paths.get(identifier, ('designs/'+item['fichier'] if item['fichier'].startswith('components/') else item['fichier']))
+    designs[identifier]=converted
+registry_path.write_text(json.dumps({'schema':'urn:zenray:design-registry:v2','name':'ZenRay Design Registry','updated':'7 October 2026','root':'templates','count':len(designs),'targetCapacity':1000,'designs':designs},indent=2,ensure_ascii=False)+'\n')
+script=target/'scripts/zr-design.mjs'
+content=script.read_text().replace('.nom','.name').replace('.fichier','.file').replace('.composants','.components')
+script.write_text(content)
+script=target/'scripts/zr-hda-instance.py'
+content=script.read_text().replace('ouvrir=args.open','open_requested=args.open').replace('ouvrir=True','open_requested=True').replace('if ouvrir:', 'if open_requested:').replace('help="ouvrir dans Chrome une fois cree"','help="emit the URL for opening in the agent internal browser"')
+content=content.replace('subprocess.run(["open", "-a", "Google Chrome", str(html_path)], check=False)','print(json.dumps({"openUrl": html_path.as_uri(), "browser": "internal"}))').replace('subprocess.run(["open", "-a", "Google Chrome", url], check=False)','print(json.dumps({"openUrl": url, "browser": "internal"}))')
+script.write_text(content)
+print(json.dumps({'skill':str(target),'originalFileCount':len(files),'blocks':len(routes)}))

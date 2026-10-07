@@ -1,0 +1,156 @@
+## Correction critique du compute : polices UltraBold et couleurs de texte (2026-09-10)
+
+Bug résolu côté moteur de rendu Python (`photo-apply.py` et `crop-apply.py`) :
+
+1. **Prise en compte réelle des graisses UltraBold et Black :**
+   - Sur `InterVariable.ttf`, l'axe 0 est `Optical size` (14 à 32) et l'axe 1 est `Weight` (100 à 900). Passer `[weight]` ciblait l'axe 0 (plafonné à 32) en laissant le poids bloqué à Regular (400).
+   - `load_font()` inspecte désormais dynamiquement les axes variables via FreeType pour cibler explicitement l'axe `weight` / `wght` avec les coordonnées appropriées `[14.0, float(weight)]`, avec repli sur `set_variation_by_name()` (`ExtraBold`, `Black`).
+   - `parse_weight()` normalise tout entier, chaîne numérique ou libellé (`ultrabold`, `extrabold`, `black`, `heavy`, `bold`).
+   - Pour la police Serif (`AnthropicSerif`), les graisses 800 (`AnthropicSerif-ExtraBold.ttf`) et 900 (`AnthropicSerif-Black.ttf`) sont mappées sans erreur de type.
+
+2. **Rendu fiable de toutes les couleurs de texte en compute :**
+   - Intégration de `parse_color()` qui normalise les chaînes hexadécimales 3, 6 ou 8 caractères, les formats `rgb()` et `rgba()`, et les tuples RGBA.
+   - Les calques de texte sont dessinés avec un tuple RGBA normalisé `(r, g, b, 255)` sur le canevas Pillow RGBA, éliminant tout rejet ou repli silencieux vers la couleur par défaut.
+   - Synchronisation complète de l'input couleur et des boutons de palette dans l'interface, avec persistance dans `_params.json` et `_crop_params.json`.
+
+
+
+## Style de titre et de sous-titre des shorts, correction du 2026-09-12, TROISIEME et derniere passe
+
+**Etat final, celui qui fait foi.** Titre `AnthropicSerif-SemiBold.ttf`, **DROIT, jamais italique**.
+Sous-titres `InterVariable` instance nommee **`Black`** (poids 900, pas ExtraBold), couleur
+**`#f8f671`** (pas `#edc853`). Voir la section suivante pour l historique complet des trois passes,
+qui reste ecrit pour ne pas rejouer les memes erreurs.
+
+## Style de titre et de sous-titre des shorts, correction du 2026-09-12, PUIS re-correction le meme jour
+
+Remplace le titre serif blanc sans fond decrit dans la section « Pipeline Reel et Shorts 15s ».
+Les deux styles ci-dessous font foi pour tout short et tout reel a partir de cette date.
+
+**Erreur commise et corrigee le meme jour : ne pas la rejouer.** La premiere passe avait pose le
+titre en `AnthropicSans-SemiBoldItalic` et les sous-titres en `InterVariable` SemiBold (600). Les
+deux etaient faux. Matthieu : « la font du titre c est pas Anthropic Serif SemiBoldItalic... les
+sous titres inter en bas devait etre en Inter ExtraBold ». Ce que porte le tableau ci-dessous est la
+version corrigee, la seule a suivre.
+
+### Le titre : pastille blanche, **AnthropicSerif** SemiBold, droit ou italique, taille MAXIMALE sans rien couper
+
+Un titre pose en blanc sur l image depend entierement de ce qu il y a derriere : il se lit sur un
+ciel, il disparait sur une facade claire. La pastille blanche supprime la question, et c est la
+raison de la regle, pas son esthetique seule.
+
+| Parametre | Valeur |
+|---|---|
+| Fond | blanc pur `#ffffff`, rectangle a coins arrondis |
+| Rayon | 30 % de la hauteur de la pastille, forme de pilule douce |
+| Marge interieure | 0,55 fois la hauteur de capitale a gauche et a droite, 0,42 en haut et en bas |
+| Police | **`AnthropicSerif-SemiBold.ttf`, DROIT, jamais italique.** Correction finale du 2026-09-12 : « Houdini doit etre non italic ». Ne plus utiliser `AnthropicSerif-SemiBoldItalic.ttf` pour ce titre. |
+| Taille | **maximale en pixels, mesuree, jamais devinee** : voir la regle de taille ci-dessous |
+| Couleur du texte | noir `#000000` |
+| Casse | majuscules |
+| Ombre | aucune, la pastille porte deja la lisibilite |
+
+**La meme logique vaut pour les deux coupes.** Droit ou italique, la pastille, le rayon, les marges
+et la couleur ne changent pas : seul le fichier de police change. Ne jamais incliner une coupe droite
+par une transformation, l italique est un dessin, jamais une deformation.
+
+Les sept coupes reelles existent sur ce Mac dans **AnthropicSerif**, `Light` jusqu a `Black`, chacune
+avec son italique. Aucun faux gras et aucune fausse italique ne se fabriquent.
+
+**Taille maximale en px sans crop apparent, la regle qui evite le titre trop petit.** Le titre ne se
+fixe jamais a une taille choisie a l avance : on part d une grande taille (130 px sur un canevas de
+1080 de large) et on la reduit par pas de 2 jusqu a ce que la PASTILLE, texte plus marge, tienne sous
+92 % de la largeur du canevas. La mesure se fait sur la largeur reelle du texte a chaque taille
+testee, jamais sur une estimation :
+
+```python
+# Grow the title to the largest size whose pill still fits, measured at each step.
+# FR : la taille se mesure contre la vraie largeur de pastille, jamais devinee.
+max_pill_width = int(canvas_width * 0.92)
+size = 130
+while size > 24:
+    font = ImageFont.truetype(TITLE_FONT, size)
+    box = font.getbbox(title_text)
+    text_w = box[2] - box[0]
+    pad_x = int((box[3] - box[1]) * 0.55)
+    if text_w + pad_x * 2 <= max_pill_width:
+        break
+    size -= 2
+```
+
+```python
+TITLE_FONT = "/Users/zenray/Library/Fonts/AnthropicSerif-SemiBoldItalic.ttf"
+TITLE_PILL_BG = (255, 255, 255, 255)
+TITLE_TEXT_COLOR = (0, 0, 0, 255)
+TITLE_RADIUS_RATIO = 0.30
+TITLE_PAD_X_RATIO = 0.55
+TITLE_PAD_Y_RATIO = 0.42
+TITLE_MAX_PILL_WIDTH_RATIO = 0.92
+```
+
+### Le sous-titre : Inter **ExtraBold**, une seule couleur, `#edc853`
+
+La bande basse abandonne le duo jaune vif et blanc. Une seule couleur, `#edc853`, sur les deux
+lignes, en `InterVariable` **ExtraBold (800)**, pas SemiBold (600). Le jaune vif `#FFE600` et le
+`#f6cf47` des anciennes sections sont perimes pour les shorts.
+
+| Parametre | Valeur |
+|---|---|
+| Police | `InterVariable.ttf`, instance nommee **`Black`** (poids 900). Correction finale du 2026-09-12 : ExtraBold (800) etait encore trop leger, Black est la regle. |
+| Couleur | **`#FFE600`**, jaune vif plein. Deux corrections avant d y arriver : `#edc853` puis `#f8f671`, tous deux juges trop pales par Matthieu. `#FFE600` est le meme jaune deja documente comme « jaune vif » dans la section Black Myth Wukong de ce skill : une seule couleur canonique. |
+| Casse | phrase normale, jamais tout en majuscules |
+| Ombre portee | aucune |
+| Auto ajustement | inchange, la largeur ne depasse jamais 86 % du canevas |
+
+**Piege de la police variable, paye le 2026-09-12 : `set_variation_by_axes([poids])` ne regle PAS le
+poids.** `InterVariable.ttf` porte deux axes dans cet ordre : `Optical size` (14 a 32) puis `Weight`
+(100 a 900). Passer une seule valeur dans `set_variation_by_axes([800])` regle donc le PREMIER axe,
+la taille optique, et laisse le poids a son defaut 400 (Regular) sans la moindre erreur. Le rendu
+sort alors en Regular alors que le code affirme ExtraBold. La correction est d utiliser le nom de
+l instance, qui ne peut pas se tromper d axe :
+
+```python
+# set_variation_by_axes([800]) sets the FIRST axis (optical size), not the weight, with no error.
+# The named instance cannot target the wrong axis.
+# FR : set_variation_by_axes([800]) regle le premier axe, la taille optique, pas le poids.
+WEIGHT_NAMES = {400: b'Regular', 500: b'Medium', 600: b'SemiBold', 700: b'Bold',
+                800: b'ExtraBold', 900: b'Black'}
+font = ImageFont.truetype("/Users/zenray/Library/Fonts/InterVariable.ttf", size)
+font.set_variation_by_name(WEIGHT_NAMES[800])
+```
+
+Le controle qui prouve que le poids a vraiment change : `font.get_variation_names()` liste les
+instances disponibles, et une capture reelle a deux poids cote a cote doit montrer un ecart net de
+graisse, jamais une difference invisible.
+
+### Le flash NEW en preroll, rose sature vers rose pale, sans bord noir (2026-09-12)
+
+Un calque d amorce de 0,30 s, pose au tout debut du short, au premier plan, centre, SANS AUCUN
+RECADRAGE (memes dimensions que le canevas du short, overlay direct a 0,0). Reprend le rythme du
+contre mikiri de Sekiro, un choc tres court pour accrocher avant que la video ne s installe.
+
+| Parametre | Valeur |
+|---|---|
+| Duree | 0,30 s (entre 0,25 et 0,35, la fourchette donnee) |
+| Texte | `NEW`, majuscules, meme police que le titre, AnthropicSerif SemiBold **droit** |
+| Couleur | **rose sature au choc, `rgb(255,18,132)`, transition RAPIDE (courbe ease-out puissance 0,30) vers un rose pale `#eb8c86`, tenu jusqu au fondu** |
+| Bord | **aucun**, zero contour noir, la forme est la couleur elle-meme |
+| Halo | vapeur texturee en nuage (bruit fractal, plusieurs octaves de bruit floute superposees), 2,15 fois la taille du texte net, couleur `#eb8c86`, jamais un simple flou uniforme |
+| Animation | fade in ET fade out du texte et du halo, jamais une coupe seche |
+| Fond | flash radial rouge, lignes de vitesse, pop blanc de hit-stop au tout premier instant |
+| Format d encodage | ProRes 4444, alpha reel, `.mov` |
+
+**Integration dans le short final.** Overlay direct `[0:v][1:v]overlay=0:0:eof_action=pass` sur la
+video deja composee (titre et sous-titres compris) : le flash occupe le centre vertical de l ecran,
+la meme zone que la video, jamais la zone du titre ni celle des sous-titres, donc aucun chevauchement
+a prevoir. `eof_action=pass` est necessaire : sans lui, la derniere image du flash reste figee sur
+l ecran une fois ses 0,30 s ecoulees au lieu de laisser voir la suite.
+
+**Script canonique** : `Memory/Houdini/Scripts/render_mikiri_flash.py` (a copier depuis le brouillon
+de session s il n y est pas encore).
+
+### La cadence, quand Matthieu demande dix lignes
+
+Dix repliques de trois secondes font trente secondes pleines, une replique par ligne, sans seconde
+ligne de complement. C est la cadence d un tour de camera de trente secondes : une replique par
+trente-six degres de rotation.

@@ -1,0 +1,52 @@
+<!-- Component: editorial-glow-stepper -->
+<!-- ID sémantique: editorial-glow-stepper -->
+<!-- Capsule avec lueur corail chaude, pastille dots et étapes numérotées 01 02 03 -->
+
+<style>
+.capsule-p3 {
+  width: 100%;
+  border-radius: var(--capsule-r-closed, 999px);
+  background: rgba(125, 125, 125, var(--capsule-bg-alpha, 0.04));
+  border: 1px solid rgba(125, 125, 125, var(--capsule-border-alpha, 0.12));
+  backdrop-filter: blur(var(--capsule-blur, 16px));
+  -webkit-backdrop-filter: blur(var(--capsule-blur, 16px));
+  overflow: hidden;
+  position: relative;
+  transition: border-radius var(--expand-duree, 0.38s) cubic-bezier(0.23, 1, 0.32, 1), border-color 0.24s ease, box-shadow 0.24s ease;
+}
+.capsule-p3::before {
+  content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  box-shadow: inset 0 0 16px var(--accent-lueur, rgba(168, 85, 47, 0.22)); opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.capsule-p3:hover::before { opacity: 0.4; }
+.capsule-p3.est-ouvert {
+  border-radius: var(--capsule-r-open, 20px);
+  border-color: var(--accent, #A8552F);
+  box-shadow: 0 12px 32px var(--accent-doux, rgba(168, 85, 47, 0.12));
+}
+.capsule-p3.est-ouvert::before { opacity: 0.2; }
+.capsule-chip-dots {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 3px 8px; border-radius: 999px; background: rgba(0,0,0,0.06);
+  font-size: 11px; letter-spacing: 2px; font-weight: 700; color: #6B6B68;
+}
+.capsule-stepper-num {
+  font-family: var(--serif, Georgia); font-size: 15px; font-weight: 400; color: var(--accent, #A8552F);
+  padding: 2px 8px; border-radius: 6px; background: var(--accent-doux, rgba(168,85,47,0.12));
+}
+</style>
+
+<div class="capsule-p3" id="stepper-demo">
+  <button type="button" style="width:100%; border:none; background:transparent; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; cursor:pointer;" onclick="this.parentElement.classList.toggle('est-ouvert')">
+    <p style="margin:0; font-family:var(--serif, Georgia); font-size:15.5px; color:#1F1F1E;">
+      My role : le Tech Art est un multiplicateur...
+    </p>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span class="capsule-chip-dots">...</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </div>
+  </button>
+</div>

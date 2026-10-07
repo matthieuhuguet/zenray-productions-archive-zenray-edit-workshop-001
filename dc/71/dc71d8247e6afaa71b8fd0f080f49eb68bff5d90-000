@@ -1,0 +1,996 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZenRay Assets, direction STUDIO</title>
+<style>
+  /* Polices SERVIES par le gabarit, jamais attendues du systeme : un repli de police
+     ne se signale jamais, seul l'oeil le voit. Les deux familles sont VARIABLES, donc
+     trois faces couvrent toutes les graisses employees ici. */
+  @font-face{font-family:'Inter';src:url('fonts/InterVariable.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap;}
+  @font-face{font-family:'AnthropicSerif';src:url('fonts/AnthropicSerif-Romans.woff2') format('woff2');font-weight:300 800;font-style:normal;font-display:swap;}
+  @font-face{font-family:'AnthropicSerif';src:url('fonts/AnthropicSerif-Italics.woff2') format('woff2');font-weight:300 800;font-style:italic;font-display:swap;}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MAQUETTE DE DESIGN, direction STUDIO. Aucun fichier produit n'est touché.
+   Interface de parametres unique en tete (loi HDA) : tout le reste en derive.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Polices, servies depuis ~/Library/Fonts pour un rendu juste en double clic ── */
+
+
+/* AnthropicSerif est installee en coupes STATIQUES. On declare des plages de graisse
+   pour que 350 (titres) et 400 (nombres) tombent tous deux sur la coupe Regular,
+   au lieu de laisser le navigateur choisir Light en silence. */
+
+
+
+
+
+/* ═══════ ÉTAGE 1, jetons globaux ═══════════════════════════════════════════ */
+:root{
+  /* Typographie, reprise du systeme ZenRayProgress */
+  --zr-police-sans:'Inter','Inter Variable','Hiragino Sans W4',-apple-system,Arial,sans-serif;
+  --zr-police-serif:'AnthropicSerif','Hiragino Mincho ProN W3',Georgia,serif;
+  --zr-poids-sans:400;
+  --zr-poids-serif:350;
+  --zr-poids-nombres:400;
+  --zr-ui-base:14px;
+  --zr-ui-3xs:calc(var(--zr-ui-base)*0.69);
+  --zr-ui-2xs:calc(var(--zr-ui-base)*0.77);
+  --zr-ui-xs:calc(var(--zr-ui-base)*0.85);
+  --zr-ui-sm:calc(var(--zr-ui-base)*0.92);
+  --zr-ui-md:var(--zr-ui-base);
+  --zr-ui-lg:calc(var(--zr-ui-base)*1.08);
+  --zr-ui-xl:calc(var(--zr-ui-base)*1.13);
+  --zr-ui-2xl:calc(var(--zr-ui-base)*1.20);
+  --zr-ui-3xl:calc(var(--zr-ui-base)*1.33);
+
+  /* Rayons et rythme, repris du systeme */
+  --zr-r-chip:7px; --zr-r-control:10px; --zr-r-panel:14px; --zr-r-window:22px;
+  --zr-r-thumb:12px;
+  --zr-pas:4px;
+  --zr-gap-1:calc(var(--zr-pas)*1);
+  --zr-gap-2:calc(var(--zr-pas)*2);
+  --zr-gap-3:calc(var(--zr-pas)*3);
+  --zr-gap-4:calc(var(--zr-pas)*4);
+  --zr-gap-6:calc(var(--zr-pas)*6);
+  --zr-gap-8:calc(var(--zr-pas)*8);
+
+  --zr-timing:.34s;
+  --zr-ease:cubic-bezier(.16,1,.3,1);
+
+  /* Geometrie de la maquette */
+  --zr-sidebar-w:248px;
+  --zr-inspector-w:326px;
+  --zr-vignette-min:216px;   /* pilote par la densite S, M, L */
+  --zr-vignette-ratio:62%;   /* hauteur de vignette en pourcentage de largeur */
+
+  /* ── SOMBRE, le defaut de cette direction ────────────────────────────────
+     On regarde de la 3D et des images sur du charbon, jamais sur du blanc. */
+  --zr-bg-ambiant:#0E0E0D;
+  --zr-bg-window:#151514;
+  --zr-bg-content:#1B1B1A;
+  --zr-bg-eleve:#232321;
+  --zr-bg-creux:#111110;
+  --zr-fg:#EDEDEA;
+  --zr-fg-doux:rgba(237,237,234,.62);
+  --zr-fg-tenu:rgba(237,237,234,.40);
+  --zr-filet:rgba(255,255,255,.085);
+  --zr-filet-fort:rgba(255,255,255,.16);
+  --zr-survol:rgba(255,255,255,.055);
+  --zr-accent:#D9AC5E;            /* laiton, la signature studio */
+  --zr-accent-doux:rgba(217,172,94,.15);
+  --zr-accent-fg:#1A1508;
+  --zr-verre:rgba(27,27,26,.72);
+  --zr-verre-filtre:blur(28px) saturate(170%);
+  --zr-ombre-douce:0 2px 10px rgba(0,0,0,.34);
+  --zr-ombre-forte:0 18px 46px rgba(0,0,0,.52),0 4px 14px rgba(0,0,0,.34);
+  --zr-vignette-fond:#131312;
+  --zr-vignette-voile:.30;
+  --zr-motif-opacite:.46;
+  --zr-hachure:rgba(255,255,255,.028);
+
+  /* Couleurs de zone de navigation, les reperes visuels forts */
+  --zone-create:#D9AC5E;
+  --zone-gallery:#B49BF5;
+  --zone-learn:#5FC2A6;
+  --zone-apps:#6FA8F0;
+  --zone-systeme:#8E8E88;
+}
+
+/* ── CLAIR, la bascule. Seuls les jetons changent, aucune regle ne se reecrit ── */
+.zr-clair{
+  --zr-bg-ambiant:#E9E7E2;
+  --zr-bg-window:#F4F3EF;
+  --zr-bg-content:#FDFDFC;
+  --zr-bg-eleve:#FFFFFF;
+  --zr-bg-creux:#F0EFEA;
+  --zr-fg:#1E1E1C;
+  --zr-fg-doux:rgba(30,30,28,.62);
+  --zr-fg-tenu:rgba(30,30,28,.42);
+  --zr-filet:rgba(0,0,0,.09);
+  --zr-filet-fort:rgba(0,0,0,.17);
+  --zr-survol:rgba(0,0,0,.045);
+  --zr-accent:#8A6516;
+  --zr-accent-doux:rgba(138,101,22,.12);
+  --zr-accent-fg:#FFFBF0;
+  --zr-verre:rgba(253,253,252,.74);
+  --zr-ombre-douce:0 2px 8px rgba(40,36,28,.10);
+  --zr-ombre-forte:0 16px 40px rgba(40,36,28,.16),0 3px 10px rgba(40,36,28,.08);
+  --zr-vignette-fond:#E6E4DE;
+  --zr-vignette-voile:.16;
+  --zr-motif-opacite:.55;
+  --zr-hachure:rgba(0,0,0,.030);
+  --zone-create:#8A6516;
+  --zone-gallery:#6B4FCF;
+  --zone-learn:#1F7D64;
+  --zone-apps:#2C6BB8;
+  --zone-systeme:#6C6C66;
+}
+
+/* ═══════ Base ══════════════════════════════════════════════════════════════ */
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:var(--zr-police-sans);
+  font-weight:var(--zr-poids-sans);
+  font-size:var(--zr-ui-md);
+  color:var(--zr-fg);
+  background:var(--zr-bg-ambiant);
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+.num{font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+h1,h2,h3,h4{margin:0;font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);letter-spacing:-.015em}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+button{border:0;background:transparent;cursor:pointer;padding:0}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:var(--zr-filet-fort);border-radius:9px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}
+
+/* Lueur ambiante derriere la fenetre. Pas d'image, uniquement des degrades,
+   et surtout AUCUN backdrop-filter ici, sinon le verre de la sidebar n'a plus
+   rien a refracter. */
+.zr-ambiant{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(1100px 620px at 12% -12%, rgba(217,172,94,.16), transparent 62%),
+    radial-gradient(900px 560px at 88% 6%, rgba(111,168,240,.11), transparent 60%),
+    radial-gradient(1200px 800px at 50% 118%, rgba(180,155,245,.10), transparent 64%);
+}
+.zr-clair .zr-ambiant{
+  background:
+    radial-gradient(1100px 620px at 12% -12%, rgba(190,150,70,.24), transparent 62%),
+    radial-gradient(900px 560px at 88% 6%, rgba(110,150,210,.18), transparent 60%),
+    radial-gradient(1200px 800px at 50% 118%, rgba(150,130,200,.16), transparent 64%);
+}
+
+/* ═══════ Cadre d'application ═══════════════════════════════════════════════ */
+.zr-app{
+  position:relative;z-index:1;height:100vh;padding:22px;
+  display:flex;flex-direction:column;
+}
+.zr-window{
+  flex:1;min-height:0;display:flex;flex-direction:column;
+  border-radius:var(--zr-r-window);overflow:hidden;
+  background:var(--zr-bg-window);
+  box-shadow:var(--zr-ombre-forte), inset 0 0 0 1px var(--zr-filet);
+}
+.zr-titlebar{
+  height:40px;flex:none;display:flex;align-items:center;gap:var(--zr-gap-3);
+  padding:0 var(--zr-gap-4);border-bottom:1px solid var(--zr-filet);
+  background:var(--zr-bg-creux);
+}
+.zr-feux{display:flex;gap:7px}
+.zr-feu{width:11px;height:11px;border-radius:50%;background:var(--zr-filet-fort)}
+.zr-feu:nth-child(1){background:#E1584E}.zr-feu:nth-child(2){background:#E2B04A}.zr-feu:nth-child(3){background:#5FB martin}
+.zr-feu:nth-child(3){background:#5FB05A}
+.zr-titre-fenetre{flex:1;text-align:center;font-size:var(--zr-ui-sm);color:var(--zr-fg-tenu)}
+.zr-titlebar-fin{display:flex;align-items:center;gap:var(--zr-gap-2)}
+
+.zr-corps{flex:1;min-height:0;display:grid;grid-template-columns:var(--zr-sidebar-w) minmax(0,1fr) var(--zr-inspector-w)}
+.zr-corps[data-inspecteur="off"]{grid-template-columns:var(--zr-sidebar-w) minmax(0,1fr) 0}
+.zr-corps[data-inspecteur="off"] .zr-inspecteur{display:none}
+
+/* ═══════ SIDEBAR ═══════════════════════════════════════════════════════════
+   Le probleme reel : treize entrees d'affilee dans la zone Create, c'est une
+   liste plate ou l'oeil ne trouve plus rien. Trois reponses ici, cumulees.
+   1. Un rail de couleur par zone, tenu sur toute la hauteur, qui donne a l'oeil
+      un repere avant meme la lecture.
+   2. Une pastille d'icone par entree, teintee de la couleur de sa zone.
+   3. Une zone Create scindee en deux registres : les six premieres entrees en
+      lignes pleines, les huit suivantes en grille compacte de deux colonnes,
+      dans l'ordre exact. Quatorze lignes deviennent dix, et l'oeil retrouve
+      des blocs au lieu d'un ruban. */
+.zr-sidebar{
+  min-height:0;display:flex;flex-direction:column;gap:var(--zr-gap-2);
+  padding:var(--zr-gap-3) var(--zr-gap-3) var(--zr-gap-4);
+  background:var(--zr-verre);
+  backdrop-filter:var(--zr-verre-filtre);-webkit-backdrop-filter:var(--zr-verre-filtre);
+  border-right:1px solid var(--zr-filet);
+}
+.zr-sb-tete{display:flex;align-items:center;gap:var(--zr-gap-2);padding:var(--zr-gap-1) var(--zr-gap-2)}
+.zr-sb-sceau{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;flex:none;
+  background:linear-gradient(140deg,var(--zr-accent),color-mix(in srgb,var(--zr-accent) 55%,#000));
+  color:var(--zr-accent-fg);font-size:var(--zr-ui-sm);font-weight:600}
+.zr-sb-nom{flex:1;min-width:0;font-size:var(--zr-ui-sm);color:var(--zr-fg-doux);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.zr-icone-btn{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:var(--zr-fg-tenu);
+  transition:background-color var(--zr-timing) var(--zr-ease),color var(--zr-timing) var(--zr-ease)}
+.zr-icone-btn:hover{background:var(--zr-survol);color:var(--zr-fg)}
+
+.zr-sb-recherche{display:flex;align-items:center;gap:var(--zr-gap-2);height:32px;padding:0 11px;
+  border-radius:999px;background:var(--zr-bg-creux);box-shadow:inset 0 0 0 1px var(--zr-filet);color:var(--zr-fg-tenu)}
+.zr-sb-recherche input{flex:1;min-width:0;border:0;outline:0;background:transparent;font-size:var(--zr-ui-sm);color:var(--zr-fg)}
+.zr-sb-recherche input::placeholder{color:var(--zr-fg-tenu)}
+
+.zr-nav{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;padding-right:2px}
+.zr-zone{position:relative;padding-left:9px;margin-top:var(--zr-gap-3)}
+.zr-zone:first-child{margin-top:var(--zr-gap-1)}
+/* Le rail de zone : deux pixels de couleur qui tiennent tout le groupe ensemble. */
+.zr-zone::before{content:"";position:absolute;left:2px;top:19px;bottom:3px;width:2px;border-radius:2px;
+  background:var(--zone);opacity:.42}
+.zr-zone-tete{display:flex;align-items:center;gap:var(--zr-gap-2);height:22px;padding:0 var(--zr-gap-2);
+  color:var(--zr-fg-tenu);font-size:var(--zr-ui-2xs);font-weight:600;letter-spacing:.09em;text-transform:uppercase}
+.zr-zone-tete .zr-compte{margin-left:auto;color:var(--zr-fg-tenu);font-size:var(--zr-ui-2xs);opacity:.8}
+.zr-zone-tete button{color:inherit;display:flex;align-items:center;gap:var(--zr-gap-2);flex:1;letter-spacing:inherit;
+  font-size:inherit;font-weight:inherit;text-transform:inherit}
+
+.zr-item{display:flex;align-items:center;gap:9px;width:100%;height:28px;padding:0 var(--zr-gap-2);
+  border-radius:9px;color:var(--zr-fg);font-size:var(--zr-ui-sm);letter-spacing:-.01em;text-align:left;
+  transition:background-color var(--zr-timing) var(--zr-ease),color var(--zr-timing) var(--zr-ease)}
+.zr-item:hover{background:var(--zr-survol)}
+.zr-pastille{width:20px;height:20px;flex:none;border-radius:6px;display:grid;place-items:center;
+  color:var(--zone);background:color-mix(in srgb,var(--zone) 15%,transparent);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--zone) 22%,transparent)}
+.zr-item .zr-libelle{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.zr-item .zr-badge{font-size:var(--zr-ui-2xs);color:var(--zr-fg-tenu)}
+.zr-item.actif{background:color-mix(in srgb,var(--zone) 16%,transparent);color:var(--zr-fg);font-weight:500}
+.zr-item.actif .zr-pastille{color:var(--zr-accent-fg);background:var(--zone);box-shadow:none}
+
+/* Le second registre : huit entrees en grille de deux colonnes. */
+.zr-grille-nav{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:3px}
+.zr-puce{display:flex;align-items:center;gap:6px;height:26px;padding:0 7px;border-radius:8px;
+  color:var(--zr-fg-doux);font-size:var(--zr-ui-2xs);letter-spacing:-.005em;text-align:left;
+  transition:background-color var(--zr-timing) var(--zr-ease),color var(--zr-timing) var(--zr-ease)}
+.zr-puce:hover{background:var(--zr-survol);color:var(--zr-fg)}
+.zr-puce svg{flex:none;color:var(--zone);opacity:.8}
+.zr-puce span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.zr-deplier{display:flex;align-items:center;gap:6px;width:100%;height:22px;padding:0 var(--zr-gap-2);margin-top:3px;
+  border-radius:8px;color:var(--zr-fg-tenu);font-size:var(--zr-ui-2xs)}
+.zr-deplier:hover{background:var(--zr-survol);color:var(--zr-fg-doux)}
+
+.zr-sb-pied{flex:none;padding:var(--zr-gap-2) var(--zr-gap-2) 0;border-top:1px solid var(--zr-filet);
+  display:flex;align-items:center;gap:var(--zr-gap-2);color:var(--zr-fg-tenu);font-size:var(--zr-ui-2xs)}
+
+/* ═══════ VUE ASSETS ════════════════════════════════════════════════════════ */
+.zr-vue{min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--zr-bg-content)}
+
+.zr-entete{flex:none;padding:var(--zr-gap-6) var(--zr-gap-8) var(--zr-gap-4);border-bottom:1px solid var(--zr-filet)}
+.zr-fil{display:flex;align-items:center;gap:7px;color:var(--zr-fg-tenu);font-size:var(--zr-ui-2xs);
+  letter-spacing:.08em;text-transform:uppercase;margin-bottom:var(--zr-gap-3)}
+.zr-entete-ligne{display:flex;align-items:flex-end;gap:var(--zr-gap-4);flex-wrap:wrap}
+.zr-entete h1{font-size:31px;line-height:1.1}
+.zr-entete .zr-chapo{margin:6px 0 0;max-width:56ch;color:var(--zr-fg-doux);font-size:var(--zr-ui-sm);line-height:1.55}
+.zr-mesures{margin-left:auto;display:flex;gap:var(--zr-gap-6);padding-bottom:3px}
+.zr-mesure{display:flex;flex-direction:column;gap:2px;align-items:flex-end}
+.zr-mesure b{font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres);font-size:23px;line-height:1;letter-spacing:.005em}
+.zr-mesure span{color:var(--zr-fg-tenu);font-size:var(--zr-ui-2xs);letter-spacing:.07em;text-transform:uppercase}
+
+/* Les filtres. Instantanes, jamais un formulaire a valider. */
+.zr-filtres{position:sticky;top:0;z-index:5;flex:none;
+  padding:var(--zr-gap-3) var(--zr-gap-8);border-bottom:1px solid var(--zr-filet);
+  background:var(--zr-verre);backdrop-filter:var(--zr-verre-filtre);-webkit-backdrop-filter:var(--zr-verre-filtre);
+  display:flex;flex-direction:column;gap:var(--zr-gap-2)}
+.zr-rail{display:flex;align-items:center;gap:var(--zr-gap-2);flex-wrap:wrap}
+.zr-rail-titre{color:var(--zr-fg-tenu);font-size:var(--zr-ui-2xs);letter-spacing:.08em;text-transform:uppercase;
+  width:62px;flex:none}
+.zr-chip{display:inline-flex;align-items:center;gap:6px;height:27px;padding:0 11px;border-radius:999px;
+  background:var(--zr-bg-creux);box-shadow:inset 0 0 0 1px var(--zr-filet);color:var(--zr-fg-doux);
+  font-size:var(--zr-ui-2xs);white-space:nowrap;
+  transition:background-color var(--zr-timing) var(--zr-ease),color var(--zr-timing) var(--zr-ease),box-shadow var(--zr-timing) var(--zr-ease)}
+.zr-chip:hover{color:var(--zr-fg);background:var(--zr-survol)}
+.zr-chip .zr-point{width:7px;height:7px;border-radius:50%;background:var(--teinte,var(--zr-fg-tenu))}
+.zr-chip .zr-n{color:var(--zr-fg-tenu);font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres)}
+.zr-chip[data-on="true"]{background:color-mix(in srgb,var(--teinte,var(--zr-accent)) 20%,transparent);
+  color:var(--zr-fg);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--teinte,var(--zr-accent)) 45%,transparent)}
+.zr-chip[data-on="true"] .zr-n{color:var(--zr-fg-doux)}
+.zr-outils{margin-left:auto;display:flex;align-items:center;gap:var(--zr-gap-2)}
+.zr-champ{display:flex;align-items:center;gap:7px;height:27px;padding:0 11px;border-radius:999px;
+  background:var(--zr-bg-creux);box-shadow:inset 0 0 0 1px var(--zr-filet);color:var(--zr-fg-tenu)}
+.zr-champ input{width:150px;border:0;outline:0;background:transparent;font-size:var(--zr-ui-2xs);color:var(--zr-fg)}
+.zr-champ input::placeholder{color:var(--zr-fg-tenu)}
+.zr-densite{display:inline-flex;gap:2px;padding:2px;border-radius:999px;background:var(--zr-bg-creux);
+  box-shadow:inset 0 0 0 1px var(--zr-filet)}
+.zr-densite button{width:26px;height:23px;border-radius:999px;color:var(--zr-fg-tenu);font-size:var(--zr-ui-2xs);
+  display:grid;place-items:center;transition:background-color var(--zr-timing) var(--zr-ease),color var(--zr-timing) var(--zr-ease)}
+.zr-densite button[data-on="true"]{background:var(--zr-accent);color:var(--zr-accent-fg);font-weight:600}
+
+/* La planche. C'est elle qui doit rendre cent assets lisibles d'un coup d'oeil. */
+.zr-planche{flex:1;min-height:0;overflow-y:auto;padding:var(--zr-gap-6) var(--zr-gap-8) var(--zr-gap-8)}
+.zr-lot-tete{display:flex;align-items:baseline;gap:var(--zr-gap-3);margin:var(--zr-gap-6) 0 var(--zr-gap-3)}
+.zr-lot-tete:first-child{margin-top:0}
+.zr-lot-tete h2{font-size:var(--zr-ui-2xl);letter-spacing:-.01em}
+.zr-lot-tete .zr-trait{flex:1;height:1px;background:var(--zr-filet)}
+.zr-lot-tete .zr-compte{color:var(--zr-fg-tenu);font-size:var(--zr-ui-2xs)}
+
+.zr-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--zr-vignette-min),1fr));gap:var(--zr-gap-4)}
+
+.zr-carte{position:relative;display:flex;flex-direction:column;gap:9px;text-align:left;border-radius:var(--zr-r-thumb);
+  transition:transform var(--zr-timing) var(--zr-ease)}
+.zr-carte:hover{transform:translateY(-3px)}
+.zr-vignette{position:relative;width:100%;padding-top:var(--zr-vignette-ratio);border-radius:var(--zr-r-thumb);
+  overflow:hidden;background:var(--zr-vignette-fond);
+  box-shadow:inset 0 0 0 1px var(--zr-filet),var(--zr-ombre-douce);
+  transition:box-shadow var(--zr-timing) var(--zr-ease)}
+.zr-carte:hover .zr-vignette{box-shadow:inset 0 0 0 1px var(--zr-filet-fort),var(--zr-ombre-forte)}
+.zr-carte[data-sel="true"] .zr-vignette{box-shadow:inset 0 0 0 2px var(--zr-accent),var(--zr-ombre-forte)}
+.zr-vignette svg{position:absolute;inset:0;width:100%;height:100%}
+/* Le motif dit clairement "emplacement" : trace au trait, jamais un faux rendu. */
+.zr-vignette .zr-cadre-pointille{position:absolute;inset:10px;border:1px dashed var(--zr-filet-fort);
+  border-radius:calc(var(--zr-r-thumb) - 5px);opacity:.55;pointer-events:none}
+.zr-vignette .zr-hachure{position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(135deg,transparent 0 6px,var(--zr-hachure) 6px 12px)}
+.zr-vignette .zr-nom-place{position:absolute;left:14px;right:14px;top:50%;transform:translateY(-50%);
+  text-align:center;font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:var(--zr-ui-lg);color:var(--zr-fg-doux);letter-spacing:.01em;pointer-events:none;
+  transition:opacity var(--zr-timing) var(--zr-ease)}
+.zr-carte:hover .zr-nom-place{opacity:0}
+
+/* Le survol revele la metadonnee, la vignette reste la vedette au repos. */
+.zr-voile{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;gap:5px;
+  padding:11px 12px;opacity:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(10,10,9,0) 26%,rgba(10,10,9,.62) 62%,rgba(10,10,9,.88));
+  transition:opacity var(--zr-timing) var(--zr-ease)}
+.zr-clair .zr-voile{background:linear-gradient(180deg,rgba(20,18,14,0) 26%,rgba(20,18,14,.52) 62%,rgba(20,18,14,.82))}
+.zr-carte:hover .zr-voile{opacity:1}
+.zr-voile-ligne{display:flex;gap:7px;flex-wrap:wrap;color:#F2F1EC;font-size:var(--zr-ui-3xs);letter-spacing:.02em}
+.zr-voile-ligne b{font-family:var(--zr-police-serif);font-weight:var(--zr-poids-nombres)}
+.zr-voile-sep{opacity:.45}
+.zr-voile-servi{color:rgba(242,241,236,.78);font-size:var(--zr-ui-3xs);line-height:1.35}
+
+.zr-etiquette{position:absolute;top:9px;left:9px;display:inline-flex;align-items:center;gap:5px;height:21px;
+  padding:0 8px;border-radius:999px;background:rgba(12,12,11,.62);color:#F1F0EB;font-size:var(--zr-ui-3xs);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.zr-clair .zr-etiquette{background:rgba(255,255,255,.82);color:#26241F}
+.zr-etiquette .zr-point{width:6px;height:6px;border-radius:50%;background:var(--teinte)}
+.zr-fanion{position:absolute;top:9px;right:9px;height:21px;padding:0 8px;border-radius:999px;
+  background:var(--zr-accent);color:var(--zr-accent-fg);font-size:var(--zr-ui-3xs);font-weight:600;
+  display:inline-flex;align-items:center}
+
+.zr-carte-pied{display:flex;align-items:baseline;gap:var(--zr-gap-2);padding:0 2px}
+.zr-carte-pied h3{flex:1;min-width:0;font-size:var(--zr-ui-lg);line-height:1.3;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.zr-carte-pied .zr-an{color:var(--zr-fg-tenu);font-family:var(--zr-police-serif);
+  font-weight:var(--zr-poids-nombres);font-size:var(--zr-ui-sm)}
+
+/* ═══════ INSPECTEUR ════════════════════════════════════════════════════════
+   Le seul endroit ou tout est ecrit, pour que la planche reste une planche. */
+.zr-inspecteur{min-width:0;min-height:0;display:flex;flex-direction:column;
+  border-left:1px solid var(--zr-filet);background:var(--zr-bg-window)}
+.zr-insp-tete{flex:none;display:flex;align-items:center;gap:var(--zr-gap-2);height:38px;
+  padding:0 var(--zr-gap-4);border-bottom:1px solid var(--zr-filet);
+  color:var(--zr-fg-tenu);font-size:var(--zr-ui-2xs);letter-spacing:.08em;text-transform:uppercase}
+.zr-insp-corps{flex:1;min-height:0;overflow-y:auto;padding:var(--zr-gap-4)}
+.zr-insp-vignette{position:relative;width:100%;padding-top:64%;border-radius:var(--zr-r-panel);overflow:hidden;
+  background:var(--zr-vignette-fond);box-shadow:inset 0 0 0 1px var(--zr-filet)}
+.zr-insp-vignette svg{position:absolute;inset:0;width:100%;height:100%}
+.zr-insp-corps h2{margin-top:var(--zr-gap-4);font-size:22px;line-height:1.22}
+.zr-insp-type{display:flex;align-items:center;gap:7px;margin-top:7px;color:var(--zr-fg-doux);font-size:var(--zr-ui-2xs)}
+.zr-insp-desc{margin:var(--zr-gap-3) 0 0;font-family:var(--zr-police-serif);font-weight:var(--zr-poids-serif);
+  font-size:var(--zr-ui-lg);line-height:1.58;color:var(--zr-fg-doux)}
+.zr-fiche{margin-top:var(--zr-gap-4);border-top:1px solid var(--zr-filet)}
+.zr-fiche-ligne{display:flex;align-items:baseline;gap:var(--zr-gap-3);padding:8px 0;border-bottom:1px solid var(--zr-filet)}
+.zr-fiche-ligne dt{width:96px;flex:none;color:var(--zr-fg-tenu);font-size:var(--zr-ui-2xs);
+  letter-spacing:.05em;text-transform:uppercase}
+.zr-fiche-ligne dd{margin:0;flex:1;min-width:0;font-size:var(--zr-ui-sm);color:var(--zr-fg)}
+.zr-servi{margin-top:var(--zr-gap-4)}
+.zr-servi-titre{color:var(--zr-fg-tenu);font-size:var(--zr-ui-2xs);letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:var(--zr-gap-2)}
+.zr-servi-liste{display:flex;flex-wrap:wrap;gap:6px}
+.zr-tag{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;
+  background:var(--zr-bg-creux);box-shadow:inset 0 0 0 1px var(--zr-filet);
+  color:var(--zr-fg-doux);font-size:var(--zr-ui-2xs)}
+.zr-actions{flex:none;display:flex;gap:var(--zr-gap-2);padding:var(--zr-gap-3) var(--zr-gap-4);
+  border-top:1px solid var(--zr-filet);background:var(--zr-bg-creux)}
+.zr-btn{flex:1;height:33px;border-radius:var(--zr-r-control);font-size:var(--zr-ui-2xs);font-weight:500;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  background:var(--zr-bg-eleve);color:var(--zr-fg);box-shadow:inset 0 0 0 1px var(--zr-filet);
+  transition:background-color var(--zr-timing) var(--zr-ease),transform .12s ease}
+.zr-btn:hover{background:var(--zr-survol)}
+.zr-btn:active{transform:scale(.98)}
+.zr-btn-primaire{background:var(--zr-accent);color:var(--zr-accent-fg);box-shadow:none;font-weight:600}
+.zr-btn-primaire:hover{filter:brightness(1.07);background:var(--zr-accent)}
+
+.zr-vide{padding:var(--zr-gap-8);text-align:center;color:var(--zr-fg-tenu);font-size:var(--zr-ui-sm)}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important;animation:none !important}
+  .zr-carte:hover{transform:none}
+}
+</style>
+</head>
+<body>
+<div class="zr-ambiant"></div>
+
+<div class="zr-app" id="racine">
+  <div class="zr-window">
+
+    <div class="zr-titlebar">
+      <div class="zr-feux"><i class="zr-feu"></i><i class="zr-feu"></i><i class="zr-feu"></i></div>
+      <div class="zr-titre-fenetre">ZenRayProgress</div>
+      <div class="zr-titlebar-fin">
+        <button class="zr-icone-btn" id="btn-inspecteur" title="Afficher ou masquer l'inspecteur">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25"><rect x="1.6" y="2.6" width="12.8" height="10.8" rx="2"/><path d="M10.4 2.6v10.8"/></svg>
+        </button>
+        <button class="zr-icone-btn" id="btn-theme" title="Basculer clair ou sombre">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25"><circle cx="8" cy="8" r="3.4"/><path d="M8 1.2v1.8M8 13v1.8M1.2 8H3M13 8h1.8M3.2 3.2l1.3 1.3M11.5 11.5l1.3 1.3M12.8 3.2l-1.3 1.3M4.5 11.5l-1.3 1.3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="zr-corps" id="corps" data-inspecteur="on">
+
+      <!-- ══════════ SIDEBAR ══════════ -->
+      <aside class="zr-sidebar">
+        <div class="zr-sb-tete">
+          <div class="zr-sb-sceau">Z</div>
+          <div class="zr-sb-nom">Matthieu Huguet</div>
+          <button class="zr-icone-btn" title="Reglages">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.4v1.6M8 13v1.6M1.4 8H3M13 8h1.6M3.3 3.3l1.1 1.1M11.6 11.6l1.1 1.1M12.7 3.3l-1.1 1.1M4.4 11.6l-1.1 1.1"/></svg>
+          </button>
+        </div>
+
+        <div class="zr-sb-recherche">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14"/></svg>
+          <input placeholder="Rechercher" id="nav-recherche">
+        </div>
+
+        <nav class="zr-nav" id="nav"></nav>
+
+        <div class="zr-sb-pied">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.25"><path d="M2 12.4V3.6a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v8.8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/><path d="M2 6.4h12"/></svg>
+          <span>Drive local, <b class="num">4,1</b> To</span>
+        </div>
+      </aside>
+
+      <!-- ══════════ VUE ZENRAY ASSETS ══════════ -->
+      <main class="zr-vue">
+        <header class="zr-entete">
+          <div class="zr-fil"><span>Create</span><span>/</span><span>Assets</span></div>
+          <div class="zr-entete-ligne">
+            <div>
+              <h1>ZenRay Assets</h1>
+              <p class="zr-chapo">Tout ce qui est fini et reutilisable, en une planche. Sculptures, environnements,
+                shaders, rigs, etalonnages, outils et gabarits, avec ce qu'il faut pour les remettre en production sans
+                rouvrir un seul projet.</p>
+            </div>
+            <div class="zr-mesures">
+              <div class="zr-mesure"><b class="num" id="m-total">0</b><span>Assets</span></div>
+              <div class="zr-mesure"><b class="num" id="m-projets">0</b><span>Projets</span></div>
+              <div class="zr-mesure"><b class="num" id="m-poids">0</b><span>Gio</span></div>
+            </div>
+          </div>
+        </header>
+
+        <div class="zr-filtres">
+          <div class="zr-rail">
+            <span class="zr-rail-titre">Type</span>
+            <div class="zr-rail" id="rail-type" style="flex:1"></div>
+          </div>
+          <div class="zr-rail">
+            <span class="zr-rail-titre">Moteur</span>
+            <div class="zr-rail" id="rail-moteur"></div>
+            <div class="zr-outils">
+              <div class="zr-champ">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14"/></svg>
+                <input placeholder="Filtrer la planche" id="filtre-texte">
+              </div>
+              <div class="zr-densite" id="densite">
+                <button data-taille="s">S</button>
+                <button data-taille="m" data-on="true">M</button>
+                <button data-taille="l">L</button>
+              </div>
+            </div>
+          </div>
+          <div class="zr-rail">
+            <span class="zr-rail-titre">Annee</span>
+            <div class="zr-rail" id="rail-annee"></div>
+          </div>
+        </div>
+
+        <div class="zr-planche" id="planche"></div>
+      </main>
+
+      <!-- ══════════ INSPECTEUR ══════════ -->
+      <aside class="zr-inspecteur">
+        <div class="zr-insp-tete">
+          <span>Fiche</span>
+        </div>
+        <div class="zr-insp-corps" id="insp"></div>
+        <div class="zr-actions">
+          <button class="zr-btn zr-btn-primaire">
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 2.4v8.2M4.8 7.4 8 10.6l3.2-3.2M2.6 13.4h10.8"/></svg>
+            Reutiliser
+          </button>
+          <button class="zr-btn">Publier</button>
+          <button class="zr-btn">Fiche</button>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   INTERFACE DE PARAMETRES (loi HDA). Toute la page se construit a partir des
+   quatre tables ci-dessous : aucune valeur ne se recopie dans le rendu.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Icones, un seul dessin par forme, instanciees partout ── */
+const D = {
+  dossier:'M1.6 4.3h4.2l1.2 1.6h7.4v7.1a1 1 0 0 1-1 1H2.6a1 1 0 0 1-1-1V4.3z',
+  gemme:'M8 1.9 14.1 6.3 8 14.1 1.9 6.3zM1.9 6.3h12.2M8 1.9 5.4 6.3 8 14.1M8 1.9l2.6 4.4L8 14.1',
+  horloge:'M8 2.2a5.8 5.8 0 1 1 0 11.6A5.8 5.8 0 0 1 8 2.2zM8 4.8V8l2.5 1.5',
+  calendrier:'M2.4 4.4a1 1 0 0 1 1-1h9.2a1 1 0 0 1 1 1v8.2a1 1 0 0 1-1 1H3.4a1 1 0 0 1-1-1zM2.4 7h11.2M5.4 2v2.4M10.6 2v2.4',
+  cible:'M8 2.2a5.8 5.8 0 1 1 0 11.6A5.8 5.8 0 0 1 8 2.2zM8 5.2a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6z',
+  image:'M2 4.2a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v7.6a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zM2 10.6l3.4-3 3 2.6 2.2-1.9 3.4 3',
+  note:'M4 2.2h4.9L12.6 6v7.8H4zM8.9 2.3v3.6h3.6',
+  etoile:'M8 1.9l1.6 4.5 4.5 1.6-4.5 1.6L8 14.1l-1.6-4.5L1.9 8l4.5-1.6z',
+  onde:'M1.9 8h1.7l1.3-4 1.9 8 1.8-6.2 1.3 2.2H14.1',
+  etagere:'M2 3.4h12v9.2H2zM2 6.6h12M2 9.6h12',
+  epingle:'M8 14.1s4.6-4.1 4.6-7.2A4.6 4.6 0 0 0 3.4 6.9c0 3.1 4.6 7.2 4.6 7.2zM8 5.2a1.7 1.7 0 1 1 0 3.4 1.7 1.7 0 0 1 0-3.4z',
+  barres:'M2.6 13.6V7.6M6.6 13.6V3.4M10.6 13.6V9.4M2 13.9h12',
+  calques:'M8 2 14.2 5.4 8 8.8 1.8 5.4zM1.8 9.4 8 12.8l6.2-3.4',
+  mallette:'M1.9 5.4a1 1 0 0 1 1-1h10.2a1 1 0 0 1 1 1v7.2a1 1 0 0 1-1 1H2.9a1 1 0 0 1-1-1zM5.6 4.4V3.2a1 1 0 0 1 1-1h2.8a1 1 0 0 1 1 1v1.2',
+  palette:'M8 2.1a5.9 5.9 0 0 0 0 11.8c1 0 1.3-.7 1-1.3-.4-.8.1-1.6 1.1-1.6h1.1c1.4 0 2.6-1.1 2.6-2.6C13.8 4.6 11.2 2.1 8 2.1zM5.4 6.2v.01M8 4.9v.01M10.6 6.4v.01',
+  buste:'M8 3a2.6 2.6 0 1 1 0 5.2A2.6 2.6 0 0 1 8 3zM2.9 13.8c0-2.9 2.3-4.5 5.1-4.5s5.1 1.6 5.1 4.5',
+  montagne:'M1.7 13.1 6 5.7l2.6 4.1 1.8-2.5 4 5.8zM1.7 13.1h12.6',
+  livre:'M2.3 3.2c2.3-.8 3.9-.8 5.7.5v9.4c-1.8-1.3-3.4-1.3-5.7-.5zM13.7 3.2c-2.3-.8-3.9-.8-5.7.5v9.4c1.8-1.3 3.4-1.3 5.7-.5z',
+  fichier:'M4.2 2.2h4.7L12.4 5.7v8.1H4.2zM8.9 2.3v3.5h3.5M6.1 8.6h4.4M6.1 10.8h4.4',
+  quadrillage:'M2.4 2.4h4.7v4.7H2.4zM8.9 2.4h4.7v4.7H8.9zM2.4 8.9h4.7v4.7H2.4zM8.9 8.9h4.7v4.7H8.9z',
+  archive:'M1.9 3.4h12.2v2.7H1.9zM3.1 6.1h9.8v6.5H3.1zM6.4 8.6h3.2',
+  disque:'M2 3.6h12v8.8H2zM4.4 3.6v8.8M11.6 9.6v.01',
+  loupe:'M7 2.4a4.6 4.6 0 1 1 0 9.2 4.6 4.6 0 0 1 0-9.2zM10.4 10.4 14 14',
+  corbeille:'M2.9 4.3h10.2M5.6 4.3V3a1 1 0 0 1 1-1h2.8a1 1 0 0 1 1 1v1.3M4.3 4.3l.7 9.1a1 1 0 0 0 1 .9h4a1 1 0 0 0 1-.9l.7-9.1',
+  chevron:'M4.4 6.2 8 9.8l3.6-3.6'
+};
+function ico(nom, taille){
+  const t = taille || 13;
+  return `<svg width="${t}" height="${t}" viewBox="0 0 16 16" fill="none" stroke="currentColor"
+    stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="${D[nom]}"/></svg>`;
+}
+
+/* ── ÉTAGE 2, familles : les cinq zones de navigation ─────────────────────── */
+const ZONES = [
+  { id:'create', nom:'Create', couleur:'var(--zone-create)',
+    /* Le registre plein s'arrete a la sixieme entree ; le reste passe en grille
+       compacte, dans l'ordre exact. C'est le seul reglage de la densite nav. */
+    seuilPlein:6,
+    items:[
+      { nom:'Create',    icone:'dossier' },
+      { nom:'Assets',    icone:'gemme', actif:true, badge:'34' },
+      { nom:'Timer',     icone:'horloge' },
+      { nom:'Plan',      icone:'calendrier' },
+      { nom:'Goals',     icone:'cible' },
+      { nom:'Media',     icone:'image' },
+      { nom:'Notes',     icone:'note' },
+      { nom:'Skills',    icone:'etoile' },
+      { nom:'Audio',     icone:'onde' },
+      { nom:'Shelf',     icone:'etagere' },
+      { nom:'Ref',       icone:'epingle' },
+      { nom:'Dashboard', icone:'barres' },
+      { nom:'Projects',  icone:'calques' },
+      { nom:'Freelance', icone:'mallette' }
+    ]},
+  { id:'gallery', nom:'Gallery', couleur:'var(--zone-gallery)', seuilPlein:9, items:[
+      { nom:'Design',       icone:'palette' },
+      { nom:'Characters',   icone:'buste' },
+      { nom:'Environments', icone:'montagne' }
+    ]},
+  { id:'learn', nom:'Learn', couleur:'var(--zone-learn)', seuilPlein:9, items:[
+      { nom:'Japanese', icone:'livre' }
+    ]},
+  { id:'apps', nom:'Apps', couleur:'var(--zone-apps)', seuilPlein:9, items:[
+      { nom:'Articles',  icone:'fichier' },
+      { nom:'Documents', icone:'note' },
+      { nom:'Features',  icone:'quadrillage' }
+    ]},
+  { id:'systeme', nom:'Systeme', couleur:'var(--zone-systeme)', seuilPlein:9, items:[
+      { nom:'Archives', icone:'archive' },
+      { nom:'Drive',    icone:'disque' },
+      { nom:'Index',    icone:'loupe' },
+      { nom:'Trash',    icone:'corbeille' }
+    ]}
+];
+
+/* ── ÉTAGE 2 bis, familles d'assets : teinte et motif de vignette par type ── */
+const TYPES = {
+  personnage:  { label:'Personnages',   teinte:'#E0745E', motif:'buste' },
+  environnement:{label:'Environnements',teinte:'#5FB39A', motif:'horizon' },
+  prop:        { label:'Props',          teinte:'#D9AC5E', motif:'cube' },
+  shader:      { label:'Shaders',        teinte:'#B49BF5', motif:'sphere' },
+  rig:         { label:'Rigs et anims',  teinte:'#6FA8F0', motif:'squelette' },
+  lut:         { label:'LUT',            teinte:'#E28FB8', motif:'rampe' },
+  outil:       { label:'Outils',         teinte:'#7FC4D9', motif:'graphe' },
+  interface:   { label:'Interface',      teinte:'#9FBF6A', motif:'bloc' },
+  gabarit:     { label:'Gabarits',       teinte:'#C79A7A', motif:'planche' }
+};
+
+/* ── ÉTAGE 3, instances : la bibliotheque de demonstration ─────────────────── */
+const ASSETS = [
+  { nom:'Ronin, corps complet',        type:'personnage',   annee:2026, format:'FBX et ZTL', poids:'2,4 Gio', moteur:'Unreal 5.8', licence:'Propre',
+    desc:"Sculpture haute definition retopologisee, quatre niveaux de detail, UDIM sur quatre tuiles. Le visage est separe du corps pour rester compatible MetaHuman.",
+    servi:['ZenRayShards','Demo reel 2026'], phare:true },
+  { nom:'Kitsune, tete et masque',     type:'personnage',   annee:2025, format:'ZTL', poids:'1,1 Gio', moteur:'ZBrush', licence:'Propre',
+    desc:"Etude de tete avec masque amovible, pensee pour le rig facial. Blendshapes de base deja poses.",
+    servi:['Portfolio'] },
+  { nom:'Soldat cendre',               type:'personnage',   annee:2024, format:'FBX', poids:'740 Mio', moteur:'Unreal 5.4', licence:'Propre',
+    desc:"Personnage secondaire, budget bas, pense pour la foule. Trois variantes de tissu sur le meme squelette.",
+    servi:['ZenRayShards'] },
+  { nom:'Marchande de nuit',           type:'personnage',   annee:2026, format:'FBX', poids:'890 Mio', moteur:'Unreal 5.8', licence:'Propre',
+    desc:"Silhouette agee, drape simule puis fige. Sert de test de lisibilite a distance moyenne.",
+    servi:['ZenRayShards'] },
+
+  { nom:'Sanctuaire noye',             type:'environnement',annee:2026, format:'UASSET', poids:'6,2 Gio', moteur:'Unreal 5.8', licence:'Propre',
+    desc:"Niveau complet, eau, brume volumetrique et eclairage nocturne regles. Le module de portique se detache et se reutilise seul.",
+    servi:['ZenRayShards','Devlog 12'], phare:true },
+  { nom:'Ruelle de Nakano',            type:'environnement',annee:2025, format:'UASSET', poids:'3,8 Gio', moteur:'Unreal 5.6', licence:'Propre',
+    desc:"Reconstruction 3D d'une ruelle photographiee a Tokyo, enseignes modulaires et decalques d'usure separes.",
+    servi:['Japan, rebuilt in 3D'] },
+  { nom:'Foret de pierres',            type:'environnement',annee:2024, format:'FBX', poids:'2,9 Gio', moteur:'Blender', licence:'Propre',
+    desc:"Kit de rochers et de mousses, dispersion par nuage de points. Douze pieces couvrent une vallee entiere.",
+    servi:['Portfolio'] },
+  { nom:'Interieur de maison de the',  type:'environnement',annee:2026, format:'UASSET', poids:'1,7 Gio', moteur:'Unreal 5.8', licence:'Propre',
+    desc:"Piece fermee, lumiere naturelle indirecte, tatamis modulaires. Sert de banc de test pour le rendu de peau.",
+    servi:['ZenRayShards'] },
+
+  { nom:'Lanternes, kit modulaire',    type:'prop',         annee:2025, format:'FBX', poids:'310 Mio', moteur:'Unreal 5.6', licence:'Propre',
+    desc:"Neuf lanternes, trois etats d'usure, une seule feuille de texture partagee entre toutes.",
+    servi:['ZenRayShards','Ruelle de Nakano'] },
+  { nom:'Armes de ceinture',           type:'prop',         annee:2026, format:'FBX', poids:'220 Mio', moteur:'Unreal 5.8', licence:'Propre',
+    desc:"Sabre, fourreau, tanto et attaches. Points d'ancrage nommes selon la convention du squelette maison.",
+    servi:['ZenRayShards'] },
+  { nom:'Mobilier de temple',          type:'prop',         annee:2024, format:'FBX', poids:'480 Mio', moteur:'Blender', licence:'Propre',
+    desc:"Vingt-deux pieces de bois, echelle verifiee sur references photographiques.",
+    servi:['Sanctuaire noye'] },
+  { nom:'Papeterie et cartes',         type:'prop',         annee:2023, format:'OBJ', poids:'96 Mio', moteur:'Blender', licence:'CC BY',
+    desc:"Petits objets de table pour les plans rapproches, deja depliees et prets a texturer.",
+    servi:['Portfolio'] },
+
+  { nom:'Peau translucide',            type:'shader',       annee:2026, format:'UASSET', poids:'34 Mio', moteur:'Unreal 5.8', licence:'Propre',
+    desc:"Materiau de peau a diffusion sous surface, quatre parametres exposes seulement, pense pour etre regle par un artiste.",
+    servi:['Ronin, corps complet','Marchande de nuit'], phare:true },
+  { nom:'Metal patine',                type:'shader',       annee:2025, format:'UASSET', poids:'18 Mio', moteur:'Unreal 5.6', licence:'Propre',
+    desc:"Metal a couche d'oxydation pilotee par la courbure. Un seul curseur fait passer du neuf au ruine.",
+    servi:['Armes de ceinture','ZenRayShards'] },
+  { nom:'Eau peu profonde',            type:'shader',       annee:2026, format:'UASSET', poids:'22 Mio', moteur:'Unreal 5.8', licence:'Propre',
+    desc:"Surface d'eau calme avec ecume de contact et refraction bornee, calibree pour les interieurs.",
+    servi:['Sanctuaire noye'] },
+  { nom:'Tissu tisse',                 type:'shader',       annee:2024, format:'SBSAR', poids:'42 Mio', moteur:'Substance', licence:'Propre',
+    desc:"Generateur de tissage parametrique, six armures, sortie directe en jeux de textures compresses.",
+    servi:['Soldat cendre'] },
+
+  { nom:'Squelette humanoide ZenRay',  type:'rig',          annee:2025, format:'FBX', poids:'12 Mio', moteur:'Unreal 5.8', licence:'Propre',
+    desc:"Hierarchie d'os unique du projet, compatible retargeting. Toute animation achetee se replaque dessus sans retouche.",
+    servi:['ZenRayShards','Ronin, corps complet','Soldat cendre'], phare:true },
+  { nom:'Cycle de marche et course',   type:'rig',          annee:2026, format:'FBX', poids:'8 Mio', moteur:'Unreal 5.8', licence:'Propre',
+    desc:"Locomotion complete sur huit directions, transitions incluses, pieds verrouilles au sol.",
+    servi:['ZenRayShards'] },
+  { nom:'Capture faciale, prise 04',   type:'rig',          annee:2026, format:'ABC', poids:'640 Mio', moteur:'MetaHuman', licence:'Propre',
+    desc:"Prise de capture faciale nettoyee, dix-huit secondes exploitables, courbes lissees a la main.",
+    servi:['Devlog 09'] },
+  { nom:'Combat, trois enchainements', type:'rig',          annee:2025, format:'FBX', poids:'26 Mio', moteur:'Unreal 5.6', licence:'Propre',
+    desc:"Trois enchainements de sabre avec fenetres d'annulation marquees par des reperes de notification.",
+    servi:['ZenRayShards'] },
+
+  { nom:'Nuit bleue, etalonnage',      type:'lut',          annee:2026, format:'CUBE', poids:'3 Mio', moteur:'DaVinci', licence:'Propre',
+    desc:"Etalonnage nocturne froid derive d'une image de reference, ecart mesure sous trois valeurs sur deux cent cinquante cinq.",
+    servi:['Devlog 12','Sanctuaire noye'] },
+  { nom:'Ambre de fin de jour',        type:'lut',          annee:2025, format:'CUBE', poids:'3 Mio', moteur:'DaVinci', licence:'Propre',
+    desc:"Chaleur de fin de journee, hautes lumieres retenues pour ne jamais bruler les visages.",
+    servi:['Ruelle de Nakano'] },
+  { nom:'Argentique doux',             type:'lut',          annee:2024, format:'CUBE', poids:'2 Mio', moteur:'DaVinci', licence:'CC BY',
+    desc:"Reponse de pellicule douce, grain separe en calque pour rester dosable apres coup.",
+    servi:['Portfolio'] },
+
+  { nom:'Semeur de rochers',           type:'outil',        annee:2025, format:'HDA', poids:'6 Mio', moteur:'Houdini', licence:'Propre',
+    desc:"Outil de dispersion parametrique, densite et pente exposees, sortie directement lisible par le moteur.",
+    servi:['Foret de pierres','Sanctuaire noye'], phare:true },
+  { nom:'Kit de ville modulaire',      type:'outil',        annee:2026, format:'HDA', poids:'11 Mio', moteur:'Houdini', licence:'Propre',
+    desc:"Generateur de facades a partir d'une emprise au sol, six familles d'immeubles, hauteurs pilotees par une courbe.",
+    servi:['Ruelle de Nakano'] },
+  { nom:'Export par lot, script',      type:'outil',        annee:2026, format:'PY', poids:'1 Mio', moteur:'Unreal 5.8', licence:'Propre',
+    desc:"Passe d'export en ligne de commande, sans ouvrir l'editeur, avec verification et code de sortie exploitable.",
+    servi:['ZenRayShards'] },
+  { nom:'Cuisson de LUT, script',      type:'outil',        annee:2024, format:'PY', poids:'1 Mio', moteur:'Python', licence:'CC BY',
+    desc:"Fabrique un etalonnage a partir d'une image de reference, en mesurant la couleur moyenne par tranche de luminance.",
+    servi:['Nuit bleue, etalonnage','Argentique doux'] },
+
+  { nom:'Verre liquide, composants',   type:'interface',    annee:2026, format:'CSS', poids:'1 Mio', moteur:'Web', licence:'Propre',
+    desc:"Systeme de surfaces vitrees complet, un seul parametre pilote l'intensite du lisere sur toute l'application.",
+    servi:['ZenRayProgress','ZenRayCloud'], phare:true },
+  { nom:'Menu radial de jeu',          type:'interface',    annee:2025, format:'UASSET', poids:'14 Mio', moteur:'Unreal 5.6', licence:'Propre',
+    desc:"Roue de selection a la manette, huit segments, animation d'ouverture reglee au ressenti.",
+    servi:['ZenRayShards'] },
+  { nom:'Barre de vie et ressource',   type:'interface',    annee:2026, format:'UASSET', poids:'5 Mio', moteur:'Unreal 5.8', licence:'Propre',
+    desc:"Jauges avec traine de degat differee, entierement pilotees par une table de donnees.",
+    servi:['ZenRayShards'] },
+
+  { nom:'Planche de post carre',       type:'gabarit',      annee:2026, format:'HTML', poids:'1 Mio', moteur:'Web', licence:'Propre',
+    desc:"Gabarit de publication au format quatre cinquiemes, texte editable directement dans la page, export en pleine resolution.",
+    servi:['Instagram','LinkedIn'] },
+  { nom:'Fiche d\'asset imprimable',    type:'gabarit',      annee:2025, format:'HTML', poids:'1 Mio', moteur:'Web', licence:'Propre',
+    desc:"Fiche recto d'un asset, pensee pour le dossier envoye a un studio, sortie en PDF vectoriel.",
+    servi:['Portfolio'] },
+  { nom:'Carrousel de devlog',         type:'gabarit',      annee:2026, format:'HTML', poids:'2 Mio', moteur:'Web', licence:'Propre',
+    desc:"Suite de six pages liees, une seule source de contenu, mise en page qui se recompose selon la longueur du texte.",
+    servi:['Devlog 12'] },
+  { nom:'Planche de references',       type:'gabarit',      annee:2024, format:'HTML', poids:'1 Mio', moteur:'Web', licence:'Propre',
+    desc:"Grille de references avec legendes et code couleur, pensee pour tenir sur un seul ecran.",
+    servi:['ZenRayShards','Portfolio'] }
+];
+
+/* ═══════ Motifs de vignette ════════════════════════════════════════════════
+   Aucun rendu invente : uniquement du trait, qui se lit comme un emplacement.
+   Le degrade prend la teinte de la famille, jamais une couleur ecrite en dur. */
+function motifSVG(type, cle){
+  const t = TYPES[type];
+  const gid = 'g' + cle;
+  const c = t.teinte;
+  const traits = {
+    buste:`<ellipse cx="160" cy="74" rx="30" ry="34"/><path d="M112 168c0-30 21-48 48-48s48 18 48 48"/>
+           <path d="M132 66h56M136 84h48M140 100h40"/><path d="M160 40v128"/>`,
+    horizon:`<path d="M28 132h264"/><path d="M52 132 108 78l34 30 26-24 44 48"/>
+           <path d="M188 132l38-34 42 34"/><path d="M28 150h264M28 164h264M28 178h264"/>
+           <path d="M96 132v46M160 132v46M224 132v46"/>`,
+    cube:`<path d="M160 40 236 78v70l-76 38-76-38V78z"/><path d="M84 78l76 38 76-38M160 116v70"/>
+           <path d="M60 56h200v104H60z" stroke-dasharray="5 6"/>`,
+    sphere:`<circle cx="160" cy="106" r="62"/><ellipse cx="160" cy="106" rx="62" ry="22"/>
+           <ellipse cx="160" cy="106" rx="62" ry="42"/><ellipse cx="160" cy="106" rx="22" ry="62"/>
+           <ellipse cx="160" cy="106" rx="42" ry="62"/>`,
+    squelette:`<path d="M160 34v40l-30 30 8 44-16 34M160 74l30 30-8 44 16 34"/>
+           <path d="M130 104 96 122M190 104l34 18"/>
+           <circle cx="160" cy="34" r="9"/><circle cx="160" cy="74" r="6"/><circle cx="130" cy="104" r="6"/>
+           <circle cx="190" cy="104" r="6"/><circle cx="138" cy="148" r="6"/><circle cx="182" cy="148" r="6"/>`,
+    rampe:`<path d="M44 58h38v96H44zM90 58h38v96H90zM136 58h38v96h-38zM182 58h38v96h-38zM228 58h38v96h-38z"/>
+           <path d="M44 106h222" stroke-dasharray="4 6"/>`,
+    graphe:`<path d="M36 52h64v34H36zM220 52h64v34h-64zM128 122h64v34h-64z"/>
+           <path d="M100 69h30c12 0 12 70 30 70M284 69h-30c-12 0-12 70-30 70"/>
+           <circle cx="160" cy="139" r="4"/>`,
+    bloc:`<path d="M32 34h256v144H32z"/><path d="M32 66h256M104 66v112"/>
+           <path d="M124 88h60v14h-60zM124 118h140v10H124zM124 140h100v10H124z"/>
+           <path d="M50 88h34v10H50zM50 110h34v10H50zM50 132h34v10H50z"/>`,
+    planche:`<path d="M28 30h124v68H28zM168 30h124v68H168zM28 114h124v68H28zM168 114h124v68H168z"/>
+           <path d="M28 82h124M168 82h124M28 166h124M168 166h124"/>`
+  }[t.motif];
+  return `<svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" fill="none">
+    <defs>
+      <linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="${c}" stop-opacity="0.30"/>
+        <stop offset="0.52" stop-color="${c}" stop-opacity="0.08"/>
+        <stop offset="1" stop-color="${c}" stop-opacity="0.02"/>
+      </linearGradient>
+    </defs>
+    <rect width="320" height="200" fill="url(#${gid})"/>
+    <g stroke="${c}" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"
+       opacity="var(--zr-motif-opacite)">${traits}</g>
+  </svg>`;
+}
+
+/* ═══════ Rendu de la navigation ════════════════════════════════════════════ */
+const etatNav = { deplie:{}, filtre:'' };
+
+function rendreNav(){
+  const q = etatNav.filtre.trim().toLowerCase();
+  const nav = document.getElementById('nav');
+  nav.innerHTML = ZONES.map(zone => {
+    const items = zone.items.filter(it => !q || it.nom.toLowerCase().includes(q));
+    if(!items.length) return '';
+    const tout = etatNav.deplie[zone.id] || q;
+    const seuil = tout ? items.length : Math.min(zone.seuilPlein, items.length);
+    const pleins = items.slice(0, seuil);
+    const puces  = items.slice(seuil);
+    const ligne = it => `
+      <button class="zr-item${it.actif ? ' actif' : ''}">
+        <span class="zr-pastille">${ico(it.icone, 12)}</span>
+        <span class="zr-libelle">${it.nom}</span>
+        ${it.badge ? `<span class="zr-badge num">${it.badge}</span>` : ''}
+      </button>`;
+    const puce = it => `
+      <button class="zr-puce" title="${it.nom}">${ico(it.icone, 12)}<span>${it.nom}</span></button>`;
+    return `
+      <section class="zr-zone" style="--zone:${zone.couleur}">
+        <div class="zr-zone-tete">
+          <button>${zone.nom}</button>
+          <span class="zr-compte num">${items.length}</span>
+        </div>
+        ${pleins.map(ligne).join('')}
+        ${puces.length ? `<div class="zr-grille-nav">${puces.map(puce).join('')}</div>` : ''}
+        ${(puces.length || (tout && !q && items.length > zone.seuilPlein))
+          ? `<button class="zr-deplier" data-zone="${zone.id}">
+               ${ico('chevron', 11)} ${tout ? 'Replier' : 'Tout deplier'}
+             </button>` : ''}
+      </section>`;
+  }).join('');
+
+  nav.querySelectorAll('.zr-deplier').forEach(b => b.addEventListener('click', () => {
+    etatNav.deplie[b.dataset.zone] = !etatNav.deplie[b.dataset.zone];
+    rendreNav();
+  }));
+}
+document.getElementById('nav-recherche').addEventListener('input', e => {
+  etatNav.filtre = e.target.value; rendreNav();
+});
+
+/* ═══════ Rendu de la vue Assets ════════════════════════════════════════════ */
+const etat = { type:'tous', moteur:'tous', annee:'toutes', texte:'', selection:0 };
+
+const MOTEURS = [...new Set(ASSETS.map(a => a.moteur))].sort();
+const ANNEES  = [...new Set(ASSETS.map(a => a.annee))].sort((a,b) => b - a);
+
+function filtres(){
+  return ASSETS.filter(a =>
+    (etat.type    === 'tous'    || a.type   === etat.type) &&
+    (etat.moteur  === 'tous'    || a.moteur === etat.moteur) &&
+    (etat.annee   === 'toutes'  || String(a.annee) === etat.annee) &&
+    (!etat.texte  || (a.nom + ' ' + a.desc + ' ' + a.servi.join(' ')).toLowerCase().includes(etat.texte))
+  );
+}
+
+function rendreRails(){
+  const compte = f => ASSETS.filter(f).length;
+  document.getElementById('rail-type').innerHTML =
+    `<button class="zr-chip" data-val="tous" data-on="${etat.type==='tous'}">
+       Tous <span class="zr-n">${ASSETS.length}</span></button>` +
+    Object.entries(TYPES).map(([id, t]) => `
+      <button class="zr-chip" data-val="${id}" data-on="${etat.type===id}" style="--teinte:${t.teinte}">
+        <span class="zr-point"></span>${t.label}
+        <span class="zr-n">${compte(a => a.type === id)}</span>
+      </button>`).join('');
+
+  document.getElementById('rail-moteur').innerHTML =
+    `<button class="zr-chip" data-val="tous" data-on="${etat.moteur==='tous'}">Tous</button>` +
+    MOTEURS.map(m => `<button class="zr-chip" data-val="${m}" data-on="${etat.moteur===m}">
+      ${m} <span class="zr-n">${compte(a => a.moteur === m)}</span></button>`).join('');
+
+  document.getElementById('rail-annee').innerHTML =
+    `<button class="zr-chip" data-val="toutes" data-on="${etat.annee==='toutes'}">Toutes</button>` +
+    ANNEES.map(y => `<button class="zr-chip" data-val="${y}" data-on="${etat.annee===String(y)}">
+      <span class="num">${y}</span> <span class="zr-n">${compte(a => a.annee === y)}</span></button>`).join('');
+
+  brancher('rail-type','type');
+  brancher('rail-moteur','moteur');
+  brancher('rail-annee','annee');
+}
+function brancher(id, cle){
+  document.getElementById(id).querySelectorAll('.zr-chip').forEach(b =>
+    b.addEventListener('click', () => { etat[cle] = b.dataset.val; rendreRails(); rendrePlanche(); }));
+}
+
+function carte(a, i){
+  const t = TYPES[a.type];
+  return `
+    <button class="zr-carte" data-i="${i}" data-sel="${etat.selection === i}">
+      <div class="zr-vignette">
+        ${motifSVG(a.type, i)}
+        <div class="zr-hachure"></div>
+        <div class="zr-cadre-pointille"></div>
+        <div class="zr-nom-place">${a.nom}</div>
+        <span class="zr-etiquette" style="--teinte:${t.teinte}"><span class="zr-point"></span>${t.label}</span>
+        ${a.phare ? `<span class="zr-fanion">Phare</span>` : ''}
+        <div class="zr-voile">
+          <div class="zr-voile-ligne">
+            <span>${a.moteur}</span><span class="zr-voile-sep">/</span>
+            <span>${a.format}</span><span class="zr-voile-sep">/</span>
+            <span><b>${a.poids}</b></span><span class="zr-voile-sep">/</span>
+            <span>${a.licence}</span>
+          </div>
+          <div class="zr-voile-servi">A servi dans ${a.servi.join(', ')}</div>
+        </div>
+      </div>
+      <div class="zr-carte-pied">
+        <h3>${a.nom}</h3>
+        <span class="zr-an">${a.annee}</span>
+      </div>
+    </button>`;
+}
+
+function rendrePlanche(){
+  const liste = filtres();
+  const planche = document.getElementById('planche');
+
+  if(!liste.length){
+    planche.innerHTML = `<p class="zr-vide">Aucun asset ne repond a ces filtres.</p>`;
+    return;
+  }
+
+  /* Regroupement par famille tant qu'aucun type n'est isole : c'est ce qui
+     permet de tenir cent vignettes sans que l'oeil perde le fil. */
+  const html = (etat.type === 'tous')
+    ? Object.entries(TYPES).map(([id, t]) => {
+        const lot = liste.map((a, i) => [a, ASSETS.indexOf(a)]).filter(([a]) => a.type === id);
+        if(!lot.length) return '';
+        return `
+          <div class="zr-lot-tete">
+            <h2>${t.label}</h2><span class="zr-trait"></span>
+            <span class="zr-compte num">${lot.length}</span>
+          </div>
+          <div class="zr-grille">${lot.map(([a, i]) => carte(a, i)).join('')}</div>`;
+      }).join('')
+    : `<div class="zr-grille">${liste.map(a => carte(a, ASSETS.indexOf(a))).join('')}</div>`;
+
+  planche.innerHTML = html;
+  planche.querySelectorAll('.zr-carte').forEach(c => c.addEventListener('click', () => {
+    etat.selection = Number(c.dataset.i);
+    planche.querySelectorAll('.zr-carte').forEach(x =>
+      x.dataset.sel = (Number(x.dataset.i) === etat.selection));
+    rendreInspecteur();
+  }));
+}
+
+function rendreInspecteur(){
+  const a = ASSETS[etat.selection];
+  const t = TYPES[a.type];
+  document.getElementById('insp').innerHTML = `
+    <div class="zr-insp-vignette">${motifSVG(a.type, 'i' + etat.selection)}
+      <div class="zr-hachure"></div><div class="zr-cadre-pointille"></div></div>
+    <h2>${a.nom}</h2>
+    <div class="zr-insp-type"><span class="zr-point" style="width:7px;height:7px;border-radius:50%;
+      display:inline-block;background:${t.teinte}"></span>${t.label}</div>
+    <p class="zr-insp-desc">${a.desc}</p>
+    <dl class="zr-fiche">
+      <div class="zr-fiche-ligne"><dt>Annee</dt><dd class="num">${a.annee}</dd></div>
+      <div class="zr-fiche-ligne"><dt>Moteur</dt><dd>${a.moteur}</dd></div>
+      <div class="zr-fiche-ligne"><dt>Format</dt><dd>${a.format}</dd></div>
+      <div class="zr-fiche-ligne"><dt>Poids</dt><dd class="num">${a.poids}</dd></div>
+      <div class="zr-fiche-ligne"><dt>Licence</dt><dd>${a.licence}</dd></div>
+    </dl>
+    <div class="zr-servi">
+      <div class="zr-servi-titre">A deja servi dans</div>
+      <div class="zr-servi-liste">${a.servi.map(s => `<span class="zr-tag">${s}</span>`).join('')}</div>
+    </div>`;
+}
+
+function rendreMesures(){
+  const gio = ASSETS.reduce((s, a) => {
+    const n = parseFloat(a.poids.replace(',', '.'));
+    return s + (a.poids.includes('Gio') ? n : n / 1024);
+  }, 0);
+  const projets = new Set(ASSETS.flatMap(a => a.servi));
+  document.getElementById('m-total').textContent   = ASSETS.length;
+  document.getElementById('m-projets').textContent = projets.size;
+  document.getElementById('m-poids').textContent   = gio.toFixed(1).replace('.', ',');
+}
+
+/* ── Densite de la planche : un seul jeton pilote toute la grille ── */
+const TAILLES = { s:'166px', m:'216px', l:'292px' };
+document.getElementById('densite').querySelectorAll('button').forEach(b =>
+  b.addEventListener('click', () => {
+    document.getElementById('densite').querySelectorAll('button').forEach(x => x.dataset.on = 'false');
+    b.dataset.on = 'true';
+    document.documentElement.style.setProperty('--zr-vignette-min', TAILLES[b.dataset.taille]);
+  }));
+
+document.getElementById('filtre-texte').addEventListener('input', e => {
+  etat.texte = e.target.value.trim().toLowerCase(); rendrePlanche();
+});
+
+document.getElementById('btn-theme').addEventListener('click', () => {
+  document.getElementById('racine').classList.toggle('zr-clair');
+  document.body.classList.toggle('zr-clair');
+});
+document.getElementById('btn-inspecteur').addEventListener('click', () => {
+  const c = document.getElementById('corps');
+  c.dataset.inspecteur = c.dataset.inspecteur === 'on' ? 'off' : 'on';
+});
+
+rendreNav();
+rendreRails();
+rendrePlanche();
+rendreInspecteur();
+rendreMesures();
+</script>
+</body>
+</html>

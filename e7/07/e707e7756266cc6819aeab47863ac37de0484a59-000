@@ -1,0 +1,44 @@
+/* 2026-09-03 : un thème pour toute l'interface, indépendant des paramètres exportés. */
+(function () {
+  'use strict';
+  const root = document.documentElement;
+  root.classList.add('zr-hda-ui');
+  const key = 'zr-hda-ui-theme';
+  let theme = 'light';
+  try { if (localStorage.getItem(key) === 'dark') theme = 'dark'; } catch (_) { /* Le clair reste utilisable sans stockage. */ }
+  const apply = value => { theme = value; root.classList.toggle('zr-dark', value === 'dark'); root.dataset.zrTheme = value; };
+  apply(theme);
+  document.addEventListener('DOMContentLoaded', () => {
+    const shell = document.createElement('div');
+    shell.className = 'zr-side-glass';
+    shell.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(shell);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'zr-theme-toggle';
+    const update = () => {
+      button.textContent = theme === 'dark' ? 'Clair' : 'Sombre';
+      button.title = theme === 'dark' ? 'Passer au thème clair' : 'Passer au thème sombre';
+      button.setAttribute('aria-label', button.title);
+      button.setAttribute('aria-pressed', String(theme === 'dark'));
+    };
+    button.addEventListener('click', () => {
+      apply(theme === 'dark' ? 'light' : 'dark');
+      update();
+      try { localStorage.setItem(key, theme); } catch (_) { button.title += ' (choix non enregistré)'; }
+    });
+    update();
+    (document.querySelector('.zr-post-tabs') || document.querySelector('header.top')).appendChild(button);
+    // Les deux scrollers partagent une coque fixe : le verre ne défile pas avec les contrôles.
+    document.fonts.load('400 13px InterVariable', 'Interface ZenRay').then(faces => {
+      root.dataset.zrFont = faces.length ? 'ready' : 'error';
+      if (!faces.length) throw new Error('InterVariable absente');
+    }).catch(() => {
+      root.dataset.zrFont = 'error';
+      const warning = document.createElement('p');
+      warning.className = 'zr-font-error'; warning.setAttribute('role', 'alert');
+      warning.textContent = 'InterVariable ne charge pas. Vérifiez le dossier assets/ui de cet atelier.';
+      document.body.appendChild(warning);
+    });
+  });
+})();

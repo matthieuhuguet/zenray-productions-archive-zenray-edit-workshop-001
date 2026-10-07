@@ -1,0 +1,24 @@
+<!-- Component: design-sliders-panel -->
+<!-- ID sémantique: design-sliders-panel -->
+<!-- Panneau latéral HDA pilotant les variables CSS :root avec bouton de copie -->
+
+<aside class="design-sliders" data-design-only style="width: 300px; padding: 20px; background: var(--surface, #FDFDFC); border-left: 1px solid var(--filet, rgba(0,0,0,0.09));">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <span style="font-weight:600; font-size:16px;">Curseurs HDA</span>
+    <span style="font-size:12px; color:var(--accent, #A8552F);">:root</span>
+  </div>
+
+  <div style="margin-bottom:14px;">
+    <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+      <span>Rayon fermé</span>
+      <span id="label-r-closed" style="color:var(--accent, #A8552F);">999px</span>
+    </div>
+    <input type="range" min="14" max="999" value="999" style="width:100%;"
+      oninput="document.documentElement.style.setProperty('--capsule-r-closed', this.value + 'px'); document.getElementById('label-r-closed').textContent = this.value + 'px';">
+  </div>
+
+  <button type="button" style="width:100%; margin-top:12px; padding:10px; border-radius:999px; border:none; background:var(--accent, #A8552F); color:#fff; font-weight:500; cursor:pointer;"
+    onclick="navigator.clipboard.writeText('--capsule-r-closed: ' + getComputedStyle(document.documentElement).getPropertyValue('--capsule-r-closed'))">
+    Copier les valeurs pour le prompt
+  </button>
+</aside>

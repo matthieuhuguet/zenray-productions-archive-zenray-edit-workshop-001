@@ -1,0 +1,10 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Composition</title><link rel="stylesheet" href="_canvas.css">
+<style>
+/* Family parameters, shared by instances of each visual element. (7 October 2026, 17:00 Europe/Paris) */
+:root { --headline-size:84px; --headline-top:18px; --lead-size:32px; --lead-leading:1.38; --lead-width:860px; --image-radius:26px; }
+.eyebrow {color:var(--accent-gold);}
+.headline {font-size:var(--headline-size); margin-top:var(--headline-top);}
+.lead {font-family:var(--zr-police-sans);font-weight:var(--interface-weight);font-size:var(--lead-size);line-height:var(--lead-leading);color:var(--ink);text-align:center;max-width:var(--lead-width);}
+.art {width:100%;border-radius:var(--image-radius);overflow:hidden;} .art img {width:100%;display:block;}
+</style></head><body><div class="canvas"><div class="eyebrow">Eyebrow</div><div class="headline">Headline<br>goes here</div><div class="spacer"></div><div class="lead">One or two sentences of supporting copy.</div><div class="spacer"></div></div></body></html>

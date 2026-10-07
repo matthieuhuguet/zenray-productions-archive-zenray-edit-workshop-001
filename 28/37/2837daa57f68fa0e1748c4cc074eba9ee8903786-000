@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>ZenRay Assets, direction Salon</title>
+<!--
+  DIRECTION 04, SALON. La synthese demandee entre 01 Atelier et 02 Galerie.
+  De l'Atelier : la matiere verre, les sous-groupes qui rendent les treize entrees lisibles,
+  les reperes d'un outil (compteurs, filtres, panneau de detail).
+  De la Galerie : la respiration, le titre serif deux tons, la retenue du chrome,
+  et des pieces assez grandes pour qu'on les regarde vraiment.
+  Trio typographique tenu : Inter pour l'interface, AnthropicSerif 350 pour les titres,
+  AnthropicSerif 400 pour TOUS les nombres visibles. Aucune monospace.
+-->
+<style>
+  /* Polices SERVIES par le gabarit, jamais attendues du systeme : un repli de police
+     ne se signale jamais, seul l'oeil le voit. Les deux familles sont VARIABLES, donc
+     trois faces couvrent toutes les graisses employees ici. */
+  @font-face{font-family:'Inter';src:url('fonts/InterVariable.woff2') format('woff2');font-weight:100 900;font-style:normal;font-display:swap;}
+  @font-face{font-family:'AnthropicSerif';src:url('fonts/AnthropicSerif-Romans.woff2') format('woff2');font-weight:300 800;font-style:normal;font-display:swap;}
+  @font-face{font-family:'AnthropicSerif';src:url('fonts/AnthropicSerif-Italics.woff2') format('woff2');font-weight:300 800;font-style:italic;font-display:swap;}
+
+  
+  
+  
+  
+  
+  
+
+  /* ETAGE 1, jetons globaux. Une seule definition par role, tout en derive. */
+  :root{
+    --sans:'Inter','Inter Variable','Hiragino Sans W4',-apple-system,Arial,sans-serif;
+    --serif:'AnthropicSerif','Hiragino Mincho ProN W3',Georgia,serif;
+    --poids-sans:400; --poids-serif:350; --poids-nombres:400;
+
+    --ui-base:14px;
+    --ui-3xs:calc(var(--ui-base)*0.69); --ui-2xs:calc(var(--ui-base)*0.77);
+    --ui-xs:calc(var(--ui-base)*0.85);  --ui-sm:calc(var(--ui-base)*0.92);
+    --ui-md:var(--ui-base);             --ui-lg:calc(var(--ui-base)*1.08);
+
+    /* Echelle editoriale : plus contrastee que l'Atelier, moins que la Galerie. */
+    --corps:16.5px;
+    --titre-1:calc(var(--corps)*2.15);
+    --titre-2:calc(var(--corps)*1.34);
+    --titre-3:calc(var(--corps)*1.10);
+
+    --r-chip:7px; --r-control:10px; --r-panel:14px; --r-window:22px;
+
+    --fond:#F2F1EE; --contenu:#FDFDFC;
+    --encre:#20201E; --encre-2:#5F5E59; --encre-3:#8C8A83;
+    --verre:rgba(253,253,252,0.66);
+    --verre-fort:rgba(253,253,252,0.86);
+    --flou:blur(28px) saturate(180%);
+    --filet:rgba(0,0,0,0.10);
+    --liseré-haut:inset 0 1px 0 rgba(255,255,255,0.72);
+    --liseré-tour:inset 0 0 0 0.5px rgba(255,255,255,0.55);
+    --ombre-panneau:0 8px 30px rgba(0,0,0,0.10);
+    --ombre-piece:0 1px 2px rgba(0,0,0,0.05),0 10px 28px rgba(0,0,0,0.07);
+    --ombre-pop:0 20px 60px rgba(0,0,0,0.16),0 3px 10px rgba(0,0,0,0.07);
+
+    /* L'accent quitte le bleu systeme pour le corail du site : chaud, discret, jamais criard. */
+    --accent:#A8552F; --accent-vif:#E08356; --accent-doux:rgba(224,131,86,0.14);
+    --selection:rgba(224,131,86,0.20);
+
+    --side-w:236px;
+  }
+  .sombre{
+    --fond:#1A1A19; --contenu:#232322;
+    --encre:#F0EFEB; --encre-2:#A3A19A; --encre-3:#75736D;
+    --verre:rgba(35,35,34,0.62); --verre-fort:rgba(35,35,34,0.86);
+    --filet:rgba(255,255,255,0.11);
+    --liseré-haut:inset 0 1px 0 rgba(255,255,255,0.07);
+    --liseré-tour:inset 0 0 0 0.5px rgba(255,255,255,0.07);
+    --ombre-panneau:0 8px 30px rgba(0,0,0,0.44);
+    --ombre-piece:0 1px 2px rgba(0,0,0,0.30),0 10px 28px rgba(0,0,0,0.34);
+    --ombre-pop:0 20px 60px rgba(0,0,0,0.58),0 3px 10px rgba(0,0,0,0.30);
+    --accent:#E29A72; --accent-vif:#E08356; --accent-doux:rgba(224,131,86,0.16);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{
+    background:var(--fond); color:var(--encre);
+    font-family:var(--sans); font-weight:var(--poids-sans); font-size:var(--ui-md);
+    -webkit-font-smoothing:antialiased; overflow:hidden;
+    transition:background .28s ease, color .28s ease;
+  }
+  /* Le fond porte deux lueurs tres douces, sinon le verre n'a rien a flouter. */
+  body::before{
+    content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(900px 620px at 8% 4%, rgba(224,131,86,0.13), transparent 62%),
+      radial-gradient(800px 560px at 92% 96%, rgba(90,130,180,0.11), transparent 60%);
+  }
+  .sombre body::before, body.sombre::before{opacity:.7;}
+
+  .app{position:relative; z-index:1; display:flex; height:100vh;}
+
+  /* ─────────── LA SIDEBAR ─────────── */
+  aside.side{
+    width:var(--side-w); flex:0 0 var(--side-w); height:100vh;
+    display:flex; flex-direction:column; padding:16px 12px 12px;
+    background:var(--verre); backdrop-filter:var(--flou); -webkit-backdrop-filter:var(--flou);
+    box-shadow:var(--liseré-haut),var(--liseré-tour),1px 0 0 var(--filet);
+  }
+  .marque{display:flex; align-items:baseline; gap:7px; padding:2px 10px 14px;}
+  .marque .m1{font-family:var(--serif); font-weight:var(--poids-serif); font-size:var(--ui-lg); letter-spacing:-0.01em;}
+  .marque .m2{font-family:var(--serif); font-weight:300; font-style:italic; font-size:var(--ui-sm); color:var(--encre-3);}
+
+  .nav{flex:1; overflow-y:auto; overflow-x:hidden; padding-bottom:8px;}
+  .nav::-webkit-scrollbar{width:7px;}
+  .nav::-webkit-scrollbar-thumb{background:var(--filet); border-radius:99px;}
+
+  .zone + .zone{margin-top:12px;}
+  .zone-tete{
+    width:100%; display:flex; align-items:center; gap:6px; border:none; background:none; cursor:pointer;
+    padding:5px 10px 5px 10px; color:var(--encre-3);
+    font-family:var(--sans); font-size:var(--ui-3xs); font-weight:500;
+    text-transform:uppercase; letter-spacing:0.10em;
+  }
+  .zone-tete .chevron{margin-left:auto; opacity:.55; transition:transform .18s ease; font-size:9px;}
+  .zone[data-open="false"] .chevron{transform:rotate(-90deg);}
+  .zone[data-open="false"] .zone-corps{display:none;}
+
+  /* Le sous-groupe : la reponse aux treize entrees, un intertitre leger plutot qu'un second cadre. */
+  .sgroupe + .sgroupe{margin-top:9px;}
+  .sgroupe-titre{
+    padding:3px 10px 4px; color:var(--encre-3); font-size:var(--ui-3xs); font-weight:400;
+    letter-spacing:0.03em; display:flex; align-items:center; gap:8px;
+  }
+  .sgroupe-titre::after{content:''; flex:1; height:0.5px; background:var(--filet);}
+
+  a.item{
+    display:flex; align-items:center; gap:9px; text-decoration:none; color:var(--encre);
+    padding:6px 10px; border-radius:var(--r-chip); font-size:var(--ui-sm); line-height:1.25;
+    transition:background .13s ease, color .13s ease;
+  }
+  a.item:hover{background:var(--accent-doux);}
+  a.item[aria-current="page"]{background:var(--selection); color:var(--accent); font-weight:500;}
+  a.item .pastille{width:5px; height:5px; border-radius:99px; background:var(--encre-3); opacity:.42; flex:0 0 5px;}
+  a.item[aria-current="page"] .pastille{background:var(--accent-vif); opacity:1;}
+  a.item .cnt{margin-left:auto; font-family:var(--serif); font-weight:var(--poids-nombres);
+    font-size:var(--ui-2xs); color:var(--encre-3);}
+
+  .side-pied{
+    display:flex; align-items:center; gap:8px; padding:9px 10px 2px; border-top:0.5px solid var(--filet);
+  }
+  .btn-theme{
+    border:none; background:none; cursor:pointer; color:var(--encre-2);
+    font-family:var(--sans); font-size:var(--ui-2xs); padding:5px 9px; border-radius:var(--r-chip);
+  }
+  .btn-theme:hover{background:var(--accent-doux); color:var(--encre);}
+  .side-pied .place{margin-left:auto; font-family:var(--serif); font-weight:var(--poids-nombres);
+    font-size:var(--ui-2xs); color:var(--encre-3);}
+
+  /* ─────────── LA SCENE ─────────── */
+  .scene{flex:1; height:100vh; overflow-y:auto; padding:0 0 96px;}
+  .dedans{max-width:1180px; margin:0 auto; padding:0 44px;}
+
+  .fil{padding:22px 0 0; font-size:var(--ui-2xs); color:var(--encre-3); letter-spacing:0.02em;}
+  .fil b{font-weight:400; color:var(--encre-2);}
+
+  header.ouverture{padding:26px 0 0;}
+  h1{
+    font-family:var(--serif); font-weight:var(--poids-serif); font-size:var(--titre-1);
+    line-height:1.08; letter-spacing:-0.022em; margin:0 0 14px;
+  }
+  h1 em{display:block; font-style:italic; font-weight:300; color:var(--encre-2);}
+  .intro{max-width:56ch; font-size:var(--ui-lg); line-height:1.62; color:var(--encre-2); margin:0 0 26px;}
+
+  /* La ligne de chiffres : le repere d'outil que la Galerie n'avait pas, en retenue. */
+  .compteurs{display:flex; gap:40px; padding:18px 0 20px; border-top:0.5px solid var(--filet); border-bottom:0.5px solid var(--filet);}
+  .compteur .n{font-family:var(--serif); font-weight:var(--poids-nombres); font-size:26px; line-height:1; letter-spacing:-0.01em;}
+  .compteur .l{margin-top:5px; font-size:var(--ui-3xs); text-transform:uppercase; letter-spacing:0.10em; color:var(--encre-3);}
+
+  .filtres{display:flex; flex-wrap:wrap; gap:7px; padding:22px 0 8px;}
+  .filtre{
+    border:none; cursor:pointer; border-radius:99px; padding:6px 13px;
+    font-family:var(--sans); font-size:var(--ui-2xs); font-weight:400;
+    background:transparent; color:var(--encre-2); box-shadow:inset 0 0 0 0.5px var(--filet);
+    transition:background .14s ease, color .14s ease, box-shadow .14s ease;
+  }
+  .filtre:hover{background:var(--accent-doux); color:var(--encre);}
+  .filtre[aria-pressed="true"]{background:var(--accent); color:#FDFDFC; box-shadow:none;}
+  .filtre .n{font-family:var(--serif); font-weight:var(--poids-nombres); opacity:.72; margin-left:5px;}
+
+  .famille{padding:34px 0 0;}
+  .famille-tete{display:flex; align-items:baseline; gap:12px; margin:0 0 18px;}
+  .famille-tete h2{font-family:var(--serif); font-weight:var(--poids-serif); font-size:var(--titre-2);
+    letter-spacing:-0.015em; margin:0;}
+  .famille-tete .n{font-family:var(--serif); font-weight:var(--poids-nombres); font-size:var(--ui-sm); color:var(--encre-3);}
+  .famille-tete .trait{flex:1; height:0.5px; background:var(--filet);}
+
+  .pieces{display:grid; grid-template-columns:repeat(auto-fill,minmax(268px,1fr)); gap:26px 22px;}
+
+  /* La piece : grande comme dans la Galerie, mais posee sur une carte comme dans l'Atelier. */
+  .piece{cursor:pointer; background:none; border:none; padding:0; text-align:left; font:inherit; color:inherit;}
+  .vue{
+    position:relative; aspect-ratio:4/3; border-radius:var(--r-panel); overflow:hidden;
+    box-shadow:var(--ombre-piece),var(--liseré-tour);
+    transition:transform .2s cubic-bezier(.22,.61,.36,1), box-shadow .2s ease;
+  }
+  .piece:hover .vue{transform:translateY(-4px); box-shadow:var(--ombre-pop),var(--liseré-tour);}
+  .vue .lettre{
+    position:absolute; left:16px; bottom:12px; font-family:var(--serif); font-weight:300;
+    font-size:34px; color:rgba(255,255,255,0.90); line-height:1; letter-spacing:-0.02em;
+  }
+  .vue .place{
+    position:absolute; right:11px; top:11px; font-size:var(--ui-3xs); color:rgba(255,255,255,0.86);
+    background:rgba(0,0,0,0.24); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    padding:3px 8px; border-radius:99px; letter-spacing:0.03em;
+  }
+  .piece h3{font-family:var(--serif); font-weight:var(--poids-serif); font-size:var(--titre-3);
+    letter-spacing:-0.012em; margin:13px 0 5px; line-height:1.24;}
+  .meta{display:flex; flex-wrap:wrap; gap:9px; font-size:var(--ui-2xs); color:var(--encre-3); margin:0 0 7px;}
+  .meta .n{font-family:var(--serif); font-weight:var(--poids-nombres); color:var(--encre-2);}
+  .piece p{font-size:var(--ui-xs); line-height:1.58; color:var(--encre-2); margin:0; max-width:40ch;}
+
+  /* ─────────── LE PANNEAU DE DETAIL ─────────── */
+  .voile{position:fixed; inset:0; z-index:40; background:rgba(0,0,0,0.26);
+    backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); opacity:0; pointer-events:none; transition:opacity .22s ease;}
+  .voile[data-on="true"]{opacity:1; pointer-events:auto;}
+  aside.detail{
+    position:fixed; top:0; right:0; z-index:41; height:100vh; width:min(430px,92vw);
+    background:var(--verre-fort); backdrop-filter:var(--flou); -webkit-backdrop-filter:var(--flou);
+    box-shadow:var(--liseré-tour),var(--ombre-pop);
+    transform:translateX(102%); transition:transform .26s cubic-bezier(.22,.61,.36,1);
+    display:flex; flex-direction:column; overflow-y:auto;
+  }
+  aside.detail[data-on="true"]{transform:translateX(0);}
+  .detail-vue{aspect-ratio:4/3; margin:16px 16px 0; border-radius:var(--r-panel); box-shadow:var(--liseré-tour);}
+  .detail-corps{padding:20px 22px 30px;}
+  .detail-corps h2{font-family:var(--serif); font-weight:var(--poids-serif); font-size:calc(var(--corps)*1.42);
+    margin:0 0 6px; letter-spacing:-0.015em; line-height:1.2;}
+  .detail-corps .fam{font-size:var(--ui-2xs); color:var(--accent); letter-spacing:0.06em;
+    text-transform:uppercase; margin:0 0 14px;}
+  .detail-corps .texte{font-size:var(--ui-sm); line-height:1.66; color:var(--encre-2); margin:0 0 20px;}
+  .fiche{border-top:0.5px solid var(--filet);}
+  .fiche div{display:flex; padding:9px 0; border-bottom:0.5px solid var(--filet); font-size:var(--ui-2xs);}
+  .fiche dt{color:var(--encre-3); width:104px; flex:0 0 104px; letter-spacing:0.04em; text-transform:uppercase; font-size:var(--ui-3xs); padding-top:1px;}
+  .fiche dd{margin:0; color:var(--encre);}
+  .fiche dd.n{font-family:var(--serif); font-weight:var(--poids-nombres);}
+  .servi{margin:20px 0 0;}
+  .servi .t{font-size:var(--ui-3xs); text-transform:uppercase; letter-spacing:0.09em; color:var(--encre-3); margin:0 0 9px;}
+  .servi span{display:inline-block; font-size:var(--ui-2xs); color:var(--encre-2);
+    box-shadow:inset 0 0 0 0.5px var(--filet); border-radius:99px; padding:4px 11px; margin:0 5px 5px 0;}
+  .actions{display:flex; gap:8px; padding:18px 22px 24px; border-top:0.5px solid var(--filet); margin-top:auto;}
+  .btn{border:none; cursor:pointer; border-radius:var(--r-control); padding:9px 15px;
+    font-family:var(--sans); font-size:var(--ui-2xs); font-weight:500; transition:filter .13s ease;}
+  .btn:hover{filter:brightness(1.06);}
+  .btn-1{background:var(--accent); color:#FDFDFC; flex:1;}
+  .btn-2{background:transparent; color:var(--encre); box-shadow:inset 0 0 0 0.5px var(--filet);}
+  .fermer{position:absolute; top:14px; right:14px; z-index:2; border:none; cursor:pointer;
+    width:28px; height:28px; border-radius:99px; background:rgba(0,0,0,0.26); color:#fff; font-size:13px;
+    backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);}
+
+  @media (prefers-reduced-transparency:reduce){
+    aside.side, aside.detail{background:var(--contenu); backdrop-filter:none; -webkit-backdrop-filter:none;}
+  }
+  @supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+    aside.side, aside.detail{background:var(--verre-fort);}
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="side">
+    <div class="marque"><span class="m1">ZenRay</span><span class="m2">Progress</span></div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-pied">
+      <button class="btn-theme" id="btn-theme">Thème sombre</button>
+      <span class="place">21,6 Gio</span>
+    </div>
+  </aside>
+
+  <section class="scene">
+    <div class="dedans">
+      <p class="fil">Create <b>/</b> ZenRay Assets</p>
+
+      <header class="ouverture">
+        <h1>Tout ce qui est fini,<em>et qui peut resservir.</em></h1>
+        <p class="intro">Douze années de travail posées sur une seule étagère. On voit d'abord la pièce, la fiche technique vient quand on la demande.</p>
+      </header>
+
+      <div class="compteurs" id="compteurs"></div>
+      <nav class="filtres" id="filtres"></nav>
+      <div id="salle"></div>
+    </div>
+  </section>
+
+</div>
+
+<div class="voile" id="voile" data-on="false"></div>
+<aside class="detail" id="detail" data-on="false" aria-hidden="true">
+  <button class="fermer" id="fermer" aria-label="Fermer">✕</button>
+  <div class="detail-vue" id="detail-vue"></div>
+  <div class="detail-corps" id="detail-corps"></div>
+  <div class="actions">
+    <button class="btn btn-1">Réutiliser</button>
+    <button class="btn btn-2">Publier</button>
+    <button class="btn btn-2">Fiche</button>
+  </div>
+</aside>
+
+<script>
+/* ETAGE 2, parametres de famille. Une teinte et un motif par famille, jamais une valeur par piece. */
+var FAMILLES = {
+  personnages:   { nom:"Personnages",           t1:"#B4714A", t2:"#8A4F33", motif:"corps" },
+  environnements:{ nom:"Environnements",        t1:"#5E7F63", t2:"#3C5A46", motif:"horizon" },
+  props:         { nom:"Props et objets",       t1:"#7A7460", t2:"#565040", motif:"bloc" },
+  matieres:      { nom:"Shaders et matières",   t1:"#6E6A86", t2:"#474463", motif:"onde" },
+  outils:        { nom:"Outils et scripts",     t1:"#4F7186", t2:"#31505F", motif:"grille" },
+  systemes:      { nom:"Systèmes d'interface",  t1:"#8A6472", t2:"#61414D", motif:"cadre" },
+  gabarits:      { nom:"Gabarits",              t1:"#8C7A4E", t2:"#615232", motif:"page" }
+};
+
+/* ETAGE 3, les instances. Guillemets doubles partout : une apostrophe francaise
+   dans une chaine a apostrophes simples ferme la chaine et tue le script entier. */
+var PIECES = [
+  { nom:"Kagura, personnage jouable", fam:"personnages", annee:2026, format:"FBX, UASSET", poids:"2,4 Gio", moteur:"Unreal 5.8", licence:"Propre",
+    court:"Héroïne complète, squelette Unreal et douze formes faciales.",
+    long:"Sculpture haute définition retopologisée, quatre niveaux de détail, UDIM sur quatre tuiles. Le visage est exporté du corps pour rester compatible MetaHuman.",
+    servi:["ZenRayShards","Démo mai 2026"] },
+  { nom:"Oni de pierre", fam:"personnages", annee:2025, format:"FBX", poids:"1,8 Gio", moteur:"Unreal 5.8", licence:"Propre",
+    court:"Adversaire massif, sculpture haute résolution et version jouable.",
+    long:"Deux jeux de maillage, l'un pour le rendu de cinématique, l'autre allégé pour le temps réel. Les matières partagent l'atlas de pierre du projet.",
+    servi:["ZenRayShards"] },
+  { nom:"Ronin, corps complet", fam:"personnages", annee:2024, format:"FBX", poids:"960 Mio", moteur:"Blender, Unreal", licence:"Propre",
+    court:"Étude anatomique devenue personnage secondaire.",
+    long:"Parti d'une étude de drapé, repris en personnage complet avec un rig simplifié. Le drapé reste réutilisable seul.",
+    servi:["Étude 2024","Portfolio"] },
+  { nom:"Rue de Yanaka, module", fam:"environnements", annee:2026, format:"UASSET", poids:"3,1 Gio", moteur:"Unreal 5.8", licence:"Propre",
+    court:"Douze modules de façade qui se répètent sans se voir.",
+    long:"Relevé photographique du quartier, converti en modules de six mètres. Les jonctions sont pensées pour qu'aucune répétition ne se lise à la marche.",
+    servi:["ZenRayShards","Série 3D Japon"] },
+  { nom:"Forêt de bambous, dressage", fam:"environnements", annee:2025, format:"UASSET", poids:"1,4 Gio", moteur:"Unreal 5.8", licence:"Propre",
+    court:"Bosquet instancié, quatre densités, vent paramétrable.",
+    long:"Le vent est un paramètre de matière, pas une animation cuite : la même forêt sert une scène calme et une scène de tempête.",
+    servi:["Série 3D Japon"] },
+  { nom:"Sanctuaire de montagne", fam:"environnements", annee:2024, format:"FBX, UASSET", poids:"2,2 Gio", moteur:"Unreal", licence:"Propre",
+    court:"Ensemble complet, toiture, portique et escalier.",
+    long:"Construit à partir de relevés de Mitsumine. Les pièces se démontent, le portique sert seul dans deux autres scènes.",
+    servi:["Série 3D Japon","Portfolio"] },
+  { nom:"Lanternes de pierre", fam:"props", annee:2026, format:"FBX", poids:"140 Mio", moteur:"Tous", licence:"Propre",
+    court:"Neuf variantes, du petit socle à la lanterne de portail.",
+    long:"Un seul maillage de base et neuf jeux de paramètres, la mousse et l'usure se règlent dans la matière plutôt que dans la géométrie.",
+    servi:["ZenRayShards","Série 3D Japon"] },
+  { nom:"Marchandises de nuit", fam:"props", annee:2025, format:"FBX", poids:"420 Mio", moteur:"Tous", licence:"Propre",
+    court:"Trente objets de rue, caisses, cageots, enseignes, vélos.",
+    long:"Le lot qui remplit un plan sans qu'on le remarque. Chaque objet porte deux niveaux de détail et un point d'accroche.",
+    servi:["ZenRayShards"] },
+  { nom:"Pierre mouillée", fam:"matieres", annee:2026, format:"UASSET", poids:"310 Mio", moteur:"Unreal 5.8", licence:"Propre",
+    court:"Matière maîtresse, pluie, mousse et usure sur trois curseurs.",
+    long:"Une seule définition, une trentaine d'instances dans le projet. Changer la teinte de la mousse se fait à un seul endroit.",
+    servi:["ZenRayShards","Sanctuaire"] },
+  { nom:"Peau et tissu", fam:"matieres", annee:2025, format:"UASSET", poids:"180 Mio", moteur:"Unreal 5.8", licence:"Propre",
+    court:"Diffusion sous la surface réglée pour les personnages du projet.",
+    long:"Le réglage a été mesuré sur des références photographiques plutôt qu'estimé à l'œil, et il tient sous les trois éclairages du jeu.",
+    servi:["Kagura","Ronin"] },
+  { nom:"Étalonnage Dune", fam:"matieres", annee:2024, format:"CUBE", poids:"6 Mio", moteur:"DaVinci, Unreal", licence:"Propre",
+    court:"Table de correction tirée d'une image de référence, pas inventée.",
+    long:"Transfert de palette mesuré pixel par pixel depuis une référence, écart final sous trois valeurs sur deux cent cinquante cinq.",
+    servi:["Série 3D Japon","Reels"] },
+  { nom:"Chaîne de vignettes", fam:"outils", annee:2026, format:"Python", poids:"2 Mio", moteur:"Ligne de commande", licence:"Propre",
+    court:"Recadre, corrige et plafonne un lot entier en une commande.",
+    long:"L'aperçu du navigateur et le rendu final partagent le même calcul, donc ce qu'on voit est ce qui sort. Vérifié à l'écart nul sur une mire de seize couleurs.",
+    servi:["Tous les posts"] },
+  { nom:"Découpe de plan par mesure", fam:"outils", annee:2025, format:"Python", poids:"1 Mio", moteur:"Ligne de commande", licence:"Propre",
+    court:"Trouve les frontières d'une image de référence au pixel près.",
+    long:"Scanne les ruptures de couleur ligne par ligne plutôt que d'estimer à l'œil. Sert à reproduire une mise en page à partir d'une capture.",
+    servi:["Carrousels","Thèmes"] },
+  { nom:"Verre liquide", fam:"systemes", annee:2026, format:"CSS", poids:"90 Kio", moteur:"Web", licence:"Propre",
+    court:"La matière des panneaux, deux thèmes, un seul jeu de jetons.",
+    long:"Toutes les surfaces du produit en descendent. Changer le flou ou la teinte se fait dans un seul bloc et se propage partout.",
+    servi:["ZenRayProgress","Ateliers"] },
+  { nom:"Atlas de composants", fam:"systemes", annee:2025, format:"HTML", poids:"120 Kio", moteur:"Web", licence:"Propre",
+    court:"Seize planches, un composant par fichier, deux fonds.",
+    long:"Le catalogue vivant de l'interface. C'est lui qu'on relit avant d'inventer une primitive visuelle de plus.",
+    servi:["ZenRayProgress"] },
+  { nom:"Fiche d'asset imprimable", fam:"gabarits", annee:2025, format:"HTML", poids:"1 Mio", moteur:"Web", licence:"Propre",
+    court:"Une pièce, une page, prête à envoyer à un studio.",
+    long:"Le gabarit prend le nom, la famille, les mesures et trois vues, puis rend une page unique. Aucune valeur écrite en dur.",
+    servi:["Portfolio"] },
+  { nom:"Carrousel neuf pages", fam:"gabarits", annee:2026, format:"HTML", poids:"3 Mio", moteur:"Web", licence:"Propre",
+    court:"Un article publié devient un carrousel sans être réécrit.",
+    long:"Les pages sont des tranches de l'article, jamais une reformulation, donc aucun texte ne peut diverger entre le site et le post.",
+    servi:["Instagram","LinkedIn"] }
+];
+
+/* La nav reelle du produit. Create se scinde en trois sous-groupes : c'est ce qui rend
+   les treize entrees lisibles sans rien retirer. */
+var NAV = [
+  { id:"create", titre:"Create", ouvert:true, sgroupes:[
+    { titre:"Travail",       items:[["Create",null],["Assets",128],["Timer",null],["Plan",6],["Goals",4]] },
+    { titre:"Bibliothèques", items:[["Media",null],["Notes",null],["Skills",74],["Audio",null],["Shelf",null],["Ref",null]] },
+    { titre:"Pilotage",      items:[["Dashboard",null],["Projects",9],["Freelance",null]] }
+  ]},
+  { id:"gallery", titre:"Gallery", ouvert:true, sgroupes:[
+    { titre:null, items:[["Design",null],["Characters",null],["Environments",null]] }
+  ]},
+  { id:"learn", titre:"Learn", ouvert:true, sgroupes:[
+    { titre:null, items:[["Japanese",106]] }
+  ]},
+  { id:"apps", titre:"Apps", ouvert:false, sgroupes:[
+    { titre:null, items:[["Articles",null],["Documents",null],["Features",null]] }
+  ]},
+  { id:"systeme", titre:"Système", ouvert:false, sgroupes:[
+    { titre:null, items:[["Archives",null],["Drive",null],["Index",null],["Trash",null]] }
+  ]}
+];
+
+var ACTIF = "Assets";
+var filtreActif = "tout";
+
+/* Le fond d'une piece : un degrade de sa famille plus un motif dessine, jamais une fausse image.
+   On n'a aucun rendu reel sous la main, donc rien ne doit ressembler a un rendu reel. */
+function fondDe(fam, i){
+  var f = FAMILLES[fam];
+  i = i || 0;
+  /* SURCHARGE D'INSTANCE : la famille donne la teinte, le rang donne la lumiere.
+     Sans elle, trois pieces d'une meme famille rendent trois vignettes identiques
+     et la rangee s'aplatit. Ce sont des emplacements, pas de faux rendus. */
+  var angle = 146 + (i % 4) * 21;
+  var lx = 28 + (i % 3) * 23;
+  var ly = 64 - (i % 3) * 18;
+  var trames = {
+    corps:   "radial-gradient(130px 160px at " + lx + "% " + (ly - 14) + "%, rgba(255,255,255,0.22), transparent 66%)",
+    horizon: "linear-gradient(to top, rgba(255,255,255,0.17) 0%, transparent " + (28 + (i % 3) * 9) + "%)",
+    bloc:    "repeating-linear-gradient(" + (38 + (i % 3) * 17) + "deg, rgba(255,255,255,0.075) 0 12px, transparent 12px 24px)",
+    onde:    "repeating-radial-gradient(circle at " + lx + "% " + ly + "%, rgba(255,255,255,0.095) 0 14px, transparent 14px 28px)",
+    grille:  "repeating-linear-gradient(0deg, rgba(255,255,255,0.09) 0 1px, transparent 1px " + (15 + (i % 3) * 5) + "px), repeating-linear-gradient(90deg, rgba(255,255,255,0.09) 0 1px, transparent 1px " + (15 + (i % 3) * 5) + "px)",
+    cadre:   "linear-gradient(" + (120 + (i % 3) * 26) + "deg, rgba(255,255,255,0.16), transparent 54%)",
+    page:    "repeating-linear-gradient(0deg, rgba(255,255,255,0.10) 0 1px, transparent 1px " + (13 + (i % 3) * 4) + "px)"
+  };
+  return trames[f.motif] + ", linear-gradient(" + angle + "deg, " + f.t1 + ", " + f.t2 + ")";
+}
+
+function rendreNav(){
+  var html = "";
+  NAV.forEach(function(z){
+    var corps = "";
+    z.sgroupes.forEach(function(sg){
+      var lignes = sg.items.map(function(it){
+        var actif = it[0] === ACTIF ? ' aria-current="page"' : "";
+        var cnt = it[1] !== null ? '<span class="cnt">' + it[1] + "</span>" : "";
+        return '<a class="item" href="#"' + actif + '><span class="pastille"></span>' + it[0] + cnt + "</a>";
+      }).join("");
+      corps += sg.titre
+        ? '<div class="sgroupe"><div class="sgroupe-titre">' + sg.titre + "</div>" + lignes + "</div>"
+        : '<div class="sgroupe">' + lignes + "</div>";
+    });
+    html += '<div class="zone" data-open="' + (z.ouvert ? "true" : "false") + '" data-id="' + z.id + '">'
+      + '<button class="zone-tete">' + z.titre + '<span class="chevron">▾</span></button>'
+      + '<div class="zone-corps">' + corps + "</div></div>";
+  });
+  document.getElementById("nav").innerHTML = html;
+  document.querySelectorAll(".zone-tete").forEach(function(b){
+    b.addEventListener("click", function(){
+      var z = b.parentElement;
+      z.dataset.open = z.dataset.open === "true" ? "false" : "true";
+    });
+  });
+}
+
+function rendreCompteurs(){
+  var familles = Object.keys(FAMILLES).filter(function(k){
+    return PIECES.some(function(p){ return p.fam === k; });
+  }).length;
+  var reemplois = PIECES.reduce(function(s, p){ return s + p.servi.length; }, 0);
+  var lots = [[PIECES.length, "pièces"], [familles, "familles"], [reemplois, "réemplois"], ["2019", "depuis"]];
+  document.getElementById("compteurs").innerHTML = lots.map(function(l){
+    return '<div class="compteur"><div class="n">' + l[0] + '</div><div class="l">' + l[1] + "</div></div>";
+  }).join("");
+}
+
+function rendreFiltres(){
+  var cles = Object.keys(FAMILLES).filter(function(k){
+    return PIECES.some(function(p){ return p.fam === k; });
+  });
+  var html = '<button class="filtre" data-f="tout" aria-pressed="' + (filtreActif === "tout") + '">Toute la collection<span class="n">'
+    + PIECES.length + "</span></button>";
+  html += cles.map(function(k){
+    var n = PIECES.filter(function(p){ return p.fam === k; }).length;
+    return '<button class="filtre" data-f="' + k + '" aria-pressed="' + (filtreActif === k) + '">'
+      + FAMILLES[k].nom + '<span class="n">' + n + "</span></button>";
+  }).join("");
+  document.getElementById("filtres").innerHTML = html;
+  document.querySelectorAll(".filtre").forEach(function(b){
+    b.addEventListener("click", function(){ filtreActif = b.dataset.f; rendreFiltres(); rendreSalle(); });
+  });
+}
+
+function rendreSalle(){
+  var cles = Object.keys(FAMILLES).filter(function(k){
+    if (filtreActif !== "tout" && k !== filtreActif) return false;
+    return PIECES.some(function(p){ return p.fam === k; });
+  });
+  document.getElementById("salle").innerHTML = cles.map(function(k){
+    var lot = PIECES.filter(function(p){ return p.fam === k; });
+    var cartes = lot.map(function(p){
+      var i = PIECES.indexOf(p);
+      return '<button class="piece" data-i="' + i + '">'
+        + '<div class="vue" style="background:' + fondDe(p.fam, i) + '">'
+        + '<span class="place">' + p.poids + "</span>"
+        + '<span class="lettre">' + p.nom.charAt(0) + "</span></div>"
+        + "<h3>" + p.nom + "</h3>"
+        + '<div class="meta"><span class="n">' + p.annee + "</span><span>" + p.format + "</span></div>"
+        + "<p>" + p.court + "</p></button>";
+    }).join("");
+    return '<section class="famille"><div class="famille-tete"><h2>' + FAMILLES[k].nom
+      + '</h2><span class="n">' + lot.length + '</span><span class="trait"></span></div>'
+      + '<div class="pieces">' + cartes + "</div></section>";
+  }).join("");
+  document.querySelectorAll(".piece").forEach(function(b){
+    b.addEventListener("click", function(){ ouvrir(PIECES[+b.dataset.i]); });
+  });
+}
+
+function ouvrir(p){
+  document.getElementById("detail-vue").style.background = fondDe(p.fam, PIECES.indexOf(p));
+  document.getElementById("detail-corps").innerHTML =
+      '<p class="fam">' + FAMILLES[p.fam].nom + "</p>"
+    + "<h2>" + p.nom + "</h2>"
+    + '<p class="texte">' + p.long + "</p>"
+    + '<div class="fiche">'
+    + "<div><dt>Année</dt><dd class=\"n\">" + p.annee + "</dd></div>"
+    + "<div><dt>Format</dt><dd>" + p.format + "</dd></div>"
+    + "<div><dt>Poids</dt><dd class=\"n\">" + p.poids + "</dd></div>"
+    + "<div><dt>Moteur</dt><dd>" + p.moteur + "</dd></div>"
+    + "<div><dt>Licence</dt><dd>" + p.licence + "</dd></div>"
+    + "</div>"
+    + '<div class="servi"><p class="t">A déjà servi dans</p>'
+    + p.servi.map(function(s){ return "<span>" + s + "</span>"; }).join("") + "</div>";
+  document.getElementById("detail").dataset.on = "true";
+  document.getElementById("detail").setAttribute("aria-hidden", "false");
+  document.getElementById("voile").dataset.on = "true";
+}
+function fermer(){
+  document.getElementById("detail").dataset.on = "false";
+  document.getElementById("detail").setAttribute("aria-hidden", "true");
+  document.getElementById("voile").dataset.on = "false";
+}
+document.getElementById("fermer").addEventListener("click", fermer);
+document.getElementById("voile").addEventListener("click", fermer);
+document.addEventListener("keydown", function(e){ if (e.key === "Escape") fermer(); });
+
+var btnTheme = document.getElementById("btn-theme");
+btnTheme.addEventListener("click", function(){
+  var sombre = document.body.classList.toggle("sombre");
+  btnTheme.textContent = sombre ? "Thème clair" : "Thème sombre";
+});
+
+rendreNav(); rendreCompteurs(); rendreFiltres(); rendreSalle();
+</script>
+</body>
+</html>

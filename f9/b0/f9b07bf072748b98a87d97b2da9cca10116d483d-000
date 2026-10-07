@@ -1,0 +1,634 @@
+#!/usr/bin/env python3
+# 2026-09-01, cook zenray-html-hda mode HEAVY : _index.json + _params.json -> JPEG finaux dans out/
+#
+# PORTAGE FIDELE du shader WebGL de `zr-photo-adjustments.js` en numpy. Le meme
+# ordre d'operations, les memes constantes et les memes formules, sinon l'apercu
+# du navigateur et le fichier livre divergent, ce qui viderait de son sens le
+# reglage a l'oeil. Ordre du shader, a ne jamais reordonner :
+#   levels -> selective color -> light -> saturation -> vibrance
+#   -> black and white -> filtre -> vignette -> grain -> clamp
+#
+# Le texte suit la meme chaine que `crop-apply.py` : police Serif/Sans, sept
+# graisses reelles, taille en px avec auto-fit qui ne depasse JAMAIS le cadre,
+# ancre haut/milieu/bas x gauche/centre/droite, jusqu'a trois calques par image.
+#
+# Les images sont ecrites sous `NN.jpg`, NN etant la position zero-completee de
+# 01 a 99 dans l'ordre choisi par glisser-deposer. Finder les trie automatiquement.
+import json
+import math
+import re
+import sys
+from pathlib import Path
+
+import numpy as np
+from PIL import Image, ImageDraw, ImageFilter, ImageFont, ImageOps
+
+HERE = Path(__file__).resolve().parent
+SOURCE_DIR = HERE.parent
+OUT_DIR = HERE / "out"
+
+SERIF_FONT_FILES = {
+    300: "/Users/zenray/Library/Fonts/AnthropicSerif-Light.ttf",
+    400: "/Users/zenray/Library/Fonts/AnthropicSerif-Regular.ttf",
+    500: "/Users/zenray/Library/Fonts/AnthropicSerif-Medium.ttf",
+    600: "/Users/zenray/Library/Fonts/AnthropicSerif-SemiBold.ttf",
+    700: "/Users/zenray/Library/Fonts/AnthropicSerif-Bold.ttf",
+    800: "/Users/zenray/Library/Fonts/AnthropicSerif-ExtraBold.ttf",
+    900: "/Users/zenray/Library/Fonts/AnthropicSerif-Black.ttf",
+}
+SANS_FONT_FILE = "/Users/zenray/Library/Fonts/InterVariable.ttf"
+MIN_FONT_SIZE_PX = 6
+
+FILTERS = [
+    "Original", "Vivid", "Vivid Warm", "Vivid Cool", "Dramatic",
+    "Dramatic Warm", "Dramatic Cool", "Mono", "Silvertone", "Noir",
+]
+LUMA = np.array([0.2126, 0.7152, 0.0722], dtype=np.float32)
+SELECTIVE_CENTERS = [0.0, 0.1666667, 0.3333333, 0.5, 0.6666667, 0.8333333]
+
+
+# ---------------------------------------------------------------- helpers GLSL
+
+def smoothstep(edge0, edge1, x):
+    """Equivalent exact de smoothstep GLSL, y compris quand edge0 > edge1."""
+    t = np.clip((x - edge0) / (edge1 - edge0), 0.0, 1.0)
+    return t * t * (3.0 - 2.0 * t)
+
+
+def luma(color):
+    # Somme explicite plutot que `color @ LUMA` : sur macOS, le matmul BLAS leve
+    # des RuntimeWarning (divide by zero, overflow, invalid value) meme sur des
+    # donnees parfaitement finies, faux positif verifie le 2026-09-01. Les deux
+    # ecritures donnent le meme resultat au bit pres, celle-ci ne ment pas.
+    return color[..., 0] * LUMA[0] + color[..., 1] * LUMA[1] + color[..., 2] * LUMA[2]
+
+
+def rgb_to_hsv(color):
+    r, g, b = color[..., 0], color[..., 1], color[..., 2]
+    maximum = np.max(color, axis=-1)
+    minimum = np.min(color, axis=-1)
+    delta = maximum - minimum
+    epsilon = 1.0e-10
+
+    hue = np.zeros_like(maximum)
+    mask = delta > epsilon
+    with np.errstate(invalid="ignore", divide="ignore"):
+        red_max = mask & (maximum == r)
+        green_max = mask & (maximum == g) & ~red_max
+        blue_max = mask & ~red_max & ~green_max
+        hue[red_max] = ((g - b)[red_max] / delta[red_max]) % 6.0
+        hue[green_max] = ((b - r)[green_max] / delta[green_max]) + 2.0
+        hue[blue_max] = ((r - g)[blue_max] / delta[blue_max]) + 4.0
+    hue = hue / 6.0
+    saturation = np.where(maximum > epsilon, delta / (maximum + epsilon), 0.0)
+    return np.stack([hue, saturation, maximum], axis=-1)
+
+
+def hsv_to_rgb(color):
+    h, s, v = color[..., 0], color[..., 1], color[..., 2]
+    p = np.abs(((h[..., None] + np.array([0.0, 0.6666667, 0.3333333], dtype=np.float32)) % 1.0) * 6.0 - 3.0)
+    return (v[..., None] * (1.0 + s[..., None] * (np.clip(p - 1.0, 0.0, 1.0) - 1.0))).astype(np.float32)
+
+
+def hue_distance(a, b):
+    difference = np.abs(a - b)
+    return np.minimum(difference, 1.0 - difference)
+
+
+def adjust_saturation(color, amount):
+    gray = luma(color)[..., None]
+    factor = max(0.0, 1.0 + amount)
+    return gray + (color - gray) * factor
+
+
+def apply_preset(color, filter_id):
+    gray = luma(color)[..., None]
+    if filter_id == 1:
+        return adjust_saturation((color - 0.5) * 1.08 + 0.5, 0.20)
+    if filter_id == 2:
+        return adjust_saturation((color - 0.5) * 1.07 + 0.5 + np.array([0.035, 0.012, -0.025], dtype=np.float32), 0.18)
+    if filter_id == 3:
+        return adjust_saturation((color - 0.5) * 1.07 + 0.5 + np.array([-0.025, 0.005, 0.035], dtype=np.float32), 0.18)
+    if filter_id == 4:
+        return adjust_saturation((color - 0.5) * 1.22 + 0.5, -0.08)
+    if filter_id == 5:
+        return adjust_saturation((color - 0.5) * 1.21 + 0.5 + np.array([0.045, 0.012, -0.035], dtype=np.float32), -0.05)
+    if filter_id == 6:
+        return adjust_saturation((color - 0.5) * 1.21 + 0.5 + np.array([-0.035, 0.004, 0.045], dtype=np.float32), -0.05)
+    if filter_id == 7:
+        return np.repeat(gray, 3, axis=-1)
+    if filter_id == 8:
+        return np.repeat(gray, 3, axis=-1) * np.array([1.06, 1.02, 0.92], dtype=np.float32) \
+            + np.array([0.015, 0.01, 0.0], dtype=np.float32)
+    if filter_id == 9:
+        return np.repeat(smoothstep(0.18, 0.82, gray), 3, axis=-1)
+    return color
+
+
+# ------------------------------------------------------------- chaine photo
+
+def apply_photo(image, photo):
+    """Rejoue la chaine du shader sur un tableau HxWx3 en float32 (0..1)."""
+    if photo is None:
+        return image
+
+    def pct(key, default=0.0):
+        return float(photo.get(key, default)) / 100.0
+
+    levels = photo.get("levels") or {}
+    color = image
+
+    # 1. Levels
+    input_black = float(levels.get("inputBlack", 0)) / 100.0
+    midtone = float(levels.get("midtone", 50)) / 100.0
+    input_white = max(input_black + 0.001, float(levels.get("inputWhite", 100)) / 100.0)
+    output_black = float(levels.get("outputBlack", 0)) / 100.0
+    output_white = float(levels.get("outputWhite", 100)) / 100.0
+    color = np.clip((color - input_black) / (input_white - input_black), 0.0, 1.0)
+    gamma = 2.0 ** ((0.5 - midtone) * 3.0)
+    color = np.power(np.maximum(color, 1e-5), gamma)
+    color = output_black + (output_white - output_black) * color
+
+    # 2. Selective Color
+    selective = photo.get("selective") or []
+    if any(any(float(channel.get(k, 0)) for k in ("hue", "saturation", "luminance")) for channel in selective):
+        hsv = rgb_to_hsv(color)
+        for index, center in enumerate(SELECTIVE_CENTERS):
+            channel = selective[index] if index < len(selective) else {}
+            hue_amount = float(channel.get("hue", 0)) / 100.0
+            sat_amount = float(channel.get("saturation", 0)) / 100.0
+            lum_amount = float(channel.get("luminance", 0)) / 100.0
+            if not (hue_amount or sat_amount or lum_amount):
+                continue
+            weight = smoothstep(0.19, 0.0, hue_distance(hsv[..., 0], center)) \
+                * smoothstep(0.05, 0.25, hsv[..., 1])
+            hsv[..., 0] = (hsv[..., 0] + hue_amount * weight * 0.12 + 1.0) % 1.0
+            hsv[..., 1] = np.clip(hsv[..., 1] + sat_amount * weight * 0.55, 0.0, 1.0)
+            hsv[..., 2] = np.clip(hsv[..., 2] + lum_amount * weight * 0.38, 0.0, 1.0)
+        color = hsv_to_rgb(hsv)
+
+    # 3. Light. `luminosity` est mesuree UNE fois, avant les operations, comme
+    #    dans le shader : la recalculer entre deux etapes changerait le rendu.
+    brilliance = pct("brilliance")
+    exposure = pct("exposure")
+    highlights = pct("highlights")
+    shadows = pct("shadows")
+    brightness = pct("brightness")
+    contrast = pct("contrast")
+    black_point = pct("blackPoint")
+    luminosity = luma(color)[..., None]
+
+    color = color * (2.0 ** (exposure * 2.0))
+    color = color + brilliance * (0.25 - np.power(luminosity - 0.5, 2.0)) * 0.55
+    color = color + highlights * smoothstep(0.45, 1.0, luminosity) * 0.32
+    color = color + shadows * (1.0 - smoothstep(0.0, 0.55, luminosity)) * 0.32
+    color = color + brightness * 0.30
+    color = (color - 0.5) * (1.0 + contrast * 0.90) + 0.5
+    color = color - black_point * (1.0 - smoothstep(0.0, 0.55, luminosity)) * 0.35
+
+    # 4. Saturation, puis Vibrance
+    color = adjust_saturation(color, pct("saturation") * 0.85)
+    vibrance = pct("vibrance")
+    if vibrance:
+        hsv = rgb_to_hsv(np.clip(color, 0.0, 1.0))
+        hsv[..., 1] = np.clip(hsv[..., 1] + vibrance * (1.0 - hsv[..., 1]) * 0.75, 0.0, 1.0)
+        color = hsv_to_rgb(hsv)
+
+    # 5. Black and White
+    black_and_white = pct("blackAndWhite")
+    if black_and_white:
+        gray = np.repeat(luma(color)[..., None], 3, axis=-1)
+        color = color + (gray - color) * black_and_white
+
+    # 6. Filtre
+    filter_name = photo.get("filter", "Original")
+    if filter_name not in FILTERS:
+        raise SystemExit(f"filtre inconnu : {filter_name}")
+    filter_id = FILTERS.index(filter_name)
+    filter_strength = float(photo.get("filterStrength", 100)) / 100.0
+    if filter_id and filter_strength:
+        color = color + (apply_preset(color, filter_id) - color) * filter_strength
+
+    # 7. Vignette, en coordonnees normalisees du cadre
+    vignette = pct("vignette")
+    if vignette:
+        height, width = color.shape[0], color.shape[1]
+        ys = (np.arange(height, dtype=np.float32) + 0.5) / height
+        xs = (np.arange(width, dtype=np.float32) + 0.5) / width
+        radius = np.sqrt((xs[None, :] - 0.5) ** 2 + (ys[:, None] - 0.5) ** 2) / 0.70710678
+        color = color * (1.0 - (smoothstep(0.34, 1.0, radius) * vignette * 0.78))[..., None]
+
+    # 8. Grain deterministe, dans le meme repere normalise que le shader.
+    grain = pct("grain")
+    if grain:
+        height, width = color.shape[0], color.shape[1]
+        ys = (np.arange(height, dtype=np.float32) + 0.5) / height
+        xs = (np.arange(width, dtype=np.float32) + 0.5) / width
+        cells = np.floor(xs[None, :] * 4096.0) * 127.1 + np.floor(ys[:, None] * 4096.0) * 311.7
+        noise = np.mod(np.sin(cells) * 43758.5453123, 1.0)
+        color = color + ((noise - 0.5) * grain * 0.16)[..., None]
+
+    return np.clip(color, 0.0, 1.0)
+
+
+# ---------------------------------------------------------------- texte
+
+def affine_coeffs(nw, nh, canvas_w, canvas_h, px, py, zoom, angle_deg):
+    """Coefficients (a,b,c,d,e,f) pour Image.transform(AFFINE) : pour chaque
+    pixel de sortie (bx,by), le pixel source lu est (a*bx+b*by+c, d*bx+e*by+f).
+    Derive directement de la meme chaine que le CSS : object-fit:cover +
+    object-position(px,py) puis transform: scale(zoom*safescale) rotate(angle)
+    autour du centre. `safescale` regonfle la couverture pour qu'aucune
+    rotation ne laisse un coin transparent (meme formule que le JS du picker,
+    a ne jamais faire diverger) :
+        safescale = |cos angle| + max(H/W, W/H) * |sin angle|
+    Angle positif = sens CSS (horaire), coherent avec `rotate(Xdeg)`.
+    """
+    s = max(canvas_w / nw, canvas_h / nh)
+
+    ratio = max(canvas_h / canvas_w, canvas_w / canvas_h)
+    theta = math.radians(angle_deg)
+    safescale = abs(math.cos(theta)) + ratio * abs(math.sin(theta))
+    safescale *= 1.002  # marge anti-arrondi
+
+    z = zoom * safescale
+    cx, cy = canvas_w / 2, canvas_h / 2
+    cos_t, sin_t = math.cos(theta), math.sin(theta)
+
+    # 2026-09-03 : la fenetre visible depend du facteur EFFECTIF, zoom compris.
+    # Calculee avec `s` seul, sa hauteur egalait exactement la source sur l'axe
+    # couvrant : la marge valait zero et Position Y ne bougeait rien, meme en
+    # zoomant. Bug rapporte par Matthieu, corrige des DEUX cotes a la fois.
+    vw = canvas_w / (z * s)
+    vh = canvas_h / (z * s)
+    x0 = max(0.0, nw - vw) * (px / 100)
+    y0 = max(0.0, nh - vh) * (py / 100)
+
+    a = cos_t / (z * s)
+    b = sin_t / (z * s)
+    c = x0 + vw / 2 - (cos_t * cx + sin_t * cy) / (z * s)
+    d = -sin_t / (z * s)
+    e = cos_t / (z * s)
+    f = y0 + vh / 2 + (sin_t * cx - cos_t * cy) / (z * s)
+    return (a, b, c, d, e, f)
+
+
+def parse_weight(val):
+    if isinstance(val, (int, float)):
+        return int(val)
+    if not val:
+        return 400
+    s = str(val).strip().lower()
+    mapping = {
+        "thin": 100, "extralight": 200, "light": 300, "regular": 400,
+        "medium": 500, "semibold": 600, "bold": 700, "extrabold": 800,
+        "ultrabold": 800, "black": 900, "heavy": 900
+    }
+    if s in mapping:
+        return mapping[s]
+    try:
+        return int(float(s))
+    except Exception:
+        return 400
+
+
+def parse_color(val, default=(246, 207, 71, 255)):
+    """Convertit toute couleur hex (#rgb, #rrggbb, #rrggbbaa), rgb/rgba
+    ou tuple en tuple RGBA (r, g, b, a) normalise 0..255."""
+    if not val:
+        return default
+    if isinstance(val, (tuple, list)):
+        if len(val) == 3:
+            return (int(val[0]), int(val[1]), int(val[2]), 255)
+        if len(val) >= 4:
+            a = int(round(val[3] * 255)) if isinstance(val[3], float) and val[3] <= 1.0 else int(val[3])
+            return (int(val[0]), int(val[1]), int(val[2]), a)
+    val_str = str(val).strip()
+    if val_str.startswith("#"):
+        h = val_str.lstrip("#")
+        if len(h) == 3:
+            h = "".join(c * 2 for c in h)
+        if len(h) == 6:
+            return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16), 255)
+        if len(h) == 8:
+            return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16), int(h[6:8], 16))
+    if val_str.lower().startswith("rgba"):
+        m = re.findall(r"[\d.]+", val_str)
+        if len(m) >= 4:
+            r, g, b = int(float(m[0])), int(float(m[1])), int(float(m[2]))
+            alpha_f = float(m[3])
+            a = int(round(alpha_f * 255)) if alpha_f <= 1.0 else int(alpha_f)
+            return (r, g, b, max(0, min(255, a)))
+    if val_str.lower().startswith("rgb"):
+        m = re.findall(r"[\d.]+", val_str)
+        if len(m) >= 3:
+            return (int(float(m[0])), int(float(m[1])), int(float(m[2])), 255)
+    try:
+        from PIL import ImageColor
+        rgb = ImageColor.getrgb(val_str)
+        if len(rgb) == 3:
+            return (rgb[0], rgb[1], rgb[2], 255)
+        if len(rgb) == 4:
+            return rgb
+    except Exception:
+        pass
+    return default
+
+
+def load_font(font_key, weight, size):
+    size = max(1, round(size))
+    weight_num = parse_weight(weight)
+    if font_key == "sans":
+        font = ImageFont.truetype(SANS_FONT_FILE, size)
+        applied = False
+        try:
+            axes = font.get_variation_axes()
+            coords = []
+            for ax in axes:
+                name = ax.get("name", b"").decode("utf-8", errors="ignore").lower() if isinstance(ax.get("name"), (bytes, bytearray)) else str(ax.get("name", "")).lower()
+                if "weight" in name or "wght" in name:
+                    w = max(ax.get("minimum", 100), min(ax.get("maximum", 900), weight_num))
+                    coords.append(float(w))
+                else:
+                    coords.append(float(ax.get("default", 14)))
+            if coords:
+                font.set_variation_by_axes(coords)
+                applied = True
+        except Exception:
+            pass
+        if not applied:
+            try:
+                name_map = {
+                    100: "Thin", 200: "ExtraLight", 300: "Light", 400: "Regular",
+                    500: "Medium", 600: "SemiBold", 700: "Bold", 800: "ExtraBold", 900: "Black"
+                }
+                closest = min(name_map.keys(), key=lambda k: abs(k - weight_num))
+                font.set_variation_by_name(name_map[closest])
+            except Exception:
+                pass
+        return font
+    nearest = min(SERIF_FONT_FILES, key=lambda w: abs(w - weight_num))
+    return ImageFont.truetype(SERIF_FONT_FILES[nearest], size)
+
+
+def position_for(bbox, h_anchor, v_anchor, canvas_w, canvas_h, margin_x, margin_y):
+    text_w, text_h = bbox[2] - bbox[0], bbox[3] - bbox[1]
+    if h_anchor == "left":
+        x = margin_x - bbox[0]
+    elif h_anchor == "right":
+        x = canvas_w - margin_x - text_w - bbox[0]
+    else:
+        x = (canvas_w - text_w) / 2 - bbox[0]
+    if v_anchor == "top":
+        y = margin_y - bbox[1]
+    elif v_anchor == "middle":
+        y = (canvas_h - text_h) / 2 - bbox[1]
+    else:
+        y = canvas_h - margin_y - text_h - bbox[1]
+    return x, y
+
+
+def draw_shadow_layer(canvas_size, value, font, x, y, canvas_w, shadow_cfg):
+    """Ombre portee : Size (rayon du flou) et Strength (densite, 0-100).
+
+    2026-09-03, bug mesure et corrige. L'ancienne version dessinait UN tampon a
+    alpha 200 puis le floutait : a Size 43 sur un canevas de 3240, l'encre
+    s'etalait tant que l'alpha du pic tombait a 95 sur 255, donc invisible sur
+    une photo claire. L'apercu montrait une ombre que le fichier livre n'avait
+    pas, exactement ce que ce skill interdit.
+
+    La densite s'obtient en RECOMPOSANT le meme calque floute sur lui-meme :
+    alpha_total = 1 - (1 - a)^n. Le degrade est conserve, la montee est
+    monotone, et n se deduit de Strength. Distance et Spread ne sont plus
+    exposes ; un ancien fichier qui les porte encore reste lu, son Spread
+    servant seulement a garder son rendu d'alors."""
+    shadow = Image.new("RGBA", canvas_size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(shadow)
+    if shadow_cfg is None:
+        draw.text((x, y), value, font=font, fill=(0, 0, 0, 200))
+        return shadow.filter(ImageFilter.GaussianBlur(canvas_w * 0.004))
+    if not shadow_cfg.get("enabled", True):
+        return shadow
+
+    size_px = max(0.0, float(shadow_cfg.get("size", 40)))
+    strength = max(0.0, min(100.0, float(shadow_cfg.get("strength", 40))))
+    if strength <= 0.01:
+        return shadow
+    # Compatibilite : les fichiers d'avant portent distance/spread.
+    spread_pct = max(0.0, min(100.0, float(shadow_cfg.get("spread", 0))))
+    distance_px = float(shadow_cfg.get("distance", 0))
+    spread_px = size_px * (spread_pct / 100.0)
+    blur_px = size_px * (1.0 - spread_pct / 100.0)
+
+    points = 1 if spread_px < 0.05 else 12
+    for i in range(points):
+        angle = (i / points) * 2 * math.pi if points > 1 else 0.0
+        dx = spread_px * math.cos(angle) if points > 1 else 0.0
+        dy = distance_px + (spread_px * math.sin(angle) if points > 1 else 0.0)
+        draw.text((x + dx, y + dy), value, font=font, fill=(0, 0, 0, 255))
+    if blur_px > 0.05:
+        shadow = shadow.filter(ImageFilter.GaussianBlur(blur_px))
+
+    passes = max(1, int(round(strength / 10.0)))
+    dense = shadow
+    for _ in range(passes - 1):
+        dense = Image.alpha_composite(dense, shadow)
+    return dense
+
+def hex_to_rgb(value):
+    rgba = parse_color(value, default=(196, 195, 185, 255))
+    return (rgba[0], rgba[1], rgba[2])
+
+
+def draw_border(canvas, cfg, canvas_w, canvas_h):
+    """Bordure exterieure, sur 3 ou 4 cotes selon `openSide`, avec coins internes
+    arrondis selon `radius` (par defaut egal a `thickness` pour un raccord propre).
+    Distance/Spread n'existent pas ici : c'est une bande PLEINE, jamais floutee,
+    posee au-dessus de la photo et EN DESSOUS du texte, comme dans l'apercu.
+    Le cote OUVERT (gauche ou droite) reste net et droit, sans arrondi ni trait,
+    pour que deux images posees cote a cote se lisent comme une seule bande continue.
+    Les coins internes fermes sont arrondis pour adoucir la jonction photo/cadre.
+    `enabled=False` ou absence de cle laisse le canevas intact."""
+    if not cfg or not cfg.get("enabled"):
+        return canvas
+    thickness = max(0.0, float(cfg.get("thickness", 6)))
+    if thickness <= 0:
+        return canvas
+    t = round(thickness)
+    raw_radius = cfg.get("radius")
+    if raw_radius is not None:
+        radius = max(0.0, float(raw_radius))
+    else:
+        radius = float(t)
+    r = round(radius)
+    r = min(r, max(0, (canvas_w - t) // 2), max(0, (canvas_h - 2 * t) // 2))
+
+    color = hex_to_rgb(cfg.get("color", "#c4c3b9"))
+    open_side = cfg.get("openSide", "none")
+
+    border_img = Image.new("RGB", (canvas_w, canvas_h), color)
+    scale = 2
+    sw, sh = canvas_w * scale, canvas_h * scale
+    st, sr = t * scale, r * scale
+    mask_hi = Image.new("L", (sw, sh), 255)
+    d = ImageDraw.Draw(mask_hi)
+
+    if open_side == "right":
+        xy = [st, st, sw, sh - st]
+        corners = (True, False, False, True)
+    elif open_side == "left":
+        xy = [0, st, sw - st, sh - st]
+        corners = (False, True, True, False)
+    else:
+        xy = [st, st, sw - st, sh - st]
+        corners = (True, True, True, True)
+
+    if sr > 0:
+        d.rounded_rectangle(xy, radius=sr, fill=0, corners=corners)
+    else:
+        d.rectangle(xy, fill=0)
+
+    mask = mask_hi.resize((canvas_w, canvas_h), Image.Resampling.BILINEAR)
+    canvas.paste(border_img, (0, 0), mask=mask)
+    return canvas
+
+
+def draw_caption(canvas, cfg, canvas_w, canvas_h):
+    if not cfg:
+        return canvas
+    if "enabled" in cfg and not cfg.get("enabled"):
+        return canvas
+    value = (cfg.get("value") or "").strip()
+    if not value:
+        return canvas
+    font_key = cfg.get("font", "serif")
+    weight = parse_weight(cfg.get("weight", 400))
+    color_rgba = parse_color(cfg.get("color"), default=(246, 207, 71, 255))
+    v_anchor, h_anchor = (cfg.get("anchor") or "bottom-center").split("-")
+    margin_x, margin_y = canvas_w * 0.06, canvas_h * 0.06
+    max_width = canvas_w * 0.88
+
+    # La taille venue du navigateur est un point de depart : on refait l'ajustement
+    # cote Python, dont les metriques different legerement, pour garantir que le
+    # texte ne sorte JAMAIS du cadre dans le fichier livre.
+    font_size = round(cfg.get("size_px") or cfg.get("requested_size_px") or 200)
+    probe = ImageDraw.Draw(canvas)
+
+    def fits(bbox):
+        if (bbox[2] - bbox[0]) > max_width:
+            return False
+        x, y = position_for(bbox, h_anchor, v_anchor, canvas_w, canvas_h, margin_x, margin_y)
+        return (x + bbox[0] >= 0 and y + bbox[1] >= 0
+                and x + bbox[2] <= canvas_w and y + bbox[3] <= canvas_h)
+
+    font = load_font(font_key, weight, font_size)
+    bbox = probe.textbbox((0, 0), value, font=font)
+    while not fits(bbox) and font_size > MIN_FONT_SIZE_PX:
+        font_size -= 2
+        font = load_font(font_key, weight, font_size)
+        bbox = probe.textbbox((0, 0), value, font=font)
+
+    x, y = position_for(bbox, h_anchor, v_anchor, canvas_w, canvas_h, margin_x, margin_y)
+
+    canvas = canvas.convert("RGBA")
+    shadow = draw_shadow_layer(canvas.size, value, font, x, y, canvas_w, cfg.get("shadow"))
+    canvas = Image.alpha_composite(canvas, shadow)
+    ImageDraw.Draw(canvas).text((x, y), value, font=font, fill=color_rgba)
+    return canvas.convert("RGB")
+
+
+# ---------------------------------------------------------------- cook
+
+def main():
+    index = json.loads((HERE / "_index.json").read_text())
+    params_path = HERE / "_params.json"
+    if not params_path.exists():
+        raise SystemExit(
+            "_params.json manquant : coller ici le JSON rendu par le bouton "
+            "« Copier TOUT (ordre + réglages) » de index.html"
+        )
+    params = json.loads(params_path.read_text())
+    by_id = {img["id"]: img for img in index["images"]}
+
+    order = params["order"]
+    images = params["images"]
+    given, declared = set(order), set(images)
+    assert len(order) == len(given), "l'ordre contient deux fois le meme id"
+    assert given == declared, (
+        f"l'ordre et images doivent citer les memes id ; "
+        f"manquants={sorted(declared - given)} en trop={sorted(given - declared)}"
+    )
+
+    OUT_DIR.mkdir(exist_ok=True)
+    written = []
+    active_order = [image_id for image_id in order if not images[image_id].get("discarded")]
+    if len(active_order) < len(order):
+        print(f"cook : {len(order) - len(active_order)} photo(s) écartée(s) ignorée(s)")
+    for position, image_id in enumerate(active_order, start=1):
+        spec = images[image_id]
+        source_id = spec.get("source_id", image_id)
+        entry = by_id.get(source_id)
+        assert entry is not None, f"source_id {source_id} absent de _index.json"
+        src_path = Path(entry["path"])
+        if not src_path.exists():
+            src_path = SOURCE_DIR / entry["file"]
+        if not src_path.exists():
+            src_path = SOURCE_DIR / "_deprecated" / entry["file"]
+        assert src_path.exists(), f"source introuvable : {src_path}"
+
+        image = ImageOps.exif_transpose(Image.open(src_path)).convert("RGB")
+
+        # CADRAGE d'abord, exactement la meme chaine que l'apercu : une seule
+        # transformation affine source -> canevas cible. Sans format demande, ou
+        # avec un cadrage neutre, l'image passe telle quelle.
+        crop = spec.get("crop") or {}
+        fmt = params.get("format")
+        if fmt:
+            canvas_w = fmt["w"] * fmt["factor"]
+            canvas_h = fmt["h"] * fmt["factor"]
+            coeffs = affine_coeffs(
+                image.width, image.height, canvas_w, canvas_h,
+                crop.get("px", 50), crop.get("py", 50),
+                crop.get("zoom", 1), crop.get("rotate", 0),
+            )
+            image = image.transform((canvas_w, canvas_h), Image.AFFINE,
+                                    data=coeffs, resample=Image.BICUBIC)
+        canvas_w, canvas_h = image.size
+
+        array = np.asarray(image, dtype=np.float32) / 255.0
+        array = apply_photo(array, spec.get("photo"))
+        out = Image.fromarray(np.rint(array * 255.0).astype(np.uint8))
+        out = draw_border(out, spec.get("border"), canvas_w, canvas_h)
+
+        texts = spec.get("text") or []
+        if isinstance(texts, dict):
+            texts = [texts]
+        for cfg in texts:
+            out = draw_caption(out, cfg, canvas_w, canvas_h)
+
+        if position > 99:
+            raise SystemExit("le mode heavy numérote les sorties de 01 à 99")
+        out_path = OUT_DIR / f"{position:02d}.jpg"
+        quality = 95
+        out.save(out_path, "JPEG", quality=quality, optimize=True)
+        size_mb = out_path.stat().st_size / 1_048_576
+        while size_mb > 8 and quality > 60:
+            quality -= 5
+            out.save(out_path, "JPEG", quality=quality, optimize=True)
+            size_mb = out_path.stat().st_size / 1_048_576
+
+        marks = []
+        if spec.get("photo") and spec["photo"] != {}:
+            marks.append("photo")
+        if texts:
+            marks.append(f"{len(texts)} texte{'s' if len(texts) > 1 else ''}")
+        written.append(out_path)
+        print(f"{position:02d}  {entry['file']}  ->  {out_path.name}  "
+              f"{out.size[0]}x{out.size[1]}  q{quality}  {size_mb:.2f} Mo"
+              + (f"  [{', '.join(marks)}]" if marks else ""))
+
+    print(f"\n{len(written)} images ecrites dans {OUT_DIR}")
+
+
+if __name__ == "__main__":
+    sys.exit(main())

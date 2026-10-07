@@ -1,0 +1,79 @@
+# ZenRay Assets, les quatre directions de design
+
+Bibliothèque de la loi HDA : ces maquettes ne sont pas des livrables morts, elles sont la
+**définition** dont les prochaines seront des instances. On les améliore, on les régénère,
+on ne repart jamais d'une page blanche.
+
+Produites le 2026-09-05 pour le redesign de la sidebar de ZenRayProgress et pour la vue de
+la nouvelle entrée de navigation « ZenRay Assets ».
+
+## Les quatre directions
+
+| Fichier | Direction | Le parti pris | Sa réponse aux treize entrées de Create |
+|---|---|---|---|
+| `01-atelier.html` | Atelier | Liquid Glass poussé, fidèle au système existant, le plus vite déployable | Create se scinde en Travail, Bibliothèques, Pilotage, plus un champ qui filtre la navigation |
+| `02-galerie.html` | Galerie | Éditorial, luxe, épuré. Le catalogue d'une maison d'édition plutôt qu'un tableau de bord | Deux sous-groupes, Atelier et Conduite, les quatre autres zones repliées |
+| `03-studio.html` | Studio | Dense et cinématographique, sombre par défaut, orienté réutilisation | Sidebar compacte à repères visuels, pensée pour vingt-cinq entrées |
+| `04-salon.html` | Salon | La synthèse entre 01 et 02, demandée après avoir vu les trois premières | Trois intertitres légers, sans réordonner un seul item |
+| `00-index.html` | Index | La page de comparaison, le Salon mis en avant | |
+
+**La direction RETENUE par Matthieu le 2026-09-05 est `02-galerie.html`**, appliquée à
+ZenRayProgress sous une contrainte explicite de sa part : le drawer de gauche reste un
+panneau isolé et flottant, la zone Create garde sa segmentation, le Liquid Glass et les
+rectangles arrondis restent. L'éditorial passe donc dans les sous-groupes de la sidebar et
+dans la vue Assets, jamais dans une refonte de la coquille.
+
+## Comment s'en servir
+
+**Régénérer un lot de maquettes pour un autre sujet.** Copier ce dossier ailleurs, garder
+`fonts/`, remplacer le contenu. La structure de chaque page est déjà là : jetons en tête,
+thème clair par défaut plus bascule, sidebar, scène, panneau de détail.
+
+**Améliorer une direction.** Éditer ICI, jamais une copie posée dans Downloads, sinon les
+deux divergent au premier correctif. C'est la même règle que pour `hda-light` et `hda-heavy`.
+
+**Reprendre une recette précise.** Chaque page porte ses commentaires de cause. Les trois
+mécanismes qui se réutilisent le plus souvent : la teinte par famille avec surcharge de
+lumière par rang (`fondDe`), le titre serif deux tons, et la ligne de compteurs en serif.
+
+## Les règles que ces maquettes respectent, et qui se vérifient
+
+Trois familles seulement, `Inter` pour l'interface, `AnthropicSerif` 350 pour les titres,
+`AnthropicSerif` 400 pour **tout nombre visible**, et zéro monospace. Les polices sont
+SERVIES depuis `fonts/`, jamais attendues du système : les deux familles sont variables,
+donc trois faces couvrent toutes les graisses. Aucun tiret cadratin nulle part.
+
+Aucune image n'est inventée : les vignettes sont des dégradés déclarés, jamais de faux
+rendus 3D. Le jour où de vrais visuels existent, ils remplacent le dégradé sans toucher à
+la mise en page.
+
+## Le contrôle, à rejouer après toute modification
+
+Servir le dossier, puis mesurer plutôt que juger à l'œil. Une police qui retombe sur son
+repli ne se signale jamais, seul un écart de largeur le prouve.
+
+```zsh
+cd "$(dirname "$0")" && python3 -m http.server 4190 --bind 127.0.0.1
+```
+
+```js
+await document.fonts.ready;
+const c = document.createElement('canvas').getContext('2d');
+c.font = '30px AnthropicSerif'; const a = c.measureText('Tout ce qui est fini').width;
+c.font = '30px Georgia';        const b = c.measureText('Tout ce qui est fini').width;
+Math.abs(a - b) > 0.5;   // false = repli silencieux, la police n'est pas servie
+let mono = 0; document.querySelectorAll('*').forEach(e => { if (/mono/i.test(getComputedStyle(e).fontFamily)) mono++; });
+mono;                    // doit valoir 0
+```
+
+Mesuré le 2026-09-05 sur `04-salon.html` : les trois faces chargées, serif 250,9 px contre
+245,1 px pour Georgia, Inter 227,8 px contre 264,4 px pour Hiragino, donc aucun repli, et
+zéro élément en monospace.
+
+## Un défaut déjà payé sur ces fichiers
+
+`03-studio.html` rendait une page entièrement vide, sidebar sans entrées et compteurs à
+zéro, alors que son HTML se terminait proprement. Cause : une apostrophe non échappée dans
+une chaîne JavaScript, qui levait une `SyntaxError` et tuait tout le script. La parade est
+d'écrire les chaînes de données en guillemets doubles, ce que font les quatre fichiers
+depuis. Un fichier syntaxiquement complet n'est pas un fichier qui marche.

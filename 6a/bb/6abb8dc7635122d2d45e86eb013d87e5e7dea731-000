@@ -1,0 +1,5 @@
+/* 2026-09-03 : polices embarquées, indépendantes du système et du réseau. */
+@font-face { font-family: InterVariable; src: url('./InterVariable.woff2') format('woff2'); font-weight: 100 900; font-style: normal; font-display: swap; }
+@font-face { font-family: AnthropicSerif; src: url('./AnthropicSerif-Romans.woff2') format('woff2'); font-weight: 100 900; font-style: normal; font-display: swap; }
+@font-face { font-family: AnthropicMono; src: url('./AnthropicMono.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+:root { --zr-police-sans: 'InterVariable', 'Hiragino Sans W4', 'Hiragino Sans', sans-serif; --zr-police-serif: 'AnthropicSerif', 'Hiragino Mincho ProN W3', serif; --zr-police-mono: 'AnthropicMono', monospace; }

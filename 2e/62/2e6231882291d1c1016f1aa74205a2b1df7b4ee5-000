@@ -1,0 +1,122 @@
+/* 2026-09-03 13:26 JST : texte préparé par l'agent, édition locale sans réécriture automatique. */
+(function () {
+  'use strict';
+  const prepared = window.ZR_POST_DATA;
+  if (!prepared) throw new Error('Paramètre manquant : ZR_POST_DATA');
+  const formats = { '4:5': '4 / 5', '1:1': '1 / 1', '9:16': '9 / 16', '16:9': '16 / 9', '3:4': '3 / 4', '2:3': '2 / 3', '4:3': '4 / 3' };
+  const key = 'zr-post:' + location.pathname;
+  function validate(value) {
+    if (!value || typeof value.text !== 'string') throw new Error('Le fichier doit contenir un champ text.');
+    if (!formats[value.format]) throw new Error('Format du post non reconnu.');
+    if (!Number.isInteger(value.limit) || value.limit < 1) throw new Error('Limite de caractères non valide.');
+    return value;
+  }
+  let draft = validate(prepared.post);
+  let storageError = false;
+  let restored = false;
+  let changedSeed = false;
+  try {
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      const data = JSON.parse(saved);
+      if (data.revision !== prepared.revision) {
+        localStorage.setItem(key + ':archive:' + (data.revision || Date.now()), JSON.stringify(data));
+        localStorage.removeItem(key);
+        changedSeed = true;
+      } else {
+        draft = validate(data.post);
+        restored = true;
+      }
+    }
+  } catch (_) { storageError = true; }
+
+  const tabs = document.createElement('nav');
+  tabs.className = 'zr-post-tabs';
+  tabs.setAttribute('aria-label', 'Atelier du post');
+  tabs.innerHTML = '<button type="button" data-view="photos" aria-pressed="false">Photos</button><button type="button" data-view="post" aria-pressed="true" aria-controls="zr-post-pane">Post</button>';
+  const pane = document.createElement('section');
+  pane.id = 'zr-post-pane';
+  pane.className = 'zr-post-pane';
+  pane.setAttribute('aria-label', 'Éditer le post');
+  pane.innerHTML = '<h2>Votre post</h2><p class="zr-post-note">Modifiez le texte directement pendant le réglage des images.</p>' +
+    '<div class="zr-post-format"><label for="zr-post-format">Aperçu du texte</label><select id="zr-post-format" aria-label="Format de l’aperçu"></select></div>' +
+    '<div class="zr-post-card"><textarea id="zr-post-text" aria-label="Texte du post" spellcheck="true" placeholder="Le texte préparé apparaît ici. Vous pouvez aussi écrire ou coller votre brouillon."></textarea></div>' +
+    '<div class="zr-post-meta"><span id="zr-post-count"></span><span id="zr-post-overflow"></span></div>' +
+    '<div class="zr-post-actions"><button type="button" class="zr-post-primary" id="zr-post-copy">Copier le post</button><button type="button" id="zr-post-save">Exporter</button><button type="button" id="zr-post-import">Importer</button></div>' +
+    '<p class="zr-post-status" role="status" aria-live="polite"></p><input type="file" hidden accept=".json,.txt,.md" id="zr-post-file">';
+  document.body.append(tabs, pane);
+  document.body.classList.add('zr-has-post');
+  document.body.classList.toggle('zr-post-light', !document.querySelector('.zr-photo-panel'));
+  document.body.dataset.zrPostOpen = 'true';
+  const text = pane.querySelector('textarea');
+  const format = pane.querySelector('select');
+  const status = pane.querySelector('[role="status"]');
+  const count = pane.querySelector('#zr-post-count');
+  const overflow = pane.querySelector('#zr-post-overflow');
+  function message(value, error = false) { status.textContent = value; status.dataset.error = String(error); }
+  Object.keys(formats).forEach(value => format.add(new Option(value, value)));
+  function update() {
+    pane.style.setProperty('--zr-post-ratio', formats[draft.format]);
+    const length = Array.from(draft.text).length;
+    count.textContent = length + ' / ' + draft.limit + ' caractères';
+    count.parentElement.dataset.over = String(length > draft.limit);
+    overflow.textContent = length > draft.limit ? (length - draft.limit) + ' en trop' : '';
+  }
+  function showDraft() { text.value = draft.text; format.value = draft.format; update(); }
+  function persist() {
+    try {
+      localStorage.setItem(key, JSON.stringify({ revision: prepared.revision, post: draft, updatedAt: new Date().toISOString() }));
+      message('Brouillon enregistré dans ce navigateur. Exporter garde une copie sur disque.');
+    } catch (_) { message('Sauvegarde locale indisponible. Exportez le post pour le conserver.', true); }
+  }
+  function setView(view) {
+    const open = view === 'post';
+    pane.hidden = !open;
+    document.body.dataset.zrPostOpen = String(open);
+    tabs.querySelectorAll('button[data-view]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === view)));
+    window.dispatchEvent(new Event('resize'));
+  }
+  tabs.addEventListener('click', event => {
+    const button = event.target.closest('button');
+    if (button?.dataset.view) setView(button.dataset.view);
+  });
+  text.addEventListener('input', () => { draft = { ...draft, text: text.value }; update(); persist(); });
+  format.addEventListener('change', () => { draft = { ...draft, format: format.value }; update(); persist(); });
+  pane.querySelector('#zr-post-copy').addEventListener('click', async () => {
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('clipboard');
+      await navigator.clipboard.writeText(draft.text);
+      message('Post copié.');
+    } catch (_) {
+      text.focus(); text.select();
+      message('Copie indisponible : le texte est sélectionné, utilisez ⌘C ou Ctrl+C.', true);
+    }
+  });
+  pane.querySelector('#zr-post-save').addEventListener('click', () => {
+    const url = URL.createObjectURL(new Blob([JSON.stringify(draft, null, 2) + '\n'], { type: 'application/json' }));
+    const link = document.createElement('a');
+    link.href = url; link.download = '_post.json';
+    document.body.appendChild(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    message('Export du brouillon lancé.');
+  });
+  const fileInput = pane.querySelector('#zr-post-file');
+  pane.querySelector('#zr-post-import').addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    try {
+      const source = await file.text();
+      const next = file.name.toLowerCase().endsWith('.json') ? validate(JSON.parse(source)) : { ...draft, text: source };
+      // Conserver l'état précédent avant un remplacement explicite par import.
+      localStorage.setItem(key + ':before-import:' + Date.now(), JSON.stringify(draft));
+      draft = next; showDraft(); persist();
+    } catch (error) { message('Import impossible : ' + error.message, true); }
+    fileInput.value = '';
+  });
+  window.ZRPostEditor = { snapshot: () => ({ ...draft }), setView };
+  showDraft();
+  if (storageError) message('Sauvegarde locale indisponible ou illisible. Exportez pour conserver vos modifications.', true);
+  else if (changedSeed) message('Nouvelle version déployée synchronisée automatiquement. L\'ancien brouillon a été archivé.');
+  else message(restored ? 'Votre brouillon local est restauré.' : (draft.text ? 'Post préparé, prêt à être modifié.' : 'Ajoutez votre brouillon ou importez un texte.'));
+})();

@@ -1,0 +1,69 @@
+<!-- Component: monogram-split-pill -->
+<!-- ID sémantique: monogram-split-pill -->
+<!-- Capsule avec pastille badge compacte d'ancrage à gauche et bouton circulaire tactile à droite -->
+
+<style>
+.capsule-p2 {
+  width: 100%;
+  border-radius: var(--capsule-r-closed, 999px);
+  background: rgba(125, 125, 125, var(--capsule-bg-alpha, 0.04));
+  border: 1px solid rgba(125, 125, 125, var(--capsule-border-alpha, 0.12));
+  backdrop-filter: blur(var(--capsule-blur, 16px));
+  -webkit-backdrop-filter: blur(var(--capsule-blur, 16px));
+  overflow: hidden;
+  transition: border-radius var(--expand-duree, 0.38s) var(--doux, cubic-bezier(0.23, 1, 0.32, 1)), background 0.24s ease, border-color 0.24s ease;
+}
+.capsule-p2:hover { border-color: rgba(125, 125, 125, calc(var(--capsule-border-alpha, 0.12) + 0.14)); }
+.capsule-p2.est-ouvert {
+  border-radius: var(--capsule-r-open, 20px);
+  background: var(--surface, #FDFDFC);
+  border-color: var(--filet, rgba(0,0,0,0.09));
+  box-shadow: 0 12px 36px rgba(0,0,0,0.06);
+}
+.capsule-badge-pill {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--badge-bg, rgba(0,0,0,0.06));
+  font-family: var(--sans, sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--encre, #1F1F1E);
+  flex-shrink: 0;
+}
+.capsule-p2 .capsule-btn-trigger {
+  padding: var(--capsule-pad-y, 12px) calc(var(--capsule-pad-x, 20px) - 4px);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; border: none; background: transparent; cursor: pointer; text-align: left;
+}
+.capsule-round-toggle {
+  width: 28px; height: 28px;
+  border-radius: 999px;
+  background: var(--badge-bg, rgba(0,0,0,0.06));
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s ease, transform var(--expand-duree, 0.38s) ease;
+}
+.capsule-p2:hover .capsule-round-toggle { background: var(--accent-doux, rgba(168,85,47,0.12)); color: var(--accent, #A8552F); }
+.capsule-p2.est-ouvert .capsule-round-toggle { transform: rotate(180deg); background: var(--accent, #A8552F); color: #fff; }
+</style>
+
+<div class="capsule-p2" id="split-pill-demo">
+  <button type="button" class="capsule-btn-trigger" onclick="this.parentElement.classList.toggle('est-ouvert')">
+    <span class="capsule-badge-pill">ROLE</span>
+    <p style="margin:0; flex:1; font-family:var(--serif, Georgia); font-size:15.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+      My role : le Tech Art est un multiplicateur...
+    </p>
+    <div class="capsule-round-toggle">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </div>
+  </button>
+  <div style="padding: 0 16px 16px; border-top: 1px solid rgba(0,0,0,0.06); display:none;" class="open-panel">
+    <p style="margin:12px 0; font-family:var(--serif, Georgia); font-size:14.5px;">
+      My role : le Tech Art est un multiplicateur qui relie l'art notamment en 3D, et l'automatisation de systèmes informatiques.
+    </p>
+  </div>
+</div>

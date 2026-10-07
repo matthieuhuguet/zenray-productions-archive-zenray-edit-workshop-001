@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+  echo "Usage: $0 <dossier-projet>" >&2
+  exit 64
+fi
+
+skill_root="$(cd "$(dirname "$0")/.." && pwd)"
+project_root="$(cd "$1" && pwd)"
+
+mkdir -p \
+  "$project_root/assets/photo-controls" \
+  "$project_root/templates" \
+  "$project_root/workshop"
+
+cp -f -- \
+  "$skill_root/assets/photo-controls/zr-photo-adjustments.js" \
+  "$project_root/assets/photo-controls/zr-photo-adjustments.js"
+cp -f -- \
+  "$skill_root/assets/photo-controls/zr-photo-adjustments.css" \
+  "$project_root/assets/photo-controls/zr-photo-adjustments.css"
+
+for path in \
+  "$project_root/assets/photo-controls/zr-photo-adjustments.js" \
+  "$project_root/assets/photo-controls/zr-photo-adjustments.css"; do
+  [[ -s "$path" ]] || { echo "Copie incomplète : $path" >&2; exit 1; }
+done
+
+echo "$project_root"

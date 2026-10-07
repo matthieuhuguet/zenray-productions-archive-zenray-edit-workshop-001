@@ -1,0 +1,64 @@
+#!/bin/zsh
+# Vignettage doux "merged" (validé 2026-07-12) : moyenne de deux gradients radiaux,
+# appliquée en une seule passe multiply. Originaux jamais modifiés.
+# Usage : vignette.sh fichier1 [fichier2 ...]
+# Réglages : R1=1.5 G1=50 R2=3.0 G2=40 QUALITY=92 MAXMB=8 (voir SKILL.md)
+#
+# MAXMB (consigne Matthieu du 2026-08-06) : quand il est posé, la qualité n'est plus
+# fixée à la main, elle devient la variable que la taille cible détermine. La vignette
+# et le plafonnement se font alors dans la MÊME passe magick, donc une seule
+# quantification, et le sous-échantillonnage de l'original est relevé puis réimposé.
+# Aucun redimensionnement, aucune conversion de couleur, jamais.
+set -e
+R1=${R1:-1.5}; G1=${G1:-50}; R2=${R2:-3.0}; G2=${G2:-40}; Q=${QUALITY:-92}
+MAXMB=${MAXMB:-}
+# OUTDIR (consigne Matthieu du 2026-08-06) : les sorties destinées à Instagram vont
+# dans un SOUS-DOSSIER, jamais à côté des originaux. Défaut "instagram" dès que MAXMB
+# est posé ; OUTDIR=. rétablit l'ancien comportement à côté du fichier source.
+if [[ -n $MAXMB ]]; then OUTDIR=${OUTDIR:-instagram}; else OUTDIR=${OUTDIR:-.}; fi
+TMP=$(mktemp -d)
+
+# Passe 1 : un masque fusionné par taille d'image rencontrée (cache par dimensions)
+for f in "$@"; do
+  dims=$(magick identify -format "%wx%h" "$f")
+  mask="$TMP/mask_$dims.png"
+  if [[ ! -f $mask ]]; then
+    W=${dims%x*}; H=${dims#*x}
+    WA=$(awk "BEGIN{printf \"%d\", $W*$R1}"); HA=$(awk "BEGIN{printf \"%d\", $H*$R1}")
+    WB=$(awk "BEGIN{printf \"%d\", $W*$R2}"); HB=$(awk "BEGIN{printf \"%d\", $H*$R2}")
+    magick -size ${WA}x${HA} radial-gradient:white-gray${G1} -gravity center -extent $dims "$TMP/gA_$dims.png"
+    magick -size ${WB}x${HB} radial-gradient:white-gray${G2} -gravity center -extent $dims "$TMP/gB_$dims.png"
+    magick "$TMP/gA_$dims.png" "$TMP/gB_$dims.png" -evaluate-sequence Mean "$mask"
+  fi
+done
+
+# Passe 2 : application en parallèle (CPU local = parallélisme gratuit)
+for f in "$@"; do
+  dims=$(magick identify -format "%wx%h" "$f")
+  if [[ $OUTDIR == "." ]]; then
+    out="${f%.*}edited.jpg"
+  else
+    mkdir -p "${f:h}/$OUTDIR"
+    out="${f:h}/$OUTDIR/${${f:t}%.*}.jpg"
+  fi
+  if [[ -n $MAXMB ]]; then
+    bytes=$(awk "BEGIN{printf \"%d\", $MAXMB*1024*1024}")
+    samp=$(magick identify -format "%[jpeg:sampling-factor]" "$f" 2>/dev/null || true)
+    if [[ -n $samp ]]; then
+      magick "$f" "$TMP/mask_$dims.png" -compose multiply -composite \
+        -sampling-factor "$samp" -define jpeg:extent=$bytes "$out" &
+    else
+      magick "$f" "$TMP/mask_$dims.png" -compose multiply -composite \
+        -define jpeg:extent=$bytes "$out" &
+    fi
+  else
+    magick "$f" "$TMP/mask_$dims.png" -compose multiply -composite -quality $Q "$out" &
+  fi
+done
+wait
+for f in "$@"; do
+  if [[ $OUTDIR == "." ]]; then o="${f%.*}edited.jpg"; else o="${f:h}/$OUTDIR/${${f:t}%.*}.jpg"; fi
+  printf "OK: %-30s %s %s\n" "${o:t}" "$(magick identify -format '%wx%h' "$o")" \
+    "$(du -h "$o" | cut -f1)"
+done
+rm -rf "$TMP"

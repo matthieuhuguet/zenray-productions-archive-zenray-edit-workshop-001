@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "files": [
+    {
+      "file": "/Users/zenray/.claude/tmp/tmp-zenray-edit/RepresentativeLandscape/out/slide-1.png",
+      "master": "/Users/zenray/.claude/tmp/tmp-zenray-edit/RepresentativeLandscape/out/masters/slide-1.png",
+      "width": 3840,
+      "height": 2160,
+      "scale": 2,
+      "bytes": 83817,
+      "format": "png",
+      "quality": null
+    }
+  ]
+}

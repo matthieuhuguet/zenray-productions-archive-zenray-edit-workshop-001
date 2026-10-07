@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+# Verify routing, real template files and browser isolation. (7 October 2026, 17:00 Europe/Paris)
+import argparse
+import hashlib
+import json
+from pathlib import Path
+
+def check(root):
+    skill = (root / 'SKILL.md').read_text()
+    assert 'name: zenray-edit' in skill
+    assert len(skill.encode()) < 16000
+    assert 'uniquement grammaire' in skill
+    routes = json.loads((root / 'references/Routes.json').read_text())
+    original = (root / 'references/legacy/OriginalSkill.md').read_text().splitlines(keepends=True)
+    assert hashlib.sha256((root / 'references/legacy/OriginalSkill.md').read_bytes()).hexdigest() == routes['sourceSha256']
+    position = 1
+    for block in routes['blocks']:
+        assert block['startLine'] == position
+        assert (root / block['path']).read_text() == ''.join(original[position - 1:block['endLine']])
+        position = block['endLine'] + 1
+    assert position == routes['lineCount'] + 1 == len(original) + 1
+    registry = json.loads((root / 'templates/designs/index.json').read_text())
+    assert registry['count'] == len(registry['designs'])
+    for identifier, design in registry['designs'].items():
+        relative, _, anchor = design['file'].partition('#')
+        path = (root / registry['root'] / relative).resolve()
+        assert path.is_relative_to(root.resolve()) and path.is_file(), identifier
+        if anchor:
+            assert f'id="{anchor}"' in path.read_text() or f"id='{anchor}'" in path.read_text(), identifier
+    for relative in ['scripts/zr-hda-instance.py', 'scripts/new-project.sh']:
+        assert '"Google Chrome"' not in (root / relative).read_text()
+        assert "'Google Chrome'" not in (root / relative).read_text()
+    config = json.loads((root / 'templates/export.json').read_text())
+    assert config['export']['minimumLongEdge'] >= 3840
+    assert config['export']['scale'] is None
+    assert (root / 'scripts/RenderComposition.cjs').is_file()
+    print(json.dumps({'ok': True, 'blocks': len(routes['blocks']), 'templates': len(registry['designs']), 'skillBytes':len(skill.encode())}))
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parent.parent)
+    arguments = parser.parse_args()
+    check(arguments.root.resolve())

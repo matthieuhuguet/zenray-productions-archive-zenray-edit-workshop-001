@@ -1,0 +1,1321 @@
+## UN SEUL OUTIL, UNE SEULE COPIE : le cadrage rejoint la chaîne (2026-09-01)
+
+**Son idée, et elle supprime un aller-retour entier.** Il proposait un bouton
+« passer à l'étape 2 en gardant les images en mémoire », et que la copie finale
+porte à la fois le cadrage et la retouche. En creusant, il y avait mieux que
+d'enchaîner deux étapes : **faire du cadrage un groupe de réglages comme un
+autre**, au même titre que Light ou Color. Il n'y a alors plus d'étapes du tout.
+
+**Le pipeline, identique dans l'aperçu et dans le cook :**
+
+```
+source  ->  cadrage (affine)  ->  réglages photo (shader)  ->  calques de texte
+```
+
+Dans le navigateur, le cadrage se fait en canvas 2D à la taille du format, et
+**c'est cette toile qui devient la texture** du module photo
+(`processor.setImage(cropCanvas)`). Côté Python, `photo-apply.py` rejoue la même
+chaîne, en réutilisant l'`affine_coeffs()` déjà écrit et validé pour le cook du
+light : une seule transformation affine, jamais un enchaînement
+crop-resize-rotate-crop.
+
+**Ce que ça change concrètement.** Avant : il cadre, copie, je cuis, je génère
+le second outil, il retouche, copie, je cuis. Maintenant : il cadre, retouche et
+titre dans la même page, **copie une seule fois**, et un seul cook produit le
+fichier final. Le bloc copié porte le format, le cadrage, la retouche, les
+textes et l'ordre.
+
+**Le cadrage s'active tout seul quand il sert, et se tait sinon.** C'est sa
+demande « systématise si l'image n'est pas recadrée ». Le générateur compare les
+rapports des images du lot : si elles ont toutes déjà le rapport de la cible,
+c'est qu'un cadrage a déjà eu lieu, et le format démarre sur `source` (aucun
+recadrage). Sinon il démarre sur le format demandé, 4:5 par défaut. Un
+`--format` explicite l'emporte toujours.
+
+**Le format reste révocable dans l'outil**, comme l'exige la règle des
+paramètres : un sélecteur en tête, `source` compris pour conserver les
+dimensions d'origine. Changer de format ne demande jamais de régénérer.
+
+**Ce que le cadrage coûte à écrire, une fois la loi HDA respectée : presque
+rien.** Les quatre curseurs de cadrage passent par le même `slider()` que les
+autres, donc ils héritent gratuitement des crans de pourcentage, du bouton
+« à toutes » et de la propagation globale. Le seul ajout réel est un routage de
+chemin : un chemin préfixé `crop.` écrit dans le cadrage, tout le reste dans les
+réglages photo.
+
+**Vérifié en `file://` sur un lot réel de neuf photos** (ito-post4, formats
+mixtes dont une portrait) : format 4:5 détecté automatiquement, aperçu au format
+cible, cadrage agissant sur l'image, retouche s'appliquant par-dessus, bloc
+copié portant les deux jeux d'informations, et cook produisant neuf fichiers
+3240 × 4050 homogènes en onze secondes, cadrage, rotation, vignette et texte
+compris.
+
+## LE WORKFLOW COMPLET, de photos brutes à images publiables (2026-09-01)
+
+Cette section est la marche à suivre de bout en bout, construite et validée sur
+un lot réel de neuf photos. Elle se lit AVANT de commencer, et elle rend inutile
+toute reconstruction : chaque pièce existe déjà dans ce skill.
+
+### La règle qui commande tout le reste
+
+> **Un travail fait n'est jamais perdu. Il est rangé dans le skill, et il est la
+> source du suivant. On améliore quelque chose d'existant, on ne repart jamais
+> d'une page blanche.**
+
+C'est la loi de la BIBLIOTHÈQUE, inscrite en priorité zéro dans
+`~/.claude/CLAUDE.md`, section « TOUT CODE PRODUIT EST UN HDA », sous-section
+« LA BIBLIOTHÈQUE », qui fait foi. Ici, cette bibliothèque est `templates/`, et
+`scripts/zr-hda-instance.py` en est le chargeur.
+
+### Les deux étages de l'outil, et pourquoi ils sont séparés
+
+| | LIGHT | HEAVY |
+|---|---|---|
+| Question à laquelle il répond | quelle partie de l'image garder | quel ordre, quelle retouche, quel texte |
+| Source | les photos d'origine | un `out/` déjà cadré |
+| Réglages | zoom, pan X/Y, rotation, format cible, texte | reorder, module photo complet, texte |
+| Rendu | CSS pur (pas de WebGL) | WebGL, donc **service local obligatoire** |
+| Ouverture | `file://` suffit | `http://127.0.0.1`, lancé par le script |
+| Cook | `crop-apply.py` | `photo-apply.py` |
+| Paramètres | `_crop_params.json` | `_params.json` |
+
+Le heavy vit DANS le `out/` du light : c'est la poupée russe décrite plus bas,
+et elle est mécanique puisque chaque outil localise sa source par
+`HERE.parent`.
+
+### La marche à suivre, dans l'ordre
+
+> **Depuis le 2026-09-01, les deux étapes n'en font plus qu'une** : le mode
+> heavy porte le cadrage, la retouche, l'ordre et le texte, et une seule copie
+> suffit. La marche en deux temps ci-dessous reste valable quand on veut
+> séparer les gestes, ou repartir d'un `out/` déjà cadré.
+
+**Le chemin le plus court, une commande et une copie :**
+
+```bash
+python3 ~/.claude/skills/zenray-html-photoshop-pdf-hda/scripts/zr-hda-instance.py <dossier-photos> --mode heavy --open
+```
+
+Matthieu cadre, réordonne, retouche, titre, clique « Copier TOUT », colle dans
+`_params.json`, puis `python3 photo-apply.py`. Fini.
+
+**1. Cadrer** (voie séparée, toujours disponible). Une commande, moins d'une seconde :
+
+```bash
+python3 ~/.claude/skills/zenray-html-photoshop-pdf-hda/scripts/zr-hda-instance.py <dossier-photos> --open
+```
+
+Matthieu règle zoom, position, rotation, format et texte, puis presse
+« Copier TOUT ». Le bloc copié se colle dans `_crop_params.json`, et
+`python3 crop-apply.py` produit les JPEG dans `out/`.
+
+**2. Réordonner, retoucher, titrer.** Sur le `out/` qui vient d'être produit :
+
+```bash
+python3 ~/.claude/skills/zenray-html-photoshop-pdf-hda/scripts/zr-hda-instance.py <ce-out> --mode heavy --open
+```
+
+Le script sert l'outil en local et ouvre Chrome. Matthieu réordonne par
+glisser-déposer, retouche image par image, ajoute jusqu'à trois textes, presse
+« Copier TOUT (ordre + réglages) ». Le bloc se colle dans `_params.json`, et
+`python3 photo-apply.py` produit les fichiers finaux, nommés
+`NN.jpg`, de `01.jpg` à `99.jpg`, selon l'ordre choisi. Finder les trie ainsi
+automatiquement.
+
+**3. Écrire le post.** Le texte relève de `zenray-social-media`, jamais d'ici.
+Les deux se lisent ensemble dès que Matthieu dit « prépare le post ».
+
+### La règle de la boucle : le réglage lui appartient, le calcul m'appartient
+
+Je livre l'outil, il règle, il copie, il me renvoie, je calcule. **Je ne remplis
+jamais un fichier de paramètres à sa place**, même quand il m'a dicté les
+valeurs à l'oral : cela court-circuite exactement la boucle qu'il demande. La
+seule exception est un test que j'annonce comme tel et dont je nettoie les
+fichiers ensuite.
+
+### Ce qui a été vérifié, et comment (à rejouer si une pièce change)
+
+Ces contrôles sont ce qui autorise à dire que l'outil ne ment pas. Ils sont
+tous rejouables.
+
+| Ce qui est vérifié | Méthode | Résultat mesuré |
+|---|---|---|
+| Le cook reproduit le shader | mire de 16 couleurs passée dans le vrai WebGL (`readPixels`) et dans numpy, sur 10 familles de réglages dont une combinée | **écart maximal 0 sur 255** |
+| Le texte ne déborde jamais | 3 calques dont un titre demandé à 900px, mesure des 4 bords contre le cadre | ramené à 500px, aucun débordement |
+| Le reorder agit | glisser-déposer simulé par `DragEvent` natifs, relecture de l'ordre et des badges | ordre et numérotation corrects |
+| Le renommage suit l'ordre | sortie comparée octet à octet aux sources (`cmp`) | identique, seul le nom change |
+| Une régénération ne détruit rien | `--force` sur une instance portant réglages et `out/` | les deux intacts, contenu compris |
+| L'image s'affiche vraiment | `readPixels` au centre, puis mesure de la taille CSS du canvas | 512 × 640 pour une image 3240 × 4050, ratio exact |
+| Un réglage agit à l'écran | exposition poussée à 60, pixel relu avant/après | 197,207,216 devient 255,255,255 |
+| Le coût d'une instance | `time` sur le générateur | **0,09 s**, zéro token de génération |
+| Le coût du cook | `time` sur 9 images de 13 Mpx | 7 secondes, textes compris |
+
+### Les pièges de cette famille d'outils, tous payés au moins une fois
+
+Chacun est développé dans sa section ; ce tableau existe pour les reconnaître
+vite.
+
+| Symptôme | Cause réelle | Parade |
+|---|---|---|
+| Le canvas central reste noir, les vignettes s'affichent | WebGL refuse une texture `file://` (origine opaque) ; un `<img>` l'accepte | chemins relatifs plus service local, automatique en heavy |
+| L'image est en mémoire mais invisible | cadre `inline-block` et canvas en `max-width:100%` : circularité, les deux tombent à zéro | le cadre porte l'`aspect-ratio` et se borne à sa ZONE parente, jamais au viewport |
+| Rien ne se redessine quand on tape | `requestAnimationFrame` gelé, onglet en arrière-plan | repli synchrone si `document.hidden` |
+| L'auto-fit ne se déclenche jamais | on mesure une boîte DOM étirée (`left:0;right:0`), qui vaut toujours la largeur du cadre | mesurer le CONTENU hors mise en page (Canvas 2D) |
+| Des warnings numpy sur des données saines | BLAS lève les drapeaux FPU sur `matmul`, faux positif macOS | somme explicite, identique au bit près |
+| Le deuxième texte semble ne pas s'ajouter | même ancre par défaut, il se pose sous le premier | ancres par défaut distinctes (bas, haut, milieu) |
+| Une valeur système choisie à l'œil | on a deviné au lieu de chercher la source | voir la règle des valeurs système du `CLAUDE.md` global |
+
+### Le vérificateur d'un outil visuel, en une phrase
+
+Un rendu ne se juge jamais sur une capture seule : on mesure. Lire les pixels
+(`readPixels`, `getImageData`), mesurer les boîtes
+(`getBoundingClientRect`), comparer octet à octet (`cmp`), et surtout
+**vérifier que la boucle de rendu tourne avant d'accuser le code qu'elle
+appelle**. Une capture qui paraît noire peut cacher une texture parfaitement
+chargée dans un rectangle de taille nulle, ce qui est arrivé le 2026-09-01.
+
+## RÈGLE D'ARGENT : un outil hda ne se REGÉNÈRE jamais, il s'INSTANCIE (2026-09-01)
+
+**À lire avant d'écrire la première ligne d'un outil hda.** Les premières
+instances ont été écrites à la main, liste d'images comprise, ce qui a coûté
+plus de trente mille tokens et de longues minutes par projet. Matthieu l'a
+tranché : « il ne faut absolument pas que la prochaine fois que je te demande
+de recréer un HTML tu me reprennes plus de 30k tokens, ça va être beaucoup trop
+cher », et il a fixé la cible : **deux minutes au maximum pour un nouveau lot
+d'images**.
+
+C'était une faute HDA de ma part, et elle mérite d'être nommée : j'avais écrit
+`var IMAGES = [...]` EN DUR dans le HTML, donc la définition et le jeu de
+paramètres étaient fondus dans le même fichier, exactement ce que la loi HDA de
+ce skill interdit. Un projet n'est pas un nouvel outil, c'est un nouveau jeu de
+paramètres.
+
+**La commande, et c'est tout ce qu'il y a à retenir :**
+
+```bash
+python3 ~/.claude/skills/zenray-html-photoshop-pdf-hda/scripts/zr-hda-instance.py <dossier-images> --open
+```
+
+```bash
+python3 ~/.claude/skills/zenray-html-photoshop-pdf-hda/scripts/zr-hda-instance.py <un-out-deja-cadre> --mode heavy --open
+```
+
+Mesuré le 2026-09-01 : **0,09 seconde** et **zéro token de génération**. Le
+script liste les images, mesure leurs dimensions (Pillow, repli `sips`), écrit
+`_index.json`, copie le gabarit avec ses assets et son cook, injecte le bloc
+`@zr-instance`, inscrit une ligne au registre et ouvre Chrome.
+
+**L'architecture qui rend cela possible.**
+
+| Élément | Rôle | Où |
+|---|---|---|
+| Gabarit | la DÉFINITION, sans aucune valeur de projet | `templates/hda-light/`, `templates/hda-heavy/` |
+| Bloc `@zr-instance` | la seule zone dépendante du projet, entre deux marqueurs | dans le `index.html` du gabarit |
+| Générateur | le COOK qui instancie | `scripts/zr-hda-instance.py` |
+| Registre | une ligne par instance créée | `instances/INDEX.md` |
+
+**Les trois interdits qui suivent.** Ne jamais recopier un HTML d'instance pour
+en faire un autre, sinon les deux divergent au premier correctif. Ne jamais
+écrire une valeur de projet ailleurs que dans le bloc `@zr-instance` : le
+générateur refuse de livrer s'il reste un `__ZR_*__` non substitué, et le
+gabarit ne doit contenir aucun nom de projet, titres compris (ils se
+remplissent depuis `PROJECT` au démarrage). Et **une correction se porte dans
+le GABARIT**, jamais seulement dans l'instance ouverte, faute de quoi le
+prochain projet repart avec le bug.
+
+**Quand il faut vraiment ouvrir le HTML.** Seulement pour ajouter une capacité
+qui n'existe pas encore (un nouveau réglage, un nouveau calque). On l'écrit
+alors dans `templates/`, on réinstancie, et le coût reste payé une fois pour
+toutes.
+
+### LE CONTRAT, confirmé par Matthieu le 2026-09-01
+
+Sa question, et la réponse est oui : « j'aimerais simplement te dire d'éditer le
+skill et tu updates l'instance aussi, on est d'accord, n'oublie rien dans la
+sauvegarde, et lors des prochaines régénérations ». **C'est exactement le
+protocole, et il n'a jamais à demander les étapes.** Quand il dit « ajoute
+ceci », la séquence complète est :
+
+1. **Éditer le GABARIT** dans `templates/hda-light` et/ou `templates/hda-heavy`,
+   jamais l'instance ouverte. Une capacité demandée « pour le html » vaut pour
+   les DEUX gabarits sauf si elle n'a de sens que dans un seul, et le dire
+   alors.
+2. **Réinstancier** ses instances existantes avec `--force`, pour qu'il retrouve
+   la nouveauté sans rien faire.
+3. **Vérifier en `file://`** avec un vrai Chromium, jamais seulement en local.
+4. **Documenter** dans ce skill, section technique plus entrée au journal.
+5. **Synchroniser** le skill (`sync-skill.sh`).
+
+**Ce qui est garanti à chaque régénération, et qui a été vérifié.** Une
+réinstanciation ne touche QUE le code : `index.html`, le cook, les assets, les
+aperçus. Restent intacts, contenu compris : `_crop_params.json`, `_params.json`,
+et tout le dossier `out/`. Autrement dit **son travail déjà collé et ses images
+déjà produites ne sont jamais perdus**.
+
+**La seule chose qui ne survit pas, et il faut le dire au lieu de le taire :**
+les réglages en cours DANS LE NAVIGATEUR, tant qu'il n'a pas pressé « Copier ».
+Le HTML ne persiste rien de lui-même. Donc, avant de régénérer une instance
+qu'il est peut-être en train d'utiliser, l'annoncer, ou lui suggérer de copier
+d'abord.
+
+### Un réglage se règle DANS l'outil, il ne justifie jamais une instance neuve
+
+Règle posée par Matthieu le 2026-09-01 : « changer l'output de 16:9 ou 4:5 ne
+devrait pas changer l'instance du HTML, ça devrait être un paramètre anticipé
+sur ce genre de détails en fonction de mes prompts, bref ne jamais gâcher ce
+qui existe déjà, sinon c'est une erreur ».
+
+Le test à passer devant tout nouveau paramètre : **est-ce que Matthieu peut
+changer d'avis là-dessus après coup ?** Si oui, la valeur appartient à
+l'interface ou au fichier de paramètres, jamais au code de l'instance. Le
+format en est l'exemple type, et il était déjà correctement traité, ce qui vaut
+d'être noté pour ne pas le casser plus tard : le sélecteur de format vit dans
+l'UI du mode light, le cook lit `params["format"]`, donc passer de 4:5 à 16:9
+est un clic suivi d'une cuisson, jamais une régénération. Le `--format` du
+générateur ne fait que PRÉ-SÉLECTIONNER la valeur la plus probable d'après le
+prompt ; il ne fige rien.
+
+**Anticiper depuis le prompt, sans jamais figer.** Quand Matthieu annonce un
+Reel, une story ou une miniature, on lance le générateur avec le format
+correspondant pour lui éviter un clic. C'est un confort, et il doit rester
+révocable dans l'outil.
+
+**Ne jamais gâcher ce qui existe.** Une régénération ne touche que le CODE
+(HTML, cook, assets) ; les fichiers de travail restent en place. Vérifié le
+2026-09-01 par un test dédié : après un `--force` sur une instance portant des
+réglages collés et un `out/` déjà produit, `_crop_params.json` et `out/`
+étaient intacts, contenu compris. Si un jour une capacité exige d'écraser un
+fichier de travail, elle le sauvegarde d'abord et le dit ; elle ne l'efface
+jamais en silence.
+
+### Crans de pourcentage et propagation au lot (2026-09-01)
+
+Deux ajouts demandés ensemble, câblés dans les DEUX gabarits, light et heavy.
+
+**1. Cinq crans sous chaque curseur : 0, 25, 50, 75, 100.** Ce sont des
+pourcentages **de la PLAGE du paramètre**, jamais des valeurs absolues, et
+c'est ce qui les rend lisibles d'une ligne à l'autre : le cran du milieu tombe
+toujours sur le neutre, quel que soit le réglage. Mesuré : 75 % d'une plage
+-100..100 donne 50 ; 50 % donne 0 ; 0 % donne -100 ; sur une plage 0..100 le
+cran vaut littéralement sa valeur ; 50 % d'un zoom 1..3 donne 2 ; 75 % d'une
+rotation -45..45 donne 22,5. **Les crans 25 et 75 sont dessinés plus petits**
+que 0, 50 et 100, qui sont les trois repères principaux (classe `.minor`).
+Cliquer un cran passe par le même `commit()` que le curseur, donc la poignée,
+le nombre affiché et le rendu suivent ensemble.
+
+**2. Trois niveaux de propagation au lot, tous PONCTUELS.** C'est le point
+qui compte, dans ses mots : « c'est lié et partagé au moment du clic ». La
+valeur est **recopiée** dans les autres images à l'instant du clic, et rien
+n'est lié ensuite : modifier une image après coup ne touche qu'elle.
+
+| Bouton | Portée | Où |
+|---|---|---|
+| `à toutes`, sur une ligne | CE seul paramètre | à droite des crans, sur chaque curseur |
+| `Appliquer ce filtre à toutes` (dynamique) | le filtre actif et son intensité | sous la grille de filtres (mode heavy) |
+| `Appliquer TOUS les réglages de cette image à toutes` | tout : photo et calques de texte | en tête du panneau (heavy), en tête des contrôles de carte (light) |
+
+**La copie est PROFONDE, jamais une référence partagée** (`JSON.parse(
+JSON.stringify(...))`). Une référence partagée donnerait un lien vivant, donc
+exactement le contraire de ce qui est demandé : toucher une image en bougerait
+neuf. Vérifié dans les deux outils : après propagation puis modification d'une
+seule image, les autres restent à la valeur propagée.
+
+**Détail qui évite un faux bug côté light.** Propager ne suffit pas à mettre
+les autres CARTES à jour : leurs curseurs afficheraient encore l'ancienne
+valeur. Un registre `CONTROLS` garde un `commit` par paramètre et par carte, et
+la propagation les appelle tous, si bien que l'affichage suit le modèle.
+
+**Piège de test rencontré, à ne pas rejouer.** « Saturation » existe DEUX fois
+dans le panneau heavy, dans Selective Color et dans Color : un test qui cible
+`.control-block` par son texte attrape le premier et conclut à tort que le cran
+ne marche pas. Cibler par conteneur (`#color-controls .control-block`).
+
+### L'INSTANCE DOIT MARCHER EN DOUBLE-CLIQUANT LE FICHIER (2026-09-01, hard fix)
+
+**La règle, et elle prime sur toute élégance d'implémentation.** Ses mots :
+« l'index doit toujours me permettre d'éditer, sinon l'user et le design
+perdent énormément en contrôle ». Un outil d'atelier qui exige qu'un process
+tourne à côté n'est pas fiable : le terminal se ferme, la commande est
+interrompue, et l'outil redevient muet sans rien expliquer. **Une instance
+s'ouvre en `file://` et fonctionne, point.**
+
+**Ce qui a fait échouer les deux premières tentatives**, et les deux causes
+étaient réelles et indépendantes, ce qui explique que la première correction
+n'ait rien changé de visible.
+
+*Cause 1, WebGL et l'origine opaque.* `texImage2D` refuse une image
+`file://`. Servir en localhost réglait le symptôme mais ajoutait la dépendance
+fragile ci-dessus. **La vraie correction est d'embarquer des aperçus en data
+URI** : une data URI est same-origin partout, donc WebGL l'accepte en `file://`
+comme en `http`. `zr-hda-instance.py` génère `_previews.js` (JPEG réduits à
+1400 px de large, qualité 82), le HTML les préfère au chemin relatif, et le
+service local n'est plus qu'un repli. Poids mesuré : 4,9 Mo pour neuf photos,
+généré en 1,4 seconde. **Le rendu final n'utilise JAMAIS ces aperçus** : le cook
+lit les originaux pleine résolution depuis `_index.json`, donc la qualité livrée
+est intacte.
+
+*Corollaire à ne pas rater.* Puisque le canvas affiche un aperçu réduit, les
+dimensions de référence ne peuvent plus venir de lui. `outputSize()` lit les
+dimensions RÉELLES injectées dans `IMAGES` (`w`/`h`), et c'est sur elles que
+reposent l'auto-fit du texte et le choix du nombre d'ancres. Sans cela, une
+taille annoncée en px ne vaudrait pas ces pixels-là sur le JPEG final.
+
+*Cause 2, le rendu pouvait se bloquer DÉFINITIVEMENT.* `scheduleRender()`
+posait `framePending = true` puis attendait un `requestAnimationFrame`. Or un
+rAF ne tire pas toujours : onglet en arrière-plan, fenêtre masquée, contexte
+sans compositeur. Quand il ne tire pas, `framePending` reste vrai **pour
+toujours**, et plus aucun rendu n'a lieu ensuite, ni texte ni curseur. Mesuré :
+`rafTire: false`, modèle parfaitement à jour (calque présent, `fitSize` correct)
+et DOM vide. Le repli `document.hidden` posé plus tôt ne couvrait pas ce cas,
+puisque `document.hidden` valait `false`. **La correction est un filet en
+`setTimeout(run, 60)` doublant le rAF, avec un drapeau `done` qui garde la
+coalescence** : le rendu est garanti, et il n'a jamais lieu deux fois.
+
+**La leçon générale, au-delà de ce skill.** Un état de garde du type « un rendu
+est déjà programmé » doit toujours être libéré par un chemin qui ne peut pas ne
+pas s'exécuter. Sinon ce n'est plus une optimisation, c'est un verrou qui peut
+rester fermé. Et le diagnostic se fait dans cet ordre : vérifier que la BOUCLE
+tourne avant d'accuser le code qu'elle appelle.
+
+**Le contrôle qui ferme le sujet, à rejouer si le gabarit change.** Ouvrir
+l'instance en `file://` avec un vrai Chromium et lire l'état, plutôt que de
+supposer :
+
+```bash
+CHROME=~/Library/Caches/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-mac-arm64/chrome-headless-shell
+"$CHROME" --headless --use-gl=angle --enable-unsafe-swiftshader \
+  --virtual-time-budget=12000 --dump-dom "file://<instance>/index.html"
+```
+
+Résultat obtenu après correction, en `file://` : image visible, trois calques
+rendus, auto-fit actif (1200 px ramenés à 800), aucun débordement, curseur
+d'exposition agissant à l'écran.
+
+### Le service local, désormais un repli et non une condition
+
+Cette section garde l'analyse d'origine, qui reste vraie sur le fond ; seule
+sa conclusion a changé, le service local étant désormais un repli et non une
+condition (voir la section précédente).
+
+**Le symptôme, payé le 2026-09-01 :** dans l'outil heavy ouvert en `file://`,
+les vignettes s'affichaient normalement mais le grand cadre restait noir.
+Matthieu : « l'image n'est pas affichée au centre, l'img reste noir ».
+
+**La cause, et elle est structurelle.** Une vignette est un `<img>`, que le
+navigateur accepte d'afficher quelle que soit son origine. Le cadre central
+passe, lui, par `texImage2D`, et **WebGL refuse une texture issue d'une origine
+opaque**, ce qu'est tout fichier ouvert en `file://`. Le mode light n'a jamais
+eu le problème parce qu'il n'utilise pas WebGL. La règle générale à retenir :
+**dès qu'un outil de ce skill lit des pixels (WebGL, `getImageData`,
+`toBlob`), il lui faut une origine commune, donc un service local.**
+
+**La correction, en deux temps.** Les images sont référencées en chemin
+RELATIF (`../`) et non plus en `file://` absolu, ce qui marche dans les deux
+protocoles ; et le générateur lance lui-même un serveur local sur le dossier
+des images, puis ouvre Chrome dessus, automatiquement en mode heavy et sur
+`--serve` pour le light. Vérifié après correction : texture chargée, canvas
+visible, et un curseur d'exposition poussé à 60 éclaircit bien le rendu à
+l'écran.
+
+**Un piège de dimensionnement trouvé au passage, indépendant du premier.** Le
+cadre était en `display:inline-block` avec un canvas en `max-width:100%` :
+la largeur du parent venait du canvas, celle du canvas venait du parent, et les
+deux tombaient à zéro. L'image était donc bien en mémoire, mais affichée dans
+un rectangle de taille nulle. Le cadre porte désormais l'`aspect-ratio` de
+l'image et se borne à sa zone parente (`height:100%; width:auto;
+max-width:100%; max-height:100%`), **jamais au viewport** : une borne en
+`100vw/100vh` paraissait équivalente et ne l'est pas, puisqu'elle vaut zéro
+dans un onglet caché. Mesure de contrôle après correction : canvas affiché en
+512 × 640 pour une image 3240 × 4050, soit le ratio exact, contenu dans sa
+zone.
+
+## Recharger un `_params.json` deja ecrit : jamais perdre un lot deja regle (2026-09-03)
+
+**L'incident, cru comme il s'est passe.** Il a demande de regenerer une
+instance avec `--force` puis a colle son bloc « Copier TOUT », en pensant que
+j'allais seulement le SAUVEGARDER sur disque. J'ai cuit les 18 JPEG. Sa
+reaction : « je voulais pas les CUIRE, je voulais l'index mais avec la
+sauvegarde de mes params actuels ». La regle de la boucle («je livre l'outil,
+il regle, il copie, il me renvoie, je calcule ») restait respectee a la lettre,
+mais son intention reelle etait de retrouver son ATELIER, pas son LIVRABLE.
+
+**Ce que ca revele : l'outil savait ECRIRE `_params.json`, jamais le LIRE.**
+Le fichier survivait deja a une regeneration (voir le CONTRAT), mais rien ne
+le rechargeait dans le navigateur : rouvrir l'instance revenait toujours a un
+lot neuf, reglages par defaut, meme quand un travail complet dormait juste a
+cote sur le disque. Corrige dans le mode heavy : au chargement de la page,
+l'outil tente silencieusement `fetch("_params.json")` ; s'il existe et se
+parse, `restoreFromParams()` reconstruit l'ordre, les variations (creees a la
+volee via `ensureVariationEntry`), le cadrage, la retouche photo, la bordure et
+les calques de texte de CHAQUE image, exactement comme s'il n'avait jamais
+quitte l'outil. Sans fichier, ou hors du serveur local, l'echec est silencieux
+et l'instance demarre neuve comme avant.
+
+**Pourquoi seulement en mode heavy, et pourquoi ca marche sans rien demander.**
+`fetch()` sur un fichier local est bloque par le navigateur en `file://` ; le
+mode heavy sert TOUJOURS via un serveur local (deja vrai depuis le hard fix du
+2026-09-01), et `_params.json` vit dans le MEME dossier que `index.html`, donc
+un chemin relatif suffit. Aucune configuration, aucun bouton : rouvrir
+l'instance suffit.
+
+**Verifie en HTTP reel** (`python3 -m http.server` sur le dossier des
+photos, comme le fait le script), sur l'instance jogasaki-post2 (18 images
+avec une variation) : `countLabel` affiche 18, la vignette de l'image 01 est
+bien 100, celle de sa variation `01-v2` bien 50, le texte « JOGASAKI » est de
+retour. Le comptage etait a 17 avant restauration (le scan des fichiers), 18
+apres (la variation recreee).
+
+**La lecon de fond, au-dela de ce bug.** Un outil qui SAUVEGARDE un etat sans
+jamais pouvoir le RELIRE n'a fait que la moitie du travail. C'est le meme
+principe que la loi de la BIBLIOTHEQUE du `CLAUDE.md` global appliquee a
+l'echelle d'un seul outil : ecrire sans jamais relire fabrique un aller simple,
+et un aller simple fait perdre le travail a la premiere confusion sur ce que
+« regenerer » veut dire.
+
+## Bordure exterieure liee, pour joindre deux images sans les recadrer (2026-09-03)
+
+**Sa demande, capture d'ecran a l'appui.** Deux photos Instagram posees cote a
+cote, sans lien de contenu, mais visuellement unies par une bordure grise/argent
+continue autour du duo, aucune bordure a la couture. C'est la meme technique que
+la section « Couper une image large en deux slides de carrousel qui se
+prolongent » plus haut dans ce skill, devenue un vrai reglage de l'outil au lieu
+d'un script a la main. Ajoute dans les DEUX outils, **light ET heavy**.
+
+**Trois parametres, un lien reciproque.**
+
+| Champ | Role |
+|---|---|
+| Couleur | hex libre, defaut `#c4c3b9` (« acier / silver », ses mots) |
+| Épaisseur | px, dans l'espace du canevas de SORTIE, fine par defaut (`6px`) |
+| Cote ouvert | Complet / Ouvert vers la precedente / Ouvert vers la suivante |
+
+**Le mecanisme du lien, exactement comme demande.** Choisir « Ouvert vers la
+suivante » sur une image active la bordure sur cette image ET pose
+automatiquement « Ouvert vers la precedente » sur son voisin de droite dans
+l'ordre courant, avec la MEME couleur et la MEME epaisseur. Changer la couleur
+ou l'epaisseur d'un cote du lien la change aussi de l'autre cote. Desactiver
+l'un des deux desactive TOUJOURS les deux, jamais un seul.
+
+**L'avertissement, quand le voisin n'existe pas.** Choisir un cote ouvert sur
+la premiere image (« precedente ») ou la derniere (« suivante ») refuse le
+lien et affiche un message rouge dans le panneau, sans rien casser, exactement
+la demande : « Pas d'image precedente : impossible de relier a gauche. » /
+« Pas d'image suivante : impossible de relier a droite. »
+
+**Le rendu, identique cote apercu et cote cook.** La bordure est une bande
+PLEINE, posee sur trois ou quatre cotes : toujours en haut et en bas, a gauche
+et a droite SAUF le cote choisi comme ouvert. Elle peint au-dessus de la photo et
+en dessous du texte (le div `#border-layer` precede `#text-layers` dans le DOM,
+exactement l'ordre que reproduit le cook, `draw_border()` avant `draw_caption()`).
+Les coins internes fermes de la bordure sont arrondis selon `radius` (par defaut
+egal a `thickness`, reglable via le champ « Arrondi » du panneau) afin d'adoucir
+la transition avec la photo et d'eviter un angle droit rigide. Cote ouvert, la
+couture reste droite et sans arrondi pour preserver la continuite panoramique.
+Cote apercu, le rendu s'effectue via un `<svg>` en decoupe evenodd subpixel ;
+cote cook Python, un masque supersample 2x avec `rounded_rectangle` assure un
+lissage anti-aliase parfait.
+
+**Verifie en `file://` avec un vrai Chromium, les DEUX outils.** Lien
+reciproque cree (couleur/epaisseur copiees, cote oppose actif sur le voisin),
+avertissement affiche au bord du lot, desactivation en cascade sur les deux
+cotes. Cote cook, un test a deux images assemblees cote a cote reproduit
+exactement la reference de Matthieu : un cadre continu autour du duo, les deux
+photos qui se touchent sans bordure a la couture.
+
+**Ce qui n'est PAS gere, assume comme une limite connue.** Le lien se calcule
+par POSITION au moment du clic, pas par un identifiant stable. Reordonner par
+glisser-deposer (mode heavy uniquement), dupliquer une variante entre deux
+images liees, ou supprimer une image liee peuvent laisser un lien pointer sur
+le mauvais voisin apres coup. Une variation dupliquee ne herite jamais d'un
+lien (elle nait avec une bordure neutre). « Appliquer TOUT a toutes » ignore
+delibbrement la bordure : c'est un reglage PAIRE, entre deux voisins precis,
+jamais une valeur qui a du sens diffusee sur tout le lot.
+
+## Ombre portee sophistiquee du texte, Distance/Spread/Size (2026-09-02)
+
+**Sa demande, en une phrase.** Remplacer l'ombre fixe du texte (un seul flou
+gris derriere les lettres) par un vrai controle, calque sur ce que Photoshop
+appelle « Drop Shadow » : Distance, Spread et Size, delibbement sans angle.
+Le reglage vit dans le sous-menu de chaque calque de texte et s'active en
+mode on/off, **light ET heavy**, comme toute capacite de texte de ce skill.
+
+**Les trois curseurs, et ce qu'ils font reellement.**
+
+| Champ | Unite | Role |
+|---|---|---|
+| Distance | px | decale l'ombre vers le BAS uniquement, aucun angle |
+| Spread | % | 0 = flou pur, 100 = tampon net sans flou, entre les deux un melange |
+| Size | px | rayon total de l'effet, partage entre le tampon et le flou selon Spread |
+
+**L'algorithme, identique cote apercu et cote cook.** C'est la meme logique
+que Photoshop, simplifiee sans angle : le texte est tamponne plusieurs fois
+sur un cercle de rayon `size * spread / 100` (12 points des que le rayon
+depasse un seuil, sinon un seul tampon), decale de `distance` vers le bas,
+puis l'ensemble est floute par ce qui reste, `size * (1 - spread / 100)`. A
+Spread=0, un seul tampon flou de rayon `size` (comportement le plus proche de
+l'ancien reglage fixe). A Spread=100, douze tampons nets disposes en cercle,
+aucun flou, un halo dur. `buildTextShadow()` cote JS et
+`draw_shadow_layer()` cote Python partagent EXACTEMENT ce calcul, points de
+cercle compris, pour que l'apercu ne mente jamais sur le fichier livre.
+
+**Les unites suivent la convention deja etablie pour la taille du texte.**
+Distance et Size sont exprimes dans l'espace du CANEVAS DE SORTIE, jamais du
+zoom d'apercu : `10px` veut dire 10 pixels reels sur le JPEG final, quel que
+soit le format ou le niveau de zoom affiche. Cote CSS, la conversion passe par
+la meme unite `cqw` que `font-size`, `toCqw(px, cw) = (px / cw * 100) + "cqw"`.
+
+**Non-regression, verifiee.** Un `_params.json` ecrit avant cette date ne
+porte pas de cle `shadow` dans ses calques de texte. Le cook detecte son
+absence et rejoue l'ANCIEN rendu a l'identique : un seul tampon, sans
+decalage, flou fixe a `canvas_w * 0.004` (l'ancienne formule). Verifie en
+retirant la cle `shadow` d'un fichier de test et en relançant le cook : zero
+erreur, meme forme de sortie. Un fichier neuf, lui, porte toujours
+`shadow: {enabled, distance, spread, size}` par calque, valeurs par defaut
+`{enabled: true, distance: 0, spread: 0, size: 10}`, choisies pour rester
+visuellement proches de l'ancien flou fixe (`10px` de rayon a `spread=0`
+donne un flou pur proche du `canvas_w * 0.004` d'avant sur un canevas 4:5).
+
+**Verifie en `file://` avec un vrai Chromium**, DOM reel (pas d'acces aux
+variables internes du module, elles vivent dans une IIFE) : ajout d'un
+calque, saisie des trois champs, lecture de `el.style.textShadow` (12 tampons
+confirmes a `spread=40`, `none` a la desactivation, un seul triplet a
+`spread=0`), lecture du JSON copie (`payload.text[0].shadow` porte les
+valeurs saisies). Cote cook, un rendu reel a `distance=12 spread=40 size=30`
+produit un halo net et lisible autour du texte, sans erreur, 3240x4050, une
+1,9 seconde. Le repli legacy (cle `shadow` retiree) a ete rejoue sur le meme
+fichier, zero erreur.
+
+**Ou toucher pour une prochaine extension.** `buildTextShadow()` (JS, heavy
+ET light) et `draw_shadow_layer()` (Python, `hda-heavy/photo-apply.py` ET
+`hda-light/crop-apply.py`) doivent TOUJOURS changer ensemble, dans les
+QUATRE fichiers : c'est le meme piege que le shader photo, un ecart entre
+apercu et cook viderait le reglage a l'oeil de son sens.
+
+## Découpage rapide en lot : l'outil `zenray-html-hda-<projet>/`, sliders zoom/pan et index image (2026-08-31)
+
+Outil dédié pour choisir la zone de découpe de une ou plusieurs photos vers un
+format cible (4:5 par défaut, mais tout format), quand la seule question est
+« quelle partie de l'image garder » et pas encore toute la composition d'un
+visuel. Ce n'est PAS le mode Template Creator (qui reconstruit une mise en
+page entière) ni le mode `-image` de l'annexe `design-sliders` (qui règle des
+photos déjà posées dans un article). C'est l'étape d'avant : trier le cadrage
+photo par photo avant de les poser où que ce soit.
+
+**Convention de dossier, fixe, renommée le 2026-08-31.** Le premier essai
+s'appelait `fast/`, sur ce seul critère de vitesse d'exécution. Matthieu l'a
+retoqué : « pourquoi tu appelles ça fast, ça n'a aucun sens », et a demandé le
+nom générique de la famille d'outils de ce skill, `zenray-html-hda`, suivi du
+nom parlant du projet ou simplement celui du dossier batché. Le sous-dossier
+s'appelle donc **`zenray-html-hda-<projet>/`**, posé à côté des images sources
+(ou dans le dossier de travail du post), `<projet>` reprenant le nom du
+dossier source quand aucun nom plus parlant ne s'impose :
+
+```
+<dossier-source>/
+  IMG_xxxx.jpeg                       # les photos d'origine, jamais touchées
+  zenray-html-hda-<projet>/
+    index.html                        # l'outil lui-même, à ouvrir dans Chrome
+    _index.json                       # catalogue id -> nom de fichier -> chemin absolu
+```
+
+`index.html` référence les photos sources par leur chemin `file://` absolu, il
+ne les copie jamais : l'outil est un atelier léger, pas un second exemplaire
+des fichiers. `_index.json` existe pour qu'un script (`crop-apply.py` ou
+équivalent) puisse relire la même correspondance id/fichier sans réanalyser le
+HTML.
+
+**Chaque image porte un badge id + nom, en permanence, jamais masqué.** Le
+badge `[03] DJI_20000818114703_0856_D.JPG` reste visible sur la carte à tout
+moment, y compris en scroll. C'est la garantie centrale de l'outil : un retour
+de Matthieu du type « remonte un peu la troisième » ou une valeur collée dans
+le prompt ne peut jamais tomber sur la mauvaise photo.
+
+**Trois curseurs par image, jamais plus tant que ce n'est pas demandé.**
+
+| Curseur | Rôle | Implémentation CSS |
+|---|---|---|
+| Zoom | grossit au-delà du minimum de couverture | `transform: scale(var(--zoom))` |
+| Pan X | déplace horizontalement la zone gardée | `object-position: var(--px) var(--py)` |
+| Pan Y | déplace verticalement la zone gardée | idem, second axe |
+
+Le cadre est un conteneur à `aspect-ratio` fixe (celui du format cible), avec
+`overflow:hidden` ; l'image à l'intérieur est en `object-fit:cover` pour
+remplir le cadre au zoom minimal, puis le `scale()` zoome davantage si besoin.
+C'est le même patron que celui déjà utilisé pour poser une photo sur un
+visuel plein cadre plus haut dans ce skill (`object-position` + `transform`),
+réemployé ici tel quel plutôt que réinventé.
+
+**Le format cible est un paramètre de l'outil, pas une valeur figée dans le
+HTML.** Un sélecteur en tête (4:5, 1:1, 9:16, 16:9…) retape tous les cadres
+d'un coup via une variable CSS `:root`, en suivant la loi du format et de la
+résolution déjà posée plus haut dans ce skill (facteur d'échelle vers 3840px
+minimum sur le grand côté).
+
+**Le bouton « Copier les paramètres » ne renvoie JAMAIS les valeurs seules.**
+Chaque ligne copiée porte obligatoirement l'id ET le nom de fichier, avant les
+valeurs de transform, séparés par un point médian (jamais un tiret cadratin,
+voir la loi typographique du `CLAUDE.md` global). Format canonique, une ligne
+par image :
+
+```
+[03] DJI_20000818114703_0856_D.JPG · zoom=1.42 rotate=0.0deg x=38% y=61% format=4:5(1080x1350)
+```
+
+En mode batch, un second bouton « Copier TOUT » concatène une ligne par image,
+dans l'ordre des id, précédée d'un en-tête qui nomme le dossier source et le
+format cible. C'est ce bloc que Matthieu recolle dans un prompt suivant pour
+que la production du recadrage final reparte sans ambiguïté sur quelle photo
+va où.
+
+**Cook, pour fermer la boucle jusqu'au JPEG final.** Un script
+`crop-apply.py`, posé dans le même sous-dossier, relit `_index.json` plus
+`_crop_params.json` (le format cible plus, par image, `zoom`/`x`/`y`/`rotate`/
+`text`) et produit les recadrages finaux à la résolution de sortie. Jamais de
+valeur en dur pour un lot précis dans le script lui-même : c'est l'interface
+de paramètres du HDA, le script en est le cook. « Je veux mes images
+maintenant » veut dire construire jusqu'au JPEG livré, pas seulement jusqu'aux
+paramètres copiés.
+
+Exemple concret construit le 2026-08-31 :
+`~/.claude/tmp/acquarium-post1/zenray-html-hda-acquarium-post1/`, neuf photos
+(cinq DJI 16:9, quatre iPhone 4:3) recadrées vers 4:5, cook fermé par
+`crop-apply.py` jusqu'aux 9 JPEG finaux, livrés à Matthieu.
+
+**Le cook `crop-apply.py`, forme canonique (rotation et texte câblés le
+2026-08-31, testés visuellement à ±15° avec les deux polices, les trois
+tailles et les deux couleurs, aucun coin transparent, sens de rotation
+cohérent).** Une SEULE transformation affine directe source vers canevas
+final (`Image.transform(..., Image.AFFINE, data=affine_coeffs(...))`), pas un
+enchaînement crop-resize-rotate-crop : plus exact, plus simple, et ça évite
+d'accumuler l'arrondi de plusieurs rééchantillonnages. `affine_coeffs()`
+reproduit exactement la chaîne CSS du picker (`object-fit:cover` +
+`object-position` + `transform: scale(zoom·safescale) rotate(angle)`,
+transform-origin centre) :
+
+- facteur de couverture `s = max(Fw/Nw, Fh/Nh)` ;
+- décalage de couverture `x0,y0` fixé par `x%`/`y%` ;
+- `safescale = |cos θ| + max(Fh/Fw, Fw/Fh)·|sin θ|`, le facteur EXACT (pas
+  une simple marge de sécurité) qui regonfle la couverture pour qu'une
+  rotation de θ ne laisse jamais un coin transparent dans le cadre
+  `overflow:hidden` ; petite marge `×1.002` en plus pour l'arrondi ;
+- `Z = zoom · safescale` est le facteur combiné réellement appliqué par le
+  CSS (`scale(var(--zoom) * var(--safescale))` côté HTML, `--safescale`
+  recalculé à chaque changement d'angle ET de format) ;
+- angle positif = sens CSS (horaire), aucune inversion de signe nécessaire
+  entre le JS et Python tant que la même convention `R(θ)=[[cosθ,-sinθ],
+  [sinθ,cosθ]]` en repère y-vers-le-bas est utilisée des deux côtés.
+
+Il applique toujours `ImageOps.exif_transpose()` avant de mesurer les
+dimensions sources, sinon une photo iPhone orientée par tag EXIF se recadre
+sur les mauvaises dimensions. Sortie en JPEG qualité 95, avec le même repli de
+poids que `render.sh` (redescend la qualité par paliers de 5 tant que le
+fichier dépasse 8 Mo).
+
+**Texte optionnel par image, câblé le 2026-08-31, passé en calques multiples
+le 2026-09-01.** Chaque calque porte : champ libre, police Serif
+(`AnthropicSerif`) ou Sans (`InterVariable`), sept graisses réelles, taille en
+**px libre** avec auto-fit (voir plus bas), couleur **jaune `#f6cf47`** (nommé
+par Matthieu « Plastic Chinese color ») ou **blanc**, et son ancre. Marge de
+6 % par rapport aux bords, quel que soit l'ancrage ; ombre portée douce (flou
+gaussien noir semi-transparent derrière le texte) pour rester lisible sur une
+photo chargée. La ligne de paramètres copiée gagne une ligne indentée par
+calque :
+`T1 text="…" font=serif|sans weight=300..900 size=<px-effectif>px color=#f6cf47|#ffffff anchor=…`.
+
+**Jusqu'à TROIS calques de texte, ajoutés au bouton `+` (2026-09-01).**
+Demande de Matthieu, valable **light ET heavy** : « il me faut aussi un autre
+bouton + pour ajouter un 2ème voire un 3ème texte ». Aucun calque n'existe par
+défaut, le bouton `+ Ajouter un texte` en crée un, chacun a son bouton
+`Supprimer`, et le bouton se désactive en affichant « (3 maximum) » une fois le
+plafond atteint. Trois points de conception qui comptent :
+
+- **L'ancre par défaut change d'un calque à l'autre**, `bottom-center`, puis
+  `top-center`, puis `middle-center`. Deux textes ajoutés coup sur coup ne
+  doivent pas se superposer au même endroit, sans quoi le second paraît absent
+  et l'outil paraît cassé.
+- **Chaque calque est auto-fitté indépendamment** : un titre trop long rétrécit
+  seul, sans toucher aux autres.
+- **Un changement de format ramène TOUS les calques** sur une ancre valide,
+  pas seulement celui qu'on regarde (portrait ou carré = colonne du centre
+  uniquement).
+
+Le cook accepte les deux formes : `draw_captions()` boucle sur une liste de
+calques et tolère encore un dict unique, pour ne pas casser un
+`_crop_params.json` écrit avant cette date. Non-régression vérifiée le
+2026-09-01, les neuf images regénérées après le passage aux calques multiples
+sont bit-identiques aux précédentes.
+
+**L'ancre du texte, ajoutée le 2026-08-31 après un premier oubli.** Le
+positionnement fixe en bas manquait un réglage : Matthieu a demandé un choix
+d'ancrage vertical, et une règle de nombre d'ancres qui dépend du format.
+Neuf valeurs canoniques couvrent tous les cas,
+`{top,middle,bottom}-{left,center,right}`, stockées telles quelles dans
+`img.text.anchor` (défaut `bottom-center`, comportement identique à avant
+l'ajout) :
+
+- **format portrait ou carré** (largeur ≤ hauteur, donc 4:5, 1:1, 9:16, 1:2,
+  3:4, 2:3) : seule la colonne du centre a un sens, le widget n'expose QUE
+  trois ancres, **Haut / Milieu / Bas**, toutes `*-center` ;
+- **format horizontal** (largeur > hauteur, donc 16:9, 4:3) : le widget
+  s'ouvre aux neuf ancres, grille 3×3.
+
+Le widget est un simple bloc de 9 boutons carrés (`data-anchor="top-left"`,
+etc.) dans une grille CSS 3×3 ; en mode portrait, seule la colonne du centre
+reste visible (`display:none` sur les boutons `*-left`/`*-right` via un
+sélecteur d'attribut `[data-anchor$="-left"]`), sans réordonner le DOM. Un
+changement de format qui fait passer du mode 9 au mode 3 **clampe**
+automatiquement une ancre non centrée vers son équivalent centré (`top-left`
+devient `top-center`) plutôt que de laisser une ancre invalide active. Côté
+CSS, l'ancre se traduit en deux classes indépendantes sur `.text-overlay`,
+`anchor-v-{top|middle|bottom}` (position `top`/`transform:translateY(-50%)`
+sur `top:50%`/`bottom`) et `anchor-h-{left|center|right}` (`text-align`
+seulement, la boîte de texte reste pleine largeur avec son padding de 6 % de
+chaque côté). Côté `crop-apply.py`, `draw_caption()` lit `text_cfg["anchor"]`,
+sépare `v_anchor, h_anchor = anchor.split("-")` et calcule `x`/`y` en
+conséquence, mêmes marges de 6 % ; testé visuellement en `top-left` et en
+`middle-center` sur un format 16:9, texte exactement où attendu, ombre lisible
+dans les deux cas.
+
+**Sept graisses réelles et taille en px avec auto-fit, ajoutées le
+2026-09-01, valables pour la version HDA light comme pour une future version
+heavy.** Deux demandes de Matthieu tenues ensemble : un choix de graisse
+complet (« Light / Regular / jusqu'à ExtraBold, tous »), et une taille en px
+qui « ne dépasse jamais le cadre, ça sort jamais du cadre pour faire une font
+crop ».
+
+*Graisse.* Sept crans réels, jamais de gras synthétique :
+`Light(300) / Regular(400) / Medium(500) / SemiBold(600) / Bold(700) /
+ExtraBold(800) / Black(900)`, les mêmes noms et les mêmes fichiers que le
+trio typographique du `CLAUDE.md` global. Pour AnthropicSerif, sept fichiers
+statiques (`AnthropicSerif-Light.ttf` … `-Black.ttf`) déclarés en SEPT
+`@font-face` qui partagent le même `font-family: 'AnthropicSerif'` avec un
+`font-weight` distinct chacun : poser `font-weight: 600` en CSS charge alors
+tout seul le bon fichier, sans jongler avec des noms de famille différents.
+Côté Python, `SERIF_FONT_FILES` est un dict `{300: chemin, 400: chemin, …}`,
+et `load_font()` prend le poids le plus proche demandé. Pour Inter (Sans),
+`InterVariable.ttf` est une police variable qui couvre nativement tout l'axe
+`wght` 100-900 en un seul fichier : `font.set_variation_by_axes([weight])`
+côté Python, `font-weight: <valeur>` tel quel côté CSS, aucun fichier à
+choisir. Testé visuellement : les sept graisses côte à côte sur la même
+photo, même texte, même taille demandée, chacune visiblement plus grasse que
+la précédente, aucun gras étalé façon synthèse.
+
+*Taille en px, jamais un palier.* Le sélecteur XL/L/S est retiré, remplacé
+par un champ numérique en px, exprimé dans l'espace du **canevas de sortie**
+(donc indépendant du zoom d'aperçu, et indépendant du format tant qu'on ne
+change pas le nombre lui-même : `200px` veut dire 200 pixels réels sur le
+JPEG final, quel que soit le format choisi).
+
+**Le principe : jamais l'inverse.** La taille demandée n'est qu'un point de
+départ. Si le texte à cette taille déborderait le cadre (largeur au-delà de
+88 % du canevas, ou la boîte de texte positionnée selon son ancre qui
+franchirait le bord même du cadre, 0 ou `canvas_w`/`canvas_h`), la taille
+RÉELLEMENT utilisée est rétrécie automatiquement jusqu'à la plus grande valeur
+qui tient. Le texte ne sort jamais du cadre, jamais recadré ni coupé : c'est
+la taille qui cède, jamais le cadre. La taille effective (celle qui sera
+réellement dessinée) s'affiche à côté du champ (« affiché 187px, ajusté pour
+tenir dans le cadre ») uniquement quand elle diffère de la demande, et c'est
+CETTE valeur, jamais la valeur demandée, qui part dans la ligne de paramètres
+copiée (`size=187px`) : le paramètre copié doit toujours décrire ce qui sera
+réellement dessiné, jamais une intention non tenue.
+
+**L'incident de mesure du 2026-09-01, à ne pas rejouer.** Premier jet de
+l'auto-fit côté JS : mesurer `overlay.scrollWidth`/`scrollHeight` (la boîte
+`.text-overlay` réellement posée dans la page) et rétrécir tant qu'elle
+dépasse le cadre padé. Résultat en apparence plausible, mais faux : `.text-
+overlay` a `left:0; right:0`, donc son `scrollWidth` vaut TOUJOURS ~= la
+largeur du cadre, quel que soit le texte ou sa taille, puisque la boîte est
+étirée à 100 % de son conteneur par construction CSS. La condition de sortie
+de la boucle de rétrécissement ne devenait donc jamais vraie par la largeur,
+et le résultat observé (une taille qui semblait raisonnable) n'était en
+réalité que l'effet du plafond d'itérations, jamais un vrai calcul de seuil,
+détecté seulement en comparant la largeur mesurée à la largeur théorique à la
+main. Corrigé en mesurant le texte HORS DOM, par Canvas 2D
+(`ctx.measureText()`, une seule ligne, `actualBoundingBoxAscent` +
+`actualBoundingBoxDescent` pour la hauteur), exactement comme
+`ImageDraw.textbbox()` le fait déjà côté Python : même algorithme, mêmes
+marges de 6 %, même test de dépassement des bords du cadre, dans les deux
+langages. **La leçon, générale au-delà de ce skill : ne jamais mesurer une
+boîte DOM étirée par CSS (`left:0;right:0`, `width:100%`) pour connaître la
+largeur de SON CONTENU ; mesurer le contenu lui-même, hors mise en page**
+(Canvas 2D, `Range.getBoundingClientRect()` sur le texte seul, ou équivalent).
+Corollaire : `.text-overlay` est passée en `white-space:nowrap` (une seule
+ligne, comme Python, qui ne sait pas retourner à la ligne), pour que ce que
+Matthieu voit dans le picker soit exactement ce que `crop-apply.py` dessine,
+jamais un texte qui s'enroule dans le navigateur et reste sur une ligne dans
+le JPEG final.
+
+## Poupée russe : un `out/` peut devenir la source d'un nouvel outil imbriqué (2026-09-01)
+
+Un `out/` de sortie n'est pas forcément un terminus. Rien n'empêche de poser un
+NOUVEL outil `zenray-html-hda-<projet>/` **à l'intérieur** d'un `out/` déjà
+produit, en le traitant comme le dossier source du stade suivant. C'est
+mécanique, parce que chaque outil de ce skill localise déjà sa source par
+`SOURCE_DIR = HERE.parent` (JS) / `SOURCE_DIR = HERE.parent` (Python) : le
+même code fonctionne, une couche plus loin, sans rien changer. Matthieu, dans
+ses mots : « ça fait une logique de folder en poupées russes ».
+
+```
+zenray-html-hda-acquarium-post1/                   # outil LIGHT, source = les photos d'origine
+  IMG_xxxx.jpeg
+  index.html, crop-apply.py, _index.json, _crop_params.json
+  out/                                             # sortie du cadrage, DEVIENT la source ici
+    01-IMG_6207.jpg … 09-IMG_6164.jpg
+    zenray-html-hda-acquarium-post1-heavy/         # outil HEAVY, source = son HERE.parent = out/
+      index.html                                   # reorder + photo + texte, DANS le meme HTML
+      assets/photo-controls/zr-photo-adjustments.{js,css}
+      _index.json, _params.json, photo-apply.py
+      out/                                          # sortie finale, retouchee et renommee
+```
+
+## Le mode HEAVY : un seul HTML, reorder inclus, module photo complet (2026-09-01)
+
+**La règle de découpage, et c'est une correction payée.** Le premier essai
+avait fabriqué un outil `-reorder` SÉPARÉ, à côté du module photo, et avait en
+plus appliqué l'ordre à la place de Matthieu. Retour sans ambiguïté : « je t'ai
+demandé le reorder DANS le skill hda et donc le html, jamais toi toi-même ».
+Deux règles en sortent, valables pour toute capacité future de cette famille
+d'outils. D'abord, **une capacité nouvelle s'ajoute DANS le HTML de l'outil
+concerné**, jamais dans un outil frère créé pour l'occasion : un outil par
+étape de travail, pas un outil par fonctionnalité. Ensuite, **le geste de
+réglage appartient à Matthieu** : je livre l'outil, il ordonne et règle, il
+copie, il me renvoie, et je ne calcule qu'ensuite. Écrire moi-même un
+`_reorder_params.json` avec un ordre qu'il m'a dicté oralement court-circuite
+exactement la boucle qu'il demande.
+
+**Ce que le HTML heavy contient, en une seule page.** Une bande de vignettes
+en bas, chacune **déplaçable par glisser-déposer** (badge de position mis à
+jour en direct, nom d'origine toujours visible, pastille orange si l'image a
+des retouches ou du texte) ; une grande prévisualisation WebGL au centre pour
+l'image sélectionnée ; et à droite le module photo complet du skill, plus les
+calques de texte. **Les réglages sont mémorisés PAR IMAGE**, photo comme
+texte : cliquer une autre vignette recharge son propre jeu, sans jamais écraser
+celui d'à côté.
+
+**Un seul contexte WebGL, jamais un par image.** Neuf contextes simultanés
+frôleraient la limite du navigateur et coûteraient une texture de 13 Mpx
+chacun. Le canvas unique recharge sa texture au changement de sélection, ce qui
+se paie quelques dizaines de millisecondes et rien d'autre.
+
+**Le bouton « Copier TOUT (ordre + réglages) »** rend un bloc unique : une
+liste lisible (`NN: ancien-nom -> NN.jpg (photo retouchée, 2
+textes)`) suivie du JSON complet, `{project, order, images{id:{position, file,
+output, photo, text}}}`. C'est ce bloc entier qui se colle dans
+`_params.json`, sans retouche.
+
+**Variantes, pour comparer sans perdre un réglage.** Le mode heavy porte deux
+icônes dans le panneau : **Dupliquer** copie l'image sélectionnée, son cadrage,
+sa retouche et ses textes, puis sélectionne aussitôt la nouvelle variante ;
+**Supprimer** retire uniquement une variante, jamais l'original. Les deux
+variantes lisent le même fichier source, mais leurs réglages sont des copies
+profondes, donc modifier l'une ne déplace pas l'autre. Le JSON copié porte
+`source_id` afin que `photo-apply.py` cuise chaque variante depuis sa photo
+d'origine et écrive deux JPEG numérotés, prêts à comparer dans `out/`.
+
+**Le cook `photo-apply.py` est un PORTAGE FIDÈLE du shader**, pas une
+approximation. Même ordre d'opérations que `zr-photo-adjustments.js`, à ne
+jamais réordonner : levels, selective color, light, saturation, vibrance,
+black and white, filtre, vignette, grain, clamp. Trois points méritent d'être retenus
+parce qu'ils cassent le rendu si on les rate : `luminosity` se mesure UNE fois,
+avant les opérations Light, et sert telle quelle à highlights, shadows et black
+point ; `smoothstep` doit accepter `edge0 > edge1` comme le fait GLSL ; le
+gamma des levels vaut `2^((0.5 - midtone) * 3)`.
+
+**La parité a été mesurée, pas supposée.** Le 2026-09-01, une mire de seize
+couleurs a été passée dans le vrai shader WebGL (`readPixels`) et dans le
+portage numpy, sur dix familles de réglages, dont un cas combinant levels,
+selective, light, saturation, vibrance, vignette et filtre : **écart maximal 0
+sur 255**. C'est le contrôle à rejouer si le shader change un jour, et c'est ce
+qui autorise à dire que l'aperçu ne ment pas.
+
+**Le grain est un paramètre de famille partagé depuis le 2026-09-02.** Il vaut
+`0` par défaut, donc les anciennes instances gardent leur rendu. En heavy, le
+curseur photo et `photo-apply.py` jouent le même bruit monochrome déterministe,
+après la vignette et avant le clamp. En light, le curseur rejoint cadrage et
+texte, il se copie avec « à toutes » et « Appliquer TOUT », puis
+`crop-apply.py` le cuit avant les textes. Une instance peut être créée depuis
+un fichier image unique, sans embarquer les autres images de son dossier.
+
+**Un faux positif numpy à connaître, sinon on croit à un bug.** Sur macOS,
+`color @ LUMA` lève `divide by zero`, `overflow` et `invalid value` alors que
+les données sont parfaitement finies : c'est BLAS qui lève les drapeaux FPU,
+pas les données. Vérifié sur un tableau aléatoire sain. La somme explicite
+`c[...,0]*L0 + c[...,1]*L1 + c[...,2]*L2` donne le même résultat au bit près,
+sans bruit, et c'est elle qui est employée. Ne pas « corriger » ce warning en
+masquant les erreurs avec `errstate` : cela cacherait aussi les vraies.
+
+Mesure de coût pour calibrer l'attente : neuf images de 3240 × 4050 traitées en
+sept secondes, textes compris.
+
+## Workflows and questions prompt to user (retours de Matthieu, journal vivant, 2026-08-31)
+
+Section demandée explicitement par Matthieu pour que ses retours sur la façon
+de travailler avec ce skill ne se perdent jamais dans une conversation.
+S'ajoute ici, sans jamais réécrire les entrées précédentes, chaque fois qu'un
+retour change durablement une manière de faire.
+
+**2026-08-31, sur l'outil de découpage en lot (nommé `fast/` à l'origine,
+renommé depuis).**
+
+- Toujours indexer chaque image (id + nom de fichier), et afficher ce badge en
+  permanence sur sa carte. Une réponse comme « remonte un peu la troisième »
+  doit toujours pouvoir être résolue sans ambiguïté.
+- Le bouton de copie des paramètres doit TOUJOURS renvoyer aussi la référence
+  de l'image (id + nom de fichier), jamais les seules valeurs de transform.
+  Raison donnée par Matthieu : « afin d'éviter toute confusion » sur l'image
+  concernée quand les valeurs reviennent dans un prompt suivant.
+- Dès qu'un lot de plusieurs images arrive, ne JAMAIS décider seul entre un
+  HTML par image et un HTML unique batchant tout le lot. Toujours poser la
+  question, dans ces termes exacts : **« Matthieu veux-tu batch toutes les
+  images dans un seul html avec un seul copy parameters settings return ? »**
+  Un HTML unique avec plusieurs images et un bouton de copie global reste
+  possible et documenté ci-dessus, mais ne se choisit jamais par défaut.
+
+**2026-08-31, renommage `fast/` en `zenray-html-hda-<projet>/`, et un nom
+choisi sans réfléchir se paie.** Premier nom posé sans lui demander : `fast/`,
+motivé uniquement par la rapidité d'exécution de l'outil. Retour de Matthieu,
+cash : « pourquoi tu appelles ça fast, ça n'a aucun sens ». Il a raison, le
+nom d'un dossier doit dire ce que c'est, pas comment on l'a fait. Le nom
+retenu, `zenray-html-hda-<projet>`, fait deux choses à la fois : il rattache
+l'outil à la famille `zenray-html-photoshop-pdf` (déjà nommée `zenray-html-*`
+ailleurs dans ce skill) et au principe HDA du `CLAUDE.md` global, et il porte
+le nom du projet traité, jamais un adjectif de circonstance. Réflexe à
+retenir avant de nommer un dossier d'outil dans ce skill : le nom doit décrire
+ce que contient le dossier et pour quel projet, jamais une qualité de
+l'exécution (rapide, propre, simple).
+
+**2026-08-31, incident tiret cadratin, deuxième occurrence dans ce skill au
+cours de la même session.** Le titre, le h1, le séparateur des lignes copiées
+et l'en-tête du bouton « Copier TOUT » de l'outil portaient tous un tiret
+signe cadratincsigne cadratinasigne cadratindsigne cadratinrsigne cadratinasigne cadratintsigne cadratinisigne cadratinnsigne cadratin signe cadratin`signe cadratin: signe cadratin`signe cadratin,signe cadratin signe cadratinesigne cadratinnsigne cadratin signe cadratinvsigne cadratinisigne cadratinosigne cadratinlsigne cadratinasigne cadratintsigne cadratinisigne cadratinosigne cadratinnsigne cadratin signe cadratindsigne cadratinisigne cadratinrsigne cadratinesigne cadratincsigne cadratintsigne cadratinesigne cadratin signe cadratindsigne cadratinesigne cadratin signe cadratinlsigne cadratinasigne cadratin signe cadratinPsigne cadratinRsigne cadratinIsigne cadratinOsigne cadratinRsigne cadratinIsigne cadratinTsigne cadratinÉsigne cadratin signe cadratin0signe cadratin signe cadratinAsigne cadratinBsigne cadratinSsigne cadratinOsigne cadratinLsigne cadratinUsigne cadratinEsigne cadratin signe cadratindsigne cadratinusigne cadratin signe cadratin`signe cadratinCsigne cadratinLsigne cadratinAsigne cadratinUsigne cadratinDsigne cadratinEsigne cadratin.signe cadratinmsigne cadratindsigne cadratin`signe cadratin
+signe cadratinglobal (« LE TIRET CADRATIN EST INTERDIT, PARTOUT, SANS EXCEPTION »), et cette
+même documentation de skill en portait cinq de plus dans le texte ajouté le
+jour même. Matthieu : « tu as remis de em dash tu te refous de ma gueule ».
+Remplacés par un point médian `·` (déjà utilisé ailleurs dans l'outil comme
+séparateur du badge id/nom) partout où l'em dash servait de simple séparation
+visuelle, par une virgule ou une reformulation ailleurs. **Ce skill en
+particulier est un point de vigilance** : la matière qu'il produit (titres de
+carte, lignes de paramètres à copier, en-têtes de section) invite à
+l'em dash comme séparateur par réflexe, précisément le réflexe interdit.
+Relire la sortie une dernière fois pour ce seul caractère avant de la livrer,
+chaque fois que ce skill écrit du texte visible.
+
+**2026-08-31, sur le cook et les extensions de l'outil.**
+
+- Une fois les paramètres collés par Matthieu, produire directement les JPEG
+  finaux (cook `crop-apply.py`, lecture de `_index.json` +
+  `_crop_params.json`, jamais de valeur en dur pour un lot précis dans le
+  script) plutôt que de lui rendre un texte à retraiter lui-même. « Je veux
+  mes images maintenant » veut dire construire jusqu'au JPEG livré, pas
+  seulement jusqu'aux paramètres.
+- Rotation/redressement en degrés (façon `Straighten` du panneau Crop
+  d'Apple Photos) et texte optionnel par image (Serif/Sans, taille XL/L/S,
+  couleur jaune `#f6cf47` « Plastic Chinese color » ou blanc) sont câblées
+  dans `index.html` ET `crop-apply.py` depuis le 2026-08-31 (voir plus haut),
+  version **HDA light** choisie par Matthieu après qu'on lui a posé la
+  question light/heavy ci-dessous. La version heavy (module photo complet)
+  reste à construire le jour où il la demande.
+- **Règle de méthode, valable au-delà de cet outil, pour tout module visuel
+  substantiel (au sens de la loi HDA de ce skill) que je m'apprête à
+  construire ou étendre.** Ne jamais l'ajouter directement. D'abord dire en
+  une phrase ce que je m'apprête à faire, puis demander explicitement si
+  Matthieu veut la version **HDA light** (les paramètres strictement
+  demandés, rien de plus) ou la version **HDA heavy** (le module complet,
+  « avec saturation et tout le reste » dans ses mots, c'est-à-dire le jeu de
+  réglages photo déjà posé dans l'annexe `design-sliders`, mode `-image` :
+  Vignette, Selective Color, Levels, Black and White, Color/Saturation/
+  Vibrance, Light/Brilliance/Exposure/Highlights/Shadows/Contrast/Black
+  Point, Filters, porté par `assets/photo-controls/zr-photo-adjustments.js`
+  et son `.css`). Ne jamais deviner lequel des deux il veut à sa place.
+
+**2026-09-01, graisse complète et taille en px avec auto-fit, appliquées à la
+version light comme à la heavy.** Demande de Matthieu, après la version light
+du texte : même en HDA light, la graisse doit couvrir toute l'échelle
+existante (Light à Black, sept crans réels, jamais un sous-ensemble choisi
+pour aller vite), et la taille se choisit en px, jamais un palier XL/L/S, à
+la condition stricte que le texte ne dépasse JAMAIS le cadre : « ça ne peut
+jamais dépasser le cadre, ça sort jamais du cadre pour faire une font crop ».
+Traduit en règle générale pour tout futur champ de taille libre dans ce
+skill : une taille demandée par l'utilisateur est toujours un point de
+départ, jamais une valeur imposée envers et contre le conteneur ; le
+programme la réduit lui-même jusqu'à la plus grande valeur qui tient
+entièrement, et c'est cette valeur réelle, jamais la valeur demandée, qui
+part dans toute donnée persistée ou copiée. Voir la section dédiée plus haut
+pour l'implémentation et l'incident de mesure DOM qu'elle a fait remonter.
+
+**2026-09-01, le skill lui-même renommé `zenray-html-photoshop-pdf-hda`.**
+Demande de Matthieu, confirmée par question directe (ambiguïté réelle entre
+« renomme le skill », « change la convention de dossier » et « rien à
+renommer ») : c'est le SKILL Claude Code qui prend le suffixe, pas seulement
+ses dossiers d'outils. Fait : `git mv` du dossier dans `~/.claude/skills/`,
+`name:` du frontmatter mis à jour, les cinq skills qui le citent
+(`zenrayshards-context`, `ui-atlas`, `gear`, `zenray-website`,
+`zenray-social-media`) corrigés puis resynchronisés un par un, mentions en
+prose du `CLAUDE.md` global corrigées, ancien miroir Codex orphelin supprimé
+(le miroir Memory s'était déjà corrigé tout seul, il est tenu par un service
+externe qui scanne `~/.claude/skills` à la minute, pas par `sync-skill.sh`).
+Retenir pour la prochaine fois qu'un renommage de skill se demande : « le nom
+du skill » dans la bouche de Matthieu peut aussi bien viser le skill que
+l'un de ses outils, et les deux renommages n'ont pas la même portée.
+
+**2026-09-01, poupée russe : un outil de reorder par glisser-déposer, imbriqué
+dans un `out/` existant.** Matthieu voulait réordonner un lot déjà cadré et
+déjà validé, sans repartir des photos d'origine. Plutôt qu'un mode de plus
+dans l'outil de cadrage, la réponse a été de poser un second outil, à
+l'identique du premier dans sa structure, mais DANS le `out/` du premier :
+« ça me semble logique, ça fait une logique de folder en poupées russes ». La
+règle qui en sort : `SOURCE_DIR = HERE.parent` rend n'importe quel outil de ce
+skill imbriquable tel quel, un `out/` de sortie pouvant toujours redevenir un
+dossier source. Voir la section dédiée plus haut. Le nommage de sortie
+`NN.jpg` de `01.jpg` à `99.jpg` est le patron à reprendre chaque fois qu'un
+ordre choisi par Matthieu doit se lire directement dans Finder, sans dépendre
+d'un fichier de métadonnées à côté.
+
+**2026-09-01, sortie heavy : le nom source sort du fichier final.** Après un
+reorder, seule la position compte à la sortie. Le cook heavy écrit donc
+`01.jpg` à `99.jpg`, et le bloc copié depuis l'outil décrit exactement les
+mêmes noms. Deux chiffres suffisent jusqu'à 99 et préservent l'ordre naturel
+dans Finder. Au centième fichier, le cook s'arrête explicitement plutôt que de
+produire un ordre ambigu.
+
+**2026-09-01, correction : une capacité s'ajoute DANS le HTML de l'outil, et
+le réglage appartient à Matthieu.** L'outil `-reorder` séparé de l'entrée
+précédente était une erreur de découpage, corrigée le jour même. Ses mots :
+« je t'ai demandé le reorder DANS le skill hda et donc le html, jamais toi toi
+même ». Deux règles, à appliquer à toute capacité future de cette famille
+d'outils. **Un outil par ÉTAPE de travail, pas un outil par fonctionnalité :**
+le reorder appartient au HTML qui sert déjà cette étape, il ne justifie pas son
+propre dossier. **Et la boucle de réglage est à lui :** je livre l'outil, il
+ordonne et règle, il presse le bouton de copie, il me renvoie le bloc, et je
+ne calcule qu'ensuite. Remplir moi-même un fichier de paramètres avec un ordre
+qu'il m'a dicté à l'oral court-circuite exactement ce qu'il demande, même
+quand l'ordre obtenu est le bon. Les deux dossiers fautifs ont été supprimés
+et remplacés par un seul HTML heavy.
+
+**2026-09-01, jusqu'à trois calques de texte au bouton `+`, light et heavy.**
+Sa demande : « il me faut aussi un autre bouton + pour ajouter un 2ème voire un
+3ème texte dans le html et dans le skill (heavy + light configs) ». Noter la
+formulation « heavy + light configs » : une capacité de texte se câble dans les
+DEUX outils, jamais dans un seul, sinon les deux divergent et le cook doit
+gérer deux formats. Détail d'implémentation qui évite un faux bug : les ancres
+par défaut des calques successifs diffèrent (bas, haut, milieu), sans quoi le
+deuxième texte se pose exactement sous le premier et paraît ne pas s'être
+ajouté.
+
+**2026-09-01, le coût de génération est un critère de conception, pas un
+détail.** Ses mots : « il ne faut absolument pas que la prochaine fois que je
+te demande de recréer un HTML tu me reprennes plus de 30k tokens », et la cible
+qu'il fixe, « JE VEUX QUE ÇA PRENNE MAX 2 MINUTES POUR LES FUTURS IMAGES ». Sa
+solution était la bonne et je l'ai suivie telle quelle : garder les HTML déjà
+produits dans le skill, les indexer, et instancier depuis cette base. La règle
+générale à retenir au-delà de ce skill : **dès qu'un livrable est refait une
+deuxième fois avec seulement des valeurs différentes, ce n'est plus un livrable
+à écrire mais un gabarit à instancier**, et le second exemplaire doit se payer
+en secondes, pas en tokens. Le symptôme qui doit alerter est simple, je suis en
+train de retaper un fichier que j'ai déjà écrit en changeant une liste. Voir la
+section « RÈGLE D'ARGENT » en tête de la partie outil.
+
+**2026-09-01, le concept manquant de la loi HDA : la BIBLIOTHÈQUE.** Ses mots,
+qui ferment la session : « un travail fait n'est jamais perdu, il est sauvegardé
+quelque part, le plus souvent à l'intérieur des propres skills ; cette base nous
+permet de régénérer la suivante à la manière d'un template d'une instance ;
+chaque travail généré n'est jamais perdu, il est la source de la prochaine
+modification ; on améliore quelque chose d'existant, on ne repart pas d'une page
+blanche, c'est comme ça qu'on construit ». La transposition Houdini du
+`CLAUDE.md` global décrivait un HDA À L'INTÉRIEUR d'une scène et oubliait la
+bibliothèque `otls/`, où la définition SURVIT au projet, ce qui est pourtant ce
+qui distingue un HDA d'un simple nœud propre. Corrigé dans le global le
+2026-09-01 : la table de transposition gagne la ligne `otls/` = `templates/` du
+skill, une section entière porte la règle, et deux échecs critiques s'ajoutent
+aux cinq existants (une définition qui meurt avec son projet, et repartir d'une
+page blanche alors qu'un gabarit existe). Ici, la bibliothèque est
+`templates/hda-light` et `templates/hda-heavy`, son chargeur est
+`scripts/zr-hda-instance.py`, et son registre est `instances/INDEX.md`.
+
+**2026-09-01, ne jamais gâcher ce qui existe, et anticiper les réglages
+révocables.** Ses mots : « utilise des paramètres intelligents, changer l'output
+de 16:9 ou 4:5 ne devrait pas changer l'instance du HTML, ça devrait être un
+paramètre anticipé sur ce genre de détails en fonction de mes prompts, bref ne
+jamais gâcher ce qui existe déjà, sinon c'est une erreur ». Deux exigences dans
+une seule phrase. La première est un critère de conception à appliquer avant
+d'écrire un paramètre : **tout ce sur quoi il peut changer d'avis appartient à
+l'interface, jamais au code**, et ce que le prompt laisse deviner sert
+seulement à pré-sélectionner la valeur la plus probable. La seconde est un
+interdit : une régénération, une correction ou un renommage ne détruit jamais
+un fichier de travail existant ; si c'est inévitable, on sauvegarde et on le
+dit. Détail et contrôle dans la section « RÈGLE D'ARGENT ».
+
+**2026-09-01, fusion des deux etapes : le cadrage devient un groupe de
+reglages.** Son idee : « si l'index recadrage passe, au lieu de copyAllButton
+il garde les images en memoire et passe directement a l'etape 2 », et « dans
+l'etape deux ca copie a la fois les infos de crop et celles de l'etape 2, ca
+eviterait un aller-retour ». En creusant, il y avait mieux qu'un enchainement
+de deux etapes : faire du cadrage un GROUPE DE REGLAGES comme un autre, ce qui
+supprime la notion d'etape. Le pipeline devient source, cadrage affine, photo,
+texte, identique dans l'apercu et dans le cook. Un seul bloc de copie, un seul
+cook, un aller-retour economise a chaque post. **La lecon de methode :
+lorsqu'une demande decrit un ENCHAINEMENT a fluidifier, chercher d'abord si les
+deux choses ne sont pas la meme chose a des etages differents ; ici, cadrer et
+retoucher sont deux maillons du meme pipeline, et les traiter comme deux
+outils etait l'artefact.** A noter aussi, ce qui valide la loi HDA : les quatre
+curseurs de cadrage ont herite gratuitement des crans et de la propagation,
+parce qu'ils passent par le meme `slider()`. Le seul code nouveau est un
+routage de chemin. Il a aussi demande de systematiser la detection : le format
+demarre sur `source` quand le lot est deja au bon rapport, sur la cible sinon.
+
+**2026-09-01, crans de pourcentage et propagation au lot, plus le CONTRAT de
+sauvegarde.** Deux ajouts : cinq crans 0/25/50/75/100 sous chaque curseur (des
+pourcentages de la PLAGE, 25 et 75 dessines plus petits) et deux boutons de
+propagation, un par parametre et un pour tout. Le point de conception a ne pas
+manquer est dans ses mots : « c'est lie et partage au moment du clic ». La
+propagation est donc une COPIE PROFONDE ponctuelle, jamais un lien vivant ; une
+reference partagee ferait bouger neuf images en en touchant une, exactement
+l'inverse de ce qu'il demande. Il a aussi fixe le protocole d'evolution, et il
+est desormais ecrit dans la section « LE CONTRAT » : il dit d'editer le skill,
+j'edite le gabarit, je reinstancie ses instances, je verifie en file://, je
+documente et je synchronise, sans qu'il ait a enumerer ces etapes. Une
+regeneration ne touche que le code : `_crop_params.json`, `_params.json` et
+`out/` sont preserves. Seule exception a annoncer plutot qu'a taire : les
+reglages encore ouverts dans le navigateur, qui ne sont persistes qu'au clic
+sur « Copier ».
+
+**2026-09-01, hard fix : une instance doit s'ouvrir en double-cliquant, sans
+serveur.** Ses mots : « index doit toujours me permettre d'edit sinon l'user /
+le design perd énormément en contrôle ». Deux causes indépendantes bloquaient
+l'aperçu, ce qui explique qu'une première correction n'ait rien changé de
+visible et qu'il ait fallu qu'il le signale une seconde fois : WebGL refusant
+une texture `file://` (corrigé par des aperçus data URI embarqués, donc
+same-origin), et un `framePending` qui restait vrai à jamais quand un
+`requestAnimationFrame` ne tirait pas (corrigé par un filet `setTimeout`).
+**La règle qui en sort et qui vaut pour tout outil d'atelier de ce skill : la
+dépendance à un process qui tourne est interdite, et un état de garde doit
+toujours être libéré par un chemin qui ne peut pas ne pas s'exécuter.** Voir la
+section dédiée pour le détail et la commande de contrôle en `file://`.
+
+**2026-09-01, piège de vérification : `requestAnimationFrame` est suspendu
+quand l'onglet est en arrière-plan.** Pendant le contrôle de l'outil heavy,
+aucun calque ne se dessinait, ce qui ressemblait à un bug de rendu. La cause
+était `document.hidden` : le pane de vérification tient l'onglet caché, et
+Chrome gèle alors les `requestAnimationFrame`. Deux enseignements. Pour le
+diagnostic, **vérifier que la boucle de rendu tourne avant d'accuser le code
+qu'elle appelle** (`await new Promise(r => requestAnimationFrame(r))` avec un
+délai de garde le dit en une seconde). Pour le code, un rendu différé garde un
+repli synchrone quand `document.hidden` est vrai, sans quoi une frappe faite
+fenêtre masquée ne s'affiche qu'au retour au premier plan.
+
+**2026-09-02, ombre portee sophistiquee, Distance/Spread/Size, sans angle.**
+Sa demande, capture d'ecran a l'appui : remplacer l'ombre fixe par un vrai
+controle a trois champs, calque sur Photoshop, en mode on/off, dans le
+sous-menu de chaque calque de texte. Applique dans les DEUX outils (heavy et
+light), les DEUX cotes de chacun (JS de l'apercu et Python du cook), avec un
+repli explicite pour ne jamais casser un `_params.json` deja ecrit. Voir la
+section dediee plus haut pour l'algorithme et les preuves.
+
+**2026-09-03, bordure exterieure liee, pour joindre deux images sans les
+recadrer.** Sa demande, avec deux captures Instagram a l'appui : une bordure
+grise/argent (`#c4c3b9`, ses mots « acier / silver ») sur les bords exterieurs
+d'une image, avec un cote OUVERT (aucune bordure) pour la relier a l'image
+voisine. Activer le cote ouvert d'une image doit poser AUTOMATIQUEMENT le cote
+oppose sur l'image adjacente, avec la meme couleur et la meme epaisseur, et
+desactiver l'un des deux doit desactiver les deux, « toujours lies ». Prevu un
+avertissement si le voisin n'existe pas (derniere image du lot). Applique dans
+les DEUX outils. Point de methode : ce n'etait pas une fonctionnalite neuve
+mais un reglage GUI d'une technique DEJA documentee dans ce skill (la section
+« Couper une image large en deux slides de carrousel qui se prolongent »,
+2026-08-12) ; verifier d'abord si une demande ressemble a quelque chose deja
+resolu ailleurs dans le skill avant de concevoir un mecanisme de zero.
+
+**2026-09-03, incident : cuit un lot alors qu'il demandait juste l'index avec
+ses reglages restaures.** « je voulais pas les CUIRE PUTAIN je voulais l'index
+mais avec la sauvegarde de mes params actuels ». Colle son bloc "Copier TOUT"
+apres une regeneration `--force` en pensant retrouver son atelier, pas
+declencher un cook. Corrige en ajoutant un rechargement automatique depuis
+`_params.json` au demarrage du mode heavy (voir la section dediee). Retenir :
+recevoir un bloc « Copier TOUT » ne veut pas TOUJOURS dire « cuis maintenant » ;
+apres une regeneration fraiche, demander avant de cuire quand le contexte laisse
+un doute, plutot que d'enchainer par reflexe photo-apply.py.
+
+**2026-09-05, coins internes arrondis pour la bordure liee et passe-partout.** Sa demande,
+capture d'ecran a l'appui : l'arrondi du cadre exterieur laissait des angles vifs a 90 degres
+sur les coins internes ou la bordure rencontre la photo. Ajout d'un reglage « Arrondi »
+(cle `radius`, par defaut egale a `thickness`) dans le panneau de bordure (mode light et
+mode heavy), synchronise entre partenaires lies. Cote navigateur, le rendu passe d'un assemblage
+de div rectangulaires a un element `<svg>` en decoupe evenodd subpixel : les coins fermes
+recoivent un arc de cercle tandis que le cote ouvert reste droit et net a la couture.
+Cote cook Python (`photo-apply.py` et `crop-apply.py`), un masque supersample 2x avec
+`rounded_rectangle` de Pillow dessine la decoupe avec lissage anti-aliase parfait.
+
+## Esthetique Liquid Glass et deux familles de police seulement (2026-09-03)
+
+**Sa demande, en une phrase.** « applique l'esthetique zenray-progress UI liquid glass au skill dans
+le index.html, avec uniquement serif ou inter, visuellement c'est moche et mono encore present ».
+
+**Les valeurs ne sont pas inventees, elles sont relevees.** Le verre vient de
+`ZenRayProgress/src/theme.js`, preset `liquidGlassNormal` en mode sombre, lu le 2026-09-03 :
+`linear-gradient(135deg, rgba(255,255,255,.20), rgba(255,255,255,.065))`,
+`blur(27px) saturate(169%)`, et la pile de neuf ombres internes et portees. Ces trois valeurs
+deviennent `--zr-glass-bg`, `--zr-glass-filter` et `--zr-glass-shadow` dans le `:root` des DEUX
+gabarits, jamais recopiees dans une regle.
+
+**Trois surfaces portent le verre, et pas une de plus** : `header.top`, la bande de vignettes
+`.strip`, et le panneau de reglages `.zr-photo-panel`. Le canvas WebGL n'a JAMAIS un ancetre
+porteur de `backdrop-filter` : la bannière du `CLAUDE.md` global sur les ancetres qui filtrent
+explique pourquoi, et c'est une regle a ne pas relacher en ajoutant du verre ailleurs.
+
+**Un fond uni ne se floute pas.** Le verre pose sur un aplat rend exactement l'aplat, donc le body
+recoit deux degrades radiaux tres doux, corail en haut a gauche et bleu en bas a droite, qui
+donnent au flou de la matiere a travailler.
+
+**Deux familles de police, zero mono.** Sa consigne remplace ici la ligne du `CLAUDE.md` global qui
+reserve le mono aux chemins et identifiants : dans ces outils, un nom de fichier passe en Inter.
+La regle des NOMBRES, elle, s'applique pleinement, et c'est elle qui donne le rendu soigne :
+
+| Ce qui est affiche | Famille |
+|---|---|
+| titre de l'outil | `AnthropicSerif` a 350 |
+| tout le chrome, libelles, noms de fichiers, champs, sorties | `InterLocal` a 400 |
+| tout NOMBRE visible : crans 0/25/50/75/100, valeur d'un curseur, badge de position | `AnthropicSerif` a 400 |
+
+Quatorze declarations `ui-monospace` ont ete remplacees, sept par gabarit, et une assertion du
+script de migration echoue si le mot `monospace` subsiste dans un gabarit.
+
+**Un defaut latent revele par le verre, et corrige.** `.stage` demarrait a `top: 56px` ecrit en
+dur, alors que `header.top` est en `flex-wrap: wrap` et passe sur plusieurs lignes des que la
+fenetre retrecit : il mesurait 162px dans la fenetre de controle et recouvrait donc la scene depuis
+toujours, ce qu'un fond opaque cachait et que le verre a rendu visible d'un coup, sous la forme
+d'une tache floue. La hauteur se MESURE desormais par un `ResizeObserver` qui ecrit `--top-h` sur
+la racine, application directe de la regle des valeurs systeme du `CLAUDE.md` global. Verifie :
+`--top-h` vaut 162px et `.stage` demarre a 162px, plus aucun recouvrement.
+
+**Controle a rejouer si les gabarits changent**, mesure et non juge a l'oeil :
+
+```js
+let mono = 0;
+document.querySelectorAll('*').forEach(e => { if (/mono/i.test(getComputedStyle(e).fontFamily)) mono++; });
+mono; // doit valoir 0
+```
+
+Resultat obtenu sur une instance reelle de 13 images : titre `AnthropicSerif / 350`, corps
+`InterLocal`, cran numerique `AnthropicSerif / 400`, **0 element en mono** sur toute la page.
+
+**2026-09-03, esthetique Liquid Glass et deux familles de police.** Ses mots : « applique
+l'esthetique zenray-progress UI liquid glass au skill dans le index.html, avec uniquement serif ou
+inter, voir claude global pour les bonnes fonts, visuellement c'est moche et mono encore present ».
+Point de methode : les valeurs du verre ont ete LUES dans `ZenRayProgress/src/theme.js` plutot que
+recomposees a l'oeil, ce qui garantit que les deux produits vieillissent ensemble. Et le verre a
+revele un defaut latent qu'un fond opaque cachait depuis le debut, un `top: 56px` en dur sous un
+header qui enveloppe : la hauteur se mesure desormais. Retenir que rendre une surface translucide
+est aussi un revelateur de bugs de superposition, jamais seulement une decision esthetique.
+
+**2026-09-05, la bibliotheque s'ouvre au DESIGN, pas seulement a l'outil.** Ses mots : « le but
+c'est de garder les designs qu'on a deja crees dans le skill et de les identifier quand j'en ai
+besoin via une amelioration ou une regeneration depuis les templates. » Quatre maquettes de
+direction rangees dans `templates/zenray-assets-mockups/`. Point de methode a retenir : jusqu'a
+ce jour, `templates/` ne portait que des OUTILS, et une maquette de design etait traitee comme
+un livrable jetable. C'etait une lecture trop etroite de la loi de la bibliotheque, qui ne
+distingue pas la nature de ce qui est produit : tout ce qui pourra servir de source a un travail
+suivant se range, un gabarit d'atelier comme une direction visuelle. Detail technique qui a
+allege le rangement de moitie : les deux familles du trio sont variables, donc trois faces
+servies remplacent les vingt-cinq faces statiques que les quatre fichiers declaraient ensemble.
+
+

@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>ZenRay Design Registry, Catalogue des 1000+ Designs</title>
+<style>
+  :root {
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --fond: #EDEDEB;
+    --surface: #FDFDFC;
+    --encre: #1F1F1E;
+    --encre-douce: #6B6B68;
+    --filet: rgba(0,0,0,0.09);
+    --accent: #A8552F;
+    --accent-doux: rgba(168,85,47,0.12);
+  }
+  .sombre {
+    --fond: #141413;
+    --surface: #1E1E1C;
+    --encre: #F0EFEB;
+    --encre-douce: #A3A19A;
+    --filet: rgba(255,255,255,0.10);
+    --accent: #E08356;
+    --accent-doux: rgba(224,131,86,0.16);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--fond); color: var(--encre);
+    font-family: var(--sans); -webkit-font-smoothing: antialiased;
+    padding: 32px 24px 80px;
+  }
+  .conteneur { max-width: 1080px; margin: 0 auto; }
+  header { margin-bottom: 28px; }
+  h1 { font-size: 28px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.02em; }
+  p.chapo { font-size: 15px; color: var(--encre-douce); margin: 0 0 20px; max-width: 70ch; line-height: 1.55; }
+  
+  .barre-outils {
+    display: flex; gap: 12px; align-items: center; justify-content: space-between;
+    background: var(--surface); padding: 12px 18px; border-radius: 999px;
+    border: 1px solid var(--filet); margin-bottom: 32px; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+  }
+  .champ-recherche {
+    flex: 1; border: none; background: transparent; font-size: 14px;
+    color: var(--encre); outline: none; font-family: inherit;
+  }
+  .filtres { display: flex; gap: 6px; }
+  .btn-filtre {
+    border: none; background: transparent; padding: 6px 14px; border-radius: 999px;
+    font-size: 13px; color: var(--encre-douce); cursor: pointer; transition: all 0.2s ease;
+  }
+  .btn-filtre.actif { background: var(--accent); color: #fff; font-weight: 500; }
+
+  .grille {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;
+  }
+  .carte-design {
+    background: var(--surface); border: 1px solid var(--filet); border-radius: 18px;
+    padding: 22px; display: flex; flex-direction: column; justify-content: space-between;
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+  }
+  .carte-design:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.05); }
+  .carte-top { margin-bottom: 14px; }
+  .carte-badges { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .tag-id {
+    font-family: monospace; font-size: 12px; padding: 3px 8px; border-radius: 6px;
+    background: var(--accent-doux); color: var(--accent); font-weight: 600;
+  }
+  .tag-type { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--encre-douce); font-weight: 600; }
+  h2 { font-size: 18px; margin: 0 0 6px; font-weight: 600; }
+  .carte-desc { font-size: 13.5px; color: var(--encre-douce); line-height: 1.5; margin: 0 0 14px; }
+  .carte-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 16px; }
+  .pill-tag { font-size: 11px; padding: 2px 7px; border-radius: 999px; background: rgba(0,0,0,0.05); color: var(--encre-douce); }
+  .carte-actions { display: flex; gap: 8px; border-top: 1px solid var(--filet); padding-top: 14px; }
+  .btn-action {
+    flex: 1; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--filet);
+    background: transparent; color: var(--encre); font-size: 12.5px; font-weight: 500;
+    cursor: pointer; text-align: center; text-decoration: none; transition: all 0.15s ease;
+  }
+  .btn-action:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-action.primaire { background: var(--accent); color: #fff; border-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="conteneur">
+  <header>
+    <h1>ZenRay Design Registry</h1>
+    <p class="chapo">Architecture universelle de templates et composants HDA. Chaque design porte un ID sémantique parlant pour pouvoir être instancié ou décliné en une phrase, sans gaspillage de tokens.</p>
+  </header>
+
+  <div class="barre-outils">
+    <input type="text" id="recherche" class="champ-recherche" placeholder="Rechercher par ID parlant (ex: luxe-epure, pure-pill, atelier)..." oninput="filtrer()">
+    <div class="filtres">
+      <button type="button" class="btn-filtre actif" onclick="changerType('tous', this)">Tous</button>
+      <button type="button" class="btn-filtre" onclick="changerType('page', this)">Pages</button>
+      <button type="button" class="btn-filtre" onclick="changerType('component', this)">Composants</button>
+    </div>
+  </div>
+
+  <div class="grille" id="grille-cards"></div>
+</div>
+
+<script>
+  let donnees = {};
+  let filtreType = 'tous';
+
+  async function charger() {
+    try {
+      const res = await fetch('index.json');
+      donnees = await res.json();
+      afficher(Object.values(donnees.designs));
+    } catch(e) {
+      console.error('Erreur chargement index.json', e);
+    }
+  }
+
+  function afficher(liste) {
+    const grille = document.getElementById('grille-cards');
+    grille.innerHTML = liste.map(d => `
+      <div class="carte-design">
+        <div class="carte-top">
+          <div class="carte-badges">
+            <span class="tag-id">${d.id}</span>
+            <span class="tag-type">${d.type}</span>
+          </div>
+          <h2>${d.nom}</h2>
+          <p class="carte-desc">${d.description}</p>
+          <div class="carte-tags">
+            ${d.tags.map(t => `<span class="pill-tag">#${t}</span>`).join('')}
+          </div>
+        </div>
+        <div class="carte-actions">
+          <button type="button" class="btn-action" onclick="copierId('${d.id}')">Copier ID</button>
+          <a class="btn-action primaire" href="${d.sourceOrigine || d.fichier}" target="_blank">Ouvrir Maquette</a>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function filtrer() {
+    const q = document.getElementById('recherche').value.toLowerCase().trim();
+    const liste = Object.values(donnees.designs).filter(d => {
+      const matchType = filtreType === 'tous' || d.type === filtreType;
+      const matchText = !q || d.id.toLowerCase().includes(q) || d.nom.toLowerCase().includes(q) || d.tags.some(t => t.includes(q)) || d.description.toLowerCase().includes(q);
+      return matchType && matchText;
+    });
+    afficher(liste);
+  }
+
+  function changerType(type, btn) {
+    filtreType = type;
+    document.querySelectorAll('.btn-filtre').forEach(b => b.classList.remove('actif'));
+    btn.classList.add('actif');
+    filtrer();
+  }
+
+  function copierId(id) {
+    navigator.clipboard.writeText(id).then(() => {
+      alert('ID ' + id + ' copié pour le prompt !');
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', charger);
+</script>
+</body>
+</html>
