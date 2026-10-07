@@ -1,0 +1,59 @@
+# ZenRay Edit migration implementation (7 October 2026)
+
+T4 implémenté et synchronisé, sans commit et sans suppression de l’ancien atelier. Les actions cloud et retrait restent au parent après audit. (7 October 2026)
+
+## État vérifié (7 October 2026)
+
+- Routeur 4 418 octets au lieu du corpus 341 525 octets ; 15 blocs exacts couvrent 6 279 lignes, archive du bundle original 115 fichiers et de l’ancienne fusion 26 fichiers vérifiées par SHA256. (7 October 2026)
+- Catalogue : 9 entrées pointent vers les vrais templates ; all-in-one vers ancre p4-ai existante. Description capacité 1000 est cible, jamais nombre livré. (7 October 2026)
+- Texte : contrat grammaire seule intégré, edit-text devient routeur compatible ; contenu original conservé dans legacy/EditText.md, sans réorganisation ou traduction automatique. (7 October 2026)
+- Rendu réel : portrait 3240×4050, paysage 3840×2160, sources inchangées ; images regardées, pas de coupe du template portrait. Limite JPEG 1 octet volontairement impossible donne échec, master PNG et HTML conservés, rapport ok:false. (7 October 2026)
+- Vérificateur de préservation : brouillon, _params, _crop_params et anciennes sorties conservés après --force ; remplacement concurrent de texte refusé. (7 October 2026)
+- UI : quatre combinaisons heavy/light et clair/sombre, police Inter custom rendue, 13 px/400, ratio carte 4:5 et écran390px. Les anciens selectors ne correspondaient plus au runtime zr-save ; verifiers corrigés vers les trois boutons actuels. (7 October 2026)
+- Post : 12 contrôles par mode, Unicode/répétition exacts, reload, injection non exécutée, dépassement non coupé, format indépendant, copie post/params avec post entier, bascule Photos/Post et état Export désactivé hors serveur. (7 October 2026)
+- Serveur : destination sibling hors source corrigée via racine commune et lecture limitée aux deux chemins admis ; instanceHTTP200, Export activé, fichier voisin AGENTS.md404. Serveurs fixtures arrêtés. (7 October 2026)
+- BundleManifest.json courant atteste 148 fichiers, contrôles passent source/Codex/Memory ; modification volontaire de RenderComposition.cjs refusée avec code1. Manifest original reste intact. (7 October 2026)
+- Toutes sources Python se compilent ; ancien atelier entier115fichiers byte-identiques au manifest initial. Aucun commit effectué. (7 October 2026)
+
+## Fichiers actifs modifiés par rapport au bundle original (7 October 2026)
+
+- `SKILL.md`. (7 October 2026)
+- `references/post-editor.md`. (7 October 2026)
+- `references/INDEX.md`. (7 October 2026)
+- `references/template-creator.md`. (7 October 2026)
+- `scripts/build-fontbook.sh`. (7 October 2026)
+- `scripts/zr-design.mjs`. (7 October 2026)
+- `scripts/zr-hda-instance.py`. (7 October 2026)
+- `scripts/index-skill.py`. (7 October 2026)
+- `scripts/verify-ui.cjs`. (7 October 2026)
+- `scripts/new-project.sh`. (7 October 2026)
+- `scripts/verify-post-editor.cjs`. (7 October 2026)
+- `templates/slide-1.html`. (7 October 2026)
+- `templates/render.sh`. (7 October 2026)
+- `templates/_canvas.css`. (7 October 2026)
+- `templates/designs/index.json`. (7 October 2026)
+- `templates/knowledge-license-roadmap/Scripts/build.py`. (7 October 2026)
+- `instances/INDEX.md`. (7 October 2026)
+
+## Fichiers nouveaux structurants (7 October 2026)
+
+- `scripts/RenderComposition.cjs`, `scripts/CheckContract.py`, `scripts/RecordBundle.py`, `templates/export.json`, `BundleManifest.json`. (7 October 2026)
+- `references/ActiveContract.md`, `references/TextEditing.md`, `references/Routes.json`, les15blocs de references/legacy, OriginalSkill.md, EditText.md, OriginalBundle.tar.gz et OriginalBundleManifest.json. (7 October 2026)
+- Canonique edit-text/SKILL.md remplacé par routeur fidèle ; sources en ~/.claude, copies générées Codex/Memory, lien Gemini. (7 October 2026)
+
+## Preuves consultables (7 October 2026)
+
+- `/Users/zenray/.claude/tmp/tmp-zenray-edit/MigrationProofs/Verification.json`. (7 October 2026)
+- `/Users/zenray/.claude/tmp/tmp-zenray-edit/MigrationProofs/CurrentBundleVerification.json`. (7 October 2026)
+- `/Users/zenray/.claude/tmp/tmp-zenray-edit/MigrationProofs/ServerVerification.json`. (7 October 2026)
+- `/Users/zenray/.claude/tmp/tmp-zenray-edit/MigrationProofs/UiVerification.json`. (7 October 2026)
+- `/Users/zenray/.claude/tmp/tmp-zenray-edit/HeavyFixture/PostEditorVerification.json`. (7 October 2026)
+- `/Users/zenray/.claude/tmp/tmp-zenray-edit/PreservationFixture/PostEditorVerification.json`. (7 October 2026)
+- `/Users/zenray/.claude/tmp/tmp-zenray-edit/RepresentativePortrait/out/RenderReport.json`. (7 October 2026)
+- `/Users/zenray/.claude/tmp/tmp-zenray-edit/RepresentativeLandscape/out/RenderReport.json`. (7 October 2026)
+
+## Limites exactes (7 October 2026)
+
+- Les tests ne promettent pas un cook photo complet, PDF modifié ou pipeline vidéo exécuté ; les recettes historiques et ressources restent conservées et routées. Les scripts externes export-png.sh/backup-memory.sh/render_mikiri_flash.py ne sont pas annoncés présents dans le bundle. (7 October 2026)
+- Les uploads cloud, archive finale, retrait de l’ancien atelier et commit/push sont à effectuer et vérifier par le parent ; aucune preuve locale ne vaut sauvegarde cloud. (7 October 2026)
+- RecordBundle.py est un acte de release explicite, CheckContract.py ne régénère pas sa propre preuve ; toute modification ultérieure exige nouvelle revue et attestation. (7 October 2026)

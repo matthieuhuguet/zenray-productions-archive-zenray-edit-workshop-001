@@ -1,0 +1,13 @@
+{
+  "date": "7 October 2026",
+  "originalFiles": 115,
+  "originalHashesUnchanged": true,
+  "immutableCloudArchiveSha256": "e5943a09d67c4547a74c53c8d6c6a82718d7e6cd278c62127bc6c263757d518f",
+  "originalEntrypointPreserved": true,
+  "canonicalSkill": "zenray-edit",
+  "removedInstalledPaths": [
+    "/Users/zenray/.claude/skills/zenray-html-photoshop-pdf-hda-socialmedia-shorts-reel",
+    "/Users/zenray/.codex/skills/zenray-html-photoshop-pdf-hda-socialmedia-shorts-reel",
+    "/Users/zenray/.claude/Memory1/Skills/zenray-html-photoshop-pdf-hda-socialmedia-shorts-reel"
+  ]
+}

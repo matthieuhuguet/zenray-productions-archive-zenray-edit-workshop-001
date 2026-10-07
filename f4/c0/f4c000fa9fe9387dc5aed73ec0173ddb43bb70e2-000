@@ -1,0 +1,36 @@
+# ZenRay Edit independent forward audit (7 October 2026)
+
+## Verified documentary behavior (7 October 2026)
+
+- Main skill routes by requested mode into ActiveContract and narrow references; 15 historical blocks are contiguous exact source slices, with historical instructions explicitly subordinate to current grammar-only and browser-isolation rules. Main reference links and 9 real template entries pass CheckContract. (7 October 2026)
+- Grammar-only fixture in EditGrammarOnlyFixture.json uses a realistic three-sentence texture post. Exactly three corrections are justified: fais to fait, toute to toutes, si il to s’il. Original sentence order, repeated garder ça, content and French language remain. No shortened version, suggested rewrite or translation is produced. This is a behavioral instruction fixture, not proof of a standalone NLP correction algorithm. (7 October 2026)
+- TextEditing.md explicitly prohibits spontaneous rewrite, shortening, reordering and translation. The historical EditText route is explicitly historical and cannot override this fidelity contract. (7 October 2026)
+- Canonical Assets entrypoint is now zenray-assets in main description and startup route. Project identity and session are retained, archive proofs are distinguished from private/public publication. (7 October 2026)
+
+## Resource and renderer evidence (7 October 2026)
+
+- Independently ran index-skill.py --verify-only: original bundle 115 files and earlier fusion 26 files pass digest verification. Current copied bundle has no missing original regular file; 11 files are modified as part of the active migration, and all originals remain in the immutable historical archive. (7 October 2026)
+- Independently ran CheckContract: 15 routes, 9 templates, main 4393 bytes at that read. It verifies exact historic source SHA and block boundaries, actual catalogue file/anchors and current export configuration; it is a structural check, not blanket runtime proof. (7 October 2026)
+- Rendered PNG dimensions and byte lengths were independently read from disk headers, agreeing with reports: portrait 3240 by 4050, 128526 bytes; landscape 3840 by 2160, 83817 bytes. Portrait visibly contains a readable template headline and supporting copy without clipping. This proves a functioning template renderer, not a finished artistic post. (7 October 2026)
+- Renderer configuration centralizes canvas dimensions, integer scale, maximum bytes, format, alpha and runtime. Missing scale computes minimum 3840 long edge. Renderer waits for images and fonts, uses isolated headless contexts, rejects errors/oversize and preserves a PNG master before delivery checks. (7 October 2026)
+- Active scripts searched contain no personal-browser launching calls. HDA --open emits an internal-browser URL; heavy mode runs a local server. RenderComposition uses a fresh headless Playwright browser context. (7 October 2026)
+- Preservation fixture and MigrationProofs/Verification.json report unchanged post, crop/photo parameters and exports across forced code regeneration, code archived in .hda-history, and a replacement draft refused before writing. Source read confirms existing _post.json is retained and conflicting requested draft rejected. (7 October 2026)
+
+## Findings and correction status (7 October 2026)
+
+- Reported ambiguity: old --force help says overwrite while active contract promises retained settings. Agent repaired help/error wording; reread confirms refresh instance code, preserving draft, parameters and exports. No audit mutation made. (7 October 2026)
+- Verification.json reports positive portrait/landscape rendering and negative oversize JPEG, missing catalogue template and corrupt historical archive cases. The negative JPEG retains master/source. These reported checks supplement independent file-header inspection and archive verifier runs. (7 October 2026)
+- Runtime UI verifier diagnostics are still being stabilized by implementation agent at this audit stage: historical selectors produced getComputedStyle(null). A final verdict is withheld until their repaired tests and stable source bundle manifest are reread. (7 October 2026)
+
+## Limits (7 October 2026)
+
+- No old media skill is removed by this auditor. No current skill or script is edited by this auditor; only report and grammar fixture are written inside the mapped Edit workshop. (7 October 2026)
+- Archive preservation and representative renderer checks do not prove every historical PDF/short/Houdini recipe, universal media creation, public publication or cloud upload. Missing historical external scripts are explicitly called out by ActiveContract instead of presented as verified capabilities. (7 October 2026)
+
+## Final reread after implementation stabilized (7 October 2026)
+
+- Implementation agent confirms the bundle is stable and its test servers are stopped. Independently re-ran current CheckContract: 15 blocks, 9 templates, 4418 main skill bytes and 148 attested files pass. CurrentBundleVerification proves an intentionally altered RenderComposition.cjs exits 1 with Current bundle changed, while the 148-file actual bundle passes. (7 October 2026)
+- Read all four final UI combinations in UiVerification.json: heavy/light modes with light/dark themes, 13px InterVariable 400, custom rendered font, transparent panel and measured glass styles. The prior getComputedStyle(null) verifier defect is repaired; current UI results are green. PostEditorVerification covers 12 behavioral checks per mode, including exact draft, unicode/repetition, reload, injection refusal, copy, overflow and mobile fit. (7 October 2026)
+- ServerVerification.json confirms isolated instance HTTP 200, server-dependent export enabled, explicit save/cook/discard/restore capabilities, and unrelated local file request HTTP 404. These are local fixture proofs, not access to a personal browser or general disk exposure. (7 October 2026)
+- The edit-text compatibility entry now points directly to current TextEditing and preserves original method in the legacy archive; grammar-only remains the default and spontaneous reorganizing or translating remains prohibited. Old media source remains untouched according to the implementation evidence. (7 October 2026)
+- Final verdict: no remaining defect found in the requested resource-preservation, route, grammar fidelity, isolated-render and current UI paths after stabilization. All observed behavior claims remain limited to the tested cases; complete execution of every historical media recipe and cloud publication are not proven by this audit. No auditor code changes, skill deletion or commit performed. (7 October 2026)

@@ -1,0 +1,27 @@
+{
+  "date": "7 October 2026",
+  "original": "J’ai fais cette texture hier. Les tuiles sont toute différentes, et je veux garder ça, vraiment garder ça. Demain je les montre, même si il reste des défauts.",
+  "corrected": "J’ai fait cette texture hier. Les tuiles sont toutes différentes, et je veux garder ça, vraiment garder ça. Demain je les montre, même s’il reste des défauts.",
+  "changes": [
+    {
+      "old": "fais",
+      "new": "fait",
+      "reason": "Past participle of faire after avoir"
+    },
+    {
+      "old": "toute",
+      "new": "toutes",
+      "reason": "Agreement with plural feminine tuiles"
+    },
+    {
+      "old": "si il",
+      "new": "s’il",
+      "reason": "Elision before il"
+    }
+  ],
+  "noReorder": true,
+  "repetitionsPreserved": true,
+  "noTranslation": true,
+  "noExtraIdea": true,
+  "scope": "Human/model behavioral fixture derived from active instructions, not an automated text-correction engine"
+}
