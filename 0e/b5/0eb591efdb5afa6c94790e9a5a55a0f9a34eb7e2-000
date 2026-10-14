@@ -1,0 +1,5 @@
+# Provenance (14 October 2026)
+
+- 14 October 2026 : copie de travail des maquettes du rework ZenRay Assets et du gabarit du titre Vogun jaune, rangée dans l'atelier du projet Assets `zenray-edit`.
+- 14 October 2026 : la source qui fait foi est le skill `~/.claude/skills/zenray-edit/templates/` (`zenray-assets-mockups/rework-12-october-2026/` et `vogun-yellow-title/`) ; cette copie ne s'édite pas, on édite le skill puis on recopie.
+- 14 October 2026 : originaux des maquettes : `~/.claude/tmp/tmp-zenray-assets-rework/`. Originaux Vogun : `/Users/zenray/Create/Build/Productions/ZenRayHoudini/VegetationCollection01/maps/trim/petals/title-animation/vogun-cyber/`.

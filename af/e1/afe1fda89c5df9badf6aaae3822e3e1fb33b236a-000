@@ -1,0 +1,40 @@
+# Rework ZenRay Assets : maquettes et décisions (14 October 2026)
+
+Ces trois fichiers sont les maquettes paramétriques du rework de la vue ZenRay Assets, produites du 12 au 14 octobre 2026 puis intégrées dans le vrai code. Ce sont des copies, les originaux restent dans `~/.claude/tmp/tmp-zenray-assets-rework/`. (14 October 2026)
+
+## Les fichiers
+
+| Fichier | Rôle | Date |
+|---|---|---|
+| `AssetsRework.html` | Trois propositions de la vue (A Tube, B Galerie, C Étagères), 18 curseurs, roue de chargement, forme de la miniature selon le type | 12 October 2026 |
+| `TubeDetails.html` | Quatre sujets, trois propositions chacun : espace utilisé, vues Finder, dossier téléchargé, sources | 12 October 2026 |
+| `TubeProject.html` | Page projet assemblée avec les choix de Matthieu | 12 October 2026 |
+
+Ouvrir un fichier dans un navigateur suffit. Le panneau de curseurs écrit uniquement des variables CSS de `:root` et porte un bouton « Copier les valeurs pour le prompt ». Le panneau ne part jamais en production. (14 October 2026)
+
+## Ce que Matthieu a choisi, dans ses mots (12 October 2026)
+
+- Espace utilisé : A barre de stockage, plus à gauche B anneau discret.
+- Vues : A Finder (icônes, liste, colonnes, galerie).
+- Dossier téléchargé : B carte du ZIP d'abord, puis A arbre Finder.
+- Sources : C barre latérale Finder, sans « Modifiés cette semaine » ni « Pas encore sauvegardés ».
+- Design général : A Tube, intégré dans la vraie vue, ancienne vue conservée par un bouton Classique / Tube. (12 October 2026)
+
+## Règles de la vue Tube (14 October 2026)
+
+- Inter seulement, jamais de serif ; titres en Inter Bold par le jeton `--tube-title-weight`. (13 October 2026)
+- Noms simples par défaut (Brouillons, Notes, Scènes Houdini, Jeu, Archive), bascule vers les noms techniques (TMP, Memory, Houdini, Unreal, Cloud). (12 October 2026)
+- La forme de la miniature porte le type : carrée pour une image, 16:9 pour une vidéo, ronde pour un son, page pour un document. (12 October 2026)
+- Les projets sont triés par leur dernière vraie modification de fichier. (14 October 2026)
+
+## Où est le code de production
+
+- Dépôt : `/Users/zenray/Create/Build/Productions/GithubProductions/ZenRayProgress`.
+- `src/components/assets/AssetsTube.jsx` et `AssetsTube.css` : la vue et ses jetons `--tube-*`.
+- `src/components/assets/ProjectWorkspace.jsx` : le branchement et le bouton Classique / Tube.
+- `src/lib/assetsProjectCover.js`, `useProjectCovers.js`, `coverThumbnail.js` : miniatures de projet par clic droit ou par nom.
+- Commits sur `origin/main` : `ba9a6257` (vue Tube), `13395ecd` (contrat), `adca0e68` (miniatures, ordre, alignement). (14 October 2026)
+
+## Pour refaire une maquette du même genre
+
+Partir de `TubeProject.html` : les données, les paramètres (`PARAMS`) et les fonctions de rendu sont séparés, donc changer un jeu de valeurs ou une proposition ne demande qu'un seul endroit. Nommer les propositions par une lettre et un mot, puis demander à Matthieu une lettre par sujet. (14 October 2026)

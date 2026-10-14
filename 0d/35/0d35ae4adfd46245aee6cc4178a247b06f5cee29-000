@@ -1,0 +1,52 @@
+// 14 October 2026: parametric renderer of the validated Vogun motion title (yellow or white), as transparent frames.
+// Derived from RenderLilyShortTitle.original.cjs (6 October 2026), whose folder was hard coded. Nothing is hard coded here:
+// the folder, the variant, the output and the frame list are arguments, so one template serves every title.
+// FR : rendu parametrique du titre Vogun anime (jaune ou blanc) en images transparentes. Rien n'est ecrit en dur.
+//
+//   node RenderTitle.cjs [--dir <folder with Animation.html + a config json>] [--config Animation.yellow.json]
+//                        [--variant <index or id>] [--out <frames folder>] [--frames 0,45,90 | all]
+//                        [--executable <path of a Chromium or headless shell>] (when the cached browser build differs from Playwright's)
+//   Needs Playwright: NODE_PATH=<a node_modules folder holding playwright> node RenderTitle.cjs ...
+const fs = require('fs')
+const path = require('path')
+const { chromium } = require('playwright')
+
+const argument = (name, fallback) => { const index = process.argv.indexOf(`--${name}`); return index > 0 ? process.argv[index + 1] : fallback }
+const directory = path.resolve(argument('dir', __dirname))
+const config = JSON.parse(fs.readFileSync(path.join(directory, argument('config', 'Animation.yellow.json')), 'utf8'))
+const variantArgument = argument('variant', '0')
+const variant = config.variants.find((item, index) => item.id === variantArgument || String(index) === variantArgument)
+if (!variant) throw new Error(`variant ${variantArgument} not found, choose one of ${config.variants.map((item) => item.id).join(', ')}`)
+const output = path.resolve(argument('out', path.join(directory, 'frames')))
+const duration = config.appear + config.hold + config.disappear
+const total = Math.round(config.fps * duration)
+const wanted = argument('frames', 'all') === 'all' ? null : new Set(argument('frames').split(',').map(Number))
+
+;(async () => {
+  fs.mkdirSync(output, { recursive: true })
+  const executablePath = argument('executable', undefined)
+  const browser = await chromium.launch({ headless: true, ...(executablePath ? { executablePath } : {}) })
+  const page = await browser.newPage({ viewport: { width: config.width, height: config.height } })
+  await page.goto('file://' + path.join(directory, config.sourceHTML || 'Animation.html'))
+  const layout = await page.evaluate(async ([c, v]) => await window.setup(c, v), [config, variant])
+  fs.writeFileSync(path.join(output, 'Layout.json'), JSON.stringify(layout, null, 2))
+  let held
+  let written = 0
+  for (let frame = 0; frame < total; frame++) {
+    const time = frame / config.fps
+    const inHold = time >= config.appear && time <= config.appear + config.hold
+    // The held part is identical frame after frame: it is drawn once and reused.
+    let buffer
+    if (inHold && held) buffer = held
+    else {
+      await page.evaluate((t) => window.renderFrame(t), time)
+      buffer = await page.screenshot({ omitBackground: true })
+      if (inHold) held = buffer
+    }
+    if (wanted && !wanted.has(frame)) continue
+    fs.writeFileSync(path.join(output, String(frame).padStart(4, '0') + '.png'), buffer)
+    written++
+  }
+  await browser.close()
+  console.log(`${variant.id}: ${written} frame(s) of ${total} written to ${output}`)
+})().catch((error) => { console.error(error); process.exit(1) })

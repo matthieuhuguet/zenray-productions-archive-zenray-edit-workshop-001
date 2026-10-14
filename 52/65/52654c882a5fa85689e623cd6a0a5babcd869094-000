@@ -1,0 +1,52 @@
+# Titre animé Vogun jaune (14 October 2026)
+
+Gabarit du titre animé en Vogun Medium, jaune pur `#FFFF00`, validé par Matthieu le 6 octobre 2026 dans le projet Vegetation Collection 01. Il vit ici pour servir tout autre titre : changer les lignes et les durées dans le JSON suffit. (14 October 2026)
+
+## Provenance (6 October 2026)
+
+- Source validée : `/Users/zenray/Create/Build/Productions/ZenRayHoudini/VegetationCollection01/maps/trim/petals/title-animation/vogun-cyber/` (`Animation.html`, `Animation.json`, variante `vogun-cyber-pingpong-yellow`).
+- Rendu 4K des images : `.../Scripts/RenderLilyShortTitle.cjs`, copié ici sous `RenderLilyShortTitle.original.cjs` (dossier écrit en dur).
+- Référence de preset : `~/.claude/skills/zenray-houdini/references/shorts/VogunTitles.md`, copiée ici. (14 October 2026)
+- Le MOV jaune rendu (`vogun-cyber-pingpong-yellow.mov`, 1,2 Mo) reste dans le dossier source, non copié.
+
+## Contenu
+
+| Fichier | Rôle |
+|---|---|
+| `Animation.html` | Moteur de l'animation, lettre par lettre, déterministe (`window.setup`, `window.renderFrame`) |
+| `Animation.yellow.json` | Paramètres de la variante jaune seule (celle qu'utilise `RenderTitle.cjs` par défaut) |
+| `Animation.both-variants.json` | Les deux variantes d'origine, jaune et blanc |
+| `RenderTitle.cjs` | Rendu paramétrique en images PNG transparentes (nouveau, 14 October 2026) |
+| `assets/Vogun-Medium.ttf` | La police, Vogun Medium d'origine, sans modification |
+| `Preview-yellow-045.png` | Image 45 de référence, 4K |
+| `VogunTitles.md`, `Animation.md` | Règles et notes de validation |
+
+## Paramètres (tous dans `Animation.yellow.json`)
+
+| Paramètre | Valeur validée | Effet |
+|---|---|---|
+| `lines` | `["ZenRay Vegetation Collection 01", "FLEUR DE LYS"]` | Première ligne en casse normale, seconde en capitales |
+| `appear`, `hold`, `disappear` | 1,5 s, 2 s, 1,5 s | Entrée, maintien, sortie ; total 5 s |
+| `foreground` | `#FFFF00` | Jaune pur (blanc : `#FFFFFF`) |
+| `widthRatio`, `lineGap` | 0,92, 110 | Largeur occupée et écart entre lignes |
+| `slices` | 4 | Bandes découpées par lettre |
+| `shadow` | noir 55 %, flou 16, centré | Ombre élégante, jamais décalée |
+| `pingPongCycles`, `pingPongAmplitude` | 2, 28 | Sortie cybernétique en ping-pong |
+| `width`, `height`, `fps` | 3840, 2160, 30 | Format de sortie |
+
+## Rendre
+
+```bash
+NODE_PATH=<un node_modules qui contient playwright> \
+node RenderTitle.cjs --dir . --out /chemin/frames --frames all
+# options : --config Animation.yellow.json  --variant <index ou id>  --frames 0,45,90
+#           --executable <chemin du chrome-headless-shell> si la version en cache diffère de celle de Playwright
+```
+
+Preuve du 14 October 2026 : l'image 45 rendue depuis ce dossier est identique à `Preview-yellow-045.png` sur tous les pixels visibles (3 840 x 2 160, canal alpha identique, 5 pixels transparents à la couleur cachée différente). (14 October 2026)
+
+## Règles à respecter
+
+- Police originale, sans graisse synthétique ; couleurs pures ; ombre centrée (VogunTitles.md). (6 October 2026)
+- Avant un rendu, demander la durée d'entrée et de maintien si elles manquent ; défaut accepté explicitement : 1,5 s et 2 s. (6 October 2026)
+- Les originaux et les rendus déjà livrés ne sont jamais modifiés ; un nouveau titre prend sa propre copie du JSON. (14 October 2026)

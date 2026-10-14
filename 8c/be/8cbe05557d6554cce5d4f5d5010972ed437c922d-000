@@ -1,0 +1,29 @@
+// 6 October 2026 20:10: Render the validated Vogun effect as transparent 4K frames.
+const fs = require('fs');
+const path = require('path');
+const { chromium } = require('playwright');
+const root = path.resolve(__dirname, '../video/shorts-lily/title');
+const config = JSON.parse(fs.readFileSync(path.join(root, 'Animation.json')));
+(async () => {
+  fs.mkdirSync(path.join(root, 'frames'), { recursive: true });
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: config.width, height: config.height } });
+  await page.goto('file://' + path.join(root, 'Animation.html'));
+  const layout = await page.evaluate(async c => await window.setup(c, c.variants[0]), config);
+  fs.writeFileSync(path.join(root, 'Layout.json'), JSON.stringify(layout, null, 2));
+  const duration = config.appear + config.hold + config.disappear;
+  let held;
+  for (let frame = 0; frame < config.fps * duration; frame++) {
+    const time = frame / config.fps;
+    let buffer;
+    if (time >= config.appear && time <= config.appear + config.hold && held) buffer = held;
+    else {
+      await page.evaluate(t => window.renderFrame(t), time);
+      buffer = await page.screenshot({ omitBackground: true });
+      if (time >= config.appear && time <= config.appear + config.hold) held = buffer;
+    }
+    fs.writeFileSync(path.join(root, 'frames', String(frame).padStart(4, '0') + '.png'), buffer);
+    if (frame % config.fps === 0) process.stdout.write(`Title: ${frame}/${config.fps * duration} frames\n`);
+  }
+  await browser.close();
+})().catch(error => { console.error(error); process.exit(1); });

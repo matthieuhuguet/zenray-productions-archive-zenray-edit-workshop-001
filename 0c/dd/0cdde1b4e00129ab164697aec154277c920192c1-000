@@ -1,0 +1,30 @@
+<!doctype html><html lang="fr"><meta charset="utf-8"><title>ZenRay, trois apparitions</title>
+<style>
+/* 6 October 2026 14:00: Derive the text-asset template with deterministic glyph animation. */
+@font-face{font-family:Display;font-weight:500;src:url('assets/Vogun-Medium.ttf')}html,body{margin:0;overflow:hidden}.glyph{position:absolute;font-family:Display;font-weight:500;white-space:pre;transform-origin:center}.piece{position:absolute;inset:0;font:inherit;white-space:pre}
+</style><body><script>
+let config,variant,glyphs=[];
+const smooth=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)};
+window.setup=async(c,v)=>{config=c;variant=v;document.body.style.background=c.background;document.body.style.color=v.foreground||c.foreground;document.body.style.textShadow=`${c.shadow.offsetX}px ${c.shadow.offsetY}px ${c.shadow.blur}px ${c.shadow.color}`;await document.fonts.load('500 200px Display');
+const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');let rows=[];
+for(const text of c.lines){let size=200;ctx.font=`500 ${size}px Display`;size=Math.floor(size*c.width*c.widthRatio/ctx.measureText(text).width);ctx.font=`500 ${size}px Display`;const metrics=ctx.measureText(text);rows.push({text,size,width:metrics.width,height:metrics.actualBoundingBoxAscent+metrics.actualBoundingBoxDescent,ascent:metrics.actualBoundingBoxAscent});}
+let top=(c.height-rows.reduce((s,r)=>s+r.height,0)-c.lineGap)/2;
+rows.forEach((r,row)=>{ctx.font=`500 ${r.size}px Display`;let left=(c.width-r.width)/2;const baseline=top+r.ascent;
+Array.from(r.text).forEach((letter,i)=>{if(letter===' ')return;const prefix=r.text.slice(0,i),x=left+ctx.measureText(prefix).width;const el=document.createElement('span');el.className='glyph';el.style.cssText=`left:${x}px;top:${baseline-r.size}px;font-size:${r.size}px;line-height:1;width:${ctx.measureText(letter).width+8}px;height:${r.size*1.25}px`;const whole=document.createElement("span");whole.textContent=letter;whole.style.opacity=0;el.append(whole);let pieces=[];for(let k=0;k<c.slices;k++){const p=document.createElement('span');p.className='piece';p.textContent=letter;p.style.clipPath=`inset(${k*25}% 0 ${75-k*25}% 0)`;el.append(p);pieces.push(p)}document.body.append(el);glyphs.push({el,whole,pieces,index:i,row,count:r.text.length});});top+=r.height+c.lineGap;});window.renderFrame(0);return rows;};
+// 6 October 2026 14:20: Traverse each line left to right, then the next line, with discrete electrical impulses.
+window.renderFrame=t=>{for(const g of glyphs){const u=g.index/(g.count-1);const start=config.firstStart+g.row*config.rowDelay+u*config.spread;const p=Math.max(0,Math.min(1,(t-start)/config.settle));const exitStart=4+g.row*config.rowDelay+u*config.spread;const fade=1-smooth((t-exitStart)/config.settle);
+g.whole.style.opacity=p>=1?fade:0;
+const exitProgress=Math.max(0,Math.min(1,(t-exitStart)/config.settle));
+for(let k=0;k<config.slices;k++){const part=g.pieces[k];let opacity=0,dx=0,dy=0;
+if(p>0&&p<1){const tick=Math.floor((t-start)*variant.frequency);const stage=Math.floor(p*5);const polarity=((tick+k)%2)*2-1;const env=(1-p)**1.2;
+if(variant.motion===1){opacity=[.25,1,.08,1,1][stage];dx=polarity*variant.amplitude*env*(k%3===0?1:.18);dy=(tick%3-1)*8*env;}
+if(variant.motion===2){opacity=((tick+k)%4===0)?.03:1;dx=(k%2?1:-1)*variant.amplitude*env*(stage<3?1:.2);dy=(k%3-1)*15*env;}
+if(variant.motion===3){opacity=[.12,1,0,1,1][stage];dx=((tick*7+k*3)%5-2)*variant.amplitude*env*.5;dy=(tick%2?1:-1)*18*env;}
+const bandProgress=Math.max(0,Math.min(1,p*3-k/(config.slices*2)));opacity*=smooth(bandProgress*2);
+}// 6 October 2026 15:15: Add local left-right ping-pong and electrical cuts during the exit.
+if(exitProgress>0&&exitProgress<1){g.whole.style.opacity=0;const envelope=Math.sin(Math.PI*exitProgress);const ping=Math.sin(exitProgress*Math.PI*2*config.pingPongCycles)*config.pingPongAmplitude*envelope;const tick=Math.floor((t-exitStart)*variant.frequency);dx=ping+(k%2?1:-1)*variant.amplitude*.18*envelope;dy=(k%3-1)*5*envelope;opacity=((tick+k)%4===0)?.12:1;}
+part.style.transform=`translate(${Math.round(dx)}px,${Math.round(dy)}px)`;part.style.opacity=opacity*fade;}}};
+// 6 October 2026 14:30: Stretch only the selected effect to 1.5 seconds in and out, with a two-second hold.
+const originalRender=window.renderFrame;
+window.renderFrame=t=>{let virtualTime;if(t<config.appear){virtualTime=t/config.appear;}else if(t<=config.appear+config.hold){virtualTime=1;}else{virtualTime=4+(t-config.appear-config.hold)/config.disappear;}originalRender(virtualTime);};
+</script></body></html>
