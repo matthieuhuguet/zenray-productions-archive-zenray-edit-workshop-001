@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ZenRay Books v3 · 3 Propositions Shelf + Design C Double-Page Livre Ouvert · 18 October 2026</title>
+<style>
+  /* 18 October 2026 : Uniquement AnthropicSerif Medium (500) et InterVariable Medium (500). Zéro Light. */
+  @font-face {
+    font-family: 'InterVariable';
+    src: url('file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/InterVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'AnthropicSerif';
+    src: url('file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/AnthropicSerif-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'AnthropicMono';
+    src: url('file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/AnthropicMono-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-display: swap;
+  }
+
+  :root {
+    --zr-police-sans: 'InterVariable', 'Hiragino Sans W4', 'Hiragino Sans', sans-serif;
+    --zr-police-serif: 'AnthropicSerif', 'Hiragino Mincho ProN W3', serif;
+    --zr-police-mono: 'AnthropicMono', ui-monospace, monospace;
+    --zr-poids-sans: 500;
+    --zr-poids-serif: 500;
+    --zr-poids-nombres: 500;
+
+    /* Paramètres HDA (18 October 2026) */
+    --shelf-cols: 5;
+    --shelf-gap: 24px;
+    --cover-radius: 6px;
+    --book-size: 18px;
+    --book-lh: 1.72;
+    --book-width: 54ch;
+    --page-pad: 44px;
+    --win-radius: 14px;
+
+    /* Thème Papier Clair Apple Books par défaut */
+    --bg-page: #FAF8F4;
+    --bg-sub: #F2EFE9;
+    --fg-ink: #181715;
+    --fg-muted: #78746C;
+    --line-hair: rgba(24, 23, 21, 0.08);
+    --card-surface: rgba(24, 23, 21, 0.03);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0E0F11;
+    color: #F2F2F4;
+    font-family: var(--zr-police-sans);
+    font-weight: 500;
+    padding: 20px 24px 56px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .num {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Barre HDA compacte en haut */
+  .hda-bar {
+    max-width: 1420px;
+    margin: 0 auto 22px;
+    background: #151619;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .hda-left {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  .hda-title {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: 19px;
+    color: #FFFFFF;
+  }
+
+  .hda-sub {
+    font-size: 12px;
+    color: rgba(242, 242, 244, 0.52);
+  }
+
+  .hda-sliders {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .s-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: rgba(242, 242, 244, 0.72);
+  }
+
+  .s-item input[type="range"] {
+    width: 72px;
+    accent-color: #FFFFFF;
+    cursor: pointer;
+  }
+
+  .chip-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .chip {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: #EAEAEF;
+    font-family: var(--zr-police-sans);
+    font-weight: 500;
+    font-size: 11.5px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .chip.active {
+    background: #FFFFFF;
+    color: #111214;
+    border-color: #FFFFFF;
+  }
+
+  .copy-btn {
+    background: #FFFFFF;
+    color: #111214;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 13px;
+    font-family: var(--zr-police-sans);
+    font-weight: 500;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  /* Pile des 3 propositions Shelf + Design C Lecteur */
+  .stack {
+    max-width: 1420px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .card {
+    background: #141518;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    cursor: pointer;
+  }
+
+  .card.selected {
+    border-color: rgba(255, 255, 255, 0.48);
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .card-head-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .badge-letter {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.10);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .card.selected .badge-letter {
+    background: #FFFFFF;
+    color: #111214;
+  }
+
+  .card-title {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: 17px;
+    color: #FFFFFF;
+  }
+
+  .card-note {
+    font-size: 12px;
+    color: rgba(242, 242, 244, 0.52);
+  }
+
+  /* Fenêtre ZenRayProgress ultra-propre */
+  .app-frame {
+    display: grid;
+    grid-template-columns: 164px 1fr;
+    min-height: 440px;
+    border-radius: var(--win-radius);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--bg-page);
+    color: var(--fg-ink);
+  }
+
+  .sidebar {
+    background: #121316;
+    color: rgba(242, 242, 244, 0.64);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 12.5px;
+  }
+
+  .traffic {
+    display: flex;
+    gap: 6px;
+    padding: 2px 6px 16px;
+  }
+
+  .traffic span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .s-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .s-link {
+    padding: 7px 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .s-link.active {
+    background: rgba(255, 255, 255, 0.10);
+    color: #FFFFFF;
+  }
+
+  .s-foot {
+    font-size: 11px;
+    color: rgba(242, 242, 244, 0.40);
+    padding: 0 6px;
+  }
+
+  /* Surface papier commune aux Shelves et au Lecteur Design C */
+  .paper-surface {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--bg-page);
+    color: var(--fg-ink);
+  }
+
+  .quiet-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 34px;
+    font-size: 12.5px;
+    color: var(--fg-muted);
+    border-bottom: 1px solid var(--line-hair);
+  }
+
+  .quiet-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .quiet-brand-title {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: 17px;
+    color: var(--fg-ink);
+  }
+
+  .quiet-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    color: var(--fg-muted);
+    font-size: 12.5px;
+  }
+
+  .quiet-actions span.active-tab {
+    color: var(--fg-ink);
+    border-bottom: 1.5px solid var(--fg-ink);
+    padding-bottom: 2px;
+  }
+
+  .quiet-bottom {
+    padding: 13px 34px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--fg-muted);
+    border-top: 1px solid var(--line-hair);
+    gap: 20px;
+  }
+
+  .hair-progress {
+    flex: 1;
+    max-width: 240px;
+    height: 2px;
+    background: var(--line-hair);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .hair-fill {
+    width: 33%;
+    height: 100%;
+    background: var(--fg-ink);
+  }
+
+  /* =========================================================
+     PROPOSITION SHELF A : GRILLE PORTRAIT 2:3 PURE (APPLE BOOKS / SHELF.JSX ÉPURÉ)
+     ========================================================= */
+  .shelf-a-wrap {
+    padding: 28px 34px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .shelf-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--shelf-cols), minmax(0, 1fr));
+    gap: var(--shelf-gap);
+  }
+
+  .book-item {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    cursor: pointer;
+  }
+
+  .book-cover {
+    aspect-ratio: 2 / 3;
+    border-radius: var(--cover-radius);
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08), inset 2px 0 0 rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(24, 23, 21, 0.08);
+  }
+
+  .cover-tag {
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.72;
+  }
+
+  .cover-serif-title {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 1.22;
+  }
+
+  .cover-author {
+    font-size: 10.5px;
+    opacity: 0.78;
+  }
+
+  .book-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .book-meta-title {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: 13.5px;
+    color: var(--fg-ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .book-meta-sub {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--fg-muted);
+  }
+
+  .mini-bar {
+    height: 2px;
+    background: var(--line-hair);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-top: 2px;
+  }
+
+  .mini-bar > div {
+    height: 100%;
+    background: var(--fg-ink);
+  }
+
+  /* =========================================================
+     PROPOSITION SHELF B : DOUBLE-NIVEAU (TABLE DE CHEVET CREATE/BOOKS + CATALOGUE SHELF.JSON)
+     ========================================================= */
+  .shelf-b-wrap {
+    padding: 24px 34px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .section-kicker {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--fg-muted);
+    margin-bottom: 10px;
+  }
+
+  .section-kicker strong {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--fg-ink);
+  }
+
+  .desk-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .desk-card {
+    display: grid;
+    grid-template-columns: 62px 1fr;
+    gap: 16px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: var(--bg-sub);
+    border: 1px solid var(--line-hair);
+    align-items: center;
+  }
+
+  .desk-cover {
+    aspect-ratio: 2 / 3;
+    border-radius: 4px;
+    padding: 8px;
+    display: flex;
+    align-items: flex-end;
+    font-family: var(--zr-police-serif);
+    font-size: 11px;
+    color: #FFFFFF;
+  }
+
+  .desk-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+  }
+
+  .desk-title {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--fg-ink);
+  }
+
+  .desk-author {
+    font-size: 12px;
+    color: var(--fg-muted);
+  }
+
+  .desk-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4px;
+    font-size: 11.5px;
+    color: var(--fg-ink);
+  }
+
+  .shelf-b-lower {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .compact-book {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .compact-cover {
+    aspect-ratio: 2 / 3;
+    border-radius: 5px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: var(--zr-police-serif);
+    font-size: 11.5px;
+    line-height: 1.2;
+    border: 1px solid var(--line-hair);
+  }
+
+  .compact-title {
+    font-size: 11.5px;
+    color: var(--fg-ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* =========================================================
+     PROPOSITION SHELF C : REGISTRE ÉDITORIAL MINIMALISTE (COUVERTURES + TABLE SHELF.JSX)
+     ========================================================= */
+  .shelf-c-wrap {
+    padding: 20px 34px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .editorial-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+
+  .editorial-table th {
+    text-align: left;
+    font-weight: 500;
+    font-size: 11px;
+    color: var(--fg-muted);
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line-hair);
+  }
+
+  .editorial-table td {
+    padding: 10px;
+    border-bottom: 1px solid var(--line-hair);
+    color: var(--fg-ink);
+    vertical-align: middle;
+  }
+
+  .row-book-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .tiny-cover {
+    width: 24px;
+    height: 34px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .row-book-title {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--fg-ink);
+  }
+
+  .pill-quiet {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 99px;
+    background: var(--bg-sub);
+    color: var(--fg-ink);
+    font-size: 11px;
+  }
+
+  /* =========================================================
+     DESIGN C VALIDÉ : DOUBLE-PAGE LIVRE OUVERT (ZÉRO CHROME, PAPIER NU)
+     ========================================================= */
+  .two-page-spread {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    gap: 48px;
+    padding: var(--page-pad) 48px;
+    align-items: center;
+  }
+
+  .spine-line {
+    width: 1px;
+    height: 100%;
+    background: var(--line-hair);
+  }
+
+  .prose-column {
+    width: 100%;
+    max-width: var(--book-width);
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: var(--book-size);
+    line-height: var(--book-lh);
+    color: var(--fg-ink);
+  }
+
+  .ch-label {
+    font-family: var(--zr-police-sans);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    margin-bottom: 10px;
+  }
+
+  .ch-title {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: calc(var(--book-size) * 1.42);
+    line-height: 1.24;
+    margin-bottom: 18px;
+  }
+
+  .prose-column p {
+    margin-bottom: 14px;
+  }
+
+  .warm-hl {
+    background: rgba(242, 194, 68, 0.28);
+    padding: 1px 3px;
+    border-radius: 3px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- BARRE HDA -->
+  <header class="hda-bar">
+    <div class="hda-left">
+      <h1 class="hda-title">ZenRay Books v3 · Shelf (3 Propositions) + Lecteur Design C</h1>
+      <span class="hda-sub">Adapté de Shelf.jsx (<span class="num">213</span> livres) + Create/Books (<span class="num">5</span> PDF Cloud) · Medium <span class="num">500</span> · <span class="num">18</span> October <span class="num">2026</span></span>
+    </div>
+
+    <div class="hda-sliders">
+      <div class="chip-row">
+        <button class="chip active" id="btnA" onclick="pick('A')">Shelf A · Grille Pure</button>
+        <button class="chip" id="btnB" onclick="pick('B')">Shelf B · Table + Grille</button>
+        <button class="chip" id="btnC" onclick="pick('C')">Shelf C · Registre</button>
+      </div>
+
+      <div class="s-item">
+        <span>Colonnes</span>
+        <input type="range" min="4" max="6" step="1" value="5" oninput="setV('--shelf-cols', this.value, 'vCols')" />
+        <span class="num" id="vCols">5</span>
+      </div>
+
+      <div class="s-item">
+        <span>Écart</span>
+        <input type="range" min="14" max="36" step="2" value="24" oninput="setV('--shelf-gap', this.value + 'px', 'vGap')" />
+        <span class="num" id="vGap">24px</span>
+      </div>
+
+      <div class="s-item">
+        <span>Corps</span>
+        <input type="range" min="15" max="22" step="0.5" value="18" oninput="setV('--book-size', this.value + 'px', 'vSize')" />
+        <span class="num" id="vSize">18px</span>
+      </div>
+
+      <div class="chip-row">
+        <button class="chip active" id="thIvoire" onclick="theme('ivoire')">Ivoire</button>
+        <button class="chip" id="thSepia" onclick="theme('sepia')">Sépia</button>
+        <button class="chip" id="thNuit" onclick="theme('nuit')">Nuit</button>
+      </div>
+
+      <button class="copy-btn" id="copyBtn" onclick="copyAll()">Copier le choix</button>
+    </div>
+  </header>
+
+  <main class="stack">
+
+    <!-- PROPOSITION SHELF A : GRILLE PORTRAIT 2:3 PURE (APPLE BOOKS / SHELF.JSX ÉPURÉ) -->
+    <section class="card selected" id="cardA" onclick="pick('A')">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="badge-letter">A</span>
+          <h2 class="card-title">Shelf A · Étagère Portrait 2:3 Épurée (Apple Books &amp; ZenRayShelf sur Papier Nu)</h2>
+          <span class="card-note">Couvertures 2:3 sur le même papier ivoire que le lecteur Design C, progression fine sous les 5 livres Cloud de Create/Books, filtres discrets en haut.</span>
+        </div>
+      </div>
+
+      <div class="app-frame">
+        <aside class="sidebar">
+          <div>
+            <div class="traffic">
+              <span style="background:#FF5F56;"></span>
+              <span style="background:#FFBD2E;"></span>
+              <span style="background:#27C93F;"></span>
+            </div>
+            <div class="s-nav">
+              <div class="s-link"><span>Create</span></div>
+              <div class="s-link"><span>Progress</span></div>
+              <div class="s-link"><span>Assets</span></div>
+              <div class="s-link active"><span>Books</span><span class="num">218</span></div>
+              <div class="s-link"><span>Money</span></div>
+              <div class="s-link"><span>Sport</span></div>
+            </div>
+          </div>
+          <div class="s-foot">Create / Books + Shelf</div>
+        </aside>
+
+        <div class="paper-surface">
+          <div class="quiet-top">
+            <div class="quiet-brand">
+              <span class="quiet-brand-title">Bibliothèque</span>
+              <span><span class="num">5</span> livres Cloud dans Create/Books · <span class="num">213</span> dans Shelf</span>
+            </div>
+            <div class="quiet-actions">
+              <span class="active-tab">En cours (<span class="num">5</span>)</span>
+              <span>À lire (<span class="num">48</span>)</span>
+              <span>Lus (<span class="num">160</span>)</span>
+              <span>Tous (<span class="num">218</span>)</span>
+              <span>Rechercher</span>
+              <span>+ Ajouter</span>
+            </div>
+          </div>
+
+          <div class="shelf-a-wrap">
+            <div class="shelf-grid">
+              <div class="book-item" onclick="openBook('The Win Without Pitching Manifesto', 'Blair Enns', '33%')">
+                <div class="book-cover" style="background:#1D222B; color:#FAF8F4;">
+                  <span class="cover-tag">Create / Books · PDF</span>
+                  <div class="cover-serif-title">The Win Without Pitching Manifesto</div>
+                  <span class="cover-author">Blair Enns</span>
+                </div>
+                <div class="book-meta">
+                  <div class="book-meta-title">Win Without Pitching</div>
+                  <div class="book-meta-sub"><span>Blair Enns</span><span class="num">33% · p. 42</span></div>
+                  <div class="mini-bar"><div style="width:33%"></div></div>
+                </div>
+              </div>
+
+              <div class="book-item" onclick="openBook('Convenience Store Woman', 'Sayaka Murata', '68%')">
+                <div class="book-cover" style="background:#263E33; color:#FAF8F4;">
+                  <span class="cover-tag">Create / Books · PDF</span>
+                  <div class="cover-serif-title">Convenience Store Woman</div>
+                  <span class="cover-author">Sayaka Murata</span>
+                </div>
+                <div class="book-meta">
+                  <div class="book-meta-title">Convenience Store Woman</div>
+                  <div class="book-meta-sub"><span>Sayaka Murata</span><span class="num">68% · p. 112</span></div>
+                  <div class="mini-bar"><div style="width:68%"></div></div>
+                </div>
+              </div>
+
+              <div class="book-item" onclick="openBook('An Introduction to Japanese Society', 'Yoshio Sugimoto', '21%')">
+                <div class="book-cover" style="background:#4E2825; color:#FAF8F4;">
+                  <span class="cover-tag">Create / Books · PDF</span>
+                  <div class="cover-serif-title">An Introduction to Japanese Society</div>
+                  <span class="cover-author">Yoshio Sugimoto</span>
+                </div>
+                <div class="book-meta">
+                  <div class="book-meta-title">Japanese Society (5th Ed.)</div>
+                  <div class="book-meta-sub"><span>Yoshio Sugimoto</span><span class="num">21% · p. 74</span></div>
+                  <div class="mini-bar"><div style="width:21%"></div></div>
+                </div>
+              </div>
+
+              <div class="book-item" onclick="openBook('Platonic', 'Marisa G. Franco', '14%')">
+                <div class="book-cover" style="background:#342E49; color:#FAF8F4;">
+                  <span class="cover-tag">Create / Books · PDF</span>
+                  <div class="cover-serif-title">Platonic : Science of Attachment</div>
+                  <span class="cover-author">Marisa G. Franco</span>
+                </div>
+                <div class="book-meta">
+                  <div class="book-meta-title">Platonic</div>
+                  <div class="book-meta-sub"><span>Marisa G. Franco</span><span class="num">14% · p. 45</span></div>
+                  <div class="mini-bar"><div style="width:14%"></div></div>
+                </div>
+              </div>
+
+              <div class="book-item" onclick="openBook('Anatomy for Sculptors', 'Uldis Zarins', '52%')">
+                <div class="book-cover" style="background:#423A30; color:#FAF8F4;">
+                  <span class="cover-tag">Create / Books · PDF</span>
+                  <div class="cover-serif-title">Anatomia dlya Skulptorov</div>
+                  <span class="cover-author">Uldis Zarins</span>
+                </div>
+                <div class="book-meta">
+                  <div class="book-meta-title">Anatomy for Sculptors</div>
+                  <div class="book-meta-sub"><span>Uldis Zarins</span><span class="num">52% · p. 118</span></div>
+                  <div class="mini-bar"><div style="width:52%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="quiet-bottom">
+            <span>Cliquer sur un livre l'ouvre directement en Double-Page Livre Ouvert (Design C)</span>
+            <span class="num">5 PDF synchronisés · 213 fiches Shelf.json</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROPOSITION SHELF B : DOUBLE-NIVEAU (TABLE DE CHEVET CREATE/BOOKS + CATALOGUE SHELF.JSON) -->
+    <section class="card" id="cardB" onclick="pick('B')">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="badge-letter">B</span>
+          <h2 class="card-title">Shelf B · Table de Chevet Create/Books en Haut + Grille Shelf.json en Bas</h2>
+          <span class="card-note">Met en avant les 2 lectures actives avec reprise immédiate à la page exacte, suivies de l'étagère complète de 218 livres.</span>
+        </div>
+      </div>
+
+      <div class="app-frame">
+        <aside class="sidebar">
+          <div>
+            <div class="traffic">
+              <span style="background:#FF5F56;"></span>
+              <span style="background:#FFBD2E;"></span>
+              <span style="background:#27C93F;"></span>
+            </div>
+            <div class="s-nav">
+              <div class="s-link"><span>Create</span></div>
+              <div class="s-link"><span>Assets</span></div>
+              <div class="s-link active"><span>Books</span><span class="num">218</span></div>
+              <div class="s-link"><span>Money</span></div>
+            </div>
+          </div>
+          <div class="s-foot">Table de chevet</div>
+        </aside>
+
+        <div class="paper-surface">
+          <div class="quiet-top">
+            <div class="quiet-brand">
+              <span class="quiet-brand-title">Lectures &amp; Étagère</span>
+              <span>Synchronisé avec zenray-data:pages/Books</span>
+            </div>
+            <div class="quiet-actions">
+              <span class="active-tab">Tout voir</span>
+              <span>Create / Books (<span class="num">5</span>)</span>
+              <span>Shelf (<span class="num">213</span>)</span>
+              <span>Exporter CSV</span>
+            </div>
+          </div>
+
+          <div class="shelf-b-wrap">
+            <div>
+              <div class="section-kicker">
+                <strong>Sur la table de chevet (Create / Books)</strong>
+                <span>Reprendre en Double-Page (Design C)</span>
+              </div>
+              <div class="desk-row">
+                <div class="desk-card">
+                  <div class="desk-cover" style="background:#1D222B;">WWP</div>
+                  <div class="desk-info">
+                    <div class="desk-title">The Win Without Pitching Manifesto</div>
+                    <div class="desk-author">Blair Enns · Proclamation II : We Will Specialize</div>
+                    <div class="mini-bar"><div style="width:33%"></div></div>
+                    <div class="desk-foot">
+                      <span class="num">Page 42 sur 128 · 33%</span>
+                      <span>Continuer la lecture →</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="desk-card">
+                  <div class="desk-cover" style="background:#263E33;">CSW</div>
+                  <div class="desk-info">
+                    <div class="desk-title">Convenience Store Woman (コンビニ人間)</div>
+                    <div class="desk-author">Sayaka Murata · Édition annotée</div>
+                    <div class="mini-bar"><div style="width:68%"></div></div>
+                    <div class="desk-foot">
+                      <span class="num">Page 112 sur 164 · 68%</span>
+                      <span>Continuer la lecture →</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <div class="section-kicker">
+                <strong>Catalogue complet (Create/Books + Shelf.json · <span class="num">218</span> livres)</strong>
+                <span>Trié par note et statut</span>
+              </div>
+              <div class="shelf-b-lower">
+                <div class="compact-book">
+                  <div class="compact-cover" style="background:#4E2825; color:#FAF8F4;"><span>PDF</span><span>Japanese Society</span></div>
+                  <div class="compact-title">Japanese Society</div>
+                </div>
+                <div class="compact-book">
+                  <div class="compact-cover" style="background:#342E49; color:#FAF8F4;"><span>PDF</span><span>Platonic</span></div>
+                  <div class="compact-title">Platonic</div>
+                </div>
+                <div class="compact-book">
+                  <div class="compact-cover" style="background:#423A30; color:#FAF8F4;"><span>PDF</span><span>Anatomy Sculptors</span></div>
+                  <div class="compact-title">Anatomy for Sculptors</div>
+                </div>
+                <div class="compact-book">
+                  <div class="compact-cover" style="background:#E6E1D6; color:#181715;"><span>96/100</span><span> $100M Offers</span></div>
+                  <div class="compact-title">$100M Offers · Hormozi</div>
+                </div>
+                <div class="compact-book">
+                  <div class="compact-cover" style="background:#E6E1D6; color:#181715;"><span>95/100</span><span>Hackers &amp; Painters</span></div>
+                  <div class="compact-title">Hackers &amp; Painters · Graham</div>
+                </div>
+                <div class="compact-book">
+                  <div class="compact-cover" style="background:#E6E1D6; color:#181715;"><span>94/100</span><span>Show Your Work!</span></div>
+                  <div class="compact-title">Show Your Work! · Kleon</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="quiet-bottom">
+            <span>Double source unifiée : Create/Books (fichiers PDF/EPUB) + public/shelf/books.json</span>
+            <span class="num">18 min lues aujourd'hui</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROPOSITION SHELF C : REGISTRE ÉDITORIAL MINIMALISTE (TABLE SHELF.JSX SUR PAPIER NU) -->
+    <section class="card" id="cardC" onclick="pick('C')">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="badge-letter">C</span>
+          <h2 class="card-title">Shelf C · Registre Éditorial Minimaliste (Index Tabulaire sur Papier Ivoire)</h2>
+          <span class="card-note">Idéal pour parcourir les 218 livres d'un coup d'œil avec statut, fichier Cloud Create/Books, page actuelle et note sur 100.</span>
+        </div>
+      </div>
+
+      <div class="app-frame">
+        <aside class="sidebar">
+          <div>
+            <div class="traffic">
+              <span style="background:#FF5F56;"></span>
+              <span style="background:#FFBD2E;"></span>
+              <span style="background:#27C93F;"></span>
+            </div>
+            <div class="s-nav">
+              <div class="s-link"><span>Create</span></div>
+              <div class="s-link"><span>Assets</span></div>
+              <div class="s-link active"><span>Books</span><span class="num">218</span></div>
+              <div class="s-link"><span>Money</span></div>
+            </div>
+          </div>
+          <div class="s-foot">Registre éditorial</div>
+        </aside>
+
+        <div class="paper-surface">
+          <div class="quiet-top">
+            <div class="quiet-brand">
+              <span class="quiet-brand-title">Index des Livres</span>
+              <span class="num">218 entrées</span>
+            </div>
+            <div class="quiet-actions">
+              <span class="active-tab">Registre</span>
+              <span>Grille 2:3</span>
+              <span>Filtre : Tous</span>
+              <span>+ Nouveau PDF</span>
+            </div>
+          </div>
+
+          <div class="shelf-c-wrap">
+            <table class="editorial-table">
+              <thead>
+                <tr>
+                  <th>Livre</th>
+                  <th>Auteur</th>
+                  <th>Source Cloud</th>
+                  <th>Statut</th>
+                  <th>Progression</th>
+                  <th>Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><div class="row-book-cell"><div class="tiny-cover" style="background:#1D222B;"></div><span class="row-book-title">The Win Without Pitching Manifesto</span></div></td>
+                  <td>Blair Enns</td>
+                  <td><span class="pill-quiet">Create / Books · PDF</span></td>
+                  <td>En cours</td>
+                  <td class="num">Page 42 / 128 (33%)</td>
+                  <td class="num">97 / 100</td>
+                </tr>
+                <tr>
+                  <td><div class="row-book-cell"><div class="tiny-cover" style="background:#263E33;"></div><span class="row-book-title">Convenience Store Woman</span></div></td>
+                  <td>Sayaka Murata</td>
+                  <td><span class="pill-quiet">Create / Books · PDF</span></td>
+                  <td>En cours</td>
+                  <td class="num">Page 112 / 164 (68%)</td>
+                  <td class="num">92 / 100</td>
+                </tr>
+                <tr>
+                  <td><div class="row-book-cell"><div class="tiny-cover" style="background:#4E2825;"></div><span class="row-book-title">An Introduction to Japanese Society</span></div></td>
+                  <td>Yoshio Sugimoto</td>
+                  <td><span class="pill-quiet">Create / Books · PDF</span></td>
+                  <td>En cours</td>
+                  <td class="num">Page 74 / 352 (21%)</td>
+                  <td class="num">91 / 100</td>
+                </tr>
+                <tr>
+                  <td><div class="row-book-cell"><div class="tiny-cover" style="background:#342E49;"></div><span class="row-book-title">Platonic : Science of Attachment</span></div></td>
+                  <td>Marisa G. Franco</td>
+                  <td><span class="pill-quiet">Create / Books · PDF</span></td>
+                  <td>En cours</td>
+                  <td class="num">Page 45 / 320 (14%)</td>
+                  <td class="num">89 / 100</td>
+                </tr>
+                <tr>
+                  <td><div class="row-book-cell"><div class="tiny-cover" style="background:#423A30;"></div><span class="row-book-title">Anatomy for Sculptors</span></div></td>
+                  <td>Uldis Zarins</td>
+                  <td><span class="pill-quiet">Create / Books · PDF</span></td>
+                  <td>Référence</td>
+                  <td class="num">Page 118 / 228 (52%)</td>
+                  <td class="num">96 / 100</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="quiet-bottom">
+            <span>Compatible import/export CSV, Markdown et JSON de Shelf.jsx</span>
+            <span class="num">5 PDF Cloud prêts à ouvrir</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VUE LECTEUR VALIDÉE : DESIGN C · DOUBLE-PAGE LIVRE OUVERT (ZÉRO CHROME, PAPIER NU) -->
+    <section class="card selected" id="cardReaderC">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="badge-letter">✓</span>
+          <h2 class="card-title">Vue Lecteur Validée · Design C · Double-Page Livre Ouvert (Zéro Chrome, Papier Nu)</h2>
+          <span class="card-note">S'ouvre dès qu'on clique sur un livre dans le Shelf ci-dessus. Bouton « Bibliothèque » en haut à droite pour revenir au Shelf.</span>
+        </div>
+      </div>
+
+      <div class="app-frame">
+        <aside class="sidebar">
+          <div>
+            <div class="traffic">
+              <span style="background:#FF5F56;"></span>
+              <span style="background:#FFBD2E;"></span>
+              <span style="background:#27C93F;"></span>
+            </div>
+            <div class="s-nav">
+              <div class="s-link"><span>Create</span></div>
+              <div class="s-link"><span>Assets</span></div>
+              <div class="s-link active"><span>Books</span><span class="num">5</span></div>
+              <div class="s-link"><span>Money</span></div>
+            </div>
+          </div>
+          <div class="s-foot">Double page · Design C</div>
+        </aside>
+
+        <div class="paper-surface">
+          <div class="quiet-top">
+            <span id="readerBookTitle">The Win Without Pitching Manifesto · Blair Enns</span>
+            <div class="quiet-actions">
+              <span class="active-tab">← Bibliothèque (<span class="num">218</span>)</span>
+              <span>Aa</span>
+              <span>Notes (<span class="num">7</span>)</span>
+              <span>Signet</span>
+            </div>
+          </div>
+
+          <div class="two-page-spread">
+            <article class="prose-column">
+              <div class="ch-label">Chapitre II</div>
+              <h3 class="ch-title">We Will Specialize</h3>
+              <p>
+                We cannot be all things to all people. When we claim expertise in everything, we are believed to be experts in nothing.
+                Positioning is the foundation of creative authority.
+              </p>
+              <p>
+                Clients hire specialists to solve high-stakes problems, whereas generalists are invited to compete on price.
+              </p>
+            </article>
+
+            <div class="spine-line"></div>
+
+            <article class="prose-column">
+              <div class="ch-label">Chapitre III</div>
+              <h3 class="ch-title">Conversations Over Presentations</h3>
+              <p>
+                The formal pitch presentation distances us from the client and turns a collaborative inquiry into a theatrical performance.
+              </p>
+              <p>
+                <span class="warm-hl">Instead of guessing behind closed doors, we sit on the same side of the table and uncover the real constraint together.</span>
+              </p>
+            </article>
+          </div>
+
+          <div class="quiet-bottom">
+            <span class="num">Page 42</span>
+            <div class="hair-progress"><div class="hair-fill"></div></div>
+            <span class="num" id="readerBookProg">Page 43 · 33%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+<script>
+  let chosenShelf = 'A';
+  let currentTheme = 'ivoire';
+
+  const PALETTES = {
+    ivoire: { bg: '#FAF8F4', sub: '#F2EFE9', ink: '#181715', muted: '#78746C', hair: 'rgba(24, 23, 21, 0.08)' },
+    sepia:  { bg: '#F3EBD9', sub: '#E8DEC8', ink: '#262018', muted: '#786B58', hair: 'rgba(38, 32, 24, 0.10)' },
+    nuit:   { bg: '#16171A', sub: '#1E2024', ink: '#EAE8E3', muted: '#8C8A84', hair: 'rgba(255, 255, 255, 0.09)' }
+  };
+
+  function pick(letter) {
+    chosenShelf = letter;
+    ['A', 'B', 'C'].forEach((k) => {
+      document.getElementById('card' + k).classList.toggle('selected', k === letter);
+      document.getElementById('btn' + k).classList.toggle('active', k === letter);
+    });
+  }
+
+  function openBook(title, author, prog) {
+    document.getElementById('readerBookTitle').textContent = title + ' · ' + author;
+    document.getElementById('readerBookProg').textContent = 'Page 43 · ' + prog;
+    document.getElementById('cardReaderC').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function setV(prop, val, id) {
+    document.documentElement.style.setProperty(prop, val);
+    document.getElementById(id).textContent = val;
+  }
+
+  function theme(key) {
+    currentTheme = key;
+    const p = PALETTES[key];
+    document.documentElement.style.setProperty('--bg-page', p.bg);
+    document.documentElement.style.setProperty('--bg-sub', p.sub);
+    document.documentElement.style.setProperty('--fg-ink', p.ink);
+    document.documentElement.style.setProperty('--fg-muted', p.muted);
+    document.documentElement.style.setProperty('--line-hair', p.hair);
+    document.getElementById('thIvoire').classList.toggle('active', key === 'ivoire');
+    document.getElementById('thSepia').classList.toggle('active', key === 'sepia');
+    document.getElementById('thNuit').classList.toggle('active', key === 'nuit');
+  }
+
+  function copyAll() {
+    const cs = getComputedStyle(document.documentElement);
+    const txt = [
+      'Design Books Shelf choisi : Shelf ' + chosenShelf + ' + Lecteur Design C',
+      'theme=' + currentTheme,
+      'cols=' + cs.getPropertyValue('--shelf-cols').trim(),
+      'gap=' + cs.getPropertyValue('--shelf-gap').trim(),
+      'size=' + cs.getPropertyValue('--book-size').trim()
+    ].join(' | ');
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt);
+    const b = document.getElementById('copyBtn');
+    b.textContent = 'Copié : ' + txt;
+    setTimeout(() => { b.textContent = 'Copier le choix'; }, 2200);
+  }
+</script>
+</body>
+</html>
