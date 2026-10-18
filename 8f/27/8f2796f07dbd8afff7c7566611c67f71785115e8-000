@@ -1,0 +1,18 @@
+{
+  "date": "18 October 2026",
+  "slug": "skin-bg-picker-matthieu10-img2",
+  "folder": "2026-10-18-skin-bg-picker-matthieu10-img2",
+  "version": 1,
+  "title": "Skin Bg Picker 2, image 2 de la planche matthieu10 (fond rouge debug, peau, fonds gris, formats)",
+  "module": "photo",
+  "assetsProject": "zenray-edit",
+  "project": "studiophoto-matthieu-17-october-2026",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-studiophoto-matthieu-17-october-2026/Index2",
+  "files": [
+    "index.html"
+  ],
+  "indexSha256": "6fd38b5939446cc2c5e59a32d5b4197079520eba98edd3b13af12694d7ec7a5b",
+  "filedAt": "2026-10-18T19:21:43.771Z",
+  "note": "index2 demandé le 18 October 2026, états de départ : debug rouge"
+}
