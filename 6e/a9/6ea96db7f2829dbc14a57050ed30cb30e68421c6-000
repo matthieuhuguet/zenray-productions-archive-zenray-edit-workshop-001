@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ZenRay Books · 3 Designs Minimalistes (Apple Books + Google Play Livres · Create/Books) · 18 October 2026</title>
+<style>
+  @font-face {
+    font-family: 'InterVariable';
+    src: url('file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/InterVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'AnthropicSerif';
+    src: url('file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/AnthropicSerif-Light.ttf') format('truetype');
+    font-weight: 350;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'AnthropicSerif';
+    src: url('file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/AnthropicSerif-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'AnthropicMono';
+    src: url('file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/AnthropicMono-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-display: swap;
+  }
+
+  :root {
+    --zr-police-sans: 'InterVariable', 'Hiragino Sans W4', 'Hiragino Sans', sans-serif;
+    --zr-police-serif: 'AnthropicSerif', 'Hiragino Mincho ProN W3', serif;
+    --zr-police-mono: 'AnthropicMono', ui-monospace, monospace;
+    --zr-poids-sans: 400;
+    --zr-poids-serif: 350;
+    --zr-poids-nombres: 400;
+
+    /* Paramètres HDA (18 October 2026) */
+    --book-font-family: 'AnthropicSerif', 'Hiragino Mincho ProN W3', serif;
+    --book-font-size: 16.5px;
+    --book-line-height: 1.68;
+    --book-measure: 60ch;
+    --ui-radius: 12px;
+    --page-pad: 28px;
+    --night-light-amber: 0.08;
+
+    /* Thème papier actif (défaut : Papier Ivoire Apple Books) */
+    --paper-bg: #FAF7F0;
+    --paper-elevated: #F3EFE6;
+    --paper-fg: #1C1B18;
+    --paper-muted: #706D65;
+    --paper-hairline: rgba(28, 27, 24, 0.09);
+    --paper-accent: #1C1B18;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0D0E10;
+    color: #ECECEF;
+    font-family: var(--zr-police-sans);
+    font-weight: var(--zr-poids-sans);
+    min-height: 100vh;
+    padding: 20px 24px 44px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .num {
+    font-family: var(--zr-police-serif);
+    font-weight: var(--zr-poids-nombres);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Barre HDA supérieure */
+  .hda-header {
+    max-width: 1480px;
+    margin: 0 auto 20px;
+    background: rgba(22, 23, 26, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .hda-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .hda-title-group {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .hda-title {
+    font-family: var(--zr-police-serif);
+    font-weight: var(--zr-poids-serif);
+    font-size: 21px;
+    color: #F6F6F8;
+    letter-spacing: -0.01em;
+  }
+
+  .hda-subtitle {
+    font-size: 12px;
+    color: rgba(235, 235, 245, 0.56);
+  }
+
+  .cloud-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: rgba(50, 215, 75, 0.12);
+    border: 1px solid rgba(50, 215, 75, 0.28);
+    color: #7EE28E;
+    font-size: 11.5px;
+  }
+
+  .cloud-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #32D74B;
+  }
+
+  .hda-controls-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .ctrl-col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .ctrl-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: rgba(235, 235, 245, 0.62);
+  }
+
+  .ctrl-val {
+    font-family: var(--zr-police-serif);
+    font-weight: var(--zr-poids-nombres);
+    color: #F5F5F7;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    accent-color: #E5E5EA;
+    cursor: pointer;
+  }
+
+  .theme-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .pill-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .group-caption {
+    font-size: 11px;
+    color: rgba(235, 235, 245, 0.50);
+    margin-right: 4px;
+  }
+
+  .hda-chip {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: rgba(235, 235, 245, 0.84);
+    font-family: var(--zr-police-sans);
+    font-weight: var(--zr-poids-sans);
+    font-size: 11.5px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 120ms ease;
+  }
+
+  .hda-chip.active {
+    background: #F4F4F6;
+    color: #111214;
+    border-color: #F4F4F6;
+  }
+
+  .copy-btn {
+    background: #F4F4F6;
+    color: #111214;
+    border: none;
+    border-radius: 9px;
+    padding: 8px 14px;
+    font-family: var(--zr-police-sans);
+    font-weight: var(--zr-poids-sans);
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  /* Grille des 3 propositions */
+  .designs-stack {
+    max-width: 1480px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .design-card {
+    background: #141518;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    cursor: pointer;
+    transition: border-color 140ms ease;
+  }
+
+  .design-card.selected {
+    border-color: rgba(255, 255, 255, 0.42);
+  }
+
+  .design-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .design-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .design-letter {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.09);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--zr-police-serif);
+    font-weight: var(--zr-poids-nombres);
+    font-size: 13px;
+    color: #FFFFFF;
+  }
+
+  .design-card.selected .design-letter {
+    background: #F4F4F6;
+    color: #111214;
+  }
+
+  .design-name {
+    font-family: var(--zr-police-serif);
+    font-weight: var(--zr-poids-serif);
+    font-size: 18px;
+    color: #F4F4F6;
+  }
+
+  .design-desc {
+    font-size: 12px;
+    color: rgba(235, 235, 245, 0.56);
+  }
+
+  .feature-badges {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .f-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    color: rgba(235, 235, 245, 0.72);
+  }
+
+  /* Fenêtre ZenRayProgress simulée */
+  .zrp-window {
+    display: grid;
+    grid-template-columns: 188px 1fr;
+    min-height: 520px;
+    border-radius: var(--ui-radius);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    background: var(--paper-bg);
+    color: var(--paper-fg);
+    position: relative;
+  }
+
+  .zrp-window.compact-rail {
+    grid-template-columns: 54px 1fr;
+  }
+
+  /* Filtre Night Light ambré façon Google Play Livres */
+  .night-light-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 162, 52, var(--night-light-amber));
+    pointer-events: none;
+    z-index: 20;
+    mix-blend-mode: multiply;
+  }
+
+  /* Sidebar ZenRayProgress gauche */
+  .zrp-sidebar {
+    background: #111215;
+    color: rgba(235, 235, 245, 0.72);
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 12px;
+    z-index: 25;
+  }
+
+  .zrp-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 8px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 8px;
+  }
+
+  .zrp-dots {
+    display: inline-flex;
+    gap: 5px;
+  }
+
+  .zrp-dots span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px;
+    border-radius: 7px;
+    color: rgba(235, 235, 245, 0.58);
+    font-size: 12px;
+  }
+
+  .nav-item.active {
+    background: rgba(255, 255, 255, 0.10);
+    color: #FFFFFF;
+  }
+
+  .nav-sub {
+    margin-left: 14px;
+    padding-left: 8px;
+    border-left: 1px solid rgba(255, 255, 255, 0.10);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 2px;
+    margin-bottom: 4px;
+  }
+
+  .nav-sub-item {
+    font-size: 11px;
+    color: rgba(235, 235, 245, 0.50);
+    padding: 3px 6px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .nav-sub-item.cloud-source {
+    color: #7EE28E;
+    background: rgba(50, 215, 75, 0.09);
+  }
+
+  /* Zone principale Books */
+  .books-workspace {
+    display: flex;
+    flex-direction: column;
+    background: var(--paper-bg);
+    color: var(--paper-fg);
+    position: relative;
+  }
+
+  /* Barre supérieure Books minimaliste */
+  .books-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--paper-hairline);
+    font-size: 12px;
+  }
+
+  .topbar-left, .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .book-crumb {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--paper-muted);
+  }
+
+  .book-crumb strong {
+    color: var(--paper-fg);
+    font-weight: var(--zr-poids-sans);
+  }
+
+  .tool-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 9px;
+    border-radius: 7px;
+    border: 1px solid var(--paper-hairline);
+    background: transparent;
+    color: var(--paper-fg);
+    font-size: 11.5px;
+  }
+
+  .tool-pill.active-tool {
+    background: var(--paper-fg);
+    color: var(--paper-bg);
+  }
+
+  /* Bandeau Bibliothèque Create/Books (5 livres réels) */
+  .create-shelf-strip {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    padding: 10px 20px;
+    background: var(--paper-elevated);
+    border-bottom: 1px solid var(--paper-hairline);
+  }
+
+  .shelf-book {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 9px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+  }
+
+  .shelf-book.reading {
+    background: var(--paper-bg);
+    border-color: var(--paper-hairline);
+  }
+
+  .book-spine {
+    width: 24px;
+    height: 34px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--zr-police-serif);
+    font-size: 10px;
+    color: #FFFFFF;
+  }
+
+  .shelf-meta {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .shelf-title {
+    font-size: 11.5px;
+    color: var(--paper-fg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .shelf-sub {
+    font-size: 10.5px;
+    color: var(--paper-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Corps de lecture : Double page (Design A) */
+  .spread-stage {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    padding: var(--page-pad) 34px;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .spread-divider {
+    background: var(--paper-hairline);
+    height: 100%;
+  }
+
+  .book-page {
+    max-width: var(--book-measure);
+    margin: 0 auto;
+    font-family: var(--book-font-family);
+    font-weight: var(--zr-poids-serif);
+    font-size: var(--book-font-size);
+    line-height: var(--book-line-height);
+    color: var(--paper-fg);
+  }
+
+  .chapter-kicker {
+    font-family: var(--zr-police-sans);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--paper-muted);
+    margin-bottom: 6px;
+  }
+
+  .chapter-heading {
+    font-family: var(--zr-police-serif);
+    font-weight: var(--zr-poids-serif);
+    font-size: calc(var(--book-font-size) * 1.42);
+    line-height: 1.25;
+    margin-bottom: 14px;
+    color: var(--paper-fg);
+  }
+
+  .book-page p {
+    margin-bottom: 12px;
+    text-align: justify;
+  }
+
+  .hl-amber {
+    background: rgba(245, 196, 66, 0.34);
+    border-bottom: 1.5px solid rgba(217, 155, 22, 0.75);
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+
+  .hl-green {
+    background: rgba(82, 196, 112, 0.25);
+    border-bottom: 1.5px solid rgba(46, 160, 78, 0.70);
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+
+  .hl-blue {
+    background: rgba(74, 158, 255, 0.24);
+    border-bottom: 1.5px solid rgba(45, 126, 224, 0.70);
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+
+  /* Popover Aa Typo flottant dans Design A */
+  .aa-popover {
+    margin-top: 10px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: var(--paper-elevated);
+    border: 1px solid var(--paper-hairline);
+    font-family: var(--zr-police-sans);
+    font-size: 11.5px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .aa-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .theme-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .t-circle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.22);
+    display: inline-block;
+  }
+
+  /* Pied de page de progression */
+  .books-footer {
+    padding: 9px 20px;
+    border-top: 1px solid var(--paper-hairline);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: var(--paper-muted);
+    gap: 14px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 3px;
+    background: var(--paper-hairline);
+    border-radius: 999px;
+    overflow: hidden;
+    max-width: 360px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--paper-fg);
+    border-radius: 999px;
+  }
+
+  /* Design B : Liseuse Focus Sans Chrome + Line Guide + Popover Sélection */
+  .focus-stage {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 28px;
+    position: relative;
+  }
+
+  .floating-hud-pill {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--paper-elevated);
+    border: 1px solid var(--paper-hairline);
+    font-size: 11.5px;
+    color: var(--paper-fg);
+  }
+
+  .floating-book-pill {
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--paper-elevated);
+    border: 1px solid var(--paper-hairline);
+    font-size: 11.5px;
+    color: var(--paper-muted);
+  }
+
+  .dimmed-paragraph {
+    opacity: 0.34;
+    transition: opacity 150ms ease;
+  }
+
+  .line-guide-active-box {
+    padding: 10px 14px;
+    margin: 6px -14px 12px;
+    border-left: 2px solid var(--paper-fg);
+    background: var(--paper-elevated);
+    border-radius: 0 8px 8px 0;
+  }
+
+  .selection-toolbar {
+    margin: 8px 0 14px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #17181C;
+    color: #F4F4F6;
+    font-family: var(--zr-police-sans);
+    font-size: 11.5px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .sel-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .swatch-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .hl-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .dict-card {
+    padding-top: 7px;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: rgba(235, 235, 245, 0.82);
+    font-size: 11px;
+  }
+
+  /* Design C : Studio d'Étude Split-View */
+  .split-study-stage {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.55fr 1px 1fr;
+    align-items: stretch;
+  }
+
+  .study-reader-pane {
+    padding: var(--page-pad) 32px;
+  }
+
+  .study-notes-pane {
+    padding: 18px 20px;
+    background: var(--paper-elevated);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-family: var(--zr-police-sans);
+    font-size: 12px;
+  }
+
+  .study-tabs {
+    display: flex;
+    gap: 6px;
+    border-bottom: 1px solid var(--paper-hairline);
+    padding-bottom: 9px;
+    flex-wrap: wrap;
+  }
+
+  .note-entry {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--paper-bg);
+    border: 1px solid var(--paper-hairline);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .note-quote {
+    font-family: var(--zr-police-serif);
+    font-size: 13px;
+    color: var(--paper-fg);
+  }
+
+  .note-comment {
+    font-size: 11.5px;
+    color: var(--paper-muted);
+  }
+
+  .flashcard-preview {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px dashed var(--paper-hairline);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11.5px;
+  }
+
+  /* Tableau exhaustif des features Apple Books + Google Play Livres */
+  .research-matrix {
+    max-width: 1480px;
+    margin: 26px auto 0;
+    background: #141518;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  .matrix-title {
+    font-family: var(--zr-police-serif);
+    font-weight: var(--zr-poids-serif);
+    font-size: 19px;
+    margin-bottom: 12px;
+    color: #F4F4F6;
+  }
+
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .matrix-table th, .matrix-table td {
+    text-align: left;
+    padding: 9px 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    vertical-align: top;
+  }
+
+  .matrix-table th {
+    color: rgba(235, 235, 245, 0.56);
+    font-weight: var(--zr-poids-sans);
+  }
+
+  .code-path {
+    font-family: var(--zr-police-mono);
+    font-size: 11px;
+    color: #9CDCFE;
+  }
+</style>
+</head>
+<body>
+
+  <!-- BARRE DE CONTRÔLE HDA -->
+  <header class="hda-header">
+    <div class="hda-top-row">
+      <div class="hda-title-group">
+        <h1 class="hda-title">ZenRay Books · 3 Propositions de Design Minimaliste</h1>
+        <span class="hda-subtitle">Fusion exhaustive Apple Books + Google Play Livres · Hébergé dans Create / dossier Books · <span class="num">18</span> October <span class="num">2026</span></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="cloud-pill">
+          <span class="cloud-dot"></span>
+          <span>Cloud actif : <span class="code-path">zenray-data:pages/Books/</span> (<span class="num">5</span> livres synchronisés dont Blair Enns)</span>
+        </span>
+        <button class="copy-btn" id="copyBtn" onclick="copyChoice()">Copier le choix + valeurs pour le prompt</button>
+      </div>
+    </div>
+
+    <div class="hda-controls-grid">
+      <div class="ctrl-col">
+        <div class="ctrl-label"><span>Design sélectionné</span><span class="ctrl-val" id="valDesign">A</span></div>
+        <div class="pill-group">
+          <button class="hda-chip active" id="btnA" onclick="selectDesign('A')">A · Atelier</button>
+          <button class="hda-chip" id="btnB" onclick="selectDesign('B')">B · Focus</button>
+          <button class="hda-chip" id="btnC" onclick="selectDesign('C')">C · Étude</button>
+        </div>
+      </div>
+
+      <div class="ctrl-col">
+        <div class="ctrl-label"><span>Corps du livre</span><span class="ctrl-val num" id="valFontSize">16.5px</span></div>
+        <input type="range" min="14" max="24" step="0.5" value="16.5" oninput="setVar('--book-font-size', this.value + 'px', 'valFontSize')" />
+      </div>
+
+      <div class="ctrl-col">
+        <div class="ctrl-label"><span>Interlignage</span><span class="ctrl-val num" id="valLineHeight">1.68</span></div>
+        <input type="range" min="1.35" max="2.05" step="0.03" value="1.68" oninput="setVar('--book-line-height', this.value, 'valLineHeight')" />
+      </div>
+
+      <div class="ctrl-col">
+        <div class="ctrl-label"><span>Largeur colonne</span><span class="ctrl-val num" id="valMeasure">60ch</span></div>
+        <input type="range" min="46" max="78" step="2" value="60" oninput="setVar('--book-measure', this.value + 'ch', 'valMeasure')" />
+      </div>
+
+      <div class="ctrl-col">
+        <div class="ctrl-label"><span>Marge page</span><span class="ctrl-val num" id="valPad">28px</span></div>
+        <input type="range" min="16" max="48" step="2" value="28" oninput="setVar('--page-pad', this.value + 'px', 'valPad')" />
+      </div>
+
+      <div class="ctrl-col">
+        <div class="ctrl-label"><span>Rayon fenêtre</span><span class="ctrl-val num" id="valRadius">12px</span></div>
+        <input type="range" min="6" max="22" step="1" value="12" oninput="setVar('--ui-radius', this.value + 'px', 'valRadius')" />
+      </div>
+
+      <div class="ctrl-col">
+        <div class="ctrl-label"><span>Night Light (Ambre)</span><span class="ctrl-val num" id="valAmber">8%</span></div>
+        <input type="range" min="0" max="0.45" step="0.03" value="0.08" oninput="setAmber(this.value)" />
+      </div>
+    </div>
+
+    <div class="theme-strip">
+      <div class="pill-group">
+        <span class="group-caption">Thème de lecture (Apple Books + Play Books) :</span>
+        <button class="hda-chip active" id="thPaper" onclick="setTheme('paper')">Papier Ivoire</button>
+        <button class="hda-chip" id="thSepia" onclick="setTheme('sepia')">Sépia Chaud</button>
+        <button class="hda-chip" id="thQuiet" onclick="setTheme('quiet')">Calme (Quiet)</button>
+        <button class="hda-chip" id="thNight" onclick="setTheme('night')">Nuit Sombre</button>
+        <button class="hda-chip" id="thOled" onclick="setTheme('oled')">Noir OLED</button>
+      </div>
+      <div class="pill-group">
+        <span class="group-caption">Police de lecture :</span>
+        <button class="hda-chip active" id="fnSerif" onclick="setFont('serif')">AnthropicSerif 350</button>
+        <button class="hda-chip" id="fnSans" onclick="setFont('sans')">InterVariable 400</button>
+        <button class="hda-chip" id="fnGeorgia" onclick="setFont('georgia')">Georgia</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- LES 3 DESIGNS -->
+  <main class="designs-stack">
+
+    <!-- DESIGN A : ATELIER ÉDITORIAL CALME -->
+    <section class="design-card selected" id="cardA" onclick="selectDesign('A')">
+      <div class="design-card-head">
+        <div class="design-title-wrap">
+          <span class="design-letter">A</span>
+          <div>
+            <h2 class="design-name">Design A · Atelier Éditorial Calme (Apple Books macOS + Barre Create/Books)</h2>
+            <p class="design-desc">Barre latérale ZenRayProgress à gauche, étagère compacte des <span class="num">5</span> livres de <span class="code-path">Create/Books</span> en haut, double page éditoriale sans aucune boîte imbriquée, popover <span class="code-path">Aa</span> intégré.</p>
+          </div>
+        </div>
+        <div class="feature-badges">
+          <span class="f-badge">Double page / 1 page / Scroll</span>
+          <span class="f-badge">Synchronisation Create/Books</span>
+          <span class="f-badge">Objectif quotidien <span class="num">18/20</span> min</span>
+          <span class="f-badge">TOC + Miniatures + Recherche</span>
+        </div>
+      </div>
+
+      <div class="zrp-window">
+        <div class="night-light-overlay"></div>
+
+        <!-- Sidebar gauche ZenRayProgress -->
+        <aside class="zrp-sidebar">
+          <div>
+            <div class="zrp-brand">
+              <div class="zrp-dots">
+                <span style="background:#FF5F56;"></span>
+                <span style="background:#FFBD2E;"></span>
+                <span style="background:#27C93F;"></span>
+              </div>
+              <span style="font-size:11px;color:#F4F4F6;">ZenRayProgress</span>
+            </div>
+            <div class="nav-list">
+              <div class="nav-item"><span>Create</span><span class="num" style="font-size:10.5px;">Drive</span></div>
+              <div class="nav-sub">
+                <div class="nav-sub-item"><span>Films & Séries</span><span class="num">142</span></div>
+                <div class="nav-sub-item"><span>Music</span><span class="num">89</span></div>
+                <div class="nav-sub-item cloud-source"><span>Books (Source)</span><span class="num">5</span></div>
+              </div>
+              <div class="nav-item"><span>Progress</span></div>
+              <div class="nav-item"><span>Assets</span></div>
+              <div class="nav-item"><span>Plan</span></div>
+              <div class="nav-item"><span>Audio</span></div>
+              <div class="nav-item active">
+                <span>Books</span>
+                <span class="num" style="font-size:10.5px;color:#7EE28E;">5 Cloud</span>
+              </div>
+              <div class="nav-item"><span>Notes</span></div>
+              <div class="nav-item"><span>Shelf</span></div>
+            </div>
+          </div>
+          <div style="padding:8px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:rgba(235,235,245,0.48);">
+            <div>Série lecture : <span class="num" style="color:#F4F4F6;">12</span> jours</div>
+            <div>Objectif <span class="num">2026</span> : <span class="num" style="color:#F4F4F6;">9 / 24</span> livres</div>
+          </div>
+        </aside>
+
+        <!-- Espace Books Design A -->
+        <div class="books-workspace">
+          <div class="books-topbar">
+            <div class="topbar-left">
+              <span class="book-crumb">Create / Books / <strong>The Win Without Pitching Manifesto · Blair Enns</strong></span>
+              <span class="tool-pill">TOC & Miniatures</span>
+              <span class="tool-pill">Rechercher (⌘F)</span>
+            </div>
+            <div class="topbar-right">
+              <span class="tool-pill">Objectif : <span class="num">18 / 20</span> min</span>
+              <span class="tool-pill active-tool">Aa Typo & Thèmes</span>
+              <span class="tool-pill">Notes & Cartes (<span class="num">7</span>)</span>
+              <span class="tool-pill">Marque-page ★</span>
+              <span class="tool-pill">Voix TTS</span>
+              <span class="tool-pill">+ Cloud dans Create/Books</span>
+            </div>
+          </div>
+
+          <!-- Étagère directe Create/Books -->
+          <div class="create-shelf-strip">
+            <div class="shelf-book reading">
+              <div class="book-spine" style="background:#1F242D;">WWP</div>
+              <div class="shelf-meta">
+                <span class="shelf-title">The Win Without Pitching Manifesto</span>
+                <span class="shelf-sub">Blair Enns · <span class="num">33%</span> · Page <span class="num">42/128</span></span>
+              </div>
+            </div>
+            <div class="shelf-book">
+              <div class="book-spine" style="background:#2F4F3E;">CSW</div>
+              <div class="shelf-meta">
+                <span class="shelf-title">Convenience Store Woman</span>
+                <span class="shelf-sub">Sayaka Murata · <span class="num">68%</span> · Page <span class="num">112/163</span></span>
+              </div>
+            </div>
+            <div class="shelf-book">
+              <div class="book-spine" style="background:#5A2D28;">IJS</div>
+              <div class="shelf-meta">
+                <span class="shelf-title">Introduction to Japanese Society</span>
+                <span class="shelf-sub">Yoshio Sugimoto · <span class="num">21%</span> · Page <span class="num">74/352</span></span>
+              </div>
+            </div>
+            <div class="shelf-book">
+              <div class="book-spine" style="background:#3B3454;">PLT</div>
+              <div class="shelf-meta">
+                <span class="shelf-title">Platonic</span>
+                <span class="shelf-sub">Marisa G. Franco · <span class="num">14%</span> · Page <span class="num">45/320</span></span>
+              </div>
+            </div>
+            <div class="shelf-book">
+              <div class="book-spine" style="background:#4E4438;">ANA</div>
+              <div class="shelf-meta">
+                <span class="shelf-title">Anatomia dlya Skulptorov</span>
+                <span class="shelf-sub">Uldis Zarins · <span class="num">52%</span> · Page <span class="num">118/228</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Double page éditoriale -->
+          <div class="spread-stage">
+            <article class="book-page">
+              <div class="chapter-kicker">Proclamation II · The Win Without Pitching Manifesto</div>
+              <h3 class="chapter-heading">We Will Specialize</h3>
+              <p>
+                We cannot be all things to all people. When we claim expertise in everything, we are believed to be experts in nothing.
+                <span class="hl-amber">Positioning is the foundation of creative authority : the moment we narrow our focus, our value rises and the need to pitch evaporates.</span>
+              </p>
+              <p>
+                Clients hire specialists to solve high-stakes problems, whereas generalists are invited to compete on price and free speculative work.
+                Every engagement begins with diagnosis before prescription.
+              </p>
+            </article>
+
+            <div class="spread-divider"></div>
+
+            <article class="book-page">
+              <div class="chapter-kicker">Proclamation III · Diagnostic Before Prescription</div>
+              <h3 class="chapter-heading">We Will Replace Presentations With Conversations</h3>
+              <p>
+                The formal pitch presentation distances us from the client and turns a collaborative inquiry into a theatrical performance.
+                <span class="hl-green">Instead of guessing behind closed doors, we sit on the same side of the table and uncover the real constraint together.</span>
+              </p>
+
+              <!-- Popover Aa minimaliste intégré -->
+              <div class="aa-popover">
+                <div class="aa-row">
+                  <span>Police : <strong>AnthropicSerif 350</strong> · Justification : <strong>Active</strong></span>
+                  <span>Mode : <strong>2 Colonnes · Guide ligne Off</strong></span>
+                </div>
+                <div class="aa-row">
+                  <span>Thèmes : Papier · Sépia · Calme · Nuit · OLED + Filtre Night Light</span>
+                  <span class="num">Luminosité 92% · Texte gras Off</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <footer class="books-footer">
+            <span>Chapitre <span class="num">2</span> sur <span class="num">12</span> · <span class="num">~11</span> min restantes dans ce chapitre · Flèche retour : Page <span class="num">38</span></span>
+            <div class="progress-track"><div class="progress-fill" style="width:33%;"></div></div>
+            <span>Page <span class="num">42</span> sur <span class="num">128</span> (<span class="num">33%</span>) · Sauvegardé dans <span class="code-path">pages/Books/.zrbooks-state.json</span></span>
+          </footer>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN B : LISEUSE FOCUS SANS CHROME (GOOGLE PLAY LIVRES + LINE GUIDE) -->
+    <section class="design-card" id="cardB" onclick="selectDesign('B')">
+      <div class="design-card-head">
+        <div class="design-title-wrap">
+          <span class="design-letter">B</span>
+          <div>
+            <h2 class="design-name">Design B · Liseuse Focus Sans Chrome (Google Play Livres + Guide de Ligne + Bulle Sélection)</h2>
+            <p class="design-desc">Rail gauche replié en icônes, zéro barre d'outils fixe, pilule HUD flottante unique, <span class="code-path">Guide de lecture (Line Guide)</span> qui isole le paragraphe actif, et bulle d'action sur sélection (Surlignage <span class="num">5</span> couleurs, Dictionnaire, Traduction FR/EN/JP, Wikipédia).</p>
+          </div>
+        </div>
+        <div class="feature-badges">
+          <span class="f-badge">Zéro barre fixe</span>
+          <span class="f-badge">Line Guide (Focus ligne)</span>
+          <span class="f-badge">Dictionnaire + Traduction JP/FR + Wikipédia</span>
+          <span class="f-badge">Défilement continu ou Page</span>
+        </div>
+      </div>
+
+      <div class="zrp-window compact-rail">
+        <div class="night-light-overlay"></div>
+
+        <!-- Rail compact ZenRayProgress -->
+        <aside class="zrp-sidebar" style="align-items:center;padding:14px 6px;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+            <div class="zrp-dots">
+              <span style="background:#FF5F56;"></span>
+              <span style="background:#FFBD2E;"></span>
+              <span style="background:#27C93F;"></span>
+            </div>
+            <div class="nav-item" style="justify-content:center;width:36px;">Cr</div>
+            <div class="nav-item" style="justify-content:center;width:36px;">Pr</div>
+            <div class="nav-item" style="justify-content:center;width:36px;">As</div>
+            <div class="nav-item active" style="justify-content:center;width:36px;">Bk</div>
+            <div class="nav-item" style="justify-content:center;width:36px;">Nt</div>
+          </div>
+          <div class="num" style="font-size:10px;color:#7EE28E;">33%</div>
+        </aside>
+
+        <!-- Page Focus -->
+        <div class="books-workspace">
+          <div class="focus-stage">
+            <div class="floating-book-pill">
+              <span>Create / Books</span>
+              <span>·</span>
+              <strong style="color:var(--paper-fg);font-weight:400;">The Win Without Pitching Manifesto</strong>
+              <span>·</span>
+              <span class="num">5</span> livres
+            </div>
+
+            <div class="floating-hud-pill">
+              <span>TOC</span>
+              <span>·</span>
+              <span>Aa</span>
+              <span>·</span>
+              <span>Guide ligne : <strong>Actif</strong></span>
+              <span>·</span>
+              <span>Night Light <span class="num">8%</span></span>
+              <span>·</span>
+              <span>★ Page <span class="num">42</span></span>
+            </div>
+
+            <article class="book-page" style="margin-top:24px;">
+              <div class="chapter-kicker">Proclamation V · We Will Diagnose Before We Prescribe</div>
+              <h3 class="chapter-heading">The Discipline of Restraint</h3>
+
+              <p class="dimmed-paragraph">
+                Most creative firms rush to show solutions in the first meeting because they mistake eagerness for competence.
+                The practitioner who prescribes before diagnosing forfeits the authority of the advisor.
+              </p>
+
+              <div class="line-guide-active-box">
+                <p style="margin-bottom:0;">
+                  <span class="hl-blue">True leverage comes from willingness to walk away when the rules of engagement prevent us from doing our best work.</span>
+                  We never offer speculative creative work, and we never solve the problem before the client has committed to the engagement.
+                </p>
+              </div>
+
+              <!-- Bulle flottante sur sélection de texte (Apple Books + Google Play Livres) -->
+              <div class="selection-toolbar">
+                <div class="sel-top">
+                  <div class="swatch-row">
+                    <span style="margin-right:4px;color:rgba(235,235,245,0.65);">Surligner :</span>
+                    <span class="hl-dot" style="background:#F5C442;"></span>
+                    <span class="hl-dot" style="background:#52C470;"></span>
+                    <span class="hl-dot" style="background:#4A9EFF;"></span>
+                    <span class="hl-dot" style="background:#F27D92;"></span>
+                    <span class="hl-dot" style="background:#B589F7;"></span>
+                    <span style="margin-left:6px;text-decoration:underline;">Souligner</span>
+                  </div>
+                  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <span>+ Note</span>
+                    <span>·</span>
+                    <span>Créer Flashcard</span>
+                    <span>·</span>
+                    <span>Dictionnaire</span>
+                    <span>·</span>
+                    <span>Traduire FR / JP</span>
+                    <span>·</span>
+                    <span>Wikipédia</span>
+                    <span>·</span>
+                    <span>Lire (TTS)</span>
+                  </div>
+                </div>
+                <div class="dict-card">
+                  <span><strong>leverage</strong> (n.) : levier, capacité à multiplier l'effet d'une action avec un effort maîtrisé.</span>
+                  <span>JP : <strong>てこ入れ · レバレッジ</strong> (teko-ire) · Traduction instantanée</span>
+                </div>
+              </div>
+
+              <p class="dimmed-paragraph">
+                When we guard our process with calm certainty, the client trusts us with the outcome.
+              </p>
+            </article>
+          </div>
+
+          <footer class="books-footer">
+            <span>Mode : Défilement continu / Page · Guide de ligne actif</span>
+            <div class="progress-track"><div class="progress-fill" style="width:33%;"></div></div>
+            <span>Page <span class="num">42 / 128</span> · <span class="num">33%</span> · Synchronisé en temps réel dans <span class="code-path">Create/Books</span></span>
+          </footer>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN C : STUDIO D'ÉTUDE SPLIT-VIEW (LECTURE + CARNET, FLASHCARDS & RECHERCHE) -->
+    <section class="design-card" id="cardC" onclick="selectDesign('C')">
+      <div class="design-card-head">
+        <div class="design-title-wrap">
+          <span class="design-letter">C</span>
+          <div>
+            <h2 class="design-name">Design C · Studio d'Étude Split-View (Lecture + Carnet de Notes, Surlignages & Flashcards)</h2>
+            <p class="design-desc">Page de lecture à gauche (<span class="num">62%</span>) et colonne d'étude unifiée à droite (<span class="num">38%</span>) : Surlignages synchronisés dans <span class="code-path">Create/Books</span>, cartes de révision (Study Cards Apple Books) et export automatique Markdown vers <span class="code-path">Create/Notes</span> (façon Google Docs sync de Google Play Livres).</p>
+          </div>
+        </div>
+        <div class="feature-badges">
+          <span class="f-badge">Split-View Lecture + Notes</span>
+          <span class="f-badge">Study Cards / Flashcards</span>
+          <span class="f-badge">Sync auto vers Create/Notes (.md)</span>
+          <span class="f-badge">Recherche plein texte</span>
+        </div>
+      </div>
+
+      <div class="zrp-window">
+        <div class="night-light-overlay"></div>
+
+        <!-- Sidebar ZenRayProgress -->
+        <aside class="zrp-sidebar">
+          <div>
+            <div class="zrp-brand">
+              <div class="zrp-dots">
+                <span style="background:#FF5F56;"></span>
+                <span style="background:#FFBD2E;"></span>
+                <span style="background:#27C93F;"></span>
+              </div>
+              <span style="font-size:11px;color:#F4F4F6;">ZenRayProgress</span>
+            </div>
+            <div class="nav-list">
+              <div class="nav-item"><span>Create</span><span style="font-size:10.5px;">Drive</span></div>
+              <div class="nav-sub">
+                <div class="nav-sub-item cloud-source"><span>Books</span><span class="num">5</span></div>
+                <div class="nav-sub-item"><span>Notes (Sync)</span><span class="num">12</span></div>
+              </div>
+              <div class="nav-item active"><span>Books</span><span class="num" style="font-size:10.5px;color:#7EE28E;">Split</span></div>
+              <div class="nav-item"><span>Japanese</span></div>
+              <div class="nav-item"><span>Shelf</span></div>
+            </div>
+          </div>
+          <div style="padding:8px;border-top:1px solid rgba(255,255,255,0.06);font-size:11px;color:rgba(235,235,245,0.48);">
+            <div><span class="num">7</span> surlignages · <span class="num">4</span> flashcards</div>
+            <div>Sync : <span class="code-path">pages/Books/</span></div>
+          </div>
+        </aside>
+
+        <!-- Espace Split-View -->
+        <div class="books-workspace">
+          <div class="books-topbar">
+            <div class="topbar-left">
+              <span class="book-crumb">Create / Books / <strong>The Win Without Pitching Manifesto</strong></span>
+              <span class="tool-pill">Changer de livre (<span class="num">5</span>)</span>
+            </div>
+            <div class="topbar-right">
+              <span class="tool-pill">Aa Typo</span>
+              <span class="tool-pill active-tool">Split Étude + Flashcards</span>
+              <span class="tool-pill">Exporter vers Create/Notes (.md)</span>
+            </div>
+          </div>
+
+          <div class="split-study-stage">
+            <article class="book-page study-reader-pane">
+              <div class="chapter-kicker">Proclamation VII · We Will Not Pitch</div>
+              <h3 class="chapter-heading">Holding the High Ground</h3>
+              <p>
+                <span class="hl-amber">Every time we decline a speculative pitch and propose a paid diagnostic discovery instead, we shift from vendor to trusted advisor.</span>
+                Scarcity and clear boundaries protect the quality of the craft.
+              </p>
+              <p>
+                In our studio practice, <span class="hl-green">parametric systems and reusable assets allow us to deliver in days what generalist agencies struggle to assemble in months.</span>
+                The client pays for the accumulated leverage, never for the raw hours alone.
+              </p>
+            </article>
+
+            <div class="spread-divider"></div>
+
+            <aside class="study-notes-pane">
+              <div class="study-tabs">
+                <span class="tool-pill active-tool">Surlignages (<span class="num">7</span>)</span>
+                <span class="tool-pill">Flashcards (<span class="num">4</span>)</span>
+                <span class="tool-pill">TOC & Pages</span>
+                <span class="tool-pill">Recherche (<span class="num">14</span>)</span>
+              </div>
+
+              <div class="note-entry">
+                <span class="note-quote">« Positioning is the foundation of creative authority : narrow focus raises value. »</span>
+                <span class="note-comment">Page <span class="num">14</span> · Surlignage Ambre · Note : Appliquer à l'offre Houdini HDA / Unreal Tech Art.</span>
+              </div>
+
+              <div class="note-entry">
+                <span class="note-quote">« Paid diagnostic discovery shifts us from vendor to trusted advisor. »</span>
+                <span class="note-comment">Page <span class="num">42</span> · Surlignage Vert · Synchronisé dans <span class="code-path">Create/Books/Notes/</span></span>
+              </div>
+
+              <div class="flashcard-preview">
+                <span>Carte d'étude #<span class="num">1</span> : Quelle étape remplace le pitch spéculatif ?</span>
+                <strong>Diagnostic payant ↺</strong>
+              </div>
+            </aside>
+          </div>
+
+          <footer class="books-footer">
+            <span>Synchronisation bidirectionnelle : <span class="code-path">pages/Books/</span> + <span class="code-path">pages/Notes/Books/</span></span>
+            <div class="progress-track"><div class="progress-fill" style="width:33%;"></div></div>
+            <span>Page <span class="num">42 / 128</span> (<span class="num">33%</span>) · Objectif : <span class="num">18 / 20</span> min aujourd'hui</span>
+          </footer>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MATRICE EXHAUSTIVE DES FONCTIONNALITÉS APPLE BOOKS + GOOGLE PLAY LIVRES + POLITIQUE CREATE/BOOKS -->
+  <section class="research-matrix">
+    <h2 class="matrix-title">Matrice Exhaustive UX / UI : Apple Books + Google Play Livres + Politique Cloud Create/Books (<span class="num">18</span> October <span class="num">2026</span>)</h2>
+    <table class="matrix-table">
+      <thead>
+        <tr>
+          <th>Catégorie</th>
+          <th>Apple Books (Livres)</th>
+          <th>Google Play Livres</th>
+          <th>Intégration ZenRay Books (<span class="code-path">zenray-progress</span>)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1. Cloud & Architecture Create/Books</strong></td>
+          <td>Bibliothèque iCloud Drive synchronisée, collections, états (En cours, À lire, Terminé), import PDF/EPUB par glisser-déposer.</td>
+          <td>Upload cloud personnel (<span class="num">1000</span>+ fichiers EPUB/PDF jusqu'à <span class="num">100</span> Mo), reprise exacte de la page sur web et mobile.</td>
+          <td>Tous les livres vivent dans <span class="code-path">Create &gt; Books</span> (<span class="code-path">zenray-data:pages/Books/</span>, <span class="num">5</span> livres déjà en ligne dont <em>The Win Without Pitching Manifesto</em>) et s'affichent directement dans l'app <strong>Books</strong> de la barre latérale gauche.</td>
+        </tr>
+        <tr>
+          <td><strong>2. Typographie & Mise en page</strong></td>
+          <td>Menu <span class="code-path">Aa</span> : choix de police, taille du corps, texte gras, espacement des lignes, espacement des mots/caractères, justification forcée, marges.</td>
+          <td>Police (Literata, Sans, Serif), taille du corps, interlignage (<span class="num">3</span> paliers + curseur), alignement justifié ou gauche, zoom page scannée.</td>
+          <td>Trio système (<span class="code-path">AnthropicSerif 350</span> pour le corps, <span class="code-path">AnthropicSerif 400</span> pour tous les nombres, <span class="code-path">InterVariable 400</span> pour l'UI) + curseurs HDA continus (corps, interlignage, largeur <span class="code-path">ch</span>, marges).</td>
+        </tr>
+        <tr>
+          <td><strong>3. Thèmes & Confort Visuel</strong></td>
+          <td>Thèmes <em>Original, Calme (Quiet), Papier, Audacieux, Sépia</em> ; bascule Nuit auto ; <strong>Guide de lecture (Line Guide)</strong> pour isoler la ligne lue.</td>
+          <td>Thèmes Clair, Sépia, Sombre, Noir OLED ; <strong>Night Light (Éclairage nocturne ambré)</strong> progressif anti-lumière bleue ; luminosité dédiée.</td>
+          <td><span class="num">5</span> thèmes (<em>Papier Ivoire, Sépia Chaud, Calme Quiet, Nuit Sombre, Noir OLED</em>) + curseur <strong>Night Light Ambre</strong> (<span class="num">0</span> à <span class="num">45%</span>) + <strong>Guide de ligne</strong> focalisé.</td>
+        </tr>
+        <tr>
+          <td><strong>4. Modes de lecture & Navigation</strong></td>
+          <td>Simple page, Double page (<span class="num">2</span> colonnes), Défilement vertical continu ; TOC hiérarchique ; grille de miniatures ; flèche retour après saut de lien.</td>
+          <td>Mode pages fluides (Flowing text) ou Pages d'origine (Scanned pages PDF) ; barre de progression bas de page avec chapitre, % et pages restantes.</td>
+          <td>Bascule instantanée <em>1 Page / Double Page / Scroll continu</em>, lecteur natif EPUB + PDF vectoriel/scanné, TOC + miniatures, et sauvegarde automatique dans <span class="code-path">pages/Books/.zrbooks-state.json</span>.</td>
+        </tr>
+        <tr>
+          <td><strong>5. Annotations, Étude & Recherche</strong></td>
+          <td>Surlignage <span class="num">5</span> couleurs + soulignement, notes attachées, <strong>Cartes d'étude (Study Cards / Flashcards)</strong>, recherche plein texte, partage de citation.</td>
+          <td>Surlignage <span class="num">4</span> couleurs + notes avec <strong>synchronisation automatique vers un document Google Docs dédié</strong> par livre ; recherche plein texte.</td>
+          <td>Surlignages <span class="num">5</span> couleurs + notes + <strong>Flashcards d'étude</strong> + export/sync automatique en Markdown vers <span class="code-path">Create/Notes</span> + recherche plein texte instantanée.</td>
+        </tr>
+        <tr>
+          <td><strong>6. Dictionnaire, Traduction & Objectifs</strong></td>
+          <td>Définir (dictionnaire), Traduire, Wikipédia, Lecture vocale, et <strong>Objectifs de lecture</strong> (minutes/jour + série quotidienne + livres/an).</td>
+          <td>Dictionnaire hors-ligne/en-ligne au clic, Google Translate intégré, recherche Wikipédia/Web, et <strong>Read Aloud (TTS)</strong> avec suivi du mot lu.</td>
+          <td>Bulle de sélection avec <strong>Dictionnaire + Traduction FR/EN/JP (furigana) + Wikipédia + Voix TTS</strong>, et compteur d'objectif quotidien (<span class="num">20</span> min/jour, série en jours).</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+<script>
+  let currentDesign = 'A';
+  let currentTheme = 'paper';
+  let currentFont = 'serif';
+
+  const THEMES = {
+    paper: { bg: '#FAF7F0', el: '#F3EFE6', fg: '#1C1B18', muted: '#706D65', hair: 'rgba(28, 27, 24, 0.09)' },
+    sepia: { bg: '#F4ECD8', el: '#EAE0C8', fg: '#2B241B', muted: '#7A6C58', hair: 'rgba(43, 36, 27, 0.11)' },
+    quiet: { bg: '#3C3D42', el: '#333438', fg: '#E6E4DF', muted: '#A6A49E', hair: 'rgba(255, 255, 255, 0.10)' },
+    night: { bg: '#18191C', el: '#202226', fg: '#E8E6E1', muted: '#8E8D88', hair: 'rgba(255, 255, 255, 0.09)' },
+    oled:  { bg: '#050506', el: '#101113', fg: '#DFDDD7', muted: '#7C7B76', hair: 'rgba(255, 255, 255, 0.08)' }
+  };
+
+  function selectDesign(letter) {
+    currentDesign = letter;
+    document.getElementById('valDesign').textContent = letter;
+    ['A', 'B', 'C'].forEach((k) => {
+      document.getElementById('card' + k).classList.toggle('selected', k === letter);
+      document.getElementById('btn' + k).classList.toggle('active', k === letter);
+    });
+  }
+
+  function setVar(name, val, labelId) {
+    document.documentElement.style.setProperty(name, val);
+    if (labelId) document.getElementById(labelId).textContent = val;
+  }
+
+  function setAmber(val) {
+    document.documentElement.style.setProperty('--night-light-amber', val);
+    document.getElementById('valAmber').textContent = Math.round(Number(val) * 100) + '%';
+  }
+
+  function setTheme(key) {
+    currentTheme = key;
+    const t = THEMES[key];
+    document.documentElement.style.setProperty('--paper-bg', t.bg);
+    document.documentElement.style.setProperty('--paper-elevated', t.el);
+    document.documentElement.style.setProperty('--paper-fg', t.fg);
+    document.documentElement.style.setProperty('--paper-muted', t.muted);
+    document.documentElement.style.setProperty('--paper-hairline', t.hair);
+    ['Paper', 'Sepia', 'Quiet', 'Night', 'Oled'].forEach((id) => {
+      document.getElementById('th' + id).classList.toggle('active', id.toLowerCase() === key);
+    });
+  }
+
+  function setFont(key) {
+    currentFont = key;
+    const map = {
+      serif: "'AnthropicSerif', 'Hiragino Mincho ProN W3', serif",
+      sans: "'InterVariable', 'Hiragino Sans W4', sans-serif",
+      georgia: "Georgia, 'Hiragino Mincho ProN W3', serif"
+    };
+    document.documentElement.style.setProperty('--book-font-family', map[key]);
+    document.getElementById('fnSerif').classList.toggle('active', key === 'serif');
+    document.getElementById('fnSans').classList.toggle('active', key === 'sans');
+    document.getElementById('fnGeorgia').classList.toggle('active', key === 'georgia');
+  }
+
+  function copyChoice() {
+    const cs = getComputedStyle(document.documentElement);
+    const payload = [
+      'Design Books choisi : ' + currentDesign,
+      'theme=' + currentTheme,
+      'font=' + currentFont,
+      'fontSize=' + cs.getPropertyValue('--book-font-size').trim(),
+      'lineHeight=' + cs.getPropertyValue('--book-line-height').trim(),
+      'measure=' + cs.getPropertyValue('--book-measure').trim(),
+      'pad=' + cs.getPropertyValue('--page-pad').trim(),
+      'radius=' + cs.getPropertyValue('--ui-radius').trim(),
+      'nightLight=' + document.getElementById('valAmber').textContent
+    ].join(' | ');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(payload);
+    }
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copié : ' + payload;
+    setTimeout(() => { btn.textContent = 'Copier le choix + valeurs pour le prompt'; }, 2400);
+  }
+</script>
+</body>
+</html>

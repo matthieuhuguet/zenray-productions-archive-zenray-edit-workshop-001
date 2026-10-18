@@ -1,0 +1,19 @@
+{
+  "date": "18 October 2026",
+  "slug": "zenray-books-minimal-3-designs",
+  "folder": "2026-10-18-zenray-books-minimal-3-designs",
+  "version": 1,
+  "title": "ZenRay Books : 3 designs minimalistes (Apple Books + Google Play Livres + Create/Books)",
+  "module": "ui",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-edit",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-zenray-books-18-october-2026/designs-round-1",
+  "files": [
+    "index.html",
+    "preview-books-3-designs.png"
+  ],
+  "indexSha256": "1c917f17fe7518ed3603d17ff77992657d59058be06f5e2fa6ae70217cba80d8",
+  "filedAt": "2026-10-18T18:35:20.930Z",
+  "note": null
+}
