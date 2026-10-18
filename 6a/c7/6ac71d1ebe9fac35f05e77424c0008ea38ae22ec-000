@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ZenRay Money · 3 Designs Addictifs (Inspiration League of Legends + ZenRay Assets · Medium 500) · 18 October 2026</title>
+<style>
+  /* 18 October 2026 : Uniquement AnthropicSerif Medium (500) et InterVariable Medium (500). Zéro Light. */
+  @font-face {
+    font-family: 'InterVariable';
+    src: url('file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/InterVariable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'AnthropicSerif';
+    src: url('file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/AnthropicSerif-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'AnthropicMono';
+    src: url('file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/AnthropicMono-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-display: swap;
+  }
+
+  :root {
+    --zr-police-sans: 'InterVariable', 'Hiragino Sans W4', 'Hiragino Sans', sans-serif;
+    --zr-police-serif: 'AnthropicSerif', 'Hiragino Mincho ProN W3', serif;
+    --zr-police-mono: 'AnthropicMono', ui-monospace, monospace;
+    --zr-poids-sans: 500;
+    --zr-poids-serif: 500;
+    --zr-poids-nombres: 500;
+
+    /* Paramètres HDA (18 October 2026) */
+    --hex-gold: #C89B3C;
+    --hex-gold-bright: #F0E6D2;
+    --hex-cyan: #0AC8B9;
+    --hex-bg: #090D13;
+    --hex-panel: #0F1620;
+    --hex-border: rgba(200, 155, 60, 0.28);
+    --card-radius: 12px;
+    --panel-pad: 22px;
+    --hero-size: 34px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #07090D;
+    color: #F0E6D2;
+    font-family: var(--zr-police-sans);
+    font-weight: 500;
+    padding: 20px 24px 48px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .num {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Barre HDA supérieure */
+  .hda-bar {
+    max-width: 1420px;
+    margin: 0 auto 22px;
+    background: #0E131B;
+    border: 1px solid var(--hex-border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .hda-title {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: 20px;
+    color: var(--hex-gold-bright);
+  }
+
+  .hda-sub {
+    font-size: 12px;
+    color: rgba(240, 230, 210, 0.56);
+    margin-left: 10px;
+  }
+
+  .hda-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .s-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: rgba(240, 230, 210, 0.75);
+  }
+
+  .s-group input[type="range"] {
+    width: 76px;
+    accent-color: var(--hex-gold);
+    cursor: pointer;
+  }
+
+  .chip {
+    background: rgba(200, 155, 60, 0.10);
+    border: 1px solid var(--hex-border);
+    color: var(--hex-gold-bright);
+    font-family: var(--zr-police-sans);
+    font-weight: 500;
+    font-size: 11.5px;
+    padding: 5px 11px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .chip.active {
+    background: var(--hex-gold);
+    color: #090D13;
+    border-color: var(--hex-gold);
+  }
+
+  .copy-btn {
+    background: var(--hex-gold);
+    color: #090D13;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-family: var(--zr-police-sans);
+    font-weight: 500;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  /* Pile des 3 propositions */
+  .stack {
+    max-width: 1420px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .design-card {
+    background: #0B1017;
+    border: 1px solid rgba(200, 155, 60, 0.18);
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    cursor: pointer;
+  }
+
+  .design-card.selected {
+    border-color: var(--hex-gold);
+    box-shadow: 0 0 0 1px rgba(200, 155, 60, 0.35);
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .card-head-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .letter-hex {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: rgba(200, 155, 60, 0.16);
+    border: 1px solid var(--hex-border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--hex-gold-bright);
+  }
+
+  .design-card.selected .letter-hex {
+    background: var(--hex-gold);
+    color: #090D13;
+  }
+
+  .card-title {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--hex-gold-bright);
+  }
+
+  .card-desc {
+    font-size: 12px;
+    color: rgba(240, 230, 210, 0.56);
+  }
+
+  /* Fenêtre ZenRayProgress avec onglet Money */
+  .zrp-frame {
+    display: grid;
+    grid-template-columns: 168px 1fr;
+    min-height: 450px;
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    border: 1px solid var(--hex-border);
+    background: var(--hex-bg);
+  }
+
+  .zrp-sidebar {
+    background: #080B10;
+    border-right: 1px solid rgba(200, 155, 60, 0.14);
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 12.5px;
+    color: rgba(240, 230, 210, 0.62);
+  }
+
+  .traffic {
+    display: flex;
+    gap: 6px;
+    padding: 2px 6px 16px;
+  }
+
+  .traffic span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .nav-col {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .nav-row {
+    padding: 7px 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-row.active-gold {
+    background: rgba(200, 155, 60, 0.16);
+    border: 1px solid rgba(200, 155, 60, 0.38);
+    color: var(--hex-gold-bright);
+  }
+
+  .money-stage {
+    padding: var(--panel-pad) 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
+    background: radial-gradient(circle at 85% 10%, rgba(200, 155, 60, 0.10), transparent 55%), var(--hex-bg);
+  }
+
+  /* En-tête Ranked LoL */
+  .rank-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(200, 155, 60, 0.18);
+  }
+
+  .rank-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .crest-badge {
+    width: 54px;
+    height: 54px;
+    border-radius: 12px;
+    background: linear-gradient(145deg, rgba(200, 155, 60, 0.28), rgba(10, 200, 185, 0.14));
+    border: 1.5px solid var(--hex-gold);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--zr-police-serif);
+    color: var(--hex-gold-bright);
+  }
+
+  .hero-amount {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: var(--hero-size);
+    color: var(--hex-gold-bright);
+    line-height: 1.1;
+  }
+
+  .rank-sub {
+    font-size: 12px;
+    color: rgba(240, 230, 210, 0.65);
+    margin-top: 4px;
+  }
+
+  .xp-bar-wrap {
+    flex: 1;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .xp-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11.5px;
+    color: rgba(240, 230, 210, 0.78);
+  }
+
+  .xp-track {
+    height: 8px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(200, 155, 60, 0.30);
+    overflow: hidden;
+  }
+
+  .xp-fill {
+    height: 100%;
+    width: 64.5%;
+    background: linear-gradient(90deg, var(--hex-gold), #F5D77F);
+  }
+
+  .gold-cta {
+    background: rgba(200, 155, 60, 0.18);
+    border: 1px solid var(--hex-gold);
+    color: var(--hex-gold-bright);
+    padding: 9px 15px;
+    border-radius: 9px;
+    font-size: 12px;
+  }
+
+  /* Grille 3 Champions = 3 Projets ZenRay Assets */
+  .champions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .champ-card {
+    background: var(--hex-panel);
+    border: 1px solid rgba(200, 155, 60, 0.22);
+    border-radius: var(--card-radius);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .champ-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .champ-name {
+    font-family: var(--zr-police-serif);
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--hex-gold-bright);
+  }
+
+  .mastery-tag {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(10, 200, 185, 0.14);
+    border: 1px solid rgba(10, 200, 185, 0.35);
+    color: var(--hex-cyan);
+  }
+
+  .champ-gold {
+    font-family: var(--zr-police-serif);
+    font-size: 22px;
+    color: var(--hex-gold);
+  }
+
+  .champ-quest {
+    font-size: 11.5px;
+    color: rgba(240, 230, 210, 0.72);
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* Frise hebdomadaire en bas */
+  .weeks-strip {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(200, 155, 60, 0.16);
+  }
+
+  .week-pill {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+
+  .week-pill.current {
+    background: rgba(200, 155, 60, 0.14);
+    border-color: var(--hex-gold);
+  }
+
+  /* Design B : Quêtes Publication -> Cashflow */
+  .bounty-split {
+    display: grid;
+    grid-template-columns: 1fr 1.35fr;
+    gap: 18px;
+    flex: 1;
+  }
+
+  .weekly-drop-box {
+    background: var(--hex-panel);
+    border: 1px solid var(--hex-border);
+    border-radius: var(--card-radius);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .bounty-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .bounty-row {
+    background: var(--hex-panel);
+    border: 1px solid rgba(200, 155, 60, 0.20);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  /* Design C : Trésorerie Souveraine Épurée */
+  .minimal-vault {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .kpi-trio {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .kpi-box {
+    padding: 16px 18px;
+    border-radius: var(--card-radius);
+    background: var(--hex-panel);
+    border: 1px solid rgba(200, 155, 60, 0.20);
+  }
+
+  .kpi-label {
+    font-size: 11.5px;
+    color: rgba(240, 230, 210, 0.58);
+    margin-bottom: 6px;
+  }
+
+  .kpi-val {
+    font-family: var(--zr-police-serif);
+    font-size: 26px;
+    color: var(--hex-gold-bright);
+  }
+</style>
+</head>
+<body>
+
+  <!-- BARRE HDA -->
+  <header class="hda-bar">
+    <div>
+      <span class="hda-title">ZenRay Money · 3 Designs Addictifs (UI League of Legends × ZenRay Assets)</span>
+      <span class="hda-sub">AnthropicSerif Medium <span class="num">500</span> + InterVariable Medium <span class="num">500</span> · <span class="num">18</span> October <span class="num">2026</span></span>
+    </div>
+
+    <div class="hda-controls">
+      <button class="chip active" id="btnA" onclick="pick('A')">A · Hextech Mastery</button>
+      <button class="chip" id="btnB" onclick="pick('B')">B · Quêtes Publication → Or</button>
+      <button class="chip" id="btnC" onclick="pick('C')">C · Vault Minimaliste</button>
+
+      <div class="s-group">
+        <span>Taille Or</span>
+        <input type="range" min="26" max="44" step="2" value="34" oninput="setV('--hero-size', this.value + 'px', 'vHero')" />
+        <span class="num" id="vHero">34px</span>
+      </div>
+
+      <div class="s-group">
+        <span>Rayon</span>
+        <input type="range" min="6" max="20" step="2" value="12" oninput="setV('--card-radius', this.value + 'px', 'vRad')" />
+        <span class="num" id="vRad">12px</span>
+      </div>
+
+      <button class="copy-btn" id="copyBtn" onclick="copyAll()">Copier le choix</button>
+    </div>
+  </header>
+
+  <main class="stack">
+
+    <!-- DESIGN A : HEXTECH RANK & MASTERY (PROJETS ZENRAY ASSETS EN CHAMPIONS) -->
+    <section class="design-card selected" id="cardA" onclick="pick('A')">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="letter-hex">A</span>
+          <div>
+            <h2 class="card-title">Design A · Hextech Rank & Mastery (Chaque Projet ZenRay Assets est un Champion qui rapporte de l'Or)</h2>
+            <p class="card-desc">Palier classé vers <span class="num">10 000 €</span> (Or) et <span class="num">20 000 €</span> (Challenger), <span class="num">3</span> cartes de maîtrise reliées à tes projets ZenRay Assets + publications, et frise hebdomadaire en bas.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="zrp-frame">
+        <aside class="zrp-sidebar">
+          <div>
+            <div class="traffic">
+              <span style="background:#FF5F56;"></span>
+              <span style="background:#FFBD2E;"></span>
+              <span style="background:#27C93F;"></span>
+            </div>
+            <div class="nav-col">
+              <div class="nav-row"><span>Create</span></div>
+              <div class="nav-row"><span>Progress</span></div>
+              <div class="nav-row"><span>Assets</span><span class="num">28</span></div>
+              <div class="nav-row active-gold"><span>Money</span><span class="num">Or II</span></div>
+              <div class="nav-row"><span>PostKit</span></div>
+              <div class="nav-row"><span>Books</span><span class="num">5</span></div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:rgba(240,230,210,0.45);">Saison Cap Japon <span class="num">2027</span></div>
+        </aside>
+
+        <div class="money-stage">
+          <div class="rank-banner">
+            <div class="rank-left">
+              <div class="crest-badge">
+                <span style="font-size:10px;letter-spacing:0.06em;">OR II</span>
+                <span class="num" style="font-size:15px;">64%</span>
+              </div>
+              <div>
+                <div class="hero-amount num">6 450 € <span style="font-size:16px;color:rgba(240,230,210,0.50);">/ 10 000 € palier Or · 20 000 € Challenger</span></div>
+                <div class="rank-sub">Semaine <span class="num">42</span> : <strong style="color:#4CD964;" class="num">+1 250 € net</strong> · Série active : <span class="num">6</span> semaines de suite avec publication</div>
+              </div>
+            </div>
+
+            <div class="xp-bar-wrap">
+              <div class="xp-labels">
+                <span>Progression vers Palier <span class="num">10 000 €</span></span>
+                <span class="num">3 550 € restants</span>
+              </div>
+              <div class="xp-track"><div class="xp-fill"></div></div>
+            </div>
+
+            <div class="gold-cta">+ Clôturer Semaine <span class="num">42</span></div>
+          </div>
+
+          <div class="champions-grid">
+            <div class="champ-card">
+              <div class="champ-top">
+                <span class="champ-name">ZenRayStudio · HDA & Store</span>
+                <span class="mastery-tag">Maîtrise <span class="num">7</span></span>
+              </div>
+              <div class="champ-gold num">3 200 € <span style="font-size:12px;color:rgba(240,230,210,0.55);">cumulés (<span class="num">+480 €</span> S42)</span></div>
+              <div class="champ-quest">
+                <span>Publications liées : <span class="num">4</span> posts X / YouTube</span>
+                <span style="color:var(--hex-cyan);">+150 XP · Publier</span>
+              </div>
+            </div>
+
+            <div class="champ-card">
+              <div class="champ-top">
+                <span class="champ-name">Freelance Tech Art · UE5</span>
+                <span class="mastery-tag">Maîtrise <span class="num">6</span></span>
+              </div>
+              <div class="champ-gold num">2 800 € <span style="font-size:12px;color:rgba(240,230,210,0.55);">cumulés (<span class="num">+650 €</span> S42)</span></div>
+              <div class="champ-quest">
+                <span>Candidatures Studios : <span class="num">15</span> envoyées</span>
+                <span style="color:var(--hex-cyan);">+200 XP · Relancer</span>
+              </div>
+            </div>
+
+            <div class="champ-card">
+              <div class="champ-top">
+                <span class="champ-name">ZenRayShards · Devlog & Assets</span>
+                <span class="mastery-tag">Maîtrise <span class="num">5</span></span>
+              </div>
+              <div class="champ-gold num">450 € <span style="font-size:12px;color:rgba(240,230,210,0.55);">cumulés (<span class="num">+120 €</span> S42)</span></div>
+              <div class="champ-quest">
+                <span>Preuve publique : <span class="num">3</span> shorts publiés</span>
+                <span style="color:var(--hex-cyan);">+100 XP · Poster</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="weeks-strip">
+            <div class="week-pill"><span>Semaine <span class="num">38</span></span><span class="num" style="color:var(--hex-gold);">+720 €</span></div>
+            <div class="week-pill"><span>Semaine <span class="num">39</span></span><span class="num" style="color:var(--hex-gold);">+890 €</span></div>
+            <div class="week-pill"><span>Semaine <span class="num">40</span></span><span class="num" style="color:var(--hex-gold);">+1 040 €</span></div>
+            <div class="week-pill"><span>Semaine <span class="num">41</span></span><span class="num" style="color:var(--hex-gold);">+1 150 €</span></div>
+            <div class="week-pill current"><span>Semaine <span class="num">42</span></span><span class="num" style="color:#4CD964;">+1 250 €</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN B : QUÊTES D'OR & BOUCLE PUBLICATION -> REVENU -->
+    <section class="design-card" id="cardB" onclick="pick('B')">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="letter-hex">B</span>
+          <div>
+            <h2 class="card-title">Design B · Boucle Publication → Cash (Coffre Hebdomadaire & Primes d'Exposition)</h2>
+            <p class="card-desc">Connecte chaque projet ZenRay Assets à ses publications de la semaine : publier débloque le multiplicateur d'exposition et alimente le coffre hebdomadaire.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="zrp-frame">
+        <aside class="zrp-sidebar">
+          <div>
+            <div class="traffic">
+              <span style="background:#FF5F56;"></span>
+              <span style="background:#FFBD2E;"></span>
+              <span style="background:#27C93F;"></span>
+            </div>
+            <div class="nav-col">
+              <div class="nav-row"><span>Create</span></div>
+              <div class="nav-row"><span>Assets</span></div>
+              <div class="nav-row active-gold"><span>Money</span><span class="num">S42</span></div>
+              <div class="nav-row"><span>PostKit</span></div>
+              <div class="nav-row"><span>Books</span></div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--hex-cyan);">Combo Expo ×<span class="num">1.6</span></div>
+        </aside>
+
+        <div class="money-stage">
+          <div class="bounty-split">
+            <div class="weekly-drop-box">
+              <div>
+                <div style="font-size:11.5px;color:var(--hex-cyan);text-transform:uppercase;letter-spacing:0.06em;">Coffre de la Semaine <span class="num">42</span></div>
+                <div class="hero-amount num" style="margin-top:8px;">+1 250 € <span style="font-size:14px;color:rgba(240,230,210,0.55);">net cette semaine</span></div>
+                <div style="margin-top:12px;font-size:12.5px;color:rgba(240,230,210,0.75);">
+                  Entrées : <span class="num" style="color:#4CD964;">+1 400 €</span> · Dépenses : <span class="num" style="color:#FF6B6B;">-150 €</span>
+                </div>
+              </div>
+
+              <div style="padding:12px;border-radius:10px;background:rgba(200,155,60,0.10);border:1px solid var(--hex-border);">
+                <div style="font-size:12px;">Total cumulé : <strong class="num">6 450 € / 20 000 €</strong></div>
+                <div class="xp-track" style="margin-top:8px;"><div class="xp-fill" style="width:64.5%;"></div></div>
+              </div>
+
+              <div class="gold-cta" style="text-align:center;">+ Ajouter un flux financier ou une vente</div>
+            </div>
+
+            <div class="bounty-list">
+              <div class="bounty-row">
+                <div>
+                  <div class="champ-name" style="font-size:15px;">1. Pack Texture Copernicus (ZenRay Assets)</div>
+                  <div style="font-size:11.5px;color:rgba(240,230,210,0.62);margin-top:3px;"><span class="num">2</span> posts publiés sur X + ArtStation · <span class="num">12</span> ventes Gumroad / Studio</div>
+                </div>
+                <div class="num" style="font-size:18px;color:var(--hex-gold);">+480 €</div>
+              </div>
+
+              <div class="bounty-row">
+                <div>
+                  <div class="champ-name" style="font-size:15px;">2. Freelance Houdini / Unreal Tech Art</div>
+                  <div style="font-size:11.5px;color:rgba(240,230,210,0.62);margin-top:3px;"><span class="num">1</span> livrable client validé · <span class="num">10</span> studios contactés</div>
+                </div>
+                <div class="num" style="font-size:18px;color:var(--hex-gold);">+650 €</div>
+              </div>
+
+              <div class="bounty-row">
+                <div>
+                  <div class="champ-name" style="font-size:15px;">3. ZenRayColorPicker & Micro-Apps</div>
+                  <div style="font-size:11.5px;color:rgba(240,230,210,0.62);margin-top:3px;">Vidéo démo publiée · Acquisition audience + ventes</div>
+                </div>
+                <div class="num" style="font-size:18px;color:var(--hex-gold);">+120 €</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESIGN C : VAULT MINIMALISTE OR & OBSIDIENNE -->
+    <section class="design-card" id="cardC" onclick="pick('C')">
+      <div class="card-head">
+        <div class="card-head-left">
+          <span class="letter-hex">C</span>
+          <div>
+            <h2 class="card-title">Design C · Vault Minimaliste Or & Obsidienne (Ultra-Direct, 3 Compteurs & Table Assets)</h2>
+            <p class="card-desc">Le plus sobre : trois grands compteurs en AnthropicSerif Medium 500, la jauge vers <span class="num">10 000 € / 20 000 €</span>, et l'état direct de chaque projet ZenRay Assets.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="zrp-frame">
+        <aside class="zrp-sidebar">
+          <div>
+            <div class="traffic">
+              <span style="background:#FF5F56;"></span>
+              <span style="background:#FFBD2E;"></span>
+              <span style="background:#27C93F;"></span>
+            </div>
+            <div class="nav-col">
+              <div class="nav-row"><span>Create</span></div>
+              <div class="nav-row"><span>Assets</span></div>
+              <div class="nav-row active-gold"><span>Money</span><span class="num">6.4k€</span></div>
+              <div class="nav-row"><span>Books</span></div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:rgba(240,230,210,0.45);">ZenRay Money</div>
+        </aside>
+
+        <div class="money-stage minimal-vault">
+          <div class="kpi-trio">
+            <div class="kpi-box">
+              <div class="kpi-label">Trésorerie Cumulée (Cap <span class="num">10 000 € / 20 000 €</span>)</div>
+              <div class="kpi-val num">6 450 €</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-label">Flux Net Semaine <span class="num">42</span></div>
+              <div class="kpi-val num" style="color:#4CD964;">+1 250 €</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-label">Projets Assets Publiés & Monétisés</div>
+              <div class="kpi-val num">6 / 8 actifs</div>
+            </div>
+          </div>
+
+          <div class="bounty-list">
+            <div class="bounty-row">
+              <span><strong>ZenRayStudio (HDA & Textures)</strong> · <span class="num">4</span> publications cette semaine</span>
+              <span class="num" style="color:var(--hex-gold);">3 200 € (50%)</span>
+            </div>
+            <div class="bounty-row">
+              <span><strong>Freelance Tech Art</strong> · <span class="num">15</span> candidatures + mission active</span>
+              <span class="num" style="color:var(--hex-gold);">2 800 € (43%)</span>
+            </div>
+            <div class="bounty-row">
+              <span><strong>Apps & Outils (ZenRayColorPicker, Shards)</strong> · <span class="num">3</span> preuves publiques</span>
+              <span class="num" style="color:var(--hex-gold);">450 € (7%)</span>
+            </div>
+          </div>
+
+          <div class="weeks-strip">
+            <div class="week-pill"><span>S38</span><span class="num">+720 €</span></div>
+            <div class="week-pill"><span>S39</span><span class="num">+890 €</span></div>
+            <div class="week-pill"><span>S40</span><span class="num">+1 040 €</span></div>
+            <div class="week-pill"><span>S41</span><span class="num">+1 150 €</span></div>
+            <div class="week-pill current"><span>S42</span><span class="num">+1 250 €</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+<script>
+  let chosen = 'A';
+
+  function pick(letter) {
+    chosen = letter;
+    ['A', 'B', 'C'].forEach((k) => {
+      document.getElementById('card' + k).classList.toggle('selected', k === letter);
+      document.getElementById('btn' + k).classList.toggle('active', k === letter);
+    });
+  }
+
+  function setV(prop, val, id) {
+    document.documentElement.style.setProperty(prop, val);
+    document.getElementById(id).textContent = val;
+  }
+
+  function copyAll() {
+    const cs = getComputedStyle(document.documentElement);
+    const txt = [
+      'Design Money choisi : ' + chosen,
+      'heroSize=' + cs.getPropertyValue('--hero-size').trim(),
+      'radius=' + cs.getPropertyValue('--card-radius').trim()
+    ].join(' | ');
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt);
+    const b = document.getElementById('copyBtn');
+    b.textContent = 'Copié : ' + txt;
+    setTimeout(() => { b.textContent = 'Copier le choix'; }, 2200);
+  }
+</script>
+</body>
+</html>
