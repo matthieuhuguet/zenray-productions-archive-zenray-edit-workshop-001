@@ -1,0 +1,18 @@
+{
+  "date": "21 October 2026",
+  "slug": "skin-bg-picker-orange-e8714e",
+  "folder": "2026-10-21-skin-bg-picker-orange-e8714e",
+  "version": 1,
+  "title": "Skin Bg Picker, fond couleur unie orange #e8714e (images 5 et 10)",
+  "module": "photo",
+  "assetsProject": "zenray-edit",
+  "project": "studiophoto-matthieu-17-october-2026",
+  "status": "pending",
+  "atelier": "/tmp/atelier-orange",
+  "files": [
+    "index.html"
+  ],
+  "indexSha256": "cee70c59070c4d103106766d1d38ed07e55a67554ee428f197219ebda839b92f",
+  "filedAt": "2026-10-20T22:43:59.200Z",
+  "note": "21 October 2026, valeurs de depart de Matthieu, correction du champ source copie"
+}
