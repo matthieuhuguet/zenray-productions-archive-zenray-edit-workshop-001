@@ -1,0 +1,18 @@
+{
+  "date": "23 October 2026",
+  "slug": "zenray-knowledge-v2",
+  "folder": "2026-10-23-zenray-knowledge-v2",
+  "version": 1,
+  "title": "ZenRay Knowledge V2, fil et bibliothèque épurés",
+  "module": "knowledge",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-edit",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-zenray-knowledge-23-october-2026",
+  "files": [
+    "index.html"
+  ],
+  "indexSha256": "787c8c7f4506d6a1103f9c1a34ab379af7613e7ea418405fee293fcc560c4174",
+  "filedAt": "2026-10-23T11:41:17.545Z",
+  "note": null
+}
