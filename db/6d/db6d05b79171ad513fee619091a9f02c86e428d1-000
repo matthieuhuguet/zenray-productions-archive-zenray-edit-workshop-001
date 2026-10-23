@@ -1,0 +1,18 @@
+{
+  "date": "23 October 2026",
+  "slug": "zenray-knowledge-sectra",
+  "folder": "2026-10-23-zenray-knowledge-sectra",
+  "version": 1,
+  "title": "ZenRay Knowledge, titres GT Sectra LCG",
+  "module": "knowledge",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-edit",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-zenray-knowledge-23-october-2026",
+  "files": [
+    "index.html"
+  ],
+  "indexSha256": "d80dff3484e2b722479ddf1c7a3335dd813b6e19414800ec2f3f0726be587783",
+  "filedAt": "2026-10-23T11:20:12.425Z",
+  "note": null
+}
