@@ -1,0 +1,18 @@
+{
+  "date": "23 October 2026",
+  "slug": "skin-bg-picker-radial-ffa000-ff5c02",
+  "folder": "2026-10-23-skin-bg-picker-radial-ffa000-ff5c02",
+  "version": 1,
+  "title": "Studio photo, dégradé radial ffa000 vers ff5c02",
+  "module": "skin-bg-picker",
+  "assetsProject": "zenray-edit",
+  "project": "studiophoto-matthieu-17-october-2026",
+  "status": "pending",
+  "atelier": "/tmp/radial-atelier",
+  "files": [
+    "index.html"
+  ],
+  "indexSha256": "1b91fdd667b40b88723ab2ce5664b171aabedc982d000b175e72f58a44042842",
+  "filedAt": "2026-10-23T11:12:46.039Z",
+  "note": null
+}
