@@ -1,0 +1,18 @@
+{
+  "date": "23 October 2026",
+  "slug": "zenray-knowledge-v3",
+  "folder": "2026-10-23-zenray-knowledge-v3",
+  "version": 1,
+  "title": "ZenRay Knowledge V3, liste reliée à la réponse",
+  "module": "knowledge",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-edit",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-zenray-knowledge-23-october-2026",
+  "files": [
+    "index.html"
+  ],
+  "indexSha256": "e7bfd270c3b5c8d53fbe76fe28a514ba2ac6ed523a26254c3edaa212b0d2d696",
+  "filedAt": "2026-10-23T11:45:04.808Z",
+  "note": null
+}

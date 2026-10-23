@@ -1,0 +1,24 @@
+{
+  "date": "23 October 2026",
+  "slug": "documentation-zenray-height-houdini",
+  "folder": "2026-10-23-documentation-zenray-height-houdini",
+  "version": 1,
+  "title": "Documentation ZenRay Height et ZenRay Houdini : trois designs",
+  "module": "zenray-houdini",
+  "assetsProject": "zenray-edit",
+  "project": "louisiana-bayou",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/skills/zenray-houdini/docs/designs",
+  "files": [
+    "index.html",
+    "zenray-height_A_desk.png",
+    "zenray-height_A_mob.png",
+    "zenray-height_B_desk.png",
+    "zenray-height_B_mob.png",
+    "zenray-height_C_desk.png",
+    "zenray-height_C_mob.png"
+  ],
+  "indexSha256": "01aa410739e61f83bc0c9ccc89f35c896bdb0c671780cfc74ba1f51ed0691502",
+  "filedAt": "2026-10-23T11:45:00.181Z",
+  "note": null
+}

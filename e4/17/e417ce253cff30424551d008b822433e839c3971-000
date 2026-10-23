@@ -1,0 +1,20 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentation ZenRay : trois designs</title>
+<style>
+:root { --bg:#fbfaf8; --fg:#1f1d1a; --muted:#6b665e; --line:#e2ded6; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#191816; --fg:#ece8e1; --muted:#a39d93; --line:#34312c; color-scheme: dark; } }
+body { margin:0; background:var(--bg); color:var(--fg); font:400 16px/1.55 'InterVariable', sans-serif; }
+main { max-width:1200px; margin:0 auto; padding:32px max(16px, env(safe-area-inset-left, 0px)); }
+h1 { font:400 34px/1.2 'AnthropicSerif', serif; margin:0 0 6px; } p { color:var(--muted); max-width:72ch; }
+.grid { display:grid; gap:28px; grid-template-columns:repeat(auto-fit, minmax(min(100%, 340px), 1fr)); margin-top:24px; }
+.card { border:1px solid var(--line); border-radius:10px; padding:14px; }
+.card img { width:100%; display:block; border-radius:6px; border:1px solid var(--line); }
+.card h2 { font:400 22px/1.3 'AnthropicSerif', serif; margin:12px 0 4px; } .card a { color:inherit; }
+</style></head><body><main>
+<h1>Documentation ZenRay Height et ZenRay Houdini : trois designs</h1>
+<p>Le même contenu, lu dans le code et le skill par BuildDocs.py, rendu avec trois jeux de jetons. Le choix se règle par la clé « design » de DocsConfig.json ; les deux articles suivent.</p>
+<div class="grid">
+<div class="card"><img src="zenray-height_A_desk.png" alt="design A"><h2>A · Encyclopédie</h2><p>Texte en serif, colonne de lecture étroite, sommaire à gauche, tableaux sobres.</p><p><a href="zenray-height_A.html">ZenRay Height</a> · <a href="zenray-houdini_A.html">ZenRay Houdini</a></p></div>
+<div class="card"><img src="zenray-height_B_desk.png" alt="design B"><h2>B · Fiche technique</h2><p>Texte en sans-serif, cartes arrondies, étapes en grille, sommaire en haut, largeur plus grande.</p><p><a href="zenray-height_B.html">ZenRay Height</a> · <a href="zenray-houdini_B.html">ZenRay Houdini</a></p></div>
+<div class="card"><img src="zenray-height_C_desk.png" alt="design C"><h2>C · Atlas</h2><p>Grand rendu de l'asset en tête, tons papier, largeur maximale pour les images.</p><p><a href="zenray-height_C.html">ZenRay Height</a> · <a href="zenray-houdini_C.html">ZenRay Houdini</a></p></div>
+</div></main></body></html>
