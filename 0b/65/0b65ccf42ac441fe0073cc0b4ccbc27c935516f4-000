@@ -1,0 +1,22 @@
+<!doctype html><html lang="fr"><head><style>@font-face{font-family:'GT Sectra LCG';src:url('../../../zenray-edit/designs/_shared/fonts/GT-Sectra-LCGV-Regular.woff2') format('woff2');font-weight:400}@font-face{font-family:'AnthropicSerif';src:url('/Users/zenray/Create/Build/Productions/GithubProductions/ZenRayProgress/public/fonts/AnthropicSerif-Romans.woff2') format('woff2')}</style><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentation ZenRay : trois designs</title>
+<!-- 23 October 2026 : typography from /Users/zenray/.claude/rules/Typography1.md (23 October 2026, 13:45 and 13:50). -->
+<style>
+:root { --paper:#f7f6f2; --ink:#242923; --muted:#636b60; --line:#dedfd6; --serif:'AnthropicSerif', serif; --sans:'InterVariable', sans-serif; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --paper:#20231f; --ink:#eff0e7; --muted:#b4bbae; --line:#41483b; color-scheme: dark; } }
+body { margin:0; background:var(--paper); color:var(--ink); font:400 18px/1.6 var(--serif); }
+main { max-width:1200px; margin:0 auto; padding-block:48px; padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); }
+.eyebrow { font:500 12px/1.5 var(--sans); text-transform:uppercase; letter-spacing:.1em; color:var(--muted); }
+h1 { font:400 44px/1.1 'GT Sectra LCG', var(--serif); margin:12px 0; } h2 { font:400 24px/1.3 'GT Sectra LCG', var(--serif); margin:12px 0 4px; }
+p { max-width:70ch; margin:0 0 10px; } .small { font:500 13px/1.5 var(--sans); color:var(--muted); }
+.grid { display:grid; gap:28px; grid-template-columns:repeat(auto-fit, minmax(min(100%, 340px), 1fr)); margin-top:28px; }
+.card img { width:100%; display:block; border:1px solid var(--line); border-radius:10px; } a { color:inherit; text-underline-offset:4px; }
+</style></head><body><main>
+<div class="eyebrow">Documentation · Louisiana Bayou</div>
+<h1>ZenRay Height et ZenRay Houdini : trois designs</h1>
+<p>Même contenu, même gabarit d'article (zenray-edit) et même typographie. Les designs changent la palette et la largeur de lecture. Le choix se règle par la clé « design » de DocsConfig.json.</p>
+<div class="grid">
+<div class="card"><img src="zenray-height_A_desk.png" alt="design A"><h2>A · Sauge</h2><p class="small">Papier clair, accent vert, largeur 980 px.</p><p class="small"><a href="zenray-height_A.html">ZenRay Height</a> · <a href="zenray-houdini_A.html">ZenRay Houdini</a></p></div>
+<div class="card"><img src="zenray-height_B_desk.png" alt="design B"><h2>B · Graphite</h2><p class="small">Gris froid, accent bleu, largeur 1120 px pour les tableaux.</p><p class="small"><a href="zenray-height_B.html">ZenRay Height</a> · <a href="zenray-houdini_B.html">ZenRay Houdini</a></p></div>
+<div class="card"><img src="zenray-height_C_desk.png" alt="design C"><h2>C · Argile</h2><p class="small">Papier chaud, accent brun, largeur 900 px pour la lecture.</p><p class="small"><a href="zenray-height_C.html">ZenRay Height</a> · <a href="zenray-houdini_C.html">ZenRay Houdini</a></p></div>
+</div></main></body></html>

@@ -1,0 +1,21 @@
+{
+  "date": "23 October 2026",
+  "slug": "documentation-zenray-height-houdini-v3",
+  "folder": "2026-10-23-documentation-zenray-height-houdini-v3",
+  "version": 1,
+  "title": "Documentation ZenRay Height et ZenRay Houdini : titres GT Sectra LCG, corps Anthropic Serif",
+  "module": "zenray-houdini",
+  "assetsProject": "zenray-edit",
+  "project": "louisiana-bayou",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/skills/zenray-houdini/docs/designs",
+  "files": [
+    "index.html",
+    "zenray-height_A_desk.png",
+    "zenray-height_B_desk.png",
+    "zenray-height_C_desk.png"
+  ],
+  "indexSha256": "7631fefbb35df8af65bf5c6efbebe725d81b7f07500a3f6516a140c490a2f606",
+  "filedAt": "2026-10-23T12:19:23.638Z",
+  "note": null
+}
