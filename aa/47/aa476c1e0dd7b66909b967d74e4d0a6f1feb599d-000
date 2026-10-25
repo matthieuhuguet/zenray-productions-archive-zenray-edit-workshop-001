@@ -1,0 +1,163 @@
+<!doctype html>
+<!-- index.html, 25 October 2026 14:15. Three QLMarkdown themes, previewed on a real qlmarkdown_cli render. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QLMarkdown, trois designs</title>
+<style>
+@font-face { font-family: "ZR UI"; font-weight: 100 900; src: url("file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/InterVariable.woff2") format("woff2"); }
+@font-face { font-family: "ZR Title"; font-style: italic; font-weight: 400; src: url("file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/GT-Sectra-LCGV-Regular-Italic.woff2") format("woff2"); }
+@font-face { font-family: "ZR Title"; font-style: italic; font-weight: 400; src: url("file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/AnthropicSerif-Regular.ttf"); unicode-range: U+0030-0039; }
+@font-face { font-family: "ZR Body"; font-weight: 400; src: url("file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/AnthropicSerif-Regular.ttf"); }
+@font-face { font-family: "ZR Mono"; font-weight: 400; src: url("file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/AnthropicMono-Regular.ttf"); }
+:root {
+  --ui-bg: #F4F3EF; --ui-panel: #FFFFFF; --ui-ink: #1C1B19; --ui-muted: #6E6A63; --ui-line: #E3E0D8; --ui-accent: #C15F3C;
+  --ui-size: 13px; --ui-gap: 20px; --ui-radius: 14px; --preview-h: 860px;
+  --f-ui: "ZR UI", "Inter Variable", -apple-system, sans-serif; --f-title: "ZR Title", "GT Sectra LCG", serif;
+  --f-body: "ZR Body", "AnthropicSerif", serif; --f-mono: "ZR Mono", "AnthropicMono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --ui-bg: #18181A; --ui-panel: #222225; --ui-ink: #ECEAE5; --ui-muted: #9C988F; --ui-line: #333336; --ui-accent: #E0805F; } }
+:root[data-theme="dark"] { --ui-bg: #18181A; --ui-panel: #222225; --ui-ink: #ECEAE5; --ui-muted: #9C988F; --ui-line: #333336; --ui-accent: #E0805F; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--ui-bg); color: var(--ui-ink); font-family: var(--f-ui); font-weight: 400; font-size: var(--ui-size); }
+header { padding: 28px var(--ui-gap) 8px; max-width: 1900px; margin: 0 auto; }
+h1.page { font-family: var(--f-title); font-style: italic; font-weight: 400; font-size: 40px; margin: 0 0 6px; }
+.lead { font-family: var(--f-body); font-size: 16px; color: var(--ui-muted); max-width: 900px; line-height: 1.55; margin: 0 0 14px; }
+.lead code, .mono { font-family: var(--f-mono); font-size: 0.9em; }
+.bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 0; }
+.seg { display: inline-flex; border: 1px solid var(--ui-line); border-radius: 99px; overflow: hidden; background: var(--ui-panel); }
+.seg button { border: 0; background: none; color: var(--ui-muted); font: inherit; padding: 7px 14px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ui-ink); color: var(--ui-bg); }
+main { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--ui-gap); padding: var(--ui-gap); max-width: 1900px; margin: 0 auto; }
+main.single { grid-template-columns: minmax(0, 1fr); }
+main.single .card:not(.on) { display: none; }
+@media (max-width: 1100px) { main { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--ui-panel); border: 1px solid var(--ui-line); border-radius: var(--ui-radius); overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.card-head { padding: 16px 18px 12px; border-bottom: 1px solid var(--ui-line); }
+.card-head h2 { font-family: var(--f-title); font-style: italic; font-weight: 400; font-size: 26px; margin: 0 0 4px; }
+.card-head p { font-family: var(--f-body); font-size: 14.5px; line-height: 1.5; color: var(--ui-muted); margin: 0; }
+.tag { display: inline-block; font-family: var(--f-mono); font-size: 11px; color: var(--ui-muted); border: 1px solid var(--ui-line); border-radius: 6px; padding: 1px 6px; margin-top: 8px; }
+iframe { display: block; width: 100%; height: var(--preview-h); border: 0; background: #fff; }
+.panel { border-top: 1px solid var(--ui-line); padding: 6px 18px 16px; }
+details { border-bottom: 1px solid var(--ui-line); padding: 8px 0; }
+details:last-of-type { border-bottom: 0; }
+summary { cursor: pointer; color: var(--ui-ink); padding: 4px 0; list-style: none; }
+summary::after { content: "+"; float: right; color: var(--ui-muted); }
+details[open] summary::after { content: "−"; }
+.row { display: grid; grid-template-columns: 1fr 120px 58px; gap: 10px; align-items: center; padding: 4px 0; }
+.row label { color: var(--ui-muted); }
+.row input[type="range"] { width: 100%; accent-color: var(--ui-accent); }
+.row input[type="color"] { width: 100%; height: 26px; border: 1px solid var(--ui-line); border-radius: 6px; background: none; padding: 0 2px; }
+.row select { width: 100%; font: inherit; color: var(--ui-ink); background: var(--ui-bg); border: 1px solid var(--ui-line); border-radius: 6px; padding: 3px 4px; }
+.val { font-family: var(--f-body); text-align: right; color: var(--ui-ink); font-size: 13.5px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 12px; }
+.btn { font: inherit; border: 1px solid var(--ui-line); background: var(--ui-bg); color: var(--ui-ink); border-radius: 99px; padding: 7px 13px; cursor: pointer; }
+.btn.primary { background: var(--ui-ink); color: var(--ui-bg); border-color: var(--ui-ink); }
+.toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); background: var(--ui-ink); color: var(--ui-bg); padding: 9px 16px; border-radius: 99px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.toast.show { opacity: 1; }
+footer { max-width: 1900px; margin: 0 auto; padding: 0 var(--ui-gap) 40px; font-family: var(--f-body); color: var(--ui-muted); font-size: 14.5px; line-height: 1.6; }
+@media (max-width: 640px) { :root { --ui-gap: 16px; --preview-h: 640px; } h1.page { font-size: 30px; } .row { grid-template-columns: 1fr 96px 50px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1 class="page">QLMarkdown, trois designs</h1>
+  <p class="lead">Les trois aperçus montrent un vrai rendu de <code>qlmarkdown_cli</code> 1.5.1 sous chaque thème. Titres en GT Sectra LCG italique, chiffres droits en Anthropic Serif, corps en Anthropic Serif Regular, code en Anthropic Mono. Chaque curseur réécrit le thème, et le CSS copié est exactement celui qui s'installe dans QLMarkdown.</p>
+  <div class="bar">
+    <div class="seg" role="group" aria-label="Mode"><button data-scheme="light" aria-pressed="true">Clair</button><button data-scheme="dark" aria-pressed="false">Sombre</button></div>
+    <div class="seg" role="group" aria-label="Affichage"><button data-view="all" aria-pressed="true">Côte à côte</button><button data-view="A" aria-pressed="false">A</button><button data-view="B" aria-pressed="false">B</button><button data-view="C" aria-pressed="false">C</button></div>
+    <button class="btn" id="copyAll">Copier les valeurs des trois pour le prompt</button>
+    <button class="btn" id="exportJson">Télécharger params.json</button>
+  </div>
+</header>
+<main id="grid"></main>
+<footer>
+  Pour installer : télécharger <span class="mono">params.json</span> dans l'atelier (ou garder les défauts), puis lancer <span class="mono">node Scripts/BuildThemes.mjs --install</span>. Les trois fichiers <span class="mono">ZenRay-A-Ivoire.css</span>, <span class="mono">ZenRay-B-Papier.css</span> et <span class="mono">ZenRay-C-Graphite.css</span> apparaissent alors dans les réglages de QLMarkdown, à côté de vos thèmes Claude, qui restent intacts.
+</footer>
+<div class="toast" id="toast"></div>
+<script src="ThemeEngine.js"></script>
+<script src="sample/Body.js"></script>
+<script>
+// Page logic, 25 October 2026 14:15. Sliders only change params; ThemeEngine.css() rebuilds the theme.
+// FR : les curseurs ne changent que les paramètres ; le thème est reconstruit par ThemeEngine.
+var STORE = 'zrql-params-v1', state = { scheme: 'light', view: 'all' }, params = {};
+var saved = {}; try { saved = JSON.parse(localStorage.getItem(STORE) || '{}'); } catch (e) {}
+Object.keys(ZRQL.DESIGNS).forEach(function (id) { params[id] = Object.assign({}, ZRQL.DESIGNS[id].params, saved[id] || {}); });
+function persist() { try { localStorage.setItem(STORE, JSON.stringify(params)); } catch (e) {} }
+function toast(t) { var el = document.getElementById('toast'); el.textContent = t; el.classList.add('show'); setTimeout(function () { el.classList.remove('show'); }, 1600); }
+function fmt(s, v) { return s.type ? '' : (Math.round(v * 1000) / 1000) + (s.unit ? ' ' + s.unit : ''); }
+function doc(id) {
+  var d = ZRQL.DESIGNS[id];
+  return '<!doctype html><html><head><meta charset="utf-8"><style>' + ZRQL.css(d, params[id], { scheme: state.scheme, withUrls: true }) + '</style></head><body>' + ZRQL_SAMPLE + '</body></html>';
+}
+function render(id) { document.getElementById('f' + id).srcdoc = doc(id); }
+function diff(id) {
+  var base = ZRQL.DESIGNS[id].params, out = [];
+  Object.keys(base).forEach(function (k) { if (String(params[id][k]) !== String(base[k])) out.push(k + '=' + params[id][k]); });
+  return id + ' (' + ZRQL.DESIGNS[id].name + ') : ' + (out.length ? out.join(', ') : 'défauts');
+}
+function copy(text, msg) { navigator.clipboard.writeText(text).then(function () { toast(msg); }, function () { prompt('Copier :', text); }); }
+function download(name, text, type) { var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: type })); a.download = name; a.click(); }
+function build() {
+  var grid = document.getElementById('grid');
+  Object.keys(ZRQL.DESIGNS).forEach(function (id) {
+    var d = ZRQL.DESIGNS[id], card = document.createElement('section');
+    card.className = 'card'; card.id = 'card' + id;
+    var cats = {};
+    ZRQL.SPEC.forEach(function (s) { (cats[s.cat] = cats[s.cat] || []).push(s); });
+    var html = '<div class="card-head"><h2>' + id + '. ' + d.name + '</h2><p>' + d.pitch + '</p><span class="tag">' + d.file + '</span></div>' +
+      '<iframe id="f' + id + '" title="Aperçu ' + d.name + '"></iframe><div class="panel">';
+    Object.keys(cats).forEach(function (c, i) {
+      html += '<details' + (i === 0 ? ' open' : '') + '><summary>' + c + '</summary>';
+      cats[c].forEach(function (s) {
+        var v = params[id][s.key], ctl;
+        if (s.type === 'select') ctl = '<select data-k="' + s.key + '">' + s.options.map(function (o) { return '<option' + (o === v ? ' selected' : '') + '>' + o + '</option>'; }).join('') + '</select>';
+        else if (s.type === 'color') ctl = '<input type="color" data-k="' + s.key + '" value="' + v + '">';
+        else ctl = '<input type="range" data-k="' + s.key + '" min="' + s.min + '" max="' + s.max + '" step="' + s.step + '" value="' + v + '">';
+        html += '<div class="row"><label>' + s.label + '</label>' + ctl + '<span class="val" data-v="' + s.key + '">' + (s.type === 'color' ? v.toUpperCase() : fmt(s, v)) + '</span></div>';
+      });
+      html += '</details>';
+    });
+    html += '<div class="actions"><button class="btn primary" data-a="css">Télécharger ' + d.file + '</button><button class="btn" data-a="copycss">Copier le CSS</button><button class="btn" data-a="prompt">Copier les valeurs pour le prompt</button><button class="btn" data-a="reset">Revenir aux défauts</button></div></div>';
+    card.innerHTML = html;
+    grid.appendChild(card);
+    card.addEventListener('input', function (e) {
+      var k = e.target.dataset.k; if (!k) return;
+      var s = ZRQL.SPEC.filter(function (x) { return x.key === k; })[0];
+      params[id][k] = s.type ? e.target.value : Number(e.target.value);
+      card.querySelector('[data-v="' + k + '"]').textContent = s.type === 'color' ? e.target.value.toUpperCase() : fmt(s, params[id][k]);
+      persist(); render(id);
+    });
+    card.addEventListener('click', function (e) {
+      var a = e.target.dataset.a; if (!a) return;
+      if (a === 'css') download(d.file, ZRQL.css(d, params[id]), 'text/css');
+      if (a === 'copycss') copy(ZRQL.css(d, params[id]), 'CSS copié');
+      if (a === 'prompt') copy('QLMarkdown ' + diff(id), 'Valeurs copiées');
+      if (a === 'reset') { params[id] = Object.assign({}, d.params); persist(); grid.innerHTML = ''; build(); toast('Défauts rétablis'); }
+    });
+    render(id);
+  });
+  applyView();
+}
+function applyView() {
+  var g = document.getElementById('grid'); g.classList.toggle('single', state.view !== 'all');
+  Object.keys(ZRQL.DESIGNS).forEach(function (id) { document.getElementById('card' + id).classList.toggle('on', state.view === id); });
+}
+document.querySelectorAll('[data-scheme]').forEach(function (b) { b.onclick = function () {
+  state.scheme = b.dataset.scheme;
+  document.querySelectorAll('[data-scheme]').forEach(function (x) { x.setAttribute('aria-pressed', x === b); });
+  Object.keys(ZRQL.DESIGNS).forEach(render);
+}; });
+document.querySelectorAll('[data-view]').forEach(function (b) { b.onclick = function () {
+  state.view = b.dataset.view;
+  document.querySelectorAll('[data-view]').forEach(function (x) { x.setAttribute('aria-pressed', x === b); });
+  applyView();
+}; });
+document.getElementById('copyAll').onclick = function () { copy('QLMarkdown ' + Object.keys(ZRQL.DESIGNS).map(diff).join(' ; '), 'Valeurs copiées'); };
+document.getElementById('exportJson').onclick = function () { download('params.json', JSON.stringify(params, null, 2), 'application/json'); };
+build();
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "date": "25 October 2026",
+  "slug": "qlmarkdown-trois-designs",
+  "folder": "2026-10-25-qlmarkdown-trois-designs",
+  "version": 1,
+  "title": "QLMarkdown, trois designs",
+  "module": "qlmarkdown",
+  "assetsProject": "zenray-edit",
+  "project": "qlmarkdown-designs-25-october-2026",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-qlmarkdown-designs-25-october-2026",
+  "files": [
+    "index.html"
+  ],
+  "indexSha256": "c2cb17a04775aaa1ab1586002856089adcaff5fd800f90886de55dfd6ece36a8",
+  "filedAt": "2026-10-25T13:55:28.231Z",
+  "note": null
+}
