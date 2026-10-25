@@ -1,0 +1,20 @@
+{
+  "date": "25 October 2026",
+  "slug": "zenray-dictate-papier-verre",
+  "folder": "2026-10-25-zenray-dictate-papier-verre",
+  "version": 1,
+  "title": "ZenRay Dictate V2, Papier en verre et icônes SF Symbols",
+  "module": "zenray-dictate",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-dictate",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-zenray-dictate-ui-v2-25-october-2026",
+  "files": [
+    "index.html",
+    "wallpaper-1280.avif",
+    "wallpaper.webp"
+  ],
+  "indexSha256": "c2f438d32340d736e5773b42069a702e014ac550cf8d075881dea8fba117a044",
+  "filedAt": "2026-10-25T18:27:16.414Z",
+  "note": null
+}

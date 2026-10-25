@@ -1,0 +1,202 @@
+<!doctype html>
+<!-- 25 October 2026, 20:15 CEST: ZenRay Dictate V2, three Papier + Liquid Glass variants and three SF Symbols icons. Every value lives in :root. -->
+<!-- FR : trois variantes Papier en verre et trois icônes SF Symbols ; toutes les valeurs sont des variables CSS. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZenRay Dictate, Papier en verre</title>
+<style>
+@font-face{font-family:'InterVariable';src:url("file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/InterVariable.woff2") format('woff2');font-weight:100 900}
+@font-face{font-family:'GT Sectra LCG';src:url("file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/GT-Sectra-LCGV-Regular-Italic.woff2") format('woff2');font-style:italic;font-weight:400}
+@font-face{font-family:'AnthropicSerif';src:url("file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/AnthropicSerif-Romans.woff2") format('woff2');font-weight:300 800}
+
+:root{
+  /* Global tokens / jetons globaux */
+  --zr-police-sans:'InterVariable','Hiragino Sans W4',sans-serif;
+  --zr-police-titres:'GT Sectra LCG','AnthropicSerif',serif;
+  --zr-police-serif:'AnthropicSerif','Hiragino Mincho ProN W3',serif;
+  --page-bg:#f4f1ea; --page-ink:#1d1b18; --page-muted:#6f6a61; --page-line:#e0dace;
+  --clay:#d97757; --clay-light:#e8957a; --clay-deep:#b85c3e; --cream:255 248 238;
+  /* Liquid Glass tokens, from templates/liquid-glass (23 October 2026) */
+  --lg-blur:22px; --lg-sat:170%; --lg-tint-top:.20; --lg-tint-bottom:.07; --lg-rim:.60;
+  --lg-filter:blur(var(--lg-blur)) saturate(var(--lg-sat));
+  --lg-edge:inset 0 calc(1*var(--pt)) 0 rgb(255 255 255 / var(--lg-rim)),inset 0 0 0 calc(1*var(--pt)) rgb(255 255 255 / calc(var(--lg-rim)*.3));
+  --lg-shadow:0 calc(24*var(--pt)) calc(60*var(--pt)) rgb(0 0 0 / .22),0 calc(4*var(--pt)) calc(14*var(--pt)) rgb(0 0 0 / .10);
+  /* Screen: 1728 x 1117 pt ; positions in pt */
+  --pt:1px; --edge-inset:16; --bottom-inset:24; --dock-h:64;
+  --t-fade:.18s; --t-move:.24s;
+}
+@media (prefers-color-scheme:dark){:root{--page-bg:#171614;--page-ink:#ece7de;--page-muted:#9b958b;--page-line:#2c2a26}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page-bg);color:var(--page-ink);font-family:var(--zr-police-sans);font-size:15px;line-height:1.55}
+.num{font-family:var(--zr-police-serif);font-style:normal}
+header.page,main{max-width:1180px;margin:0 auto;padding:0 20px}
+header.page{padding-top:40px}
+h1,h2{font-family:var(--zr-police-titres);font-style:italic;font-weight:400;letter-spacing:-.01em;margin:0}
+h1{font-size:44px;line-height:1.1} h2{font-size:30px}
+.lede,.desc{color:var(--page-muted);max-width:780px}
+.tag{font-size:12px;font-weight:500;color:var(--clay-deep);letter-spacing:.04em;text-transform:uppercase}
+button.ui{font:inherit;font-weight:500;border:1px solid var(--page-line);background:transparent;color:var(--page-ink);border-radius:999px;padding:7px 14px;cursor:pointer}
+section.proposal{margin:44px 0 0;padding-top:28px;border-top:1px solid var(--page-line)}
+.meta{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:baseline}
+
+/* SF Symbol drawn as a mask, coloured by currentColor / symbole SF en masque, couleur par currentColor */
+.sf{display:inline-block;width:var(--sz,16px);height:var(--sz,16px);background:currentColor;-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat;flex:none}
+.sf.mic{--m:url(symbols/mic.fill.png)} .sf.copy{--m:url(symbols/doc.on.doc.png)} .sf.ret{--m:url(symbols/return.png)}
+.sf.redo{--m:url(symbols/arrow.clockwise.png)} .sf.check{--m:url(symbols/checkmark.png)} .sf.wave{--m:url(symbols/waveform.png)}
+.sf.rays{--m:url(symbols/rays.png)} .sf.wavemic{--m:url(symbols/waveform.and.mic.png)} .sf.close{--m:url(symbols/xmark.png)}
+
+/* Mock screen with the Create wallpaper ; no filter on any ancestor of the glass */
+.screen{position:relative;width:100%;aspect-ratio:1728/1117;border-radius:14px;overflow:hidden;container-type:inline-size;
+  background:image-set(url(wallpaper-1280.avif) type("image/avif"),url(wallpaper.webp) type("image/webp")) center/cover;box-shadow:0 24px 60px -30px rgba(0,0,0,.5)}
+.screen{--pt:calc(100cqw/1728)}
+.screen .menubar{position:absolute;inset:0 0 auto 0;height:calc(32*var(--pt));background:rgb(255 255 255 / .22);display:flex;align-items:center;justify-content:flex-end;padding:0 calc(18*var(--pt));color:#fff;font-size:calc(13*var(--pt));font-weight:500}
+.screen .window{position:absolute;left:8%;top:14%;width:52%;height:60%;border-radius:calc(14*var(--pt));background:rgb(255 255 255 / .9);box-shadow:0 calc(30*var(--pt)) calc(60*var(--pt)) calc(-30*var(--pt)) rgba(0,0,0,.45)}
+.screen .window i{position:absolute;left:8%;right:20%;height:calc(12*var(--pt));border-radius:9px;background:#e6e0d6}
+.screen .window i:nth-child(1){top:18%}.screen .window i:nth-child(2){top:26%;right:34%}.screen .window i:nth-child(3){top:34%;right:46%}
+.dock{position:absolute;left:50%;bottom:calc(6*var(--pt));transform:translateX(-50%);width:34%;height:calc(58*var(--pt));border-radius:calc(18*var(--pt));background:rgb(255 255 255 / .22)}
+.state{position:absolute;left:calc(18*var(--pt));top:calc(6*var(--pt));font-size:calc(13*var(--pt));color:#fff;font-weight:500}
+
+.rec,.result{position:absolute;opacity:0;pointer-events:none;transition:opacity var(--t-fade) ease,transform var(--t-move) ease}
+.rec{right:calc(var(--edge-inset)*var(--pt));top:50%;transform:translate(8%,-50%)}
+.result{left:50%;bottom:calc((var(--bottom-inset) + var(--dock-h))*var(--pt));transform:translate(-50%,10%)}
+.screen[data-state=rec] .rec,.screen[data-state=busy] .rec{opacity:1;transform:translate(0,-50%)}
+.screen[data-state=done] .result{opacity:1;transform:translate(-50%,0)}
+
+/* Shared glass / verre commun */
+.glass{background:linear-gradient(180deg,rgb(var(--tint) / var(--tt)),rgb(var(--tint) / var(--tb)));backdrop-filter:var(--lg-filter);-webkit-backdrop-filter:var(--lg-filter);box-shadow:var(--lg-edge),var(--lg-shadow)}
+.bars{display:flex;align-items:center;gap:calc(3*var(--pt));flex:1;min-width:0;overflow:hidden}
+.bars b{display:block;width:calc(3*var(--pt));border-radius:9px;height:calc(5*var(--pt));background:currentColor;flex:none}
+.screen[data-state=busy] .bars b,.detail[data-state=busy] .bars b{opacity:.4}
+.timer{font-family:var(--zr-police-serif);font-variant-numeric:tabular-nums}
+.pulse{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+
+/* ===== B1 : Papier en verre crème (le plus proche de B) ===== */
+.B1{--tint:var(--cream);--tt:.62;--tb:.42;--ink:#2a2622;--muted:#7c7368;--w:300;--h:60;--rw:640}
+.B1 .rec{width:calc(var(--w)*var(--pt));height:calc(var(--h)*var(--pt));border-radius:calc(var(--h)/2*var(--pt));display:flex;align-items:center;gap:calc(12*var(--pt));padding:0 calc(16*var(--pt)) 0 calc(14*var(--pt));color:var(--ink)}
+.B1 .rec .btn{width:calc(32*var(--pt));height:calc(32*var(--pt));border-radius:50%;background:var(--clay);color:#fff;display:grid;place-items:center;flex:none}
+.B1 .rec .bars{color:var(--clay)} .B1 .rec .timer{font-size:calc(14*var(--pt));color:var(--muted)}
+.B1 .result{width:calc(var(--rw)*var(--pt));border-radius:calc(20*var(--pt));padding:calc(16*var(--pt)) calc(20*var(--pt)) calc(14*var(--pt));color:var(--ink)}
+.B1 .result h4{margin:0 0 calc(4*var(--pt));font-family:var(--zr-police-titres);font-style:italic;font-weight:400;font-size:calc(14*var(--pt));color:var(--clay-deep)}
+.B1 .result p{margin:0;font-family:var(--zr-police-serif);font-size:calc(17*var(--pt));line-height:1.45}
+.B1 .result .actions{display:flex;gap:calc(16*var(--pt));margin-top:calc(10*var(--pt));font-size:calc(12*var(--pt));font-weight:500;color:var(--muted)}
+.B1 .result .actions span{display:inline-flex;align-items:center;gap:calc(5*var(--pt))}
+
+/* ===== B2 : Verre clair, texte blanc, accents terracotta ===== */
+.B2{--tint:255 255 255;--tt:.20;--tb:.07;--ink:#fff;--w:280;--h:56;--rw:620}
+.B2 .rec{width:calc(var(--w)*var(--pt));height:calc(var(--h)*var(--pt));border-radius:calc(var(--h)/2*var(--pt));display:flex;align-items:center;gap:calc(12*var(--pt));padding:0 calc(18*var(--pt));color:var(--ink)}
+.B2 .rec .sf.mic{color:var(--clay)} .B2 .rec .bars{color:#fff} .B2 .rec .timer{font-size:calc(14*var(--pt));opacity:.85}
+.B2 .result{width:calc(var(--rw)*var(--pt));border-radius:calc(22*var(--pt));padding:calc(16*var(--pt)) calc(18*var(--pt)) calc(16*var(--pt)) calc(22*var(--pt));color:var(--ink);display:flex;gap:calc(14*var(--pt));align-items:flex-start}
+.B2 .result p{margin:0;flex:1;font-family:var(--zr-police-serif);font-size:calc(17*var(--pt));line-height:1.45;text-shadow:0 1px 2px rgb(0 0 0 / .25)}
+.B2 .result .icons{display:flex;gap:calc(6*var(--pt))}
+.B2 .result .icons > span{width:calc(30*var(--pt));height:calc(30*var(--pt));border-radius:50%;background:rgb(255 255 255 / .18);display:grid;place-items:center;color:#fff}
+.B2 .result .icons > span:first-child{background:var(--clay)}
+
+/* ===== B3 : Verre compact, le plus simple ===== */
+.B3{--tint:var(--cream);--tt:.55;--tb:.35;--ink:#2a2622;--muted:#7c7368;--w:168;--h:44;--rw:560}
+.B3 .rec{width:calc(var(--w)*var(--pt));height:calc(var(--h)*var(--pt));border-radius:calc(var(--h)/2*var(--pt));display:flex;align-items:center;gap:calc(10*var(--pt));padding:0 calc(14*var(--pt));color:var(--clay)}
+.B3 .result{width:calc(var(--rw)*var(--pt));border-radius:calc(16*var(--pt));padding:calc(12*var(--pt)) calc(16*var(--pt));color:var(--ink);display:flex;gap:calc(10*var(--pt));align-items:flex-start}
+.B3 .result .sf.check{color:var(--clay);margin-top:calc(4*var(--pt))}
+.B3 .result p{margin:0;font-family:var(--zr-police-serif);font-size:calc(16*var(--pt));line-height:1.45}
+
+/* Real size detail / taille réelle (1 pt = 1 px) over the wallpaper */
+.detail{--pt:1px;position:relative;margin-top:14px;display:flex;gap:28px;align-items:center;justify-content:center;flex-wrap:wrap;padding:38px 24px 30px;border-radius:14px;overflow:hidden;
+  background:image-set(url(wallpaper-1280.avif) type("image/avif"),url(wallpaper.webp) type("image/webp")) center/cover}
+.detail .rec,.detail .result{position:static;opacity:1;transform:none;max-width:100%}
+.detail-label{width:100%;text-align:center;color:#fff;font-size:12px;font-weight:500;opacity:.85}
+
+/* Icons: one SF Symbol on a terracotta squircle / un seul symbole SF sur carré arrondi terracotta */
+.icons-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:18px}
+.icons-row figure{margin:0;text-align:center}
+.app-icon{--s:180px;position:relative;width:var(--s);height:var(--s);margin:0 auto;border-radius:calc(var(--s)*.225);overflow:hidden;color:#fff;
+  background:linear-gradient(160deg,#e9977a 0%,var(--clay) 45%,#bd5f40 100%);box-shadow:0 calc(var(--s)*.08) calc(var(--s)*.16) rgb(120 50 20 / .30)}
+.app-icon::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,rgb(255 255 255 / .28),rgb(255 255 255 / 0) 46%);box-shadow:inset 0 calc(var(--s)*.01) 0 rgb(255 255 255 / .45)}
+.app-icon .sf{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
+.i1 .sf.mic{--sz:calc(var(--s)*.56)}
+.i2 .sf.rays{--sz:calc(var(--s)*.80);opacity:.5} .i2 .sf.mic{--sz:calc(var(--s)*.40)}
+.i3 .sf.wavemic{--sz:calc(var(--s)*.62)}
+.sizes{display:flex;justify-content:center;align-items:flex-end;gap:12px;margin-top:14px}
+figcaption{color:var(--page-muted);font-size:13px;margin-top:10px}
+.notes{margin:30px 0 60px;color:var(--page-muted);font-size:13px}
+@media (max-width:720px){.icons-row{grid-template-columns:1fr}h1{font-size:34px}}
+</style>
+</head>
+<body>
+<header class="page">
+  <div class="tag">ZenRay Dictate · V2 · <span class="num">25</span> October <span class="num">2026</span></div>
+  <h1>Papier en verre</h1>
+  <p class="lede">Tes choix : l’interface B Papier avec le thème Liquid Glass, et l’icône terracotta au micro et aux rayons, simplifiée. Les trois variantes gardent le même parcours : Fn ouvre la capsule à droite au milieu, un second Fn l’arrête, le texte arrive en bas au centre et part dans le presse-papiers. Tous les pictogrammes sont de vrais symboles SF Symbols exportés depuis macOS.</p>
+  <p><button class="ui" id="replay">Rejouer</button> <button class="ui" id="pause">Pause sur le texte</button></p>
+</header>
+<main>
+  <section class="proposal B1">
+    <div class="meta"><h2>B1 · Papier crème</h2><span class="tag">le plus proche de B</span></div>
+    <p class="desc">Verre teinté crème. Capsule de <span class="num">300</span> × <span class="num">60</span> pt : bouton terracotta <code>mic.fill</code>, onde terracotta, minuteur. Carte de <span class="num">640</span> pt avec un petit titre, le texte et trois actions <code>doc.on.doc</code>, <code>return</code>, <code>arrow.clockwise</code>.</p>
+    <div class="screen" data-state="idle"><div class="menubar">ZenRay · Claude</div><div class="window"><i></i><i></i><i></i></div><div class="dock"></div><div class="state">prêt</div>
+      <div class="rec glass"><span class="btn pulse"><span class="sf mic" style="--sz:calc(15*var(--pt))"></span></span><span class="bars"></span><span class="timer">0:04</span></div>
+      <div class="result glass"><h4>Transcription</h4><p class="text"></p><div class="actions"><span><span class="sf copy" style="--sz:calc(12*var(--pt))"></span>Copié</span><span><span class="sf ret" style="--sz:calc(12*var(--pt))"></span>Insérer</span><span><span class="sf redo" style="--sz:calc(12*var(--pt))"></span>Refaire</span></div></div>
+    </div>
+  </section>
+
+  <section class="proposal B2">
+    <div class="meta"><h2>B2 · Verre clair</h2><span class="tag">verre Liquid Glass pur</span></div>
+    <p class="desc">Le verre exact du gabarit Liquid Glass, texte blanc, accents terracotta. Capsule de <span class="num">280</span> × <span class="num">56</span> pt : <code>mic.fill</code> terracotta, onde blanche, minuteur. Carte de <span class="num">620</span> pt : le texte et trois boutons ronds, sans titre.</p>
+    <div class="screen" data-state="idle"><div class="menubar">ZenRay · Claude</div><div class="window"><i></i><i></i><i></i></div><div class="dock"></div><div class="state">prêt</div>
+      <div class="rec glass"><span class="sf mic pulse" style="--sz:calc(17*var(--pt))"></span><span class="bars"></span><span class="timer">0:04</span></div>
+      <div class="result glass"><p class="text"></p><div class="icons"><span><span class="sf copy" style="--sz:calc(13*var(--pt))"></span></span><span><span class="sf ret" style="--sz:calc(13*var(--pt))"></span></span><span><span class="sf redo" style="--sz:calc(13*var(--pt))"></span></span></div></div>
+    </div>
+  </section>
+
+  <section class="proposal B3">
+    <div class="meta"><h2>B3 · Compact</h2><span class="tag">le plus simple</span></div>
+    <p class="desc">Capsule crème de <span class="num">168</span> × <span class="num">44</span> pt : seulement <code>mic.fill</code> et l’onde. Le texte arrive dans une carte de <span class="num">560</span> pt précédée de <code>checkmark</code>, sans bouton ; il est déjà copié.</p>
+    <div class="screen" data-state="idle"><div class="menubar">ZenRay · Claude</div><div class="window"><i></i><i></i><i></i></div><div class="dock"></div><div class="state">prêt</div>
+      <div class="rec glass"><span class="sf mic pulse" style="--sz:calc(16*var(--pt))"></span><span class="bars"></span></div>
+      <div class="result glass"><span class="sf check" style="--sz:calc(14*var(--pt))"></span><p class="text"></p></div>
+    </div>
+  </section>
+
+  <section class="proposal">
+    <div class="meta"><h2>Icônes</h2><span class="tag">terracotta, un seul symbole SF</span></div>
+    <p class="desc">Trois simplifications de l’icône 1 : le même carré arrondi terracotta avec un reflet de verre en haut, et un seul symbole SF Symbols blanc. Tailles Dock <span class="num">16</span>, <span class="num">32</span> et <span class="num">64</span> px en dessous.</p>
+    <div class="icons-row">
+      <figure><div class="app-icon i1"><span class="sf mic"></span></div><div class="sizes" data-icon="i1"></div><figcaption>I1 · <code>mic.fill</code> seul</figcaption></figure>
+      <figure><div class="app-icon i2"><span class="sf rays"></span><span class="sf mic"></span></div><div class="sizes" data-icon="i2"></div><figcaption>I2 · <code>mic.fill</code> et <code>rays</code></figcaption></figure>
+      <figure><div class="app-icon i3"><span class="sf wavemic"></span></div><div class="sizes" data-icon="i3"></div><figcaption>I3 · <code>waveform.and.mic</code></figcaption></figure>
+    </div>
+  </section>
+  <p class="notes">Réglages : dimensions en points, teinte et opacités du verre (<code>--tint</code>, <code>--tt</code>, <code>--tb</code>), flou (<span class="num">22</span> px), liseré (<span class="num">0,60</span>), marges au bord (<span class="num">16</span> pt à droite, <span class="num">24</span> pt au-dessus du Dock) et durées (<span class="num">0,18</span> s) sont des variables CSS ; l’app native reprendra les mêmes valeurs comme jetons.</p>
+</main>
+<script>
+// 25 October 2026: replays Fn -> recording -> transcription -> text on every mock screen. / rejoue la séquence.
+const PARAMS = { recordMs: 3200, busyMs: 650, resultMs: 2800, idleMs: 800, bars: { B1: 24, B2: 22, B3: 14 },
+  text: 'Bonjour, je teste la dictée de Claude avec Houdini et Unreal Engine.' }
+const screens = [...document.querySelectorAll('section.proposal .screen')]
+screens.forEach(s => { const d = document.createElement('div'); d.className = 'detail'; d.dataset.state = 'rec'
+  d.append(s.querySelector('.rec').cloneNode(true), s.querySelector('.result').cloneNode(true))
+  const l = document.createElement('div'); l.className = 'detail-label'; l.textContent = 'Taille réelle : capsule d’enregistrement, puis texte'; d.append(l); s.after(d) })
+const details = [...document.querySelectorAll('.detail')]
+const all = [...screens, ...details]
+all.forEach(s => { const kind = s.closest('section').classList[1], bars = s.querySelector('.bars')
+  if (bars) for (let i = 0; i < PARAMS.bars[kind]; i++) bars.append(document.createElement('b'))
+  s.querySelectorAll('.text').forEach(t => t.textContent = PARAMS.text) })
+document.querySelectorAll('.sizes').forEach(row => { const src = document.querySelector('.app-icon.' + row.dataset.icon)
+  ;[16, 32, 64].forEach(px => { const c = src.cloneNode(true); c.style.setProperty('--s', px + 'px'); c.style.margin = '0'; row.append(c) }) })
+const label = { idle: 'prêt', rec: 'Fn · enregistrement', busy: 'transcription', done: 'texte copié' }
+let paused = false, timers = []
+const set = st => screens.forEach(s => { s.dataset.state = st; s.querySelector('.state').textContent = label[st] })
+function cycle() { timers.forEach(clearTimeout); timers = []; set('idle'); const t = PARAMS.idleMs
+  timers.push(setTimeout(() => set('rec'), t), setTimeout(() => set('busy'), t + PARAMS.recordMs),
+    setTimeout(() => set('done'), t + PARAMS.recordMs + PARAMS.busyMs),
+    setTimeout(() => { if (!paused) cycle() }, t + PARAMS.recordMs + PARAMS.busyMs + PARAMS.resultMs)) }
+function tick(now) { all.forEach(s => { const rec = s.dataset.state === 'rec'
+  s.querySelectorAll('.bars b').forEach((b, i) => { const v = rec ? 5 + 20 * Math.abs(Math.sin(now / 140 + i * .9) * Math.sin(now / 420 + i)) : 5; b.style.height = `calc(${v.toFixed(1)}*var(--pt))` }) })
+  requestAnimationFrame(tick) }
+document.getElementById('replay').onclick = () => { paused = false; cycle() }
+document.getElementById('pause').onclick = () => { paused = true; timers.forEach(clearTimeout); set('done') }
+cycle(); requestAnimationFrame(tick)
+</script>
+</body>
+</html>

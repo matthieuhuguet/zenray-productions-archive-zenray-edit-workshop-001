@@ -1,0 +1,227 @@
+<!doctype html>
+<!-- 25 October 2026, 19:40 CEST: ZenRay Dictate, three UI proposals and three icons for the Claude engine. Every value lives in :root. -->
+<!-- FR : trois propositions d'interface et trois icônes ; toutes les valeurs sont des variables CSS de :root. -->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZenRay Dictate, trois interfaces</title>
+<style>
+@font-face{font-family:'InterVariable';src:url("file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/InterVariable.woff2") format('woff2');font-weight:100 900}
+@font-face{font-family:'GT Sectra LCG';src:url("file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/GT-Sectra-LCGV-Regular-Italic.woff2") format('woff2');font-style:italic;font-weight:400}
+@font-face{font-family:'AnthropicSerif';src:url("file:///Users/zenray/.claude/skills/zenray-edit/designs/_shared/fonts/AnthropicSerif-Romans.woff2") format('woff2');font-weight:300 800}
+
+:root{
+  /* Global tokens / jetons globaux (25 October 2026) */
+  --zr-police-sans:'InterVariable','Hiragino Sans W4',sans-serif;
+  --zr-police-titres:'GT Sectra LCG','AnthropicSerif',serif;
+  --zr-style-titres:italic;
+  --zr-police-serif:'AnthropicSerif','Hiragino Mincho ProN W3',serif;
+  --page-bg:#f4f1ea; --page-ink:#1d1b18; --page-muted:#6f6a61; --page-line:#e0dace;
+  --clay:#d97757; --clay-deep:#b85c3e; --cream:#f5f0e8;
+  /* Screen mock / faux écran : 1728 x 1117 pt shown at --scale */
+  --screen-w:1728; --screen-h:1117; --scale:0.52;
+  --edge-inset:16; --bottom-inset:24;
+  /* Timing / temps (seconds) */
+  --t-fade:.18s; --t-move:.24s;
+}
+@media (prefers-color-scheme:dark){:root{--page-bg:#171614;--page-ink:#ece7de;--page-muted:#9b958b;--page-line:#2c2a26}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page-bg);color:var(--page-ink);font-family:var(--zr-police-sans);font-weight:400;font-size:15px;line-height:1.55}
+.num{font-family:var(--zr-police-serif);font-style:normal}
+header.page{max-width:1180px;margin:0 auto;padding:40px 20px 8px}
+h1,h2,h3{font-family:var(--zr-police-titres);font-style:var(--zr-style-titres);font-weight:400;letter-spacing:-.01em;margin:0}
+h1{font-size:44px;line-height:1.1}
+h2{font-size:30px;margin-bottom:6px}
+h3{font-size:20px}
+.lede{color:var(--page-muted);max-width:760px;margin:10px 0 0}
+.controls{display:flex;gap:10px;align-items:center;margin:18px 0 0;flex-wrap:wrap}
+button.ui{font:inherit;font-weight:500;border:1px solid var(--page-line);background:transparent;color:var(--page-ink);border-radius:999px;padding:7px 14px;cursor:pointer}
+button.ui:hover{border-color:var(--clay)}
+main{max-width:1180px;margin:0 auto;padding:0 20px 60px}
+section.proposal{margin:44px 0 0;padding-top:28px;border-top:1px solid var(--page-line)}
+.proposal .meta{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:baseline}
+.proposal p.desc{color:var(--page-muted);margin:6px 0 16px;max-width:780px}
+.tag{font-size:12px;font-weight:500;color:var(--clay-deep);letter-spacing:.04em;text-transform:uppercase}
+
+/* Mock screen / faux écran */
+.screen{position:relative;width:100%;max-width:calc(var(--screen-w)*var(--scale)*1px);aspect-ratio:1728/1117;border-radius:14px;overflow:hidden;
+  background:linear-gradient(135deg,#3d4a5c 0%,#6b5b73 45%,#c08a6a 100%);box-shadow:0 24px 60px -30px rgba(0,0,0,.5);container-type:inline-size}
+.screen .menubar{position:absolute;inset:0 0 auto 0;height:2.2cqw;background:rgba(255,255,255,.28);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:flex-end;padding:0 1.2cqw;gap:1.2cqw;color:#fff;font-size:.95cqw;font-weight:500}
+.screen .window{position:absolute;left:8%;top:14%;width:54%;height:62%;border-radius:1cqw;background:rgba(255,255,255,.86);box-shadow:0 2cqw 4cqw -2cqw rgba(0,0,0,.4)}
+.screen .window::before{content:"";position:absolute;left:1.2cqw;top:1.1cqw;width:4cqw;height:.9cqw;background:radial-gradient(circle at .45cqw 50%,#ff5f57 .4cqw,transparent .42cqw),radial-gradient(circle at 1.75cqw 50%,#febc2e .4cqw,transparent .42cqw),radial-gradient(circle at 3.05cqw 50%,#28c840 .4cqw,transparent .42cqw)}
+.screen .window .lines{position:absolute;left:6%;right:6%;top:18%;display:grid;gap:1.2cqw}
+.screen .window .lines i{display:block;height:.9cqw;border-radius:1cqw;background:#e3ddd3}
+.screen .window .lines i:nth-child(2){width:80%}.screen .window .lines i:nth-child(3){width:64%}
+.dock{position:absolute;left:50%;bottom:.6cqw;transform:translateX(-50%);width:34%;height:3.6cqw;border-radius:1.2cqw;background:rgba(255,255,255,.3);backdrop-filter:blur(10px)}
+.state{position:absolute;right:1.2cqw;top:2.8cqw;font-size:.9cqw;color:#fff;font-weight:500;background:rgba(0,0,0,.28);padding:.3cqw .8cqw;border-radius:2cqw}
+
+/* All widget sizes are written in points, converted by --pt (1 pt in cqw units of the screen). */
+.screen{--pt:calc(100cqw/1728)}
+.rec,.result{position:absolute;opacity:0;pointer-events:none;transition:opacity var(--t-fade) ease,transform var(--t-move) ease}
+.rec{right:calc(var(--edge-inset)*var(--pt));top:50%;transform:translate(10%,-50%)}
+.result{left:50%;bottom:calc((var(--bottom-inset) + 64)*var(--pt));transform:translate(-50%,12%)}
+.screen[data-state="rec"] .rec,.screen[data-state="busy"] .rec{opacity:1;transform:translate(0,-50%)}
+.screen[data-state="done"] .result{opacity:1;transform:translate(-50%,0)}
+.bars{display:flex;align-items:center;gap:calc(3*var(--pt))}
+.bars b{display:block;width:calc(4*var(--pt));border-radius:calc(2*var(--pt));height:calc(6*var(--pt));background:currentColor;transition:height .08s}
+.screen[data-state="busy"] .bars b{height:calc(4*var(--pt))!important;opacity:.45}
+.timer{font-family:var(--zr-police-serif);font-variant-numeric:tabular-nums}
+
+/* ===== A : Verre sombre, pilule verticale ===== */
+.A{--a-bg:rgba(22,20,18,.72);--a-ink:#f4efe6;--a-accent:var(--clay);--a-w:64;--a-h:212;--a-radius:32;--a-result-w:720}
+.A .rec{width:calc(var(--a-w)*var(--pt));height:calc(var(--a-h)*var(--pt));border-radius:calc(var(--a-radius)*var(--pt));background:var(--a-bg);backdrop-filter:blur(20px) saturate(1.4);
+  border:calc(1*var(--pt)) solid rgba(255,255,255,.14);color:var(--a-ink);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(16*var(--pt)) 0;box-shadow:0 calc(18*var(--pt)) calc(40*var(--pt)) calc(-18*var(--pt)) rgba(0,0,0,.6)}
+.A .rec .dot{width:calc(12*var(--pt));height:calc(12*var(--pt));border-radius:50%;background:var(--a-accent);box-shadow:0 0 calc(10*var(--pt)) var(--a-accent);animation:pulse 1.2s infinite}
+.A .rec .bars{flex-direction:column;color:var(--a-accent)}
+.A .rec .bars b{height:calc(4*var(--pt));width:calc(6*var(--pt))}
+.A .rec .timer{font-size:calc(13*var(--pt))}
+.A .result{width:calc(var(--a-result-w)*var(--pt));border-radius:calc(22*var(--pt));background:var(--a-bg);backdrop-filter:blur(20px) saturate(1.4);border:calc(1*var(--pt)) solid rgba(255,255,255,.14);color:var(--a-ink);
+  padding:calc(16*var(--pt)) calc(22*var(--pt));font-family:var(--zr-police-serif);font-size:calc(17*var(--pt));line-height:1.45;box-shadow:0 calc(18*var(--pt)) calc(40*var(--pt)) calc(-18*var(--pt)) rgba(0,0,0,.6)}
+.A .result .chip{display:inline-block;margin-left:calc(10*var(--pt));font-family:var(--zr-police-sans);font-size:calc(11*var(--pt));font-weight:500;color:var(--a-accent)}
+
+/* ===== B : Papier Claude, capsule horizontale ===== */
+.B{--b-bg:#f7f2ea;--b-ink:#2a2622;--b-muted:#8b8378;--b-accent:var(--clay);--b-w:300;--b-h:60;--b-result-w:640}
+.B .rec{width:calc(var(--b-w)*var(--pt));height:calc(var(--b-h)*var(--pt));border-radius:calc(var(--b-h)/2*var(--pt));background:var(--b-bg);color:var(--b-ink);display:flex;align-items:center;gap:calc(12*var(--pt));padding:0 calc(18*var(--pt));
+  box-shadow:0 calc(14*var(--pt)) calc(32*var(--pt)) calc(-14*var(--pt)) rgba(60,40,20,.45),0 0 0 calc(1*var(--pt)) rgba(120,90,60,.12)}
+.B .rec .mic{width:calc(30*var(--pt));height:calc(30*var(--pt));border-radius:50%;background:var(--b-accent);display:grid;place-items:center;flex:none;animation:pulse 1.2s infinite}
+.B .rec .mic svg{width:calc(14*var(--pt));height:calc(14*var(--pt))}
+.B .rec .bars{flex:1;color:var(--b-accent)}
+.B .rec .timer{font-size:calc(14*var(--pt));color:var(--b-muted)}
+.B .result{width:calc(var(--b-result-w)*var(--pt));border-radius:calc(18*var(--pt));background:var(--b-bg);color:var(--b-ink);padding:calc(16*var(--pt)) calc(20*var(--pt)) calc(14*var(--pt));
+  box-shadow:0 calc(14*var(--pt)) calc(32*var(--pt)) calc(-14*var(--pt)) rgba(60,40,20,.45),0 0 0 calc(1*var(--pt)) rgba(120,90,60,.12)}
+.B .result h4{margin:0 0 calc(4*var(--pt));font-family:var(--zr-police-titres);font-style:italic;font-weight:400;font-size:calc(14*var(--pt));color:var(--b-accent)}
+.B .result p{margin:0;font-family:var(--zr-police-serif);font-size:calc(17*var(--pt));line-height:1.45}
+.B .result .actions{display:flex;gap:calc(14*var(--pt));margin-top:calc(10*var(--pt));font-size:calc(11*var(--pt));font-weight:500;color:var(--b-muted)}
+
+/* ===== C : Orbe minimal, une ligne ===== */
+.C{--c-size:46;--c-accent:var(--clay);--c-bg:rgba(14,13,12,.82);--c-ink:#fff}
+.C .rec{width:calc(var(--c-size)*var(--pt));height:calc(var(--c-size)*var(--pt));border-radius:50%;background:radial-gradient(circle at 35% 30%,#f0a685,var(--c-accent) 60%,#8f3f24);
+  box-shadow:0 0 0 calc(var(--ring,0)*var(--pt)) rgba(217,119,87,.28),0 calc(10*var(--pt)) calc(24*var(--pt)) calc(-8*var(--pt)) rgba(0,0,0,.55);display:grid;place-items:center;transition:opacity var(--t-fade),transform var(--t-move),box-shadow .08s}
+.C .rec svg{width:calc(18*var(--pt));height:calc(18*var(--pt))}
+.C .screen[data-state="busy"] .rec{animation:spin 1s linear infinite}
+.C .result{max-width:calc(820*var(--pt));border-radius:calc(999*var(--pt));background:var(--c-bg);backdrop-filter:blur(16px);color:var(--c-ink);padding:calc(12*var(--pt)) calc(22*var(--pt));font-size:calc(15*var(--pt));font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.C .result .k{color:var(--c-accent);margin-right:calc(8*var(--pt))}
+
+/* Real-size detail / détail en taille réelle : 1 pt = 1 px */
+.detail{--pt:1px;margin-top:14px;display:flex;gap:28px;align-items:center;justify-content:center;flex-wrap:wrap;padding:34px 24px;border-radius:14px;background:linear-gradient(135deg,#3d4a5c 0%,#6b5b73 45%,#c08a6a 100%)}
+.detail .rec,.detail .result{position:static;opacity:1;transform:none;pointer-events:auto}
+.detail .result{max-width:100%}
+.detail-label{width:100%;text-align:center;color:#fff;font-size:12px;font-weight:500;opacity:.8;margin-top:-18px}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+@keyframes spin{to{filter:hue-rotate(25deg) brightness(1.1)}}
+
+/* Icons / icônes */
+.icons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:18px}
+.icons figure{margin:0;text-align:center}
+.icons svg{width:100%;max-width:200px;height:auto;filter:drop-shadow(0 16px 24px rgba(0,0,0,.22))}
+.icons .dock-row{display:flex;justify-content:center;gap:10px;margin-top:10px}
+.icons .dock-row svg{width:36px;filter:none}
+figcaption{color:var(--page-muted);font-size:13px;margin-top:8px}
+.notes{margin-top:30px;color:var(--page-muted);font-size:13px}
+@media (max-width:720px){.icons{grid-template-columns:1fr}h1{font-size:34px}}
+</style>
+</head>
+<body>
+<header class="page">
+  <div class="tag">ZenRay Dictate · moteur Claude · <span class="num">25</span> October <span class="num">2026</span></div>
+  <h1>Trois interfaces de dictée</h1>
+  <p class="lede">Même parcours dans les trois cas : un appui sur Fn ouvre le widget d’enregistrement à droite, au milieu de l’écran ; un second appui l’arrête, le texte apparaît en bas au centre et part dans le presse-papiers ; un clic ailleurs le fait disparaître. Les faux écrans rejouent la séquence en boucle.</p>
+  <div class="controls"><button class="ui" id="replay">Rejouer</button><button class="ui" id="pause">Pause</button></div>
+</header>
+<main>
+  <section class="proposal A">
+    <div class="meta"><h2>A · Verre</h2><span class="tag">pilule verticale sombre</span></div>
+    <p class="desc">Pilule verticale de <span class="num">64</span> × <span class="num">212</span> pt en verre sombre, contre le bord droit : point orange qui pulse, onde verticale, minuteur. Le texte arrive dans une carte de verre de <span class="num">720</span> pt de large.</p>
+    <div class="screen" data-state="idle"><div class="menubar">ZenRay · Claude</div><div class="window"><div class="lines"><i></i><i></i><i></i></div></div><div class="dock"></div><div class="state">prêt</div>
+      <div class="rec"><span class="dot"></span><span class="bars"></span><span class="timer">0:00</span></div>
+      <div class="result"><span class="text"></span><span class="chip">Copié</span></div>
+    </div>
+  </section>
+
+  <section class="proposal B">
+    <div class="meta"><h2>B · Papier</h2><span class="tag">capsule claire, couleurs Claude</span></div>
+    <p class="desc">Capsule horizontale crème de <span class="num">300</span> × <span class="num">60</span> pt : micro terracotta qui pulse, onde, minuteur. Le résultat est une carte papier avec un petit titre, le texte en Anthropic Serif et les raccourcis Copier, Insérer, Refaire.</p>
+    <div class="screen" data-state="idle"><div class="menubar">ZenRay · Claude</div><div class="window"><div class="lines"><i></i><i></i><i></i></div></div><div class="dock"></div><div class="state">prêt</div>
+      <div class="rec"><span class="mic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><rect x="8.5" y="3" width="7" height="12" rx="3.5" fill="#fff" stroke="none"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></span><span class="bars"></span><span class="timer">0:00</span></div>
+      <div class="result"><h4>Transcription</h4><p class="text"></p><div class="actions"><span>⌘C Copié</span><span>↵ Insérer</span><span>R Refaire</span></div></div>
+    </div>
+  </section>
+
+  <section class="proposal C">
+    <div class="meta"><h2>C · Orbe</h2><span class="tag">minimal, une ligne</span></div>
+    <p class="desc">Un orbe terracotta de <span class="num">46</span> pt dont l’anneau suit le volume de la voix, sans texte. Le résultat tient sur une seule ligne dans une pilule noire, comme une notification.</p>
+    <div class="screen" data-state="idle"><div class="menubar">ZenRay · Claude</div><div class="window"><div class="lines"><i></i><i></i><i></i></div></div><div class="dock"></div><div class="state">prêt</div>
+      <div class="rec"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><rect x="8.5" y="3" width="7" height="12" rx="3.5" fill="#fff" stroke="none"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></div>
+      <div class="result"><span class="k">✓</span><span class="text"></span></div>
+    </div>
+  </section>
+
+  <section class="proposal">
+    <div class="meta"><h2>Icônes</h2><span class="tag">remplacent l’étoile Gemini</span></div>
+    <p class="desc">Trois icônes originales aux couleurs de Claude (terracotta <span class="num">#D97757</span> et crème), sans reprendre son logo. Taille Dock en dessous.</p>
+    <div class="icons">
+      <figure>
+        <svg viewBox="0 0 1024 1024" class="ico1"><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e48b6b"/><stop offset="1" stop-color="#c2603f"/></linearGradient></defs>
+          <rect x="64" y="64" width="896" height="896" rx="200" fill="url(#g1)"/>
+          <g stroke="#fff6ee" stroke-width="34" stroke-linecap="round" opacity=".9"><line x1="512" y1="170" x2="512" y2="250"/><line x1="512" y1="774" x2="512" y2="854"/><line x1="170" y1="512" x2="250" y2="512"/><line x1="774" y1="512" x2="854" y2="512"/><line x1="270" y1="270" x2="326" y2="326"/><line x1="698" y1="698" x2="754" y2="754"/><line x1="754" y1="270" x2="698" y2="326"/><line x1="326" y1="698" x2="270" y2="754"/></g>
+          <rect x="432" y="318" width="160" height="290" rx="80" fill="#fff"/><path d="M362 500a150 150 0 0 0 300 0M512 650v72" fill="none" stroke="#fff" stroke-width="40" stroke-linecap="round"/></svg>
+        <figcaption>1 · Terracotta, micro et rayons</figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 1024 1024" class="ico2"><rect x="64" y="64" width="896" height="896" rx="200" fill="#f5efe6"/>
+          <g fill="#d97757"><path d="M512 190 548 430 512 470 476 430Z"/><path d="M512 834 476 594 512 554 548 594Z"/><path d="M190 512 430 476 470 512 430 548Z"/><path d="M834 512 594 548 554 512 594 476Z"/><path d="M284 284 470 452 452 470Z" opacity=".75"/><path d="M740 740 554 572 572 554Z" opacity=".75"/><path d="M740 284 572 470 554 452Z" opacity=".75"/><path d="M284 740 452 554 470 572Z" opacity=".75"/></g>
+          <circle cx="512" cy="512" r="128" fill="#2a2622"/><rect x="478" y="440" width="68" height="116" rx="34" fill="#f5efe6"/><path d="M450 520a62 62 0 0 0 124 0M512 584v28" fill="none" stroke="#f5efe6" stroke-width="18" stroke-linecap="round"/></svg>
+        <figcaption>2 · Crème, éclat terracotta</figcaption>
+      </figure>
+      <figure>
+        <svg viewBox="0 0 1024 1024" class="ico3"><defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22201d"/><stop offset="1" stop-color="#0f0e0d"/></linearGradient></defs>
+          <rect x="64" y="64" width="896" height="896" rx="200" fill="url(#g3)"/>
+          <g fill="#d97757"><rect x="214" y="452" width="56" height="120" rx="28"/><rect x="318" y="372" width="56" height="280" rx="28"/><rect x="422" y="282" width="56" height="460" rx="28"/><rect x="546" y="232" width="56" height="560" rx="28" fill="#f0a685"/><rect x="650" y="352" width="56" height="320" rx="28"/><rect x="754" y="442" width="56" height="140" rx="28"/></g></svg>
+        <figcaption>3 · Sombre, onde terracotta</figcaption>
+      </figure>
+    </div>
+    <div class="icons" id="dockSizes"></div>
+  </section>
+
+  <p class="notes">Paramètres : toutes les dimensions (pt), couleurs, marges au bord (<span class="num">16</span> pt à droite, <span class="num">24</span> pt au-dessus du Dock) et durées (<span class="num">0,18</span> s de fondu) sont des variables CSS de <code>:root</code> et de chaque proposition ; elles seront reprises telles quelles comme jetons dans l’app native.</p>
+</main>
+<script>
+// 25 October 2026: replays Fn -> recording -> transcription -> result on every mock screen. / rejoue la séquence sur chaque faux écran.
+const PARAMS = { recordMs: 3200, busyMs: 700, resultMs: 2600, idleMs: 900, bars: { A: 9, B: 22, C: 0 },
+  text: 'Bonjour, je teste la dictée de Claude avec Houdini et Unreal Engine.' }
+const screens = [...document.querySelectorAll('section.proposal .screen')]
+screens.forEach(s => { const d = document.createElement('div'); d.className = 'detail'; d.dataset.state = 'rec'; d.append(s.querySelector('.rec').cloneNode(true), s.querySelector('.result').cloneNode(true)); const l = document.createElement('div'); l.className = 'detail-label'; l.textContent = 'Taille réelle : widget d’enregistrement, puis texte'; d.append(l); s.after(d) })
+const details = [...document.querySelectorAll('.detail')]
+;[...screens, ...details].forEach(s => { const kind = s.closest('section').classList[1]; const bars = s.querySelector('.bars'); if (bars) for (let i = 0; i < PARAMS.bars[kind]; i++) bars.append(document.createElement('b')); s.querySelectorAll('.text').forEach(t => t.textContent = PARAMS.text) })
+const label = { idle: 'prêt', rec: 'Fn · enregistrement', busy: 'transcription', done: 'texte copié' }
+let paused = false, timers = []
+function set(state) { screens.forEach(s => { s.dataset.state = state; s.querySelector('.state').textContent = label[state] }) }
+function cycle() {
+  timers.forEach(clearTimeout); timers = []; set('idle')
+  const t0 = PARAMS.idleMs; timers.push(setTimeout(() => set('rec'), t0))
+  timers.push(setTimeout(() => set('busy'), t0 + PARAMS.recordMs))
+  timers.push(setTimeout(() => set('done'), t0 + PARAMS.recordMs + PARAMS.busyMs))
+  timers.push(setTimeout(() => { if (!paused) cycle() }, t0 + PARAMS.recordMs + PARAMS.busyMs + PARAMS.resultMs))
+}
+let start = performance.now()
+function tick(now) {
+  ;[...screens, ...details].forEach(s => {
+    const rec = s.dataset.state === 'rec'
+    s.querySelectorAll('.bars b').forEach((b, i) => { const v = rec ? 6 + 22 * Math.abs(Math.sin(now / 140 + i * 0.9) * Math.sin(now / 410 + i)) : 6; b.style.height = `calc(${v.toFixed(1)}*var(--pt))` })
+    const t = s.querySelector('.timer'); if (t && rec && !s.classList.contains('detail')) { const sec = Math.floor((now - start) / 1000) % 60; t.textContent = `0:${String(sec).padStart(2, '0')}` }
+    const orb = s.closest('.C') && s.querySelector('.rec'); if (orb) orb.style.setProperty('--ring', rec ? (4 + 10 * Math.abs(Math.sin(now / 160))).toFixed(1) : 0)
+  })
+  requestAnimationFrame(tick)
+}
+new MutationObserver(() => {}).observe(document.body, { subtree: true, attributes: true })
+screens.forEach(s => new MutationObserver(() => { if (s.dataset.state === 'rec') start = performance.now() }).observe(s, { attributes: true, attributeFilter: ['data-state'] }))
+document.getElementById('replay').onclick = () => { paused = false; cycle() }
+document.getElementById('pause').onclick = () => { paused = true; timers.forEach(clearTimeout); set('done') }
+// Dock sizes / tailles Dock
+const dock = document.getElementById('dockSizes')
+document.querySelectorAll('.icons svg').forEach(svg => { const f = document.createElement('figure'); f.className = 'dock-row'; [16, 32, 64].forEach(sz => { const c = svg.cloneNode(true); c.style.width = sz + 'px'; c.removeAttribute('class'); f.append(c) }); dock.append(f) })
+cycle(); requestAnimationFrame(tick)
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "date": "25 October 2026",
+  "slug": "zenray-dictate-claude-ui",
+  "folder": "2026-10-25-zenray-dictate-claude-ui",
+  "version": 1,
+  "title": "ZenRay Dictate, trois interfaces et trois icônes Claude",
+  "module": "zenray-dictate",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-dictate",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-zenray-dictate-ui-25-october-2026",
+  "files": [
+    "index.html"
+  ],
+  "indexSha256": "0d4e7f0d08d3dc50c6572a04ae717f9da7841432aa467efdf35dbe716cebd5b9",
+  "filedAt": "2026-10-25T18:23:06.579Z",
+  "note": null
+}
