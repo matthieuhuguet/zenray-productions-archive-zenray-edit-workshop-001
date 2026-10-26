@@ -1,0 +1,23 @@
+{
+  "date": "26 October 2026",
+  "slug": "website-works-typography",
+  "folder": "2026-10-26-website-works-typography-v2",
+  "version": 2,
+  "title": "Works : GT Ultra, Literata, GT Standard L",
+  "module": "WorksTypography",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-edit",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-zenray-website-26-october-2026",
+  "files": [
+    "index.html",
+    "Comparison.png",
+    "Snapshots.json",
+    "TypographySettings.json",
+    "Verification.json",
+    "Works-A.png"
+  ],
+  "indexSha256": "0ad8d2bf27b8247b218dbb227a25ec391e2c9800cbc4800581963721fb087b76",
+  "filedAt": "2026-10-26T15:39:07.940Z",
+  "note": null
+}
