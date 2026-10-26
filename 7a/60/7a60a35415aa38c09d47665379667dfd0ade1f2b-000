@@ -1,0 +1,70 @@
+{
+  "date": "26 October 2026",
+  "results": [
+    {
+      "theme": "dark",
+      "width": 1500,
+      "fonts": true,
+      "attachmentsCollapsed": true,
+      "completionPersisted": true,
+      "bounds": {
+        "left": 236,
+        "top": 605.0003051757812,
+        "right": 665.9996337890625,
+        "bottom": 984,
+        "w": 1500,
+        "h": 1000
+      },
+      "escape": true
+    },
+    {
+      "theme": "dark",
+      "width": 375,
+      "fonts": true,
+      "attachmentsCollapsed": true,
+      "completionPersisted": true,
+      "bounds": {
+        "left": 16,
+        "top": 279.390625,
+        "right": 359,
+        "bottom": 747.390625,
+        "w": 375,
+        "h": 1000
+      },
+      "escape": true
+    },
+    {
+      "theme": "light",
+      "width": 1500,
+      "fonts": true,
+      "attachmentsCollapsed": true,
+      "completionPersisted": true,
+      "bounds": {
+        "left": 236,
+        "top": 605,
+        "right": 666,
+        "bottom": 984,
+        "w": 1500,
+        "h": 1000
+      },
+      "escape": true
+    },
+    {
+      "theme": "light",
+      "width": 375,
+      "fonts": true,
+      "attachmentsCollapsed": true,
+      "completionPersisted": true,
+      "bounds": {
+        "left": 16,
+        "top": 279.390625,
+        "right": 359,
+        "bottom": 747.390625,
+        "w": 375,
+        "h": 1000
+      },
+      "escape": true
+    }
+  ],
+  "errors": []
+}

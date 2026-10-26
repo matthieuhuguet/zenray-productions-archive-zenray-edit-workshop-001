@@ -1,0 +1,28 @@
+{
+  "date": "26 October 2026",
+  "slug": "plan-current-fonts-contrast",
+  "folder": "2026-10-26-plan-current-fonts-contrast-v2",
+  "version": 2,
+  "title": "ZenRay Plan, Verre clarifié, widget épuré",
+  "module": "plan",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-calendar-plan-23-october-2026",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-zenray-calendar-plan-23-october-2026/Designs/Plan-26-October-2026",
+  "files": [
+    "index.html",
+    "ActualReference.png",
+    "CurrentPreview.png",
+    "Overview.png",
+    "Preview-A.png",
+    "Updated-dark-1500.png",
+    "Updated-dark-375.png",
+    "Updated-light-1500.png",
+    "Updated-light-375.png",
+    "UpdatedVerification.json",
+    "Verification.json"
+  ],
+  "indexSha256": "23f78694f984202cd22daccd0db26ea09fd0816c52bff0783172bf78d7acdfeb",
+  "filedAt": "2026-10-26T12:00:06.051Z",
+  "note": "26 October 2026 : A retenu, attachments repliés, validation dans le widget, dates entières GT Ultra."
+}

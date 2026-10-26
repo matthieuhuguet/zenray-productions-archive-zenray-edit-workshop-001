@@ -1,0 +1,66 @@
+{
+  "date": "26 October 2026",
+  "rows": [
+    {
+      "design": "paper",
+      "theme": "light",
+      "geometry": {
+        "padding": "10px",
+        "radius": "17px",
+        "columns": 7
+      },
+      "popoverBounds": true
+    },
+    {
+      "design": "paper",
+      "theme": "dark",
+      "geometry": {
+        "padding": "10px",
+        "radius": "17px",
+        "columns": 7
+      },
+      "popoverBounds": true
+    },
+    {
+      "design": "ledger",
+      "theme": "light",
+      "geometry": {
+        "padding": "10px",
+        "radius": "17px",
+        "columns": 7
+      },
+      "popoverBounds": true
+    },
+    {
+      "design": "ledger",
+      "theme": "dark",
+      "geometry": {
+        "padding": "10px",
+        "radius": "17px",
+        "columns": 7
+      },
+      "popoverBounds": true
+    },
+    {
+      "design": "opal",
+      "theme": "light",
+      "geometry": {
+        "padding": "10px",
+        "radius": "17px",
+        "columns": 7
+      },
+      "popoverBounds": true
+    },
+    {
+      "design": "opal",
+      "theme": "dark",
+      "geometry": {
+        "padding": "10px",
+        "radius": "17px",
+        "columns": 7
+      },
+      "popoverBounds": true
+    }
+  ],
+  "errors": []
+}
