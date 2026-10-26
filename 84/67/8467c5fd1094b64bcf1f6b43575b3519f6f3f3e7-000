@@ -1,0 +1,22 @@
+{
+  "date": "26 October 2026",
+  "slug": "plan-current-fonts-contrast",
+  "folder": "2026-10-26-plan-current-fonts-contrast",
+  "version": 1,
+  "title": "ZenRay Plan, design actuel, polices et contraste",
+  "module": "plan",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-calendar-plan-23-october-2026",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-zenray-calendar-plan-23-october-2026/Designs/Plan-26-October-2026",
+  "files": [
+    "index.html",
+    "ActualReference.png",
+    "CurrentPreview.png",
+    "Overview.png",
+    "Preview-A.png"
+  ],
+  "indexSha256": "92332ca3eec13a188e36d899b2b24a0006b835d479bc2b3705f81a985e1d3a0d",
+  "filedAt": "2026-10-26T11:37:43.996Z",
+  "note": null
+}
