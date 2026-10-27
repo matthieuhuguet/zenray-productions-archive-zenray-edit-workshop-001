@@ -1,0 +1,19 @@
+{
+  "date": "27 October 2026",
+  "slug": "cover-letter-eidos-vfx-artist",
+  "folder": "2026-10-27-cover-letter-eidos-vfx-artist",
+  "version": 1,
+  "title": "Cover Letter Eidos VFX Artist",
+  "module": "Cover Letter",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-edit",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-cover-letter-eidos-27-october-2026",
+  "files": [
+    "index.html",
+    "preview-1.png"
+  ],
+  "indexSha256": "4824298f79f19da4fbb84d82b388fb66ac730e9475b214e0fda12efcac569ab0",
+  "filedAt": "2026-10-27T16:34:29.926Z",
+  "note": null
+}
