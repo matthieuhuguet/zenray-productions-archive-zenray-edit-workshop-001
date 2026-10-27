@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "date": "27 October 2026",
+    "author": "Matthieu Huguet (ZenRay)",
+    "description": "System design tokens for ZenRay Edit HTML Design templates."
+  },
+  "typography": {
+    "fontTitle": "'GT Ultra', 'Hiragino Sans W4', sans-serif",
+    "fontNum": "'GT Ultra', 'Hiragino Sans W4', sans-serif",
+    "fontBody": "'Literata', 'Hiragino Mincho ProN W3', Georgia, serif",
+    "fontUi": "'GT Standard L', 'Hiragino Sans W4', sans-serif",
+    "fontMono": "'AnthropicMono', monospace",
+    "weights": {
+      "regular": 400,
+      "bold": 700
+    },
+    "fontFiles": {
+      "gtUltra": "fonts/GT-Ultra-Regular.woff2",
+      "gtStandard": "fonts/GT-Standard-L-Regular.woff2",
+      "gtStandardBold": "fonts/GT-Standard-L-Bold.woff2",
+      "literata": "fonts/Literata-latin.woff2",
+      "literataItalic": "fonts/Literata-Italic-latin.woff2",
+      "anthropicMono": "fonts/AnthropicMono-Regular.ttf"
+    }
+  },
+  "themes": {
+    "liquid-glass": {
+      "name": "Liquid Glass",
+      "bg": "#0b0f19",
+      "surface": "rgba(255, 255, 255, 0.08)",
+      "surfaceHover": "rgba(255, 255, 255, 0.12)",
+      "surfaceActive": "rgba(255, 255, 255, 0.16)",
+      "ink": "#f8fafc",
+      "inkMuted": "#94a3b8",
+      "inkFaint": "#64748b",
+      "accent": "#38bdf8",
+      "accentHover": "#0ea5e9",
+      "border": "rgba(255, 255, 255, 0.14)",
+      "rim": "rgba(255, 255, 255, 0.45)",
+      "shadow": "0 20px 45px rgba(0, 0, 0, 0.45)",
+      "blur": "24px",
+      "sat": "160%",
+      "overlay": "radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.18) 0%, rgba(15, 23, 42, 0.85) 75%)"
+    },
+    "paper": {
+      "name": "Papier",
+      "bg": "#f9f8f5",
+      "surface": "#ffffff",
+      "surfaceHover": "#f4f2eb",
+      "surfaceActive": "#eeece3",
+      "ink": "#181715",
+      "inkMuted": "#68655e",
+      "inkFaint": "#9b978c",
+      "accent": "#d9531e",
+      "accentHover": "#bf4313",
+      "border": "rgba(24, 23, 21, 0.12)",
+      "rim": "rgba(24, 23, 21, 0.04)",
+      "shadow": "0 12px 30px rgba(24, 23, 21, 0.06)",
+      "blur": "0px",
+      "sat": "100%",
+      "overlay": "linear-gradient(180deg, #fbfaf7 0%, #f4f2ec 100%)"
+    }
+  },
+  "spacing": {
+    "unit": "4px",
+    "xs": "8px",
+    "sm": "12px",
+    "md": "16px",
+    "lg": "24px",
+    "xl": "32px",
+    "2xl": "48px",
+    "radius": {
+      "sm": "6px",
+      "md": "12px",
+      "lg": "18px",
+      "xl": "26px",
+      "full": "9999px"
+    }
+  }
+}

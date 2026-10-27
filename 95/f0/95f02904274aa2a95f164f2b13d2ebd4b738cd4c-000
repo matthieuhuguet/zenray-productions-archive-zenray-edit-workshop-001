@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="paper">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Scaffolding : ZenRay Edit HTML Design</title>
+  <style>
+    /* Polices système ZenRay (26 October 2026) */
+    @font-face {
+      font-family: 'GT Ultra';
+      font-weight: 400;
+      font-style: normal;
+      src: url('fonts/GT-Ultra-Regular.woff2') format('woff2');
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'GT Standard L';
+      font-weight: 400;
+      font-style: normal;
+      src: url('fonts/GT-Standard-L-Regular.woff2') format('woff2');
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'GT Standard L';
+      font-weight: 700;
+      font-style: normal;
+      src: url('fonts/GT-Standard-L-Bold.woff2') format('woff2');
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Literata';
+      font-weight: 400;
+      font-style: normal;
+      src: url('fonts/Literata-latin.woff2') format('woff2');
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Literata';
+      font-weight: 400;
+      font-style: italic;
+      src: url('fonts/Literata-Italic-latin.woff2') format('woff2');
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'AnthropicMono';
+      font-weight: 400;
+      font-style: normal;
+      src: url('fonts/AnthropicMono-Regular.ttf') format('truetype');
+      font-display: swap;
+    }
+
+    /* Variables CSS procédurales HDA (27 October 2026) */
+    :root {
+      /* Typographie système (priorité 0 absolue) */
+      --font-title: 'GT Ultra', 'Hiragino Sans W4', sans-serif;
+      --font-num: 'GT Ultra', 'Hiragino Sans W4', sans-serif;
+      --font-body: 'Literata', 'Hiragino Mincho ProN W3', Georgia, serif;
+      --font-ui: 'GT Standard L', 'Hiragino Sans W4', sans-serif;
+      --font-mono: 'AnthropicMono', monospace;
+
+      /* Réglages procéduraux HDA modifiables */
+      --hda-radius: 20px;
+      --hda-blur: 24px;
+      --hda-sat: 160%;
+      --hda-border-alpha: 0.14;
+      --hda-rim-alpha: 0.40;
+      --hda-space-base: 16px;
+      --hda-title-size: 2.2rem;
+      --hda-body-size: 1.05rem;
+
+      /* Défaut : Liquid Glass */
+      --theme-bg: #0b0f19;
+      --theme-overlay: radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.18) 0%, rgba(15, 23, 42, 0.85) 75%);
+      --theme-surface: rgba(255, 255, 255, 0.08);
+      --theme-surface-hover: rgba(255, 255, 255, 0.12);
+      --theme-surface-active: rgba(255, 255, 255, 0.18);
+      --theme-ink: #f8fafc;
+      --theme-muted: #94a3b8;
+      --theme-faint: #64748b;
+      --theme-accent: #38bdf8;
+      --theme-border: rgba(255, 255, 255, var(--hda-border-alpha));
+      --theme-rim: rgba(255, 255, 255, var(--hda-rim-alpha));
+      --theme-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+      --theme-glass-filter: blur(var(--hda-blur)) saturate(var(--hda-sat));
+    }
+
+    html[data-theme="paper"] {
+      --theme-bg: #f9f8f5;
+      --theme-overlay: linear-gradient(180deg, #fbfaf7 0%, #f4f2ec 100%);
+      --theme-surface: #ffffff;
+      --theme-surface-hover: #f4f2eb;
+      --theme-surface-active: #eeece3;
+      --theme-ink: #181715;
+      --theme-muted: #68655e;
+      --theme-faint: #9b978c;
+      --theme-accent: #d9531e;
+      --theme-border: rgba(24, 23, 21, var(--hda-border-alpha));
+      --theme-rim: rgba(24, 23, 21, 0.05);
+      --theme-shadow: 0 12px 32px rgba(24, 23, 21, 0.07);
+      --theme-glass-filter: none;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--theme-bg);
+      background-image: var(--theme-overlay);
+      background-attachment: fixed;
+      color: var(--theme-ink);
+      font-family: var(--font-body);
+      font-size: var(--hda-body-size);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .num {
+      font-family: var(--font-num);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Barre supérieure de navigation */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: var(--theme-surface);
+      border-bottom: 1px solid var(--theme-border);
+      gap: 16px;
+      font-family: var(--font-ui);
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-date {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      background: var(--theme-surface-active);
+      color: var(--theme-accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-family: var(--font-title);
+    }
+
+    .topbar-title {
+      font-family: var(--font-title);
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: var(--theme-ink);
+    }
+
+    .topbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      font-family: var(--font-ui);
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--theme-border);
+      background: var(--theme-surface);
+      color: var(--theme-ink);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .nav-btn:hover {
+      background: var(--theme-surface-hover);
+      border-color: var(--theme-accent);
+    }
+
+    .nav-btn.active {
+      background: var(--theme-accent);
+      color: #ffffff;
+      border-color: var(--theme-accent);
+    }
+
+    html[data-theme="paper"] .nav-btn.active {
+      color: #ffffff;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Conteneur principal */
+    main {
+      flex: 1;
+      padding: 32px 24px 64px;
+      max-width: 1440px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .view-container {
+      display: block;
+    }
+
+    .view-container.grid-view {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 28px;
+    }
+
+    .variant-card {
+      background: var(--theme-surface);
+      backdrop-filter: var(--theme-glass-filter);
+      -webkit-backdrop-filter: var(--theme-glass-filter);
+      border: 1px solid var(--theme-border);
+      border-top: 1px solid var(--theme-rim);
+      border-radius: var(--hda-radius);
+      box-shadow: var(--theme-shadow);
+      padding: calc(var(--hda-space-base) * 1.5);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .variant-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--theme-border);
+      padding-bottom: 12px;
+    }
+
+    .variant-tag {
+      font-family: var(--font-title);
+      font-size: 1.35rem;
+      color: var(--theme-accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .variant-title {
+      font-family: var(--font-title);
+      font-size: 1.6rem;
+      font-weight: 400;
+      color: var(--theme-ink);
+      line-height: 1.25;
+    }
+
+    .variant-body {
+      font-family: var(--font-body);
+      color: var(--theme-ink);
+      font-size: var(--hda-body-size);
+      line-height: 1.65;
+    }
+
+    .variant-meta {
+      font-family: var(--font-ui);
+      font-size: 0.86rem;
+      color: var(--theme-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      padding-top: 10px;
+      border-top: 1px dashed var(--theme-border);
+    }
+
+    /* Panneau Paramétrique HDA (Drawer) */
+    .hda-panel {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 360px;
+      max-height: calc(100vh - 120px);
+      background: var(--theme-surface);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid var(--theme-border);
+      border-top: 1px solid var(--theme-rim);
+      border-radius: var(--hda-radius);
+      box-shadow: var(--theme-shadow);
+      padding: 20px;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      font-family: var(--font-ui);
+      transform: translateY(0);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      overflow-y: auto;
+    }
+
+    .hda-panel.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(20px);
+    }
+
+    .hda-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--theme-border);
+      padding-bottom: 10px;
+    }
+
+    .hda-panel-title {
+      font-family: var(--font-title);
+      font-size: 1.05rem;
+      color: var(--theme-ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hda-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .hda-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.84rem;
+      color: var(--theme-muted);
+    }
+
+    .hda-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 9999px;
+      background: var(--theme-border);
+      outline: none;
+    }
+
+    .hda-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--theme-accent);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .prompt-box {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--theme-border);
+      border-radius: 8px;
+      padding: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--theme-muted);
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(50px);
+      background: var(--theme-accent);
+      color: #ffffff;
+      padding: 10px 22px;
+      border-radius: 9999px;
+      font-family: var(--font-ui);
+      font-size: 0.92rem;
+      font-weight: 500;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 300;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barre supérieure de navigation -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="badge-date">27 October 2026</span>
+      <h1 class="topbar-title">Test Scaffolding</h1>
+    </div>
+
+    <!-- Sélecteur de variante -->
+    <nav class="topbar-nav" id="variant-nav" aria-label="Variantes de design">
+      <button type="button" class="nav-btn active" data-variant="A">Proposition A</button>
+      <button type="button" class="nav-btn" data-variant="B">Proposition B</button>
+      <button type="button" class="nav-btn" data-variant="C">Proposition C</button>
+      <button type="button" class="nav-btn" data-view="split" id="btn-split">Comparer tout</button>
+    </nav>
+
+    <!-- Actions globales : Thème, Paramètres, Copier prompt, Plein écran -->
+    <div class="topbar-actions">
+      <button type="button" class="nav-btn" id="btn-theme" title="Basculer Liquid Glass / Papier">
+        <span id="theme-label">Papier</span>
+      </button>
+      <button type="button" class="nav-btn" id="btn-hda" title="Curseurs HDA">
+        <span>Curseurs HDA</span>
+      </button>
+      <button type="button" class="nav-btn" id="btn-copy" title="Copier les variables pour le prompt">
+        <span>Copier prompt</span>
+      </button>
+      <button type="button" class="nav-btn" id="btn-fullscreen" title="Plein écran">
+        <span>Plein écran</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Zone de présentation des propositions -->
+  <main id="main-content">
+    <div class="view-container" id="proposals-wrapper">
+            <article class="variant-card" data-variant="A" style="display: flex;">
+        <header class="variant-header">
+          <span class="variant-tag"><span class="num">01</span> Proposition A</span>
+          <span class="badge-date">Option A</span>
+        </header>
+        <h2 class="variant-title">Test Scaffolding : Approche A</h2>
+        <div class="variant-body">
+          <p>Exploration architecturale et graphique de la variante A. Cette proposition met en avant les équilibres visuels, la clarté typographique (GT Ultra et Literata) et une adaptabilité fluide aux environnements clairs et sombres.</p>
+        </div>
+        <footer class="variant-meta">
+          <span>Module : HTML Design</span>
+          <span>Thème : paper</span>
+          <span>Variante : A</span>
+          <span>Date : 27 October 2026</span>
+        </footer>
+      </article>
+      <article class="variant-card" data-variant="B" style="display: none;">
+        <header class="variant-header">
+          <span class="variant-tag"><span class="num">02</span> Proposition B</span>
+          <span class="badge-date">Option B</span>
+        </header>
+        <h2 class="variant-title">Test Scaffolding : Approche B</h2>
+        <div class="variant-body">
+          <p>Exploration architecturale et graphique de la variante B. Cette proposition met en avant les équilibres visuels, la clarté typographique (GT Ultra et Literata) et une adaptabilité fluide aux environnements clairs et sombres.</p>
+        </div>
+        <footer class="variant-meta">
+          <span>Module : HTML Design</span>
+          <span>Thème : paper</span>
+          <span>Variante : B</span>
+          <span>Date : 27 October 2026</span>
+        </footer>
+      </article>
+      <article class="variant-card" data-variant="C" style="display: none;">
+        <header class="variant-header">
+          <span class="variant-tag"><span class="num">03</span> Proposition C</span>
+          <span class="badge-date">Option C</span>
+        </header>
+        <h2 class="variant-title">Test Scaffolding : Approche C</h2>
+        <div class="variant-body">
+          <p>Exploration architecturale et graphique de la variante C. Cette proposition met en avant les équilibres visuels, la clarté typographique (GT Ultra et Literata) et une adaptabilité fluide aux environnements clairs et sombres.</p>
+        </div>
+        <footer class="variant-meta">
+          <span>Module : HTML Design</span>
+          <span>Thème : paper</span>
+          <span>Variante : C</span>
+          <span>Date : 27 October 2026</span>
+        </footer>
+      </article>
+    </div>
+  </main>
+
+  <!-- Panneau Paramétrique HDA (Drawer) -->
+  <aside class="hda-panel hidden" id="hda-drawer" aria-label="Panneau paramétrique HDA">
+    <div class="hda-panel-header">
+      <div class="hda-panel-title">
+        <span>Paramètres HDA</span>
+      </div>
+      <button type="button" class="nav-btn" id="btn-close-hda" style="padding: 4px 8px; font-size: 0.78rem;">Fermer</button>
+    </div>
+
+    <div class="hda-row">
+      <div class="hda-label">
+        <span>Rayon de courbure (radius)</span>
+        <span class="num" id="val-radius">20px</span>
+      </div>
+      <input type="range" class="hda-slider" id="slider-radius" min="4" max="40" value="20" step="1">
+    </div>
+
+    <div class="hda-row">
+      <div class="hda-label">
+        <span>Flou Liquid Glass (blur)</span>
+        <span class="num" id="val-blur">24px</span>
+      </div>
+      <input type="range" class="hda-slider" id="slider-blur" min="0" max="60" value="24" step="2">
+    </div>
+
+    <div class="hda-row">
+      <div class="hda-label">
+        <span>Saturation Liquid Glass</span>
+        <span class="num" id="val-sat">160%</span>
+      </div>
+      <input type="range" class="hda-slider" id="slider-sat" min="100" max="250" value="160" step="5">
+    </div>
+
+    <div class="hda-row">
+      <div class="hda-label">
+        <span>Opacité des bordures</span>
+        <span class="num" id="val-border">0.14</span>
+      </div>
+      <input type="range" class="hda-slider" id="slider-border" min="0.02" max="0.50" value="0.14" step="0.02">
+    </div>
+
+    <div class="hda-row">
+      <div class="hda-label">
+        <span>Espacement de base</span>
+        <span class="num" id="val-space">16px</span>
+      </div>
+      <input type="range" class="hda-slider" id="slider-space" min="8" max="32" value="16" step="2">
+    </div>
+
+    <div class="hda-row">
+      <div class="hda-label">
+        <span>Taille des titres</span>
+        <span class="num" id="val-title-size">1.6rem</span>
+      </div>
+      <input type="range" class="hda-slider" id="slider-title-size" min="1.2" max="2.6" value="1.6" step="0.05">
+    </div>
+
+    <div class="hda-row">
+      <div class="hda-label">
+        <span>Valeurs sérialisées pour le prompt</span>
+      </div>
+      <div class="prompt-box" id="prompt-preview">/* Variables générées */</div>
+    </div>
+
+    <button type="button" class="nav-btn active" id="btn-copy-drawer" style="justify-content: center; width: 100%;">
+      Copier les valeurs pour le prompt
+    </button>
+  </aside>
+
+  <!-- Notification Toast -->
+  <div class="toast" id="toast-notify">Valeurs copiées dans le presse-papiers</div>
+
+  <script>
+    (function() {
+      const root = document.documentElement;
+      const proposalsWrapper = document.getElementById('proposals-wrapper');
+      const cards = document.querySelectorAll('.variant-card');
+      const navButtons = document.querySelectorAll('#variant-nav .nav-btn[data-variant]');
+      const splitBtn = document.getElementById('btn-split');
+      const themeBtn = document.getElementById('btn-theme');
+      const themeLabel = document.getElementById('theme-label');
+      const hdaBtn = document.getElementById('btn-hda');
+      const hdaDrawer = document.getElementById('hda-drawer');
+      const closeHdaBtn = document.getElementById('btn-close-hda');
+      const fullscreenBtn = document.getElementById('btn-fullscreen');
+      const copyBtn = document.getElementById('btn-copy');
+      const copyDrawerBtn = document.getElementById('btn-copy-drawer');
+      const toast = document.getElementById('toast-notify');
+      const promptPreview = document.getElementById('prompt-preview');
+
+      // Sliders
+      const sliderRadius = document.getElementById('slider-radius');
+      const sliderBlur = document.getElementById('slider-blur');
+      const sliderSat = document.getElementById('slider-sat');
+      const sliderBorder = document.getElementById('slider-border');
+      const sliderSpace = document.getElementById('slider-space');
+      const sliderTitleSize = document.getElementById('slider-title-size');
+
+      // Valeurs affichées
+      const valRadius = document.getElementById('val-radius');
+      const valBlur = document.getElementById('val-blur');
+      const valSat = document.getElementById('val-sat');
+      const valBorder = document.getElementById('val-border');
+      const valSpace = document.getElementById('val-space');
+      const valTitleSize = document.getElementById('val-title-size');
+
+      // Gestion des variantes (A, B, C... ou split)
+      function showVariant(target) {
+        navButtons.forEach(btn => btn.classList.remove('active'));
+        splitBtn.classList.remove('active');
+
+        if (target === 'split') {
+          splitBtn.classList.add('active');
+          proposalsWrapper.className = 'view-container grid-view';
+          cards.forEach(card => card.style.display = 'flex');
+        } else {
+          const activeBtn = document.querySelector(`#variant-nav .nav-btn[data-variant="${target}"]`);
+          if (activeBtn) activeBtn.classList.add('active');
+          proposalsWrapper.className = 'view-container';
+          cards.forEach(card => {
+            card.style.display = (card.getAttribute('data-variant') === target) ? 'flex' : 'none';
+          });
+        }
+      }
+
+      navButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          showVariant(btn.getAttribute('data-variant'));
+        });
+      });
+
+      splitBtn.addEventListener('click', () => {
+        showVariant('split');
+      });
+
+      // Gestion du thème (Liquid Glass vs Papier)
+      function updateThemeLabel() {
+        const currentTheme = root.getAttribute('data-theme') || 'liquid-glass';
+        themeLabel.textContent = (currentTheme === 'liquid-glass') ? 'Papier' : 'Liquid Glass';
+      }
+
+      themeBtn.addEventListener('click', () => {
+        const currentTheme = root.getAttribute('data-theme') || 'liquid-glass';
+        const nextTheme = (currentTheme === 'liquid-glass') ? 'paper' : 'liquid-glass';
+        root.setAttribute('data-theme', nextTheme);
+        updateThemeLabel();
+        updatePromptBox();
+      });
+
+      // Gestion des sliders HDA
+      function updateCssVars() {
+        const radius = sliderRadius.value + 'px';
+        const blur = sliderBlur.value + 'px';
+        const sat = sliderSat.value + '%';
+        const borderAlpha = sliderBorder.value;
+        const space = sliderSpace.value + 'px';
+        const titleSize = sliderTitleSize.value + 'rem';
+
+        root.style.setProperty('--hda-radius', radius);
+        root.style.setProperty('--hda-blur', blur);
+        root.style.setProperty('--hda-sat', sat);
+        root.style.setProperty('--hda-border-alpha', borderAlpha);
+        root.style.setProperty('--hda-space-base', space);
+        root.style.setProperty('--hda-title-size', titleSize);
+
+        valRadius.textContent = radius;
+        valBlur.textContent = blur;
+        valSat.textContent = sat;
+        valBorder.textContent = borderAlpha;
+        valSpace.textContent = space;
+        valTitleSize.textContent = titleSize;
+
+        updatePromptBox();
+      }
+
+      [sliderRadius, sliderBlur, sliderSat, sliderBorder, sliderSpace, sliderTitleSize].forEach(input => {
+        input.addEventListener('input', updateCssVars);
+      });
+
+      // Génération du texte pour le prompt
+      function generatePromptValues() {
+        const currentTheme = root.getAttribute('data-theme') || 'liquid-glass';
+        return [
+          `/* Paramètres de design ZenRay Edit (${currentTheme}) */`,
+          `--theme: ${currentTheme};`,
+          `--hda-radius: ${sliderRadius.value}px;`,
+          `--hda-blur: ${sliderBlur.value}px;`,
+          `--hda-sat: ${sliderSat.value}%;`,
+          `--hda-border-alpha: ${sliderBorder.value};`,
+          `--hda-space-base: ${sliderSpace.value}px;`,
+          `--hda-title-size: ${sliderTitleSize.value}rem;`,
+          `--font-title: 'GT Ultra', sans-serif;`,
+          `--font-body: 'Literata', serif;`,
+          `--font-ui: 'GT Standard L', sans-serif;`
+        ].join('\n');
+      }
+
+      function updatePromptBox() {
+        promptPreview.textContent = generatePromptValues();
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2200);
+      }
+
+      function copyPromptToClipboard() {
+        const text = generatePromptValues();
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('Valeurs HDA copiées pour le prompt !');
+        }).catch(() => {
+          showToast('Presse-papiers indisponible');
+        });
+      }
+
+      copyBtn.addEventListener('click', copyPromptToClipboard);
+      copyDrawerBtn.addEventListener('click', copyPromptToClipboard);
+
+      // Panneau HDA
+      hdaBtn.addEventListener('click', () => {
+        hdaDrawer.classList.toggle('hidden');
+      });
+      closeHdaBtn.addEventListener('click', () => {
+        hdaDrawer.classList.add('hidden');
+      });
+
+      // Plein écran
+      fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      });
+
+      // Init
+      updateThemeLabel();
+      updateCssVars();
+      if (navButtons.length > 0) {
+        showVariant(navButtons[0].getAttribute('data-variant'));
+      } else {
+        showVariant('split');
+      }
+    })();
+  </script>
+</body>
+</html>

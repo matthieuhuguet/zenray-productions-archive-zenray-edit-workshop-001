@@ -1,0 +1,21 @@
+{
+  "paragraphs": [
+    "Fort d'une solide experience en developpement d'outils proceduraux sous Houdini et en integration temps reel sous Unreal Engine 5, je vous adresse ma candidature pour rejoindre votre equipe technique.",
+    "Mes realisations recentes s'articulent autour de deux piliers majeurs :",
+    "Je serais ravi d'echanger plus en detail sur les defis techniques de vos prochaines productions."
+  ],
+  "bullets": [
+    "Conception et automatisation de pipelines HDA haute fidelite reliant Houdini, Karma et Unreal Engine.",
+    "Optimisation des temps de rendu et structuration d'architectures parametriques modulaires."
+  ],
+  "signature": null,
+  "subject": "Candidature Technical Artist & Pipeline Specialist",
+  "text": "Madame, Monsieur,\n\nFort d'une solide experience en developpement d'outils proceduraux sous Houdini et en integration temps reel sous Unreal Engine 5, je vous adresse ma candidature pour rejoindre votre equipe technique.\n\nMes realisations recentes s'articulent autour de deux piliers majeurs :\n\n- Conception et automatisation de pipelines HDA haute fidelite reliant Houdini, Karma et Unreal Engine.\n- Optimisation des temps de rendu et structuration d'architectures parametriques modulaires.\n\nJe serais ravi d'echanger plus en detail sur les defis techniques de vos prochaines productions.",
+  "company": "Remedy Entertainment",
+  "slug": "test-cover-letter-remedy",
+  "out": "/tmp/test-remedy.pdf",
+  "downloads": false,
+  "singlePage": true,
+  "tight": false,
+  "open": false
+}

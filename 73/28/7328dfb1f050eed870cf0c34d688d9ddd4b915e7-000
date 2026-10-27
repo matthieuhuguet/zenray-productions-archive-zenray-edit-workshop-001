@@ -1,0 +1,20 @@
+{
+  "date": "27 October 2026",
+  "slug": "test-cover-letter-remedy",
+  "folder": "2026-10-27-test-cover-letter-remedy",
+  "version": 1,
+  "title": "Candidature Technical Artist & Pipeline Specialist",
+  "module": "cover-letter",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-edit",
+  "status": "pending",
+  "atelier": "/var/folders/r2/wh6ygv490dqbrs2mb51g39jm0000gn/T/zr-pdf-build-test-cover-letter-remedy-1793119462702",
+  "files": [
+    "index.html",
+    "document.json",
+    "test-cover-letter-remedy-preview-1.png"
+  ],
+  "indexSha256": "d478a6ddf649625a9fc686206361e90ec5ace003ec296467eaa6023e682c36d5",
+  "filedAt": "2026-10-27T16:44:23.756Z",
+  "note": "Rendered PDF Document, 1 page(s)"
+}
