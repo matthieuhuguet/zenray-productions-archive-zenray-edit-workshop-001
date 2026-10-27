@@ -1,0 +1,20 @@
+{
+  "date": "27 October 2026",
+  "slug": "sunblink-environment-gameplay-designer",
+  "folder": "2026-10-27-sunblink-environment-gameplay-designer",
+  "version": 1,
+  "title": "Application: Environment Gameplay Designer",
+  "module": "cover-letter",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-edit",
+  "status": "pending",
+  "atelier": "/var/folders/r2/wh6ygv490dqbrs2mb51g39jm0000gn/T/zr-pdf-build-sunblink-environment-gameplay-designer-1793120495505",
+  "files": [
+    "index.html",
+    "document.json",
+    "sunblink-environment-gameplay-designer-preview-1.png"
+  ],
+  "indexSha256": "708a35c75b46bab4ed1c0dd35a10c95bca5ee71304d8b1ebdee258f039e5f151",
+  "filedAt": "2026-10-27T17:01:36.877Z",
+  "note": "Rendered PDF Document, 1 page(s)"
+}

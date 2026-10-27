@@ -1,0 +1,29 @@
+{
+  "paragraphs": [
+    "To the recruitment team,",
+    "Hello Sunblink,",
+    "I am writing about your opening for Environment Gameplay Designer.",
+    "My name is Matthieu Huguet and I work as a freelance Technical Artist, specializing in procedural environments and pipelines between Houdini and Unreal Engine 5.",
+    "Holding a Game Design Bachelor from LISAA Paris and a Game Art Master’s from ARTFX Montpellier, alongside specialized coursework at Gnomon and Harvard CS50, I combine an understanding of design imperatives with the technical rigor of production tooling.",
+    "In production, I have notably collaborated with Meerkat Studio on several simulation titles shipped on Steam (including Santa Simulator and Bakery Coffee Simulator) and on unannounced commercial contracts. I handled technical environment integration, real-time lighting, and asset optimization to maintain a stable framerate. Earlier during my studies, I co-developed Noyes (graduation game), before delivering real-time visualization missions for private clients. All my work is documented at matthieuhuguet.com.",
+    "My daily focus is designing parametric HDAs and automation scripts (Python, VEX) that empower level designers and environment artists to iterate rapidly without hitting pipeline bottlenecks:",
+    "Your opening for Environment Gameplay Designer lines up with my day-to-day work: Houdini, Unreal Engine, Python, PCG, Blueprints and C++.",
+    "Your track record for high-impact visual and technical delivery requires resilient pipelines and friction-free workflows for creative teams. This is exactly what I bring to Sunblink: removing friction for your artists by building dependable, production-ready procedural systems.",
+    "I’m currently looking for freelance Technical Artist missions via my own structure, and I can take on a defined scope (tools, pipeline integration, or environment production) on a short or long engagement.",
+    "I would be happy to walk you through my tools and talk with you by video call, whenever suits you.",
+    "Matthieu Huguet Technical Artist · Houdini & Unreal Engine 5 matthieuhuguet.com · linkedin.com/in/zenray"
+  ],
+  "bullets": [
+    "Modular Houdini-to-UE5 generators (architecture, parametric stairs kits, tiles, and floor variations).",
+    "Optimized real-time shaders, modular Vertex Paint master materials, and foliage deformation via Vertex Animation Textures (VAT).",
+    "Procedural texturing systems in Copernicus and Substance Designer adhering to strict isotropic texel density to maximize visual fidelity while reducing memory footprint. My latest published work: Fleur de Lys: Procedural Lily, Houdini to Unreal, Ceramic Tiles and HDA Stairs Component."
+  ],
+  "salutation": null,
+  "signoff": null,
+  "signature": null,
+  "subject": "Application: Environment Gameplay Designer",
+  "text": "To the recruitment team,\n\nHello Sunblink,\n\nI am writing about your opening for Environment Gameplay Designer.\n\nMy name is Matthieu Huguet and I work as a freelance Technical Artist, specializing in procedural environments and pipelines between Houdini and Unreal Engine 5.\n\nHolding a Game Design Bachelor from LISAA Paris and a Game Art Master’s from ARTFX Montpellier, alongside specialized coursework at Gnomon and Harvard CS50, I combine an understanding of design imperatives with the technical rigor of production tooling.\n\nIn production, I have notably collaborated with Meerkat Studio on several simulation titles shipped on Steam (including Santa Simulator and Bakery Coffee Simulator) and on unannounced commercial contracts. I handled technical environment integration, real-time lighting, and asset optimization to maintain a stable framerate. Earlier during my studies, I co-developed Noyes (graduation game), before delivering real-time visualization missions for private clients. All my work is documented at matthieuhuguet.com.\n\nMy daily focus is designing parametric HDAs and automation scripts (Python, VEX) that empower level designers and environment artists to iterate rapidly without hitting pipeline bottlenecks:\n- Modular Houdini-to-UE5 generators (architecture, parametric stairs kits, tiles, and floor variations).\n- Optimized real-time shaders, modular Vertex Paint master materials, and foliage deformation via Vertex Animation Textures (VAT).\n- Procedural texturing systems in Copernicus and Substance Designer adhering to strict isotropic texel density to maximize visual fidelity while reducing memory footprint. My latest published work: Fleur de Lys: Procedural Lily, Houdini to Unreal, Ceramic Tiles and HDA Stairs Component.\n\nYour opening for Environment Gameplay Designer lines up with my day-to-day work: Houdini, Unreal Engine, Python, PCG, Blueprints and C++.\n\nYour track record for high-impact visual and technical delivery requires resilient pipelines and friction-free workflows for creative teams. This is exactly what I bring to Sunblink: removing friction for your artists by building dependable, production-ready procedural systems.\n\nI’m currently looking for freelance Technical Artist missions via my own structure, and I can take on a defined scope (tools, pipeline integration, or environment production) on a short or long engagement.\n\nI would be happy to walk you through my tools and talk with you by video call, whenever suits you.\n\nMatthieu Huguet\nTechnical Artist · Houdini & Unreal Engine 5\nmatthieuhuguet.com · linkedin.com/in/zenray",
+  "company": "Sunblink",
+  "slug": "sunblink-environment-gameplay-designer",
+  "out": "/Users/zenray/Downloads/test-sunblink.pdf"
+}
