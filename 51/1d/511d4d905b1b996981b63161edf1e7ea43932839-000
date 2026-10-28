@@ -1,0 +1,71 @@
+# ZenRay Edit : index mapping des designs HTML (28 October 2026)
+
+Chaîne contrôlée : skill local (/Users/zenray/.claude/skills/zenray-edit/designs), miroir Memory1/Skills/zenray-edit, cloud zenray-data (pages/ZenRayAssets/zenray-edit/sources/memory/canonical-skill/designs).
+Résultat : OK, 141 fichiers (pages HTML + miniatures).
+
+Pointé par la galerie : 62 dossiers, 79 pages HTML (copie canonical-skill). Non affichés, car doublons ou autres usages : 49 HTML de Memory1/Projects/zenray-edit/Designs (copies de projet), 95 HTML de l'atelier tmp-zenray-edit (brouillons et copies), 49 HTML de templates, articles et références du skill.
+
+| Dossier du design | Pages HTML | Local | Miroir | Cloud (pages + miniature) | Miniature |
+|---|---|---|---|---|---|
+| 2026-10-14-delivery-mode-context-menu | 1 | oui | oui | oui | oui |
+| 2026-10-14-video-player-icons-only | 1 | oui | oui | oui | oui |
+| 2026-10-14-video-player-minimal-absolu | 1 | oui | oui | oui | oui |
+| 2026-10-16-sport-round-1 | 5 | oui | oui | oui | oui |
+| 2026-10-16-sport-round-2 | 4 | oui | oui | oui | oui |
+| 2026-10-16-sport-round-3 | 2 | oui | oui | oui | oui |
+| 2026-10-16-sport-round-3-v2 | 2 | oui | oui | oui | oui |
+| 2026-10-16-sport-round-4 | 2 | oui | oui | oui | oui |
+| 2026-10-16-sport-round-5 | 2 | oui | oui | oui | oui |
+| 2026-10-16-sport-round-6 | 2 | oui | oui | oui | oui |
+| 2026-10-16-sport-round-7 | 2 | oui | oui | oui | oui |
+| 2026-10-16-sport-round-8 | 2 | oui | oui | oui | oui |
+| 2026-10-16-sport-round-9 | 2 | oui | oui | oui | oui |
+| 2026-10-18-color-picker-minimal-3-designs | 1 | oui | oui | oui | oui |
+| 2026-10-18-color-picker-minimal-3-designs-v2 | 1 | oui | oui | oui | oui |
+| 2026-10-18-skin-bg-picker-matthieu10-img2 | 1 | oui | oui | oui | oui |
+| 2026-10-18-zenray-books-minimal-3-designs | 1 | oui | oui | oui | oui |
+| 2026-10-18-zenray-books-v2-ultra-simple | 1 | oui | oui | oui | oui |
+| 2026-10-18-zenray-books-v3-shelf-and-c | 1 | oui | oui | oui | oui |
+| 2026-10-18-zenray-money-lol-3-designs | 1 | oui | oui | oui | oui |
+| 2026-10-18-zenray-money-v2-lol-0999 | 1 | oui | oui | oui | oui |
+| 2026-10-18-zenray-money-v2-lol-0999-v2 | 1 | oui | oui | oui | oui |
+| 2026-10-21-design-gallery-three-directions | 1 | oui | oui | oui | oui |
+| 2026-10-21-motion-ui-mockups | 1 | oui | oui | oui | oui |
+| 2026-10-21-skin-bg-picker-orange-e8714e | 1 | oui | oui | oui | oui |
+| 2026-10-23-documentation-zenray-height-houdini | 1 | oui | oui | oui | oui |
+| 2026-10-23-documentation-zenray-height-houdini-v2 | 1 | oui | oui | oui | oui |
+| 2026-10-23-documentation-zenray-height-houdini-v3 | 1 | oui | oui | oui | oui |
+| 2026-10-23-plan-entry-zoom | 1 | oui | oui | oui | oui |
+| 2026-10-23-plan-tile-time-top | 1 | oui | oui | oui | oui |
+| 2026-10-23-plan-tile-times | 1 | oui | oui | oui | oui |
+| 2026-10-23-sidebar-plan-first | 1 | oui | oui | oui | oui |
+| 2026-10-23-sidebar-v2-italic | 1 | oui | oui | oui | oui |
+| 2026-10-23-sidebar-v2-space | 1 | oui | oui | oui | oui |
+| 2026-10-23-skin-bg-picker-radial-ffa000-ff5c02 | 1 | oui | oui | oui | oui |
+| 2026-10-23-sport-last-sessions-gt-sectra | 1 | oui | oui | oui | oui |
+| 2026-10-23-sport-mockup-last-sessions-simplified | 1 | oui | oui | oui | oui |
+| 2026-10-23-zenray-knowledge | 1 | oui | oui | oui | oui |
+| 2026-10-23-zenray-knowledge-sectra | 1 | oui | oui | oui | oui |
+| 2026-10-23-zenray-knowledge-v2 | 1 | oui | oui | oui | oui |
+| 2026-10-23-zenray-knowledge-v3 | 1 | oui | oui | oui | oui |
+| 2026-10-23-zenray-knowledge-v5-liquid-glass | 1 | oui | oui | oui | oui |
+| 2026-10-25-abonnement-max | 1 | oui | oui | oui | oui |
+| 2026-10-25-abonnement-max-claude-code | 1 | oui | oui | oui | oui |
+| 2026-10-25-qlmarkdown-trois-designs | 3 | oui | oui | oui | oui |
+| 2026-10-25-zenray-dictate-claude-ui | 1 | oui | oui | oui | oui |
+| 2026-10-25-zenray-dictate-papier-verre | 1 | oui | oui | oui | oui |
+| 2026-10-26-freelance-gt-standard | 1 | oui | oui | oui | oui |
+| 2026-10-26-freelance-gt-ultra | 1 | oui | oui | oui | oui |
+| 2026-10-26-gallery-rework-todo3d | 1 | oui | oui | oui | oui |
+| 2026-10-26-gallery-rework-todo3d-v2 | 1 | oui | oui | oui | oui |
+| 2026-10-26-gallery-rework-todo3d-v3 | 1 | oui | oui | oui | oui |
+| 2026-10-26-plan-current-fonts-contrast | 1 | oui | oui | oui | oui |
+| 2026-10-26-plan-current-fonts-contrast-v2 | 1 | oui | oui | oui | oui |
+| 2026-10-26-sidebar-literata-gt-standard | 1 | oui | oui | oui | oui |
+| 2026-10-26-website-works-typography | 1 | oui | oui | oui | oui |
+| 2026-10-26-website-works-typography-v2 | 1 | oui | oui | oui | oui |
+| 2026-10-27-cover-letter-eidos-vfx-artist | 1 | oui | oui | oui | oui |
+| 2026-10-27-freelance-experience-widget | 1 | oui | oui | oui | oui |
+| 2026-10-27-sunblink-environment-gameplay-designer | 1 | oui | oui | oui | oui |
+| 2026-10-27-sunblink-environment-gameplay-designer-v2 | 1 | oui | oui | oui | oui |
+| 2026-10-27-test-cover-letter-remedy | 1 | oui | oui | oui | oui |
