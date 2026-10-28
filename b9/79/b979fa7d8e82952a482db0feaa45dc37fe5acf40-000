@@ -10,6 +10,8 @@
 @font-face{font-family:'Literata';src:url('fonts/Literata-Italic-latin.woff2') format('woff2');font-weight:200 900;font-style:italic}
 @font-face{font-family:'GT Sectra LCG';src:url('fonts/GT-Sectra-LCGV-Regular-Italic.woff2') format('woff2');font-weight:400;font-style:italic}
 @font-face{font-family:'Inter';src:url('fonts/InterVariable.woff2') format('woff2');font-weight:100 900;font-style:normal}
+/* 28 October 2026 at 20:45 CET. Add Walsheim and Ultra role comparisons. */
+@font-face{font-family:'GT Walsheim';src:url('fonts/GT-Walsheim-Regular.woff2') format('woff2');font-weight:400;font-style:normal}
 @font-face{font-family:'GT Ultra';src:url('fonts/GT-Ultra-Regular.woff2') format('woff2');font-weight:400;font-style:normal}
 :root{
  /* the sliders (defaults = the proposal) */
@@ -65,6 +67,8 @@ h1{font:400 24px/1.2 var(--font-title);text-transform:none;letter-spacing:normal
 /* the "Avant" column keeps the previous fonts, fixed */
 .before .head{font-family:'GT Sectra LCG','Literata',serif!important;font-style:italic!important;font-weight:400!important;font-size:15.1px!important;letter-spacing:-.01em!important;margin-top:34px}.before .head:first-child{margin-top:0}
 .before .item,.before .search{font-family:'Inter','Hiragino Sans W4',sans-serif!important;font-weight:400!important;font-size:14px!important;letter-spacing:-.015em!important;min-height:31px}.before .item.active{font-weight:500!important}
+#stage[data-font-mode="walsheim-titles"] .variant .head,#stage[data-font-mode="walsheim-modules"] .variant .item,#stage[data-font-mode="walsheim-modules"] .variant .search{font-family:'GT Walsheim',sans-serif;font-style:normal;font-weight:400}
+#stage[data-font-mode="walsheim-modules"] .variant .head,#stage[data-font-mode="walsheim-titles"] .variant .item,#stage[data-font-mode="walsheim-titles"] .variant .search{font-family:'GT Ultra',sans-serif;font-style:normal;font-weight:400}
 #stage[data-font-mode="gt-ultra-only"] .variant .head,#stage[data-font-mode="gt-ultra-only"] .variant .item,#stage[data-font-mode="gt-ultra-only"] .variant .search{font-family:'GT Ultra',sans-serif;font-style:normal;font-weight:400}
 #stage[data-font-mode="gt-ultra-titles"] .variant .head{font-family:'GT Ultra',sans-serif;font-style:normal;font-weight:400}
 #stage[data-font-mode="gt-ultra-titles"] .variant .item,#stage[data-font-mode="gt-ultra-titles"] .variant .search{font-family:'Literata',Georgia,serif;font-style:normal}
@@ -72,7 +76,7 @@ h1{font:400 24px/1.2 var(--font-title);text-transform:none;letter-spacing:normal
 @media (max-width:1000px){.layout{grid-template-columns:1fr}.controls{position:static}.stage{grid-template-columns:1fr}}
 </style></head><body><div class="page">
 <h1>Sidebar de gauche</h1>
-<p class="lead">Le toggle inverse les polices des titres de section et des petits modules dans les colonnes claire et sombre : GT Ultra avec Literata, Literata avec GT Ultra, ou GT Ultra partout. La colonne Avant conserve la référence précédente. Réglez les tailles et les espaces à gauche, puis copiez les paramètres.</p>
+<p class="lead">Le toggle inverse les polices des titres de section et des petits modules dans les colonnes claire et sombre : GT Ultra avec Literata, Literata avec GT Ultra, GT Ultra partout, ou GT Walsheim et GT Ultra dans les deux sens. La colonne Avant conserve la référence précédente. Réglez les tailles et les espaces à gauche, puis copiez les paramètres.</p>
 <div class="layout">
  <div class="controls" id="controls"></div>
  <div class="stage" id="stage"></div>
@@ -101,7 +105,9 @@ const DEFAULT_FONT_MODE='gt-ultra-titles';
 const FONT_MODES={
  'gt-ultra-titles':['Sections : GT Ultra','Modules : Literata'],
  'literata-titles':['Sections : Literata','Modules : GT Ultra'],
- 'gt-ultra-only':['Sections : GT Ultra','Modules : GT Ultra']
+ 'gt-ultra-only':['Sections : GT Ultra','Modules : GT Ultra'],
+ 'walsheim-titles':['Sections : GT Walsheim','Modules : GT Ultra'],
+ 'walsheim-modules':['Sections : GT Ultra','Modules : GT Walsheim']
 };
 const CONTROL_MODES={'--sb-title-weight':'literata-titles','--sb-title-style':'literata-titles','--sb-ui-weight':'gt-ultra-titles','--sb-active-weight':'gt-ultra-titles'};
 let fontMode=DEFAULT_FONT_MODE;
