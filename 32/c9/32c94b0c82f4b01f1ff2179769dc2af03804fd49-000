@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Les Grilli Type, comparaison des familles</title>
+<!-- 28 October 2026 at 20:18 CET. Families and regular faces are read from the local Font Book inventory. -->
+<style>
+:root {
+  --paper: #f5f2eb;
+  --surface: #fffdf8;
+  --ink: #24231f;
+  --muted: #78736a;
+  --line: #e3ded4;
+  --accent: #a96743;
+  --font-title: 'GT Ultra Regular', 'GT Ultra', Georgia, serif;
+  --font-body: 'Literata', Georgia, serif;
+  --font-ui: 'GT Standard L', Arial, sans-serif;
+  --font-code: 'AnthropicMono', monospace;
+  --sample-size: 27px;
+  --card-gap: 14px;
+  --card-radius: 16px;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 14px/1.45 var(--font-ui); }
+button, input { font: inherit; }
+button { color: inherit; }
+.page { width: min(1640px, calc(100% - 56px)); margin: 0 auto; padding: 44px 0 72px; }
+.topline { display: flex; justify-content: space-between; align-items: center; gap: 18px; color: var(--muted); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; }
+.date { font-family: var(--font-title); font-size: 12px; letter-spacing: 0; text-transform: none; color: var(--ink); }
+h1 { max-width: 950px; margin: 18px 0 8px; font: 400 clamp(38px, 5vw, 68px)/.98 var(--font-title); letter-spacing: -.035em; }
+.lead { max-width: 840px; margin: 0; color: #514d46; font: 400 16px/1.55 var(--font-body); }
+.note { margin: 12px 0 0; color: var(--muted); font: 400 12px/1.5 var(--font-body); }
+.num { font-family: var(--font-title); font-variant-numeric: lining-nums; }
+.summary { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 24px; }
+.pill { display: inline-flex; align-items: center; gap: 7px; padding: 7px 11px; border: 1px solid var(--line); border-radius: 99px; background: rgba(255,253,248,.7); color: var(--muted); font-size: 12px; }
+.pill strong { color: var(--ink); font-weight: 400; }
+.toolbar { display: grid; grid-template-columns: minmax(220px, 1.3fr) minmax(260px, 1.7fr) auto; align-items: end; gap: 12px; margin: 0 0 16px; padding: 14px; border: 1px solid var(--line); border-radius: 14px; background: rgba(255,253,248,.75); }
+.control { min-width: 0; }
+.control label { display: block; margin: 0 0 6px; color: var(--muted); font-size: 11px; }
+.search, .sample-input { width: 100%; height: 38px; border: 1px solid var(--line); border-radius: 9px; padding: 0 11px; outline: 0; background: var(--surface); color: var(--ink); }
+.search:focus, .sample-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(169,103,67,.12); }
+.size-row { display: flex; align-items: center; gap: 9px; height: 38px; }
+.size-row input { width: 100%; accent-color: var(--accent); }
+.size-value { min-width: 44px; text-align: right; color: var(--muted); font: 400 13px var(--font-title); }
+.filters { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+.filter { min-height: 36px; padding: 0 11px; border: 1px solid var(--line); border-radius: 9px; background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; }
+.filter[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+.filter .num { margin-left: 4px; }
+.results { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 0 2px 10px; color: var(--muted); font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); gap: var(--card-gap); align-items: start; }
+.card { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: var(--card-radius); background: var(--surface); box-shadow: 0 4px 16px rgba(43,37,27,.035); }
+.card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 14px 15px 10px; border-bottom: 1px solid var(--line); }
+.family-name { overflow-wrap: anywhere; font-size: 13px; font-weight: 500; }
+.tag { flex: none; color: var(--muted); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+.specimen { padding: 15px 15px 12px; font-family: var(--sample-font), serif; font-weight: 400; }
+.specimen-main { min-height: 74px; font-size: var(--sample-size); line-height: 1.13; overflow-wrap: anywhere; }
+.specimen-detail { padding-top: 9px; color: #5f5a52; font-size: 15px; line-height: 1.35; overflow-wrap: anywhere; }
+.card-foot { display: flex; flex-direction: column; gap: 4px; padding: 10px 15px 13px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
+.file { font: 10px/1.4 var(--font-code); overflow-wrap: anywhere; }
+.variants { display: flex; flex-direction: column; gap: 0; padding: 0 15px; }
+.variant { padding: 11px 0 12px; border-bottom: 1px solid var(--line); }
+.variant:last-child { border-bottom: 0; }
+.variant-label { margin: 0 0 6px; color: var(--muted); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
+.variant .specimen { padding: 0; }
+.variant .specimen-main { min-height: 0; font-size: 24px; }
+.variant .specimen-detail { padding-top: 5px; font-size: 13px; }
+.empty { grid-column: 1/-1; padding: 36px; border: 1px dashed var(--line); border-radius: 14px; text-align: center; color: var(--muted); font-family: var(--font-body); }
+footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px 24px; margin-top: 22px; padding-top: 13px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+footer .source { font-family: var(--font-code); }
+@media (max-width: 900px) { .toolbar { grid-template-columns: 1fr 1fr; } .filters { grid-column: 1/-1; justify-content: flex-start; } }
+@media (max-width: 600px) { .page { width: min(100% - 28px, 520px); padding-top: 26px; } .topline { align-items: flex-start; } .toolbar { grid-template-columns: 1fr; } .filters { grid-column: auto; } h1 { font-size: 42px; } }
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="topline"><span>Font Book · Fontes locales</span><span class="date">28 October 2026</span></div>
+  <h1>Les familles Grilli Type, côte à côte</h1>
+  <p class="lead">Chaque carte montre une fonte Regular installée sur ce Mac. Le texte identique permet de comparer les dessins; le champ de saisie le remplace en direct.</p>
+  <p class="note"><span class="num">21</span> familles Grilli Type apparaissent après regroupement des variantes de scripts de GT America. GT Sectra garde ses coupes LCG, Display et Fine séparées. Les cinq familles de comparaison demandées sont ajoutées après.</p>
+  <div class="summary" aria-label="Résumé des fontes"><span class="pill"><strong><span class="num">21</span> Grilli Type</strong> familles</span><span class="pill"><strong><span class="num">5</span> en plus</strong> Literata, Inter, Anthropic</span><span class="pill"><strong><span class="num">26</span></strong> cartes</span></div>
+  <section class="toolbar" aria-label="Réglages de comparaison">
+    <div class="control"><label for="searchInput">Chercher une famille</label><input class="search" id="searchInput" type="search" placeholder="Nom ou créateur" autocomplete="off"></div>
+    <div class="control"><label for="sampleInput">Texte à comparer</label><input class="sample-input" id="sampleInput" type="text" value="The quick brown fox jumps over the lazy dog." autocomplete="off"></div>
+    <div class="control"><label for="sizeInput">Taille du spécimen</label><div class="size-row"><input id="sizeInput" type="range" min="20" max="48" value="27" step="1"><output class="size-value" id="sizeOutput">27 px</output></div></div>
+    <div class="filters" role="group" aria-label="Filtrer les familles"><button class="filter" type="button" data-filter="all" aria-pressed="true">Toutes <span class="num">26</span></button><button class="filter" type="button" data-filter="gt" aria-pressed="false">Grilli Type <span class="num">21</span></button><button class="filter" type="button" data-filter="extra" aria-pressed="false">Ajouts <span class="num">5</span></button></div>
+  </section>
+  <div class="results"><span id="resultCount">26 familles affichées</span><span>Un spécimen Regular par famille</span></div>
+  <section class="grid" id="fontGrid" aria-live="polite"></section>
+  <footer><span>Les fontes sont appelées par leur nom de famille dans Font Book.</span><span class="source">~/Library/Fonts · noms OpenType · Regular</span><span>GT Pressura LCGV est installée aussi, mais son fichier porte le crédit Dominik Huber &amp; Moiré.</span></footer>
+</main>
+<script>
+// 28 October 2026 at 20:18 CET. Font data is centralized so the specimen cards stay editable.
+const FONT_DATA = [{"name": "GT Alpina", "cssFamily": "GT Alpina", "group": "gt", "manufacturer": "Grilli Type", "file": "GT-Alpina-Standard-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT America", "cssFamily": "GT America LCGV", "group": "gt", "manufacturer": "Grilli Type", "file": "GT-America-LCGV-Standard-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": [{"label": "Arabic", "cssFamily": "GT America Arabic", "sample": "العربية من صميم الطباعة", "detail": "٠١٢٣٤٥٦٧٨٩", "language": "ar", "direction": "rtl", "file": "GT-America-Arabic-Regular.otf"}, {"label": "Devanagari", "cssFamily": "GT America Devanagari", "sample": "देवनागरी अक्षर अभ्यास", "detail": "०१२३४५६७८९", "language": "hi", "direction": "ltr", "file": "GT-America-Devanagari-Regular.otf"}, {"label": "Hebrew", "cssFamily": "GT America Hebrew", "sample": "אותיות ברורות בעברית", "detail": "אבגדהוזחטיךכלםמןנסעףפץצקרשת", "language": "he", "direction": "rtl", "file": "GT-America-Hebrew-Regular.otf"}, {"label": "Korean", "cssFamily": "GT America Korean", "sample": "한글 글꼴 비교", "detail": "한글 0123456789", "language": "ko", "direction": "ltr", "file": "GT-America-Korean-Regular.otf"}, {"label": "Thai Looped", "cssFamily": "GT America Thai Looped", "sample": "ตัวอย่างตัวอักษรไทย", "detail": "๐๑๒๓๔๕๖๗๘๙", "language": "th", "direction": "ltr", "file": "GT-America-Thai-Looped-Regular.otf"}]}, {"name": "GT Canon L", "cssFamily": "GT Canon L", "group": "gt", "manufacturer": "Grilli Type AG", "file": "GT-Canon-L-Standard-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Cinetype", "cssFamily": "GT Cinetype", "group": "gt", "manufacturer": "Grilli Type", "file": "GT-Cinetype-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Eesti Display LC", "cssFamily": "GT Eesti Display LC", "group": "gt", "manufacturer": "Grilli Type", "file": "GT-Eesti-LC-Display-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Era Display", "cssFamily": "GT Era Display", "group": "gt", "manufacturer": "Grilli Type AG", "file": "GT-Era-Display-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Flaire Basic", "cssFamily": "GT Flaire Basic", "group": "gt", "manufacturer": "Grilli Type", "file": "GT-Flaire-Basic-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Flexa", "cssFamily": "GT Flexa", "group": "gt", "manufacturer": "Grilli Type", "file": "GT-Flexa-Standard-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Haptik", "cssFamily": "GT Haptik", "group": "gt", "manufacturer": "Grilli Type", "file": "GT-Haptik-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Maru", "cssFamily": "GT Maru", "group": "gt", "manufacturer": "Grilli Type AG", "file": "GT-Maru-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Mechanik Poly", "cssFamily": "GT Mechanik Poly", "group": "gt", "manufacturer": "Grilli Type AG", "file": "GT-Mechanik-Poly-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Pantheon Display", "cssFamily": "GT Pantheon Display", "group": "gt", "manufacturer": "Grilli Type", "file": "GT-Pantheon-Display-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Planar", "cssFamily": "GT Planar", "group": "gt", "manufacturer": "Grilli Type AG", "file": "GT-Planar-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Sectra Display LCG", "cssFamily": "GT Sectra Display LCG", "group": "gt", "manufacturer": "Grilli Type", "file": "GT-Sectra-LCGV-Display-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Sectra Fine LCG", "cssFamily": "GT Sectra Fine LCG", "group": "gt", "manufacturer": "Grilli Type", "file": "GT-Sectra-LCGV-Fine-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Sectra LCG", "cssFamily": "GT Sectra LCG", "group": "gt", "manufacturer": "Grilli Type", "file": "GT-Sectra-LCGV-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Standard L", "cssFamily": "GT Standard L", "group": "gt", "manufacturer": "Grilli Type AG", "file": "GT-Standard-L-Standard-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Super Display", "cssFamily": "GT Super Display", "group": "gt", "manufacturer": "Grilli Type", "file": "GT-Super-Display-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Ultra", "cssFamily": "GT Ultra Regular", "group": "gt", "manufacturer": "Grilli Type AG", "file": "GT-Ultra-Standard-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Walsheim LC", "cssFamily": "GT Walsheim LC", "group": "gt", "manufacturer": "Grilli Type", "file": "GT-Walsheim-LC-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "GT Zirkon", "cssFamily": "GT Zirkon", "group": "gt", "manufacturer": "Grilli Type", "file": "GT-Zirkon-Regular.otf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "Literata", "cssFamily": "Literata", "group": "extra", "manufacturer": "TypeTogether", "file": "Literata[opsz,wght].ttf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "Inter", "cssFamily": "Inter Variable", "group": "extra", "manufacturer": "rsms", "file": "InterVariable.ttf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "Anthropic Serif", "cssFamily": "AnthropicSerif", "group": "extra", "manufacturer": "BSPK LLC", "file": "AnthropicSerif-Regular.ttf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "Anthropic Sans", "cssFamily": "AnthropicSans", "group": "extra", "manufacturer": "BSPK LLC", "file": "AnthropicSans-Regular.ttf", "sample": "The quick brown fox jumps over the lazy dog.", "detail": "AaBbCc   0123456789   € @ &", "language": "en", "direction": "ltr", "variants": []}, {"name": "Anthropic Mono", "cssFamily": "AnthropicMono", "group": "extra", "manufacturer": "BSPK LLC", "file": "AnthropicMono-Regular.ttf", "sample": "const type = \"clear\";", "detail": "AaBbCc   0123456789   {} []", "language": "en", "direction": "ltr", "variants": []}];
+const FILTER_LABELS = { all: 'familles affichées', gt: 'familles Grilli Type affichées', extra: 'familles de comparaison affichées' };
+const elements = {
+  search: document.getElementById('searchInput'),
+  sample: document.getElementById('sampleInput'),
+  size: document.getElementById('sizeInput'),
+  sizeOutput: document.getElementById('sizeOutput'),
+  grid: document.getElementById('fontGrid'),
+  resultCount: document.getElementById('resultCount'),
+};
+let activeFilter = 'all';
+function createSpecimen(variant, editable) {
+  const box = document.createElement('div');
+  box.className = 'specimen';
+  box.style.setProperty('--sample-font', JSON.stringify(variant.cssFamily));
+  const primary = document.createElement('div');
+  primary.className = 'specimen-main';
+  primary.lang = variant.language || 'en';
+  primary.dir = variant.direction || 'ltr';
+  primary.dataset.defaultText = variant.sample;
+  primary.dataset.editable = editable ? 'true' : 'false';
+  primary.textContent = editable && elements.sample.value ? elements.sample.value : variant.sample;
+  const detail = document.createElement('div');
+  detail.className = 'specimen-detail';
+  detail.lang = variant.language || 'en';
+  detail.dir = variant.direction || 'ltr';
+  detail.textContent = variant.detail;
+  box.append(primary, detail);
+  return box;
+}
+function createCard(font) {
+  const card = document.createElement('article');
+  card.className = 'card';
+  card.dataset.group = font.group;
+  const head = document.createElement('div');
+  head.className = 'card-head';
+  const name = document.createElement('div');
+  name.className = 'family-name';
+  name.textContent = font.name;
+  const tag = document.createElement('div');
+  tag.className = 'tag';
+  tag.textContent = font.group === 'gt' ? 'Grilli Type' : 'Comparaison';
+  head.append(name, tag);
+  card.append(head);
+  const mainVariant = { cssFamily: font.cssFamily, sample: font.sample, detail: font.detail, language: font.language, direction: font.direction };
+  card.append(createSpecimen(mainVariant, true));
+  if (font.variants.length) {
+    const variants = document.createElement('div');
+    variants.className = 'variants';
+    for (const variant of font.variants) {
+      const item = document.createElement('div');
+      item.className = 'variant';
+      const label = document.createElement('div');
+      label.className = 'variant-label';
+      label.textContent = variant.label;
+      item.append(label, createSpecimen(variant, false));
+      variants.append(item);
+    }
+    card.append(variants);
+  }
+  const foot = document.createElement('div');
+  foot.className = 'card-foot';
+  const maker = document.createElement('span');
+  maker.textContent = font.manufacturer;
+  const file = document.createElement('span');
+  file.className = 'file';
+  file.textContent = font.file;
+  foot.append(maker, file);
+  for (const variant of font.variants) {
+    const variantFile = document.createElement('span');
+    variantFile.className = 'file';
+    variantFile.textContent = variant.file;
+    foot.append(variantFile);
+  }
+  card.append(foot);
+  return card;
+}
+function render() {
+  const query = elements.search.value.trim().toLowerCase();
+  const visible = FONT_DATA.filter(font => {
+    const filterMatch = activeFilter === 'all' || font.group === activeFilter;
+    const searchMatch = !query || JSON.stringify(font).toLowerCase().includes(query);
+    return filterMatch && searchMatch;
+  });
+  elements.grid.replaceChildren(...visible.map(createCard));
+  elements.resultCount.textContent = `${visible.length} ${FILTER_LABELS[activeFilter]}`;
+  const customText = elements.sample.value.trim();
+  for (const specimen of elements.grid.querySelectorAll('[data-editable="true"]')) {
+    specimen.textContent = customText || specimen.dataset.defaultText;
+  }
+}
+document.querySelector('.filters').addEventListener('click', event => {
+  const button = event.target.closest('[data-filter]');
+  if (!button) return;
+  activeFilter = button.dataset.filter;
+  document.querySelectorAll('[data-filter]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+  render();
+});
+elements.search.addEventListener('input', render);
+elements.sample.addEventListener('input', render);
+elements.size.addEventListener('input', () => {
+  document.documentElement.style.setProperty('--sample-size', `${elements.size.value}px`);
+  elements.sizeOutput.textContent = `${elements.size.value} px`;
+});
+render();
+</script>
+</body>
+</html>

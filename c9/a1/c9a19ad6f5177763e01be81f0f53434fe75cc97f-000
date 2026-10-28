@@ -1,0 +1,18 @@
+{
+  "date": "28 October 2026",
+  "slug": "grilli-type-fontbook-comparison",
+  "folder": "2026-10-28-grilli-type-fontbook-comparison",
+  "version": 1,
+  "title": "Comparaison des 21 familles Grilli Type et 5 fontes",
+  "module": "typography",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-edit",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-zenray-edit/tmp-fontbook-grilli-type-28-October-2026",
+  "files": [
+    "index.html"
+  ],
+  "indexSha256": "819c7d31ba040ec98eacd424caa87704629a24671a342713e1b14499635b5475",
+  "filedAt": "2026-10-28T19:22:59.572Z",
+  "note": "21 familles Grilli Type regroupées depuis les noms OpenType du Font Book, plus Literata, Inter, Anthropic Serif, Sans et Mono."
+}
