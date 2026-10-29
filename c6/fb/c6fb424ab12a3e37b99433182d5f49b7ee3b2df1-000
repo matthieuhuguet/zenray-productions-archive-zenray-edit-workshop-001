@@ -1,0 +1,28 @@
+À l’attention de l’équipe de recrutement,
+
+Bonjour Ludia,
+
+Je vous écris au sujet de votre offre « Technical Artist / Artiste Technique ».
+
+Vos jeux mobiles ont besoin d’environnements et d’assets légers, produits vite. Je suis technical artist freelance. Je construis des environnements et des outils procéduraux optimisés pour le temps réel, que je peux livrer à distance depuis la France, sur une mission ciblée.
+
+Je m’appelle Matthieu Huguet, spécialisé dans les environnements procéduraux et les pipelines entre Houdini et Unreal Engine 5.
+
+Diplômé d’un Bachelor Game Design à LISAA Paris et d’un Master Game Art à ARTFX Montpellier, complétés par des cursus spécialisés chez Gnomon et CS50 de Harvard, j’associe la compréhension des impératifs de design à la rigueur technique de l’outillage de production.
+
+En production, j’ai notamment collaboré avec Meerkat Studio sur plusieurs titres de simulation sortis sur Steam (dont Santa Simulator et Bakery Coffee Simulator) et sur des projets non annoncés sous contrat rémunéré. J’y ai pris en charge l’intégration technique des environnements, l’éclairage temps réel et l’optimisation des assets pour garantir un framerate stable. Plus tôt durant mes études, j’ai co-développé Noyes (jeu étudiant), avant de réaliser des missions de visualisation temps réel pour des clients privés. Tout mon travail est documenté sur matthieuhuguet.com.
+
+Au quotidien, mon cœur d’expertise consiste à bâtir des outils paramétriques HDA et des scripts d’automatisation (Python, VEX) qui permettent aux level designers et environment artists d’itérer rapidement sans subir de goulot d’étranglement technique :
+- Générateurs modulaires Houdini vers Unreal Engine 5 (architectures, kits d’escaliers paramétriques, tuiles et variations de sols).
+- Shaders temps réel optimisés, Master Materials modulaires pilotés par Vertex Paint, et déformations de végétation via Vertex Animation Textures (VAT).
+- Systèmes de textures procédurales sous Copernicus et Substance Designer respectant une texel density isotrope stricte pour maximiser la fidélité visuelle tout en réduisant l’empreinte mémoire. Mes derniers travaux publiés : Fleur de Lys: Procedural Lily, Houdini to Unreal, Ceramic Tiles et HDA Stairs Component.
+
+Votre travail sur des titres à forte intensité visuelle et technique exige des pipelines solides et des outils confortables pour les équipes créatives. C’est précisément cette valeur que je souhaite apporter à Ludia : libérer du temps pour vos artistes en concevant des systèmes procéduraux robustes et prêts pour la production.
+
+Je recherche actuellement des missions de Technical Artist freelance via ma propre structure, et je peux prendre en charge un périmètre défini (outils, intégration pipeline ou production d’environnements) sur un engagement court ou long.
+
+Je serais ravi de vous présenter concrètement mes outils et d’échanger avec vous par visioconférence selon vos disponibilités.
+
+Matthieu Huguet
+Technical Artist · Houdini & Unreal Engine 5
+matthieuhuguet.com · linkedin.com/in/zenray

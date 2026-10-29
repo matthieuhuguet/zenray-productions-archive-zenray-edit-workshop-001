@@ -1,0 +1,20 @@
+{
+  "date": "29 October 2026",
+  "slug": "cover-letter-ludia-technical-artist",
+  "folder": "2026-10-29-cover-letter-ludia-technical-artist",
+  "version": 1,
+  "title": "Technical Artist / Artiste Technique",
+  "module": "cover-letter",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-edit",
+  "status": "pending",
+  "atelier": "/var/folders/r2/wh6ygv490dqbrs2mb51g39jm0000gn/T/zr-pdf-build-cover-letter-ludia-technical-artist-1793268326950",
+  "files": [
+    "index.html",
+    "cover-letter-ludia-technical-artist-preview-1.png",
+    "document.json"
+  ],
+  "indexSha256": "1c4134ae18e232987d9e4f3e21b4e96ad15e26d0084cd0d9341ec2880e419a4b",
+  "filedAt": "2026-10-29T10:05:28.172Z",
+  "note": "Rendered PDF Document, 1 page(s)"
+}
