@@ -1,0 +1,297 @@
+{
+ "title": "Wild Grass : choose the green ones",
+ "subtitle": "Pre-ticked = my colour measure (hue \u2265 75, sat \u2265 0.35). Untick or tick, then copy the selection and paste it in the chat.",
+ "mcp": "/Users/zenray/Create/Build/Productions/ZenRayShards/ZenRayShards/Scripts/mcp.py",
+ "thumb_px": 220,
+ "output": "/Users/zenray/.claude/tmp/tmp-grass-picker-29-october-2026/index.html",
+ "groups": [
+  {
+   "name": "sjliZ",
+   "items": [
+    {
+     "id": "sjliZ_A",
+     "label": "A",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_sjliZ/High/sjliZ_tier_1/StaticMeshes/SM_sjliZ_VarA",
+     "note": "h84 s0.41",
+     "color": "#778e54",
+     "selected": true
+    },
+    {
+     "id": "sjliZ_B",
+     "label": "B",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_sjliZ/High/sjliZ_tier_1/StaticMeshes/SM_sjliZ_VarB",
+     "note": "h86 s0.39",
+     "color": "#718853",
+     "selected": true
+    },
+    {
+     "id": "sjliZ_C",
+     "label": "C",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_sjliZ/High/sjliZ_tier_1/StaticMeshes/SM_sjliZ_VarC",
+     "note": "h85 s0.41",
+     "color": "#768e54",
+     "selected": true
+    },
+    {
+     "id": "sjliZ_D",
+     "label": "D",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_sjliZ/High/sjliZ_tier_1/StaticMeshes/SM_sjliZ_VarD",
+     "note": "h84 s0.39",
+     "color": "#7e955b",
+     "selected": true
+    },
+    {
+     "id": "sjliZ_E",
+     "label": "E",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_sjliZ/High/sjliZ_tier_1/StaticMeshes/SM_sjliZ_VarE",
+     "note": "h81 s0.43",
+     "color": "#798f51",
+     "selected": true
+    }
+   ]
+  },
+  {
+   "name": "vczndjqja",
+   "items": [
+    {
+     "id": "vczndjqja_A",
+     "label": "A",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vczndjqja/Medium/vczndjqja_tier_2/StaticMeshes/SM_vczndjqja_VarA",
+     "note": "h49 s0.32",
+     "color": "#b1a779",
+     "selected": false
+    },
+    {
+     "id": "vczndjqja_B",
+     "label": "B",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vczndjqja/Medium/vczndjqja_tier_2/StaticMeshes/SM_vczndjqja_VarB",
+     "note": "h42 s0.27",
+     "color": "#baab88",
+     "selected": false
+    },
+    {
+     "id": "vczndjqja_C",
+     "label": "C",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vczndjqja/Medium/vczndjqja_tier_2/StaticMeshes/SM_vczndjqja_VarC",
+     "note": "h44 s0.28",
+     "color": "#b2a581",
+     "selected": false
+    },
+    {
+     "id": "vczndjqja_D",
+     "label": "D",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vczndjqja/Medium/vczndjqja_tier_2/StaticMeshes/SM_vczndjqja_VarD",
+     "note": "h49 s0.31",
+     "color": "#b2a77a",
+     "selected": false
+    },
+    {
+     "id": "vczndjqja_E",
+     "label": "E",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vczndjqja/Medium/vczndjqja_tier_2/StaticMeshes/SM_vczndjqja_VarE",
+     "note": "h49 s0.31",
+     "color": "#b1a77a",
+     "selected": false
+    },
+    {
+     "id": "vczndjqja_F",
+     "label": "F",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vczndjqja/Medium/vczndjqja_tier_2/StaticMeshes/SM_vczndjqja_VarF",
+     "note": "h47 s0.30",
+     "color": "#b2a67d",
+     "selected": false
+    },
+    {
+     "id": "vczndjqja_G",
+     "label": "G",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vczndjqja/Medium/vczndjqja_tier_2/StaticMeshes/SM_vczndjqja_VarG",
+     "note": "h49 s0.30",
+     "color": "#aca379",
+     "selected": false
+    },
+    {
+     "id": "vczndjqja_H",
+     "label": "H",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vczndjqja/Medium/vczndjqja_tier_2/StaticMeshes/SM_vczndjqja_VarH",
+     "note": "h43 s0.28",
+     "color": "#b8aa85",
+     "selected": false
+    }
+   ]
+  },
+  {
+   "name": "vdilbaiia",
+   "items": [
+    {
+     "id": "vdilbaiia_A",
+     "label": "A",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vdilbaiia/Medium/vdilbaiia_tier_2/StaticMeshes/SM_vdilbaiia_VarA",
+     "note": "h41 s0.26",
+     "color": "#ad9f81",
+     "selected": false
+    },
+    {
+     "id": "vdilbaiia_B",
+     "label": "B",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vdilbaiia/Medium/vdilbaiia_tier_2/StaticMeshes/SM_vdilbaiia_VarB",
+     "note": "h40 s0.20",
+     "color": "#857c6a",
+     "selected": false
+    },
+    {
+     "id": "vdilbaiia_C",
+     "label": "C",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vdilbaiia/Medium/vdilbaiia_tier_2/StaticMeshes/SM_vdilbaiia_VarC",
+     "note": "h41 s0.23",
+     "color": "#978c74",
+     "selected": false
+    },
+    {
+     "id": "vdilbaiia_D",
+     "label": "D",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vdilbaiia/Medium/vdilbaiia_tier_2/StaticMeshes/SM_vdilbaiia_VarD",
+     "note": "h40 s0.20",
+     "color": "#867d6b",
+     "selected": false
+    },
+    {
+     "id": "vdilbaiia_E",
+     "label": "E",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vdilbaiia/Medium/vdilbaiia_tier_2/StaticMeshes/SM_vdilbaiia_VarE",
+     "note": "h40 s0.20",
+     "color": "#837a68",
+     "selected": false
+    },
+    {
+     "id": "vdilbaiia_F",
+     "label": "F",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vdilbaiia/Medium/vdilbaiia_tier_2/StaticMeshes/SM_vdilbaiia_VarF",
+     "note": "h40 s0.18",
+     "color": "#857d6d",
+     "selected": false
+    },
+    {
+     "id": "vdilbaiia_G",
+     "label": "G",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vdilbaiia/Medium/vdilbaiia_tier_2/StaticMeshes/SM_vdilbaiia_VarG",
+     "note": "h40 s0.22",
+     "color": "#a49880",
+     "selected": false
+    },
+    {
+     "id": "vdilbaiia_H",
+     "label": "H",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vdilbaiia/Medium/vdilbaiia_tier_2/StaticMeshes/SM_vdilbaiia_VarH",
+     "note": "h41 s0.24",
+     "color": "#a3967b",
+     "selected": false
+    },
+    {
+     "id": "vdilbaiia_I",
+     "label": "I",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vdilbaiia/Medium/vdilbaiia_tier_2/StaticMeshes/SM_vdilbaiia_VarI",
+     "note": "h40 s0.20",
+     "color": "#807867",
+     "selected": false
+    },
+    {
+     "id": "vdilbaiia_J",
+     "label": "J",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vdilbaiia/Medium/vdilbaiia_tier_2/StaticMeshes/SM_vdilbaiia_VarJ",
+     "note": "h41 s0.23",
+     "color": "#9b9078",
+     "selected": false
+    },
+    {
+     "id": "vdilbaiia_K",
+     "label": "K",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vdilbaiia/Medium/vdilbaiia_tier_2/StaticMeshes/SM_vdilbaiia_VarK",
+     "note": "h41 s0.25",
+     "color": "#9e9277",
+     "selected": false
+    },
+    {
+     "id": "vdilbaiia_L",
+     "label": "L",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vdilbaiia/Medium/vdilbaiia_tier_2/StaticMeshes/SM_vdilbaiia_VarL",
+     "note": "h41 s0.22",
+     "color": "#8d836d",
+     "selected": false
+    }
+   ]
+  },
+  {
+   "name": "vlkhcbxia",
+   "items": [
+    {
+     "id": "vlkhcbxia_A",
+     "label": "A",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vlkhcbxia/Medium/vlkhcbxia_tier_2/StaticMeshes/SM_vlkhcbxia_VarA",
+     "note": "h68 s0.42",
+     "color": "#81894f",
+     "selected": false
+    },
+    {
+     "id": "vlkhcbxia_B",
+     "label": "B",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vlkhcbxia/Medium/vlkhcbxia_tier_2/StaticMeshes/SM_vlkhcbxia_VarB",
+     "note": "h77 s0.49",
+     "color": "#65753c",
+     "selected": true
+    },
+    {
+     "id": "vlkhcbxia_C",
+     "label": "C",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vlkhcbxia/Medium/vlkhcbxia_tier_2/StaticMeshes/SM_vlkhcbxia_VarC",
+     "note": "h80 s0.49",
+     "color": "#5f713a",
+     "selected": true
+    },
+    {
+     "id": "vlkhcbxia_D",
+     "label": "D",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vlkhcbxia/Medium/vlkhcbxia_tier_2/StaticMeshes/SM_vlkhcbxia_VarD",
+     "note": "h59 s0.41",
+     "color": "#929156",
+     "selected": false
+    },
+    {
+     "id": "vlkhcbxia_E",
+     "label": "E",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vlkhcbxia/Medium/vlkhcbxia_tier_2/StaticMeshes/SM_vlkhcbxia_VarE",
+     "note": "h46 s0.37",
+     "color": "#a69768",
+     "selected": false
+    },
+    {
+     "id": "vlkhcbxia_F",
+     "label": "F",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vlkhcbxia/Medium/vlkhcbxia_tier_2/StaticMeshes/SM_vlkhcbxia_VarF",
+     "note": "h80 s0.52",
+     "color": "#5c7035",
+     "selected": true
+    },
+    {
+     "id": "vlkhcbxia_G",
+     "label": "G",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vlkhcbxia/Medium/vlkhcbxia_tier_2/StaticMeshes/SM_vlkhcbxia_VarG",
+     "note": "h84 s0.53",
+     "color": "#516630",
+     "selected": true
+    },
+    {
+     "id": "vlkhcbxia_H",
+     "label": "H",
+     "asset": "/Game/Fab/Megascans/Plants/Wild_Grass_vlkhcbxia/Medium/vlkhcbxia_tier_2/StaticMeshes/SM_vlkhcbxia_VarH",
+     "note": "h61 s0.47",
+     "color": "#989952",
+     "selected": false
+    }
+   ]
+  }
+ ],
+ "copy": {
+  "group_line": "{group}: {labels}",
+  "separator": " | "
+ }
+}

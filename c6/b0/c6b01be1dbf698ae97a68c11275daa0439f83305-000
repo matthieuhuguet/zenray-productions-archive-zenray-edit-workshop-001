@@ -1,0 +1,18 @@
+{
+  "date": "29 October 2026",
+  "slug": "grading-sliders-bayou",
+  "folder": "2026-10-29-grading-sliders-bayou",
+  "version": 1,
+  "title": "Grading sliders Louisiana Bayou",
+  "module": "grading",
+  "assetsProject": "zenray-edit",
+  "project": "louisiana-bayou",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-grading-bayou-29-october-2026",
+  "files": [
+    "index.html"
+  ],
+  "indexSha256": "a52c6ce44c66f3077ca20c77db0bd6b7d575e0205830d6470f9f791ae6d014e5",
+  "filedAt": "2026-10-29T18:34:29.258Z",
+  "note": null
+}

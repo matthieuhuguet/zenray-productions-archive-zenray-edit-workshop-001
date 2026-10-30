@@ -1,0 +1,11 @@
+<svg style="width:100%;height:auto;display:block;font-family:Literata,serif" viewBox="0 0 760 280" role="img" aria-label="Une tuile 3D reçoit une adresse UV sur la feuille">
+  <rect width="760" height="280" fill="#eeeae1"/>
+  <polygon points="60,200 230,175 270,95 100,120" fill="#b67c55" opacity=".8" stroke="#34332f" stroke-width="2"/>
+  <text class="svgtext" x="40" y="236">une tuile du toit (en 3D)</text>
+  <path d="M290 150 H400" stroke="#34332f" stroke-width="2"/><path d="M390 142 L402 150 L390 158" stroke="#34332f" fill="none" stroke-width="2"/>
+  <text class="svgtext2" x="296" y="138">ses UV</text>
+  <rect x="440" y="30" width="240" height="230" fill="#ddd8cd" stroke="#34332f" stroke-width="2"/>
+  <rect x="470" y="60" width="90" height="70" fill="#b67c55" opacity=".85"/>
+  <text class="svgnum" x="472" y="150">U de 0,13 à 0,50</text><text class="svgnum" x="472" y="172">V de 0,62 à 0,87</text>
+  <text class="svgtext2" x="440" y="278">la feuille de texture (0 à 1 dans les deux sens)</text>
+</svg>

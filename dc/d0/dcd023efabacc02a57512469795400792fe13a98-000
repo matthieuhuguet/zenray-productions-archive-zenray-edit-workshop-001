@@ -1,0 +1,21 @@
+{
+  "date": "29 October 2026",
+  "slug": "louisiana-bayou-roof-summary",
+  "folder": "2026-10-29-louisiana-bayou-roof-summary",
+  "version": 1,
+  "title": "Louisiana Bayou : le toit en trois paragraphes",
+  "module": "article",
+  "assetsProject": "zenray-edit",
+  "project": "louisiana-bayou",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-houdini-september-2026/tmp-bayou-louisiana/Articles/RoofSummary-29-October-2026",
+  "files": [
+    "index.html",
+    "Article.json",
+    "Sources.json",
+    "roof.png"
+  ],
+  "indexSha256": "edf06e3a7e05492f2ea3aed79b2f96af95edb545cfbf697f556ead5396837437",
+  "filedAt": "2026-10-29T17:21:00.733Z",
+  "note": null
+}

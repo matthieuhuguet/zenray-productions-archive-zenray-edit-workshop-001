@@ -1,0 +1,22 @@
+{
+  "date": "29 October 2026",
+  "slug": "louisiana-bayou-roof-summary",
+  "folder": "2026-10-29-louisiana-bayou-roof-summary-v2",
+  "version": 2,
+  "title": "Toit procédural : géométrie et 36 variantes",
+  "module": "article",
+  "assetsProject": "zenray-edit",
+  "project": "louisiana-bayou",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-houdini-september-2026/tmp-bayou-louisiana/Articles/RoofSummary-29-October-2026",
+  "files": [
+    "index.html",
+    "Article.json",
+    "OriginalUvDiagram.svg",
+    "Sources.json",
+    "roof.png"
+  ],
+  "indexSha256": "3399f1b0d286a46d1e5e391d8c02f934595b7938ebf4543ecedcfb9bd74fe9d6",
+  "filedAt": "2026-10-29T17:31:31.808Z",
+  "note": null
+}

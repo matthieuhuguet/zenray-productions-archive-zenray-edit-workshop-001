@@ -1,0 +1,34 @@
+{
+  "title": "Comment le toit est construit",
+  "eyebrow": "Louisiana Bayou",
+  "date": "29 October 2026",
+  "subtitle": "Le toit de la chapelle dans Houdini",
+  "status": "Synthèse",
+  "lead": "",
+  "hero": "roof",
+  "heroAlt": "Détail des bardeaux du toit de la chapelle",
+  "heroText": "",
+  "heroCaption": "Détail du toit, rendu Karma CPU.",
+  "footer": "Source : Leçon du toit, trim sheet, tuiles et texel density ; construction procédurale du projet Louisiana Bayou.",
+  "sources": "Sources.json",
+  "fontSet": "gtultra",
+  "titleStyle": "normal",
+  "theme": "papier",
+  "sections": [
+    {
+      "id": "shape",
+      "title": "Une forme paramétrable",
+      "html": "<p>Le toit de la chapelle est construit dans Houdini avec des paramètres qui règlent la courbure des pentes et le creux du faîtage, la ligne où les deux pans se rejoignent. Les bardeaux, les planches de rive et la charpente suivent cette même forme : modifier le profil permet donc de faire évoluer l’ensemble du toit.</p>"
+    },
+    {
+      "id": "shingles",
+      "title": "Des bardeaux superposés",
+      "html": "<p>Les bardeaux sont disposés en rangées qui se recouvrent, avec des joints décalés et de petites variations de largeur pour éviter un résultat trop régulier. Chaque pièce suit la pente du toit et conserve son épaisseur. La vue en fil de fer permet de voir comment ces éléments sont assemblés.</p>"
+    },
+    {
+      "id": "textures",
+      "title": "Une texture réutilisable",
+      "html": "<p>Les textures utilisent une trim sheet, une image qui rassemble plusieurs bandes de bois réutilisées sur les bardeaux. Les coordonnées UV indiquent quelle partie de cette image recouvre chaque pièce. Leur échelle est réglée pour conserver un niveau de détail cohérent, tandis que les textures apportent le grain, la couleur et l’usure du bois.</p>"
+    }
+  ]
+}

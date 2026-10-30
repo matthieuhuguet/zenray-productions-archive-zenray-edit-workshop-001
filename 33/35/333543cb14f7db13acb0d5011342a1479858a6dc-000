@@ -1,0 +1,19 @@
+{
+  "date": "29 October 2026",
+  "slug": "wild-grass-picker",
+  "folder": "2026-10-29-wild-grass-picker",
+  "version": 1,
+  "title": "Wild Grass picker",
+  "module": "picker",
+  "assetsProject": "zenray-edit",
+  "project": "louisiana-bayou",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-grass-picker-29-october-2026",
+  "files": [
+    "index.html",
+    "spec.json"
+  ],
+  "indexSha256": "cc721c2ff5531f1f402589d15753498526ed1ac8df7db30f9fb1290928fa5f69",
+  "filedAt": "2026-10-29T21:24:45.045Z",
+  "note": null
+}
