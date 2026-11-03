@@ -1,0 +1,345 @@
+#!/usr/bin/env python3
+# Created 3 November 2026, 17:50 CET (Europe/Paris).
+# Plans the project folder of each ZenRay Edit image by matching SHA-256 content hashes.
+# Read-only on every source: it hashes files and writes one plan.json. It never moves, renames or deletes anything.
+
+import concurrent.futures
+import hashlib
+import json
+import os
+import re
+import sys
+import time
+from collections import Counter, defaultdict
+from datetime import datetime
+
+EDIT_ROOT = "/Users/zenray/.claude/tmp/tmp-zenray-edit"
+IMAGES_DIR = os.path.join(EDIT_ROOT, "Media", "Images")
+PLAN_DIR = os.path.join(EDIT_ROOT, "Plans", "images-by-project-3-november-2026")
+PLAN_PATH = os.path.join(PLAN_DIR, "plan.json")
+SEARCH_ROOT = "/Users/zenray/.claude/tmp"
+SEARCH_BUDGET_SECONDS = 15 * 60
+WORKERS = 16
+BATCH_SIZE = 2000
+CHUNK_BYTES = 1024 * 1024
+PREFIX_BYTES = 64 * 1024
+UNSORTED_PROJECT = "_sans-projet"
+OUT_OF_SCOPE_FOLDERS = ("Media/HTML", "Media/PDF", "Media/Video")
+EXCLUDED_DIR_NAMES = {"node_modules", ".git", "__pycache__", ".venv", "venv"}
+TEXT_EXTENSIONS = {".html", ".htm", ".json", ".md", ".css", ".js", ".mjs", ".cjs",
+                   ".txt", ".svg", ".xml", ".py", ".sh"}
+TMP_DIR_RE = re.compile(r"^tmp-(.+)$")
+DATE_TAIL_RE = re.compile(r"-\d{1,2}-[a-z]+-\d{4}$", re.IGNORECASE)
+UNSAFE_CHARS_RE = re.compile(r"[^A-Za-z0-9._-]+")
+DECLARED_SUFFIX_RE = re.compile(r"-([0-9a-f]{12})\.(?:png|svg)$")
+REFERENCE_RE = re.compile(r"[A-Za-z0-9_.\-]+-[0-9a-f]{12}\.(?:png|svg)")
+
+
+def is_excluded_dir(name):
+    # Skip dependency folders, VCS data and any cache folder (Caches, .pytest_cache, ...).
+    return name in EXCLUDED_DIR_NAMES or "cache" in name.lower()
+
+
+def digest_prefix(path):
+    # SHA-256 of the first 64 KiB only. Identical files always share it, so it rejects candidates cheaply.
+    try:
+        with open(path, "rb") as handle:
+            return path, hashlib.sha256(handle.read(PREFIX_BYTES)).hexdigest()
+    except OSError:
+        return path, None
+
+
+def digest_full(path):
+    # Full SHA-256 of the file content, read in 1 MiB chunks.
+    digest = hashlib.sha256()
+    try:
+        with open(path, "rb") as handle:
+            for chunk in iter(lambda: handle.read(CHUNK_BYTES), b""):
+                digest.update(chunk)
+        return path, digest.hexdigest()
+    except OSError:
+        return path, None
+
+
+def walk_candidates(size_set, deadline):
+    # Walk SEARCH_ROOT without following symlinks; keep regular files whose byte size matches an image.
+    stats = {"files_scanned": 0, "directories_skipped": 0, "errors": 0, "timed_out": False}
+    candidates = []
+    stack = [SEARCH_ROOT]
+    while stack:
+        if time.monotonic() > deadline:
+            stats["timed_out"] = True
+            break
+        current = stack.pop()
+        try:
+            with os.scandir(current) as entries:
+                for entry in entries:
+                    try:
+                        if entry.is_dir(follow_symlinks=False):
+                            if entry.path == EDIT_ROOT:
+                                continue
+                            if is_excluded_dir(entry.name):
+                                stats["directories_skipped"] += 1
+                                continue
+                            stack.append(entry.path)
+                        elif entry.is_file(follow_symlinks=False):
+                            stats["files_scanned"] += 1
+                            size = entry.stat(follow_symlinks=False).st_size
+                            if size in size_set:
+                                candidates.append((entry.path, size))
+                    except OSError:
+                        stats["errors"] += 1
+        except OSError:
+            stats["errors"] += 1
+    return candidates, stats
+
+
+def run_batches(function, items, executor, deadline):
+    # Process items in batches so the deadline can stop the work between two batches.
+    results = []
+    for start in range(0, len(items), BATCH_SIZE):
+        if time.monotonic() > deadline:
+            return results, False
+        batch = items[start:start + BATCH_SIZE]
+        results.extend(executor.map(function, batch, chunksize=16))
+    return results, True
+
+
+def project_from_copy(copy_path):
+    # Return (project, tmp_dir) from the first tmp-<name> folder between SEARCH_ROOT and the file.
+    parts = os.path.relpath(copy_path, SEARCH_ROOT).split(os.sep)
+    for part in parts[:-1]:
+        match = TMP_DIR_RE.match(part)
+        if match:
+            raw_name = DATE_TAIL_RE.sub("", match.group(1))
+            project = UNSAFE_CHARS_RE.sub("-", raw_name).strip("-") or None
+            return project, part
+    return None, None
+
+
+def choose_copy_and_project(copies):
+    # Majority vote over the projects of all copies; ties go to the alphabetically first project.
+    by_project = defaultdict(list)
+    without_project = []
+    for copy_path in copies:
+        project, _ = project_from_copy(copy_path)
+        if project:
+            by_project[project].append(copy_path)
+        else:
+            without_project.append(copy_path)
+    if by_project:
+        primary = sorted(by_project.items(), key=lambda item: (-len(item[1]), item[0]))[0][0]
+        return primary, by_project[primary][0], sorted(by_project)
+    return None, (without_project[0] if without_project else None), []
+
+
+def scan_references():
+    # Map each image file name to the text files under EDIT_ROOT that mention it (read-only).
+    references = defaultdict(set)
+    for dirpath, dirnames, filenames in os.walk(EDIT_ROOT):
+        dirnames[:] = [d for d in dirnames
+                       if not is_excluded_dir(d)
+                       and os.path.join(dirpath, d) not in (IMAGES_DIR, PLAN_DIR)]
+        for filename in filenames:
+            if os.path.splitext(filename)[1].lower() not in TEXT_EXTENSIONS:
+                continue
+            path = os.path.join(dirpath, filename)
+            try:
+                with open(path, encoding="utf-8", errors="ignore") as handle:
+                    text = handle.read()
+            except OSError:
+                continue
+            for token in set(REFERENCE_RE.findall(text)):
+                references[token].add(os.path.relpath(path, EDIT_ROOT))
+    return references
+
+
+def evenly_spaced(items, count=10):
+    # Pick a spread of examples instead of the first alphabetical block.
+    if not items:
+        return []
+    step = max(1, len(items) // count)
+    return items[::step][:count]
+
+
+def list_folder_files(folder):
+    base = os.path.join(EDIT_ROOT, folder)
+    found = []
+    for root, _dirs, names in os.walk(base):
+        for name in names:
+            found.append(os.path.relpath(os.path.join(root, name), EDIT_ROOT))
+    return sorted(found)
+
+
+def main():
+    started = time.monotonic()
+    deadline = started + SEARCH_BUDGET_SECONDS
+    if not os.path.isdir(IMAGES_DIR):
+        raise SystemExit("Images folder not found: " + IMAGES_DIR)
+
+    image_names = sorted(
+        name for name in os.listdir(IMAGES_DIR)
+        if not name.startswith(".") and os.path.isfile(os.path.join(IMAGES_DIR, name))
+    )
+    image_paths = {name: os.path.join(IMAGES_DIR, name) for name in image_names}
+    image_sizes = {name: os.path.getsize(path) for name, path in image_paths.items()}
+    size_set = set(image_sizes.values())
+    print("images:", len(image_names), "distinct sizes:", len(size_set))
+
+    with concurrent.futures.ProcessPoolExecutor(max_workers=WORKERS) as executor:
+        # 1. Hash every image: full SHA-256 and first-64-KiB digest.
+        ordered_paths = [image_paths[name] for name in image_names]
+        full_results = list(executor.map(digest_full, ordered_paths, chunksize=4))
+        prefix_results = list(executor.map(digest_prefix, ordered_paths, chunksize=16))
+
+        image_full = {}
+        image_prefix = {}
+        for name, (_, full_hex), (_, prefix_hex) in zip(image_names, full_results, prefix_results):
+            if full_hex is None or prefix_hex is None:
+                raise SystemExit("Cannot read image: " + image_paths[name])
+            image_full[name] = full_hex
+            image_prefix[name] = prefix_hex
+
+        names_by_prefix_key = defaultdict(list)
+        names_by_full = defaultdict(list)
+        for name in image_names:
+            names_by_prefix_key[(image_sizes[name], image_prefix[name])].append(name)
+            names_by_full[image_full[name]].append(name)
+
+        # 2. Walk the tmp tree and keep files with a matching byte size.
+        candidates, walk_stats = walk_candidates(size_set, deadline)
+        print("walk: files", walk_stats["files_scanned"], "size matches", len(candidates),
+              "timed out" if walk_stats["timed_out"] else "complete")
+        candidate_sizes = dict(candidates)
+
+        # 3. Cheap prefix check, then full SHA-256 only for prefix matches.
+        prefix_results_found, prefix_done = run_batches(
+            digest_prefix, [path for path, _ in candidates], executor, deadline)
+        prefix_hits = [
+            path for path, digest in prefix_results_found
+            if digest is not None and (candidate_sizes[path], digest) in names_by_prefix_key
+        ]
+        full_results_found, full_done = run_batches(digest_full, prefix_hits, executor, deadline)
+
+    timed_out = walk_stats["timed_out"] or not prefix_done or not full_done
+
+    # 4. Attach every verified copy to the images it matches.
+    copies_by_name = defaultdict(list)
+    for path, digest in full_results_found:
+        if digest is None:
+            continue
+        for name in names_by_full.get(digest, []):
+            copies_by_name[name].append(path)
+
+    reference_map = scan_references()
+
+    entries = []
+    for name in image_names:
+        copies = sorted(set(copies_by_name.get(name, [])))
+        project, copy_path, projects_seen = choose_copy_and_project(copies)
+        tmp_dir = project_from_copy(copy_path)[1] if copy_path else None
+        suffix_match = DECLARED_SUFFIX_RE.search(name)
+        declared_suffix = suffix_match.group(1) if suffix_match else None
+        folder = project or UNSORTED_PROJECT
+        references = sorted(reference_map.get(name, set()))
+        entries.append({
+            "current_name": name,
+            "current_path": image_paths[name],
+            "size_bytes": image_sizes[name],
+            "sha256": image_full[name],
+            "declared_suffix": declared_suffix,
+            "declared_suffix_matches_sha256": declared_suffix == image_full[name][:12],
+            "project": project,
+            "source_tmp_dir": tmp_dir,
+            "copy_path": copy_path,
+            "copies_found": len(copies),
+            "all_copies": copies,
+            "projects_seen": projects_seen,
+            "ambiguous": len(projects_seen) > 1,
+            "target_dir": "Media/Images/" + folder + "/",
+            "target_path": os.path.join(IMAGES_DIR, folder),
+            "confidence": "identical-content" if copies else "none",
+            "referenced_in_count": len(references),
+            "referenced_in": references[:10],
+        })
+
+    with_project = [e for e in entries if e["project"]]
+    copy_without_project = [e for e in entries if e["copies_found"] and not e["project"]]
+    without_copy = [e for e in entries if not e["copies_found"]]
+    per_project = Counter(e["project"] for e in with_project)
+    summary = {
+        "images_total": len(entries),
+        "images_with_project": len(with_project),
+        "images_without_project": len(entries) - len(with_project),
+        "images_with_copy_but_no_project": len(copy_without_project),
+        "images_without_copy": len(without_copy),
+        "images_ambiguous": sum(1 for e in entries if e["ambiguous"]),
+        "images_referenced_by_text": sum(1 for e in entries if e["referenced_in_count"]),
+        "images_declared_suffix_mismatch": sum(1 for e in entries if not e["declared_suffix_matches_sha256"]),
+        "coverage_ratio": round(len(with_project) / len(entries), 4) if entries else 0,
+        "per_project": dict(per_project.most_common()),
+    }
+
+    out_of_scope = {folder: list_folder_files(folder) for folder in OUT_OF_SCOPE_FOLDERS}
+
+    elapsed = time.monotonic() - started
+    status = "timeout" if timed_out else "complete"
+    plan = {
+        "schema": "zenray-edit/images-by-project/1",
+        "generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
+        "script": os.path.join(EDIT_ROOT, "Scripts", "PlanImagesByProject.py"),
+        "mode": "plan only, nothing moved, renamed or deleted",
+        "matching": "same byte size and same first 64 KiB, then full SHA-256 equality",
+        "search": {
+            "root": SEARCH_ROOT,
+            "excluded_root": EDIT_ROOT,
+            "excluded_directory_names": sorted(EXCLUDED_DIR_NAMES),
+            "excluded_directory_name_contains": "cache",
+            "status": status,
+            "budget_seconds": SEARCH_BUDGET_SECONDS,
+            "elapsed_seconds": round(elapsed, 1),
+            "files_scanned": walk_stats["files_scanned"],
+            "directories_skipped": walk_stats["directories_skipped"],
+            "read_errors": walk_stats["errors"],
+            "size_matched_files": len(candidates),
+            "prefix_matched_files": len(prefix_hits),
+            "fully_hashed_files": len(full_results_found),
+        },
+        "summary": summary,
+        "images": entries,
+        "out_of_scope": {
+            "counts": {folder: len(files) for folder, files in out_of_scope.items()},
+            "files": out_of_scope,
+        },
+    }
+
+    os.makedirs(PLAN_DIR, exist_ok=True)
+    temp_path = PLAN_PATH + ".tmp"
+    with open(temp_path, "w", encoding="utf-8") as handle:
+        json.dump(plan, handle, ensure_ascii=False, indent=2)
+        handle.write("\n")
+    os.replace(temp_path, PLAN_PATH)
+
+    print("search status:", status, "elapsed:", round(elapsed, 1), "s")
+    print("images total:", summary["images_total"], "with project:", summary["images_with_project"],
+          "without project:", summary["images_without_project"],
+          "(copy but no project:", summary["images_with_copy_but_no_project"],
+          ", no copy:", summary["images_without_copy"], ")")
+    print("coverage:", summary["coverage_ratio"], "ambiguous:", summary["images_ambiguous"])
+    print("images referenced by text files:", summary["images_referenced_by_text"])
+    print("per project (top 8):")
+    for project, count in per_project.most_common(8):
+        print("  %5d  %s" % (count, project))
+    print("examples with project:")
+    for e in evenly_spaced(with_project):
+        print("  %s -> %s" % (e["current_name"], e["copy_path"]))
+    print("examples without project:")
+    for e in evenly_spaced(without_copy):
+        print("  %s" % e["current_name"])
+    print("out of scope:", plan["out_of_scope"]["counts"])
+    print("plan written:", PLAN_PATH)
+    return 3 if timed_out else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
