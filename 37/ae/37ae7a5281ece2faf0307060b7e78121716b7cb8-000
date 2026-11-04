@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZenRay Assets : Sélecteur Grilli Type & Terminal de file</title>
+  <style>
+    /* ── Grilli Type Font Declarations (local macOS + file URLs) ── */
+    @font-face {
+      font-family: 'GT Ultra';
+      src: local('GT Ultra Regular'), local('GTUltra-Regular'), url('file:///Users/zenray/Library/Fonts/GT-Ultra-Standard-Regular.otf');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Ultra';
+      src: local('GT Ultra Bold'), local('GTUltra-Bold'), url('file:///Users/zenray/Library/Fonts/GT-Ultra-Standard-Bold.otf');
+      font-weight: 700;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Standard L';
+      src: local('GT Standard L Regular'), local('GTStandardL-Regular'), url('file:///Users/zenray/Library/Fonts/GT-Standard-L-Standard-Regular.otf');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Standard L';
+      src: local('GT Standard L Bold'), local('GTStandardL-Bold'), url('file:///Users/zenray/Library/Fonts/GT-Standard-L-Standard-Bold.otf');
+      font-weight: 700;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT America';
+      src: local('GT America Regular'), local('GT-America-LCGV-Standard-Regular'), url('file:///Users/zenray/Library/Fonts/GT-America-LCGV-Standard-Regular.otf');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT America';
+      src: local('GT America Bold'), local('GT-America-LCGV-Standard-Bold'), url('file:///Users/zenray/Library/Fonts/GT-America-LCGV-Standard-Bold.otf');
+      font-weight: 700;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Alpina';
+      src: local('GT Alpina Regular'), local('GT-Alpina-Standard-Regular'), url('file:///Users/zenray/Library/Fonts/GT-Alpina-Standard-Regular.otf');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Alpina';
+      src: local('GT Alpina Bold'), local('GT-Alpina-Standard-Bold'), url('file:///Users/zenray/Library/Fonts/GT-Alpina-Standard-Bold.otf');
+      font-weight: 700;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Cinetype';
+      src: local('GT Cinetype Regular'), local('GT-Cinetype-Regular'), url('file:///Users/zenray/Library/Fonts/GT-Cinetype-Regular.otf');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Cinetype';
+      src: local('GT Cinetype Bold'), local('GT-Cinetype-Bold'), url('file:///Users/zenray/Library/Fonts/GT-Cinetype-Bold.otf');
+      font-weight: 700;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Pressura';
+      src: local('GT Pressura Regular'), local('GT-Pressura-LCGV-Standard-Regular'), url('file:///Users/zenray/Library/Fonts/GT-Pressura-LCGV-Standard-Regular.otf');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Pressura';
+      src: local('GT Pressura Bold'), local('GT-Pressura-LCGV-Standard-Bold'), url('file:///Users/zenray/Library/Fonts/GT-Pressura-LCGV-Standard-Bold.otf');
+      font-weight: 700;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Sectra';
+      src: local('GT Sectra Regular'), local('GT-Sectra-LCGV-Regular'), url('file:///Users/zenray/Library/Fonts/GT-Sectra-LCGV-Regular.otf');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Sectra';
+      src: local('GT Sectra Bold'), local('GT-Sectra-LCGV-Bold'), url('file:///Users/zenray/Library/Fonts/GT-Sectra-LCGV-Bold.otf');
+      font-weight: 700;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Flexa';
+      src: local('GT Flexa Regular'), local('GT-Flexa-Standard-Regular'), url('file:///Users/zenray/Library/Fonts/GT-Flexa-Standard-Regular.otf');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Maru';
+      src: local('GT Maru Regular'), local('GT-Maru-Regular'), url('file:///Users/zenray/Library/Fonts/GT-Maru-Regular.otf');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Planar';
+      src: local('GT Planar Regular'), local('GT-Planar-Regular'), url('file:///Users/zenray/Library/Fonts/GT-Planar-Regular.otf');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Walsheim';
+      src: local('GT Walsheim Regular'), local('GT-Walsheim-LC-Regular'), url('file:///Users/zenray/Library/Fonts/GT-Walsheim-LC-Regular.otf');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Zirkon';
+      src: local('GT Zirkon Regular'), local('GT-Zirkon-Regular'), url('file:///Users/zenray/Library/Fonts/GT-Zirkon-Regular.otf');
+      font-weight: 400;
+      font-style: normal;
+    }
+    @font-face {
+      font-family: 'GT Canon L';
+      src: local('GT Canon L Regular'), local('GT-Canon-L-Standard-Regular'), url('file:///Users/zenray/Library/Fonts/GT-Canon-L-Standard-Regular.otf');
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    /* ── Global Setup ── */
+    :root {
+      --ui-font: 'GT Ultra', -apple-system, BlinkMacSystemFont, sans-serif;
+      --number-font: 'GT Ultra', -apple-system, BlinkMacSystemFont, sans-serif;
+      --number-weight: 400;
+      --app-bg: #0F1115;
+      --card-bg: #161B22;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(255, 255, 255, 0.22);
+      --text-main: #EDEDEB;
+      --text-subtle: #8B949E;
+      --accent-purple: #A855F7;
+      --accent-purple-glow: rgba(168, 85, 247, 0.18);
+      --accent-blue: #3286FF;
+      --accent-blue-glow: rgba(50, 134, 255, 0.18);
+      --accent-orange: #F59E0B;
+      --accent-green: #10B981;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+    body {
+      background-color: var(--app-bg);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* ── Studio Top Bar ── */
+    .studio-header {
+      padding: 16px 32px;
+      background: rgba(22, 27, 34, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .studio-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .studio-logo {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+    }
+    .studio-header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #fff;
+    }
+    .studio-header .meta-pill {
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 4px 10px;
+      border-radius: 999px;
+      color: var(--text-subtle);
+    }
+    .action-top-copy {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .action-top-copy:hover {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    /* ── Main Workspace Layout ── */
+    .studio-workspace {
+      display: grid;
+      grid-template-columns: 500px 1fr;
+      gap: 36px;
+      padding: 32px;
+      max-width: 1560px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* ── Left Column: Native macOS Widget Container ── */
+    .widget-preview-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .widget-column-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-subtle);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .widget-column-title .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    /* ── The 460px macOS Popover ── */
+    .popover-container {
+      width: 460px;
+      background: #161B22;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6), 0 4px 16px rgba(0, 0, 0, 0.4);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      font-family: var(--ui-font);
+      user-select: none;
+    }
+    /* Popover Top Arrow (macOS style) */
+    .popover-container::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 8px solid rgba(255, 255, 255, 0.12);
+    }
+    .popover-container::after {
+      content: '';
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-bottom: 7px solid #161B22;
+    }
+
+    /* Status Lines */
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      line-height: 1.4;
+      margin-bottom: 4px;
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-purple { background-color: var(--accent-purple); box-shadow: 0 0 6px var(--accent-purple-glow); }
+    .dot-blue { background-color: var(--accent-blue); box-shadow: 0 0 6px var(--accent-blue-glow); }
+    .dot-orange { background-color: var(--accent-orange); }
+    .status-sub {
+      color: #9CA3AF;
+      font-size: 11px;
+      margin-left: 14px;
+      margin-bottom: 4px;
+    }
+
+    /* Collapsible Terminal Toggle Row */
+    .queue-toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      margin-top: 2px;
+      margin-bottom: 8px;
+    }
+    .queue-btn {
+      background: none;
+      border: none;
+      color: var(--accent-orange);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.15s ease;
+    }
+    .queue-btn:hover {
+      background: rgba(245, 158, 11, 0.15);
+    }
+
+    /* ── Terminal HUD Boxes (Variants) ── */
+    .terminal-box {
+      border-radius: 8px;
+      margin: 4px 0 10px 0;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+    .terminal-box.collapsed {
+      display: none;
+    }
+
+    /* Variant 1: Minimal HUD (Dark Slate) */
+    .terminal-style-minimal {
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 10px 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 10px;
+    }
+    .terminal-style-minimal .term-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 4px;
+    }
+    .terminal-style-minimal .term-title {
+      font-weight: 700;
+      color: #E2E8F0;
+      font-size: 10.5px;
+    }
+    .terminal-style-minimal .term-badge {
+      color: var(--accent-orange);
+      font-size: 9.5px;
+    }
+    .terminal-style-minimal .term-cmd {
+      color: var(--accent-purple);
+      font-weight: 500;
+      margin-bottom: 2px;
+      word-break: break-all;
+    }
+    .terminal-style-minimal .term-phase {
+      color: #94A3B8;
+      font-size: 9px;
+      margin-bottom: 6px;
+    }
+    .terminal-style-minimal .term-queue-item {
+      color: #64748B;
+      font-size: 9.5px;
+      line-height: 1.35;
+    }
+    .terminal-style-minimal .term-queue-more {
+      color: #475569;
+      font-size: 9px;
+      margin-top: 2px;
+    }
+
+    /* Variant 2: Pipeline Steps */
+    .terminal-style-pipeline {
+      background: #0D1117;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 12px;
+      font-family: var(--ui-font);
+    }
+    .pipeline-steps {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .pipeline-step {
+      flex: 1;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .pipeline-step.done {
+      border-color: rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.08);
+      color: #10B981;
+    }
+    .pipeline-step.active {
+      border-color: rgba(168, 85, 247, 0.4);
+      background: rgba(168, 85, 247, 0.12);
+      color: #C084FC;
+    }
+    .pipeline-step.pending {
+      color: #6B7280;
+    }
+    .pipeline-details {
+      font-family: ui-monospace, monospace;
+      font-size: 9.5px;
+      color: #9CA3AF;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Variant 3: Monospace Console */
+    .terminal-style-console {
+      background: #0A0D12;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 9.5px;
+    }
+    .console-header {
+      background: #161B22;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .traffic-dots { display: flex; gap: 4px; }
+    .traffic-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .td-red { background: #EF4444; }
+    .td-yellow { background: #F59E0B; }
+    .td-green { background: #10B981; }
+    .console-title { color: #8B949E; font-size: 9px; margin-left: 6px; }
+    .console-body {
+      padding: 8px 10px;
+      color: #E6EDF3;
+      line-height: 1.45;
+    }
+    .console-line-time { color: #6E7681; margin-right: 6px; }
+    .console-line-cmd { color: #58A6FF; }
+    .console-line-info { color: #7EE787; }
+
+    /* Summary Counters */
+    .summary-heading {
+      font-size: 13.5px;
+      font-weight: 400;
+      color: #EDEDEB;
+      margin: 4px 0 2px 0;
+    }
+    .number-val {
+      font-family: var(--number-font);
+      font-weight: var(--number-weight);
+    }
+    .speeds-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #9CA3AF;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+    .destinations-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 11px;
+      margin-bottom: 10px;
+    }
+
+    /* Tabs */
+    .filter-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 3px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: #8B949E;
+      font-size: 11px;
+      font-family: var(--ui-font);
+      padding: 5px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+    .tab-btn.active {
+      background: #21262D;
+      color: #F0F6FC;
+      font-weight: 500;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Project Lego Tiles */
+    .projects-scroll {
+      max-height: 270px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-right: 2px;
+    }
+    .projects-scroll::-webkit-scrollbar { width: 4px; }
+    .projects-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 4px; }
+
+    .project-tile {
+      background: #1C2128;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .project-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .project-name {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: #F0F6FC;
+    }
+    .project-total {
+      font-size: 10.5px;
+      color: #8B949E;
+    }
+    .pills-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .lego-pill {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 10px;
+      border: 1px solid transparent;
+    }
+    .pill-mac {
+      background: rgba(30, 41, 59, 0.9);
+      border-color: rgba(56, 189, 248, 0.25);
+      color: #E2E8F0;
+    }
+    .pill-github {
+      background: rgba(46, 16, 101, 0.6);
+      border-color: rgba(168, 85, 247, 0.35);
+      color: #F3E8FF;
+    }
+    .pill-gdrive {
+      background: rgba(30, 58, 138, 0.6);
+      border-color: rgba(50, 134, 255, 0.35);
+      color: #DBEAFE;
+    }
+    .pill-pending {
+      font-size: 10px;
+      color: var(--accent-orange);
+      margin-left: auto;
+    }
+
+    /* Quit Button */
+    .quit-btn {
+      margin-top: 12px;
+      background: #21262D;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #C9D1D9;
+      font-family: var(--ui-font);
+      font-size: 11.5px;
+      padding: 7px 0;
+      border-radius: 7px;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s ease;
+    }
+    .quit-btn:hover { background: #30363D; color: #fff; }
+
+    /* ── Right Column: Studio Controls & Typography Inspector ── */
+    .studio-panel {
+      background: rgba(22, 27, 34, 0.7);
+      backdrop-filter: blur(24px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #F0F6FC;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .section-desc {
+      font-size: 11.5px;
+      color: var(--text-subtle);
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+
+    /* Preset Buttons Grid */
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 8px;
+    }
+    .preset-card {
+      background: #1C2128;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .preset-card:hover {
+      border-color: var(--border-focus);
+      background: #21262D;
+      transform: translateY(-1px);
+    }
+    .preset-card.active {
+      border-color: var(--accent-blue);
+      background: rgba(50, 134, 255, 0.12);
+    }
+    .preset-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .preset-sub {
+      font-size: 10.5px;
+      color: var(--text-subtle);
+    }
+
+    /* Font Family Selector Dropdown / Chips */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .control-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #8B949E;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .select-input {
+      background: #1C2128;
+      color: #F0F6FC;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12.5px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s ease;
+    }
+    .select-input:focus { border-color: var(--accent-blue); }
+
+    /* Segmented Weight Controls */
+    .segmented-control {
+      display: flex;
+      background: #1C2128;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 3px;
+    }
+    .seg-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #8B949E;
+      font-size: 11px;
+      padding: 6px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+    .seg-btn.active {
+      background: #2D333B;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Terminal HUD Style Selector */
+    .terminal-choice-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .terminal-choice-card {
+      background: #1C2128;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .terminal-choice-card:hover {
+      border-color: var(--border-focus);
+      background: #21262D;
+    }
+    .terminal-choice-card.active {
+      border-color: var(--accent-purple);
+      background: rgba(168, 85, 247, 0.1);
+    }
+    .term-opt-name { font-size: 11.5px; font-weight: 600; color: #fff; }
+    .term-opt-desc { font-size: 10px; color: var(--text-subtle); line-height: 1.35; }
+
+    /* JSON Output & Copy Box */
+    .json-export-box {
+      background: #0D1117;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .json-code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 11px;
+      color: #7EE787;
+      white-space: pre-wrap;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .copy-btn-large {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+    .copy-btn-large:hover {
+      background: linear-gradient(135deg, #34D399, #10B981);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #10B981;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+      z-index: 1000;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Studio Header -->
+  <header class="studio-header">
+    <div class="studio-title">
+      <div class="studio-logo">ZR</div>
+      <div>
+        <h1>ZenRay Assets : Sélecteur Grilli Type & Terminal de file</h1>
+      </div>
+      <div class="meta-pill">73 fontes Grilli Type détectées · Rendu 1:1 natif macOS</div>
+    </div>
+    <button class="action-top-copy" onclick="copyConfig()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+      Copier la configuration JSON
+    </button>
+  </header>
+
+  <!-- Studio Workspace -->
+  <main class="studio-workspace">
+
+    <!-- Left Column: The 1:1 Pixel Native macOS Widget -->
+    <div class="widget-preview-column">
+      <div class="widget-column-title">
+        <span class="live-dot"></span>
+        Aperçu interactif direct (ZenRay Assets Popover 460px)
+      </div>
+
+      <div class="popover-container" id="widgetContainer">
+        <!-- Status Row 1: Running GitHub Job -->
+        <div class="status-row">
+          <span class="status-dot dot-purple"></span>
+          <span style="font-weight: 500;">Sauvegarde GitHub de ZenRay-Edit</span>
+        </div>
+        <div class="status-sub">Traitement en cours</div>
+
+        <!-- Status Row 2: Active Google Drive Speed -->
+        <div class="status-row">
+          <span class="status-dot dot-blue"></span>
+          <span style="color: var(--accent-blue);">Sauvegarde Google Drive active ↑ <span class="number-val">12 MB/s</span></span>
+        </div>
+
+        <!-- Status Row 3: Collapsible Queue & Terminal Button -->
+        <div class="queue-toggle-row">
+          <span class="status-dot dot-orange"></span>
+          <span style="color: #9CA3AF;"><span class="number-val">44</span> opérations en attente</span>
+          <button class="queue-btn" id="terminalToggleBtn" onclick="toggleTerminal()">
+            <span id="termIcon">▾</span> <span id="termBtnText">replier</span>
+          </button>
+        </div>
+
+        <!-- Collapsible Terminal HUD Box -->
+        <div class="terminal-box terminal-style-minimal" id="terminalBox">
+          <!-- Injected via JavaScript based on selected terminal variant -->
+        </div>
+
+        <!-- Summary Heading & File Count (GT Ultra Regular 400!) -->
+        <div class="summary-heading">
+          <span class="number-val">51</span> projets · <span class="number-val">296899</span> fichiers
+        </div>
+
+        <!-- Speeds Row -->
+        <div class="speeds-row">
+          <span>Upload ↑ <span class="number-val">13 MB/s</span></span>
+          <span>Download ↓ <span class="number-val">0 KB/s</span></span>
+        </div>
+
+        <!-- Fallback Destinations Breakdown -->
+        <div class="destinations-row">
+          <div style="display: flex; align-items: center; gap: 6px; color: var(--accent-purple);">
+            <span class="status-dot dot-purple"></span>
+            <span>GitHub (<span class="number-val">296678</span>) ↑ <span class="number-val">928 KB/s</span></span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px; color: var(--accent-blue);">
+            <span class="status-dot dot-blue"></span>
+            <span>GDrive (<span class="number-val">46307</span>) ↑ <span class="number-val">12 MB/s</span></span>
+          </div>
+        </div>
+
+        <!-- Storage Filter Tabs -->
+        <div class="filter-tabs">
+          <button class="tab-btn active" onclick="setTab(this, 'all')">Tout</button>
+          <button class="tab-btn" onclick="setTab(this, 'mac')">Mac</button>
+          <button class="tab-btn" onclick="setTab(this, 'github')">GitHub</button>
+          <button class="tab-btn" onclick="setTab(this, 'gdrive')">GDrive</button>
+        </div>
+
+        <!-- Project Lego Tiles List -->
+        <div class="projects-scroll" id="projectList">
+          <!-- Project 1 -->
+          <div class="project-tile" data-mac="3502" data-gh="3493" data-gd="3488">
+            <div class="project-header-row">
+              <span class="project-name">ZenRay-Edit</span>
+              <span class="project-total"><span class="number-val">3502</span> fichiers</span>
+            </div>
+            <div class="pills-row">
+              <span class="lego-pill pill-mac">Mac <span class="number-val">3502</span></span>
+              <span class="lego-pill pill-github">GitHub <span class="number-val">3493</span></span>
+              <span class="lego-pill pill-gdrive">GDrive <span class="number-val">3488</span></span>
+              <span class="pill-pending"><span class="number-val">202</span> à envoyer</span>
+            </div>
+          </div>
+
+          <!-- Project 2 -->
+          <div class="project-tile" data-mac="102546" data-gh="102546" data-gd="17">
+            <div class="project-header-row">
+              <span class="project-name">zenray-japanese</span>
+              <span class="project-total"><span class="number-val">102546</span> fichiers</span>
+            </div>
+            <div class="pills-row">
+              <span class="lego-pill pill-mac">Mac <span class="number-val">102546</span></span>
+              <span class="lego-pill pill-github">GitHub <span class="number-val">102546</span></span>
+              <span class="lego-pill pill-gdrive">GDrive <span class="number-val">17</span></span>
+              <span class="pill-pending"><span class="number-val">2</span> à envoyer</span>
+            </div>
+          </div>
+
+          <!-- Project 3 -->
+          <div class="project-tile" data-mac="63666" data-gh="81815" data-gd="17">
+            <div class="project-header-row">
+              <span class="project-name">ZenRay Meshes</span>
+              <span class="project-total"><span class="number-val">81815</span> fichiers</span>
+            </div>
+            <div class="pills-row">
+              <span class="lego-pill pill-mac">Mac <span class="number-val">63666</span></span>
+              <span class="lego-pill pill-github">GitHub <span class="number-val">81815</span></span>
+              <span class="lego-pill pill-gdrive">GDrive <span class="number-val">17</span></span>
+              <span class="pill-pending"><span class="number-val">2</span> à envoyer</span>
+            </div>
+          </div>
+
+          <!-- Project 4 -->
+          <div class="project-tile" data-mac="18245" data-gh="18425" data-gd="17">
+            <div class="project-header-row">
+              <span class="project-name">Vegatations Assets ZenRay Collection 01</span>
+              <span class="project-total"><span class="number-val">18425</span> fichiers</span>
+            </div>
+            <div class="pills-row">
+              <span class="lego-pill pill-mac">Mac <span class="number-val">18245</span></span>
+              <span class="lego-pill pill-github">GitHub <span class="number-val">18425</span></span>
+              <span class="lego-pill pill-gdrive">GDrive <span class="number-val">17</span></span>
+              <span class="pill-pending"><span class="number-val">2</span> à envoyer</span>
+            </div>
+          </div>
+
+          <!-- Project 5 -->
+          <div class="project-tile" data-mac="6737" data-gh="12946" data-gd="6739">
+            <div class="project-header-row">
+              <span class="project-name">ZenRay Motion Design</span>
+              <span class="project-total"><span class="number-val">12946</span> fichiers</span>
+            </div>
+            <div class="pills-row">
+              <span class="lego-pill pill-mac">Mac <span class="number-val">6737</span></span>
+              <span class="lego-pill pill-github">GitHub <span class="number-val">12946</span></span>
+              <span class="lego-pill pill-gdrive">GDrive <span class="number-val">6739</span></span>
+              <span class="pill-pending"><span class="number-val">2</span> à envoyer</span>
+            </div>
+          </div>
+
+          <!-- Project 6 -->
+          <div class="project-tile" data-mac="11038" data-gh="11097" data-gd="17">
+            <div class="project-header-row">
+              <span class="project-name">ZenRay Plan</span>
+              <span class="project-total"><span class="number-val">11097</span> fichiers</span>
+            </div>
+            <div class="pills-row">
+              <span class="lego-pill pill-mac">Mac <span class="number-val">11038</span></span>
+              <span class="lego-pill pill-github">GitHub <span class="number-val">11097</span></span>
+              <span class="lego-pill pill-gdrive">GDrive <span class="number-val">17</span></span>
+              <span class="pill-pending"><span class="number-val">2</span> à envoyer</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quit Button -->
+        <button class="quit-btn">Quitter Assets</button>
+      </div>
+    </div>
+
+    <!-- Right Column: Studio Controls & Typography Inspector -->
+    <div class="studio-panel">
+
+      <!-- Section: Presets Rapides -->
+      <div>
+        <div class="section-title">
+          <span>Presets instantanés recommandés</span>
+          <span style="font-size: 11px; color: var(--accent-orange);">1 clic</span>
+        </div>
+        <div class="section-desc">
+          Sélectionnez une harmonie typographique prête à l'emploi parmi les meilleures combinaisons Grilli Type.
+        </div>
+        <div class="preset-grid">
+          <div class="preset-card active" onclick="applyPreset('pure-ultra')">
+            <div class="preset-title">GT Ultra Pur (Recommandé)</div>
+            <div class="preset-sub">Interface GT Ultra · Nombres GT Ultra 400 régulier</div>
+          </div>
+          <div class="preset-card" onclick="applyPreset('ultra-standard')">
+            <div class="preset-title">GT Ultra + Standard L</div>
+            <div class="preset-sub">Interface GT Ultra · Chiffres techniques GT Standard L</div>
+          </div>
+          <div class="preset-card" onclick="applyPreset('america-tech')">
+            <div class="preset-title">GT America Tech Studio</div>
+            <div class="preset-sub">Modernité suisse contemporaine intégrale</div>
+          </div>
+          <div class="preset-card" onclick="applyPreset('sectra-editorial')">
+            <div class="preset-title">GT Sectra Editorial</div>
+            <div class="preset-sub">Serif contemporain affûté et chiffres précis</div>
+          </div>
+          <div class="preset-card" onclick="applyPreset('pressura-hud')">
+            <div class="preset-title">GT Pressura HUD Industriel</div>
+            <div class="preset-sub">Esprit ingénierie compacte, lisibilité maximale</div>
+          </div>
+          <div class="preset-card" onclick="applyPreset('cinetype-mono')">
+            <div class="preset-title">GT Cinetype Studio</div>
+            <div class="preset-sub">Esthétique cinématographique & sous-titrage</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Typography Selectors -->
+      <div>
+        <div class="section-title">
+          <span>Réglages Typographiques Grilli Type</span>
+        </div>
+        <div class="controls-grid">
+          <!-- Text Font Family -->
+          <div class="control-group">
+            <label class="control-label" for="uiFontSelect">Police Interface & Titres</label>
+            <select class="select-input" id="uiFontSelect" onchange="updateCustomFont()">
+              <option value="GT Ultra" selected>GT Ultra (Standard)</option>
+              <option value="GT Standard L">GT Standard L</option>
+              <option value="GT America">GT America</option>
+              <option value="GT Alpina">GT Alpina</option>
+              <option value="GT Cinetype">GT Cinetype</option>
+              <option value="GT Pressura">GT Pressura</option>
+              <option value="GT Sectra">GT Sectra LCG</option>
+              <option value="GT Flexa">GT Flexa</option>
+              <option value="GT Maru">GT Maru</option>
+              <option value="GT Planar">GT Planar</option>
+              <option value="GT Walsheim">GT Walsheim</option>
+              <option value="GT Zirkon">GT Zirkon</option>
+              <option value="GT Canon L">GT Canon L</option>
+            </select>
+          </div>
+
+          <!-- Number Font Family -->
+          <div class="control-group">
+            <label class="control-label" for="numberFontSelect">Police Nombres & Compteurs</label>
+            <select class="select-input" id="numberFontSelect" onchange="updateCustomFont()">
+              <option value="harmonized" selected>Harmonisé (Même fonte que l'interface)</option>
+              <option value="GT Ultra">GT Ultra</option>
+              <option value="GT Standard L">GT Standard L (Technique)</option>
+              <option value="GT America">GT America</option>
+              <option value="GT Alpina">GT Alpina</option>
+              <option value="GT Cinetype">GT Cinetype</option>
+              <option value="GT Pressura">GT Pressura (Condensé)</option>
+              <option value="GT Sectra">GT Sectra</option>
+              <option value="GT Flexa">GT Flexa</option>
+              <option value="GT Planar">GT Planar</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Number Weight Control -->
+        <div class="control-group" style="margin-top: 14px;">
+          <label class="control-label">Graisse des Nombres (Weight)</label>
+          <div class="segmented-control" id="weightControl">
+            <button class="seg-btn" onclick="setWeight(300)">300 Light</button>
+            <button class="seg-btn active" onclick="setWeight(400)">400 Regular (Défaut)</button>
+            <button class="seg-btn" onclick="setWeight(500)">500 Medium</button>
+            <button class="seg-btn" onclick="setWeight(700)">700 Bold</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Terminal HUD Design Variant -->
+      <div>
+        <div class="section-title">
+          <span>Variante du Terminal HUD de file</span>
+          <span style="font-size: 11px; color: var(--accent-purple);">3 propositions minimales</span>
+        </div>
+        <div class="section-desc">
+          Choisissez la présentation des commandes Git et des projets en attente lorsque le menu déroulant est ouvert.
+        </div>
+        <div class="terminal-choice-grid">
+          <!-- Option 1 -->
+          <div class="terminal-choice-card active" id="termChoice-minimal" onclick="setTerminalVariant('minimal')">
+            <div class="term-opt-name">1. Minimal HUD (Dark Slate)</div>
+            <div class="term-opt-desc">Commandes $ git directes, badge orange, phase LFS et 5 prochains projets. L'implémentation native directe.</div>
+          </div>
+          <!-- Option 2 -->
+          <div class="terminal-choice-card" id="termChoice-pipeline" onclick="setTerminalVariant('pipeline')">
+            <div class="term-opt-name">2. Pipeline Steps (Étapes)</div>
+            <div class="term-opt-desc">Étapes de synchronisation sous forme de pills horizontales : Inventaire → LFS Shards → Git Push.</div>
+          </div>
+          <!-- Option 3 -->
+          <div class="terminal-choice-card" id="termChoice-console" onclick="setTerminalVariant('console')">
+            <div class="term-opt-name">3. Console Monospace (CLI)</div>
+            <div class="term-opt-desc">Fenêtre terminal macOS avec traffic lights, timestamps [01:32] et stdout en direct.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: JSON Export Box -->
+      <div>
+        <div class="section-title">
+          <span>Configuration JSON prête pour l'agent</span>
+        </div>
+        <div class="json-export-box">
+          <div class="json-code" id="jsonOutput">
+{
+  "fontName": "GTUltra-Regular",
+  "serifFontName": "GTUltra-Regular",
+  "numberWeight": 400,
+  "terminalStyle": "minimal-hud"
+}</div>
+          <button class="copy-btn-large" onclick="copyConfig()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+            Copier la configuration JSON pour Antigravity / Claude
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span>Configuration copiée dans le presse-papier !</span>
+  </div>
+
+  <script>
+    // ── Live State ──
+    const state = {
+      uiFont: 'GT Ultra',
+      numberFont: 'GT Ultra',
+      numberWeight: 400,
+      terminalVariant: 'minimal',
+      terminalExpanded: true
+    };
+
+    // ── Presets Definition ──
+    const presets = {
+      'pure-ultra': {
+        ui: 'GT Ultra',
+        num: 'GT Ultra',
+        weight: 400,
+        term: 'minimal'
+      },
+      'ultra-standard': {
+        ui: 'GT Ultra',
+        num: 'GT Standard L',
+        weight: 400,
+        term: 'minimal'
+      },
+      'america-tech': {
+        ui: 'GT America',
+        num: 'GT America',
+        weight: 400,
+        term: 'pipeline'
+      },
+      'sectra-editorial': {
+        ui: 'GT Sectra',
+        num: 'GT Sectra',
+        weight: 400,
+        term: 'minimal'
+      },
+      'pressura-hud': {
+        ui: 'GT Pressura',
+        num: 'GT Pressura',
+        weight: 400,
+        term: 'console'
+      },
+      'cinetype-mono': {
+        ui: 'GT Cinetype',
+        num: 'GT Cinetype',
+        weight: 400,
+        term: 'console'
+      }
+    };
+
+    function applyPreset(key) {
+      document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      const p = presets[key];
+      if (!p) return;
+
+      state.uiFont = p.ui;
+      state.numberFont = p.num;
+      state.numberWeight = p.weight;
+      state.terminalVariant = p.term;
+
+      document.getElementById('uiFontSelect').value = p.ui;
+      document.getElementById('numberFontSelect').value = (p.ui === p.num) ? 'harmonized' : p.num;
+
+      // Update weight buttons
+      document.querySelectorAll('#weightControl .seg-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.includes(String(p.weight)));
+      });
+
+      // Update terminal cards
+      setTerminalVariant(p.term);
+
+      applyStyles();
+    }
+
+    function updateCustomFont() {
+      // Clear preset selection
+      document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+
+      const uiVal = document.getElementById('uiFontSelect').value;
+      const numVal = document.getElementById('numberFontSelect').value;
+
+      state.uiFont = uiVal;
+      state.numberFont = (numVal === 'harmonized') ? uiVal : numVal;
+
+      applyStyles();
+    }
+
+    function setWeight(w) {
+      state.numberWeight = w;
+      document.querySelectorAll('#weightControl .seg-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.includes(String(w)));
+      });
+      applyStyles();
+    }
+
+    function setTerminalVariant(variant) {
+      state.terminalVariant = variant;
+      document.querySelectorAll('.terminal-choice-card').forEach(c => c.classList.remove('active'));
+      const activeCard = document.getElementById('termChoice-' + variant);
+      if (activeCard) activeCard.classList.add('active');
+      renderTerminal();
+      updateJson();
+    }
+
+    function toggleTerminal() {
+      state.terminalExpanded = !state.terminalExpanded;
+      const box = document.getElementById('terminalBox');
+      const icon = document.getElementById('termIcon');
+      const text = document.getElementById('termBtnText');
+
+      if (state.terminalExpanded) {
+        box.classList.remove('collapsed');
+        icon.textContent = '▾';
+        text.textContent = 'replier';
+      } else {
+        box.classList.add('collapsed');
+        icon.textContent = '▸';
+        text.textContent = 'terminal';
+      }
+    }
+
+    function renderTerminal() {
+      const box = document.getElementById('terminalBox');
+      box.className = 'terminal-box terminal-style-' + state.terminalVariant;
+      if (!state.terminalExpanded) box.classList.add('collapsed');
+
+      if (state.terminalVariant === 'minimal') {
+        box.innerHTML = `
+          <div class="term-head">
+            <span class="term-title">⌘ File Git & Commandes</span>
+            <span class="term-badge">1 en cours · 44 en attente</span>
+          </div>
+          <div class="term-cmd">$ git -C ~/Create/.../ZenRay-Edit add . &amp;&amp; git commit</div>
+          <div class="term-phase">↳ Transfert des shards LFS en cours…</div>
+          <div class="term-queue-item">1. [archive] ZenRay Assets Tube View</div>
+          <div class="term-queue-item">2. [archive] ZenRayPostKit</div>
+          <div class="term-queue-item">3. [archive] Vegatations Assets ZenRay Collection 01</div>
+          <div class="term-queue-item">4. [archive] ZenRay Motion Design</div>
+          <div class="term-queue-item">5. [archive] ZenRay Plan</div>
+          <div class="term-queue-more">   ... +39 autres projets en file</div>
+        `;
+      } else if (state.terminalVariant === 'pipeline') {
+        box.innerHTML = `
+          <div class="pipeline-steps">
+            <div class="pipeline-step done">
+              <span style="font-weight: 600;">1. Nettoyage ✓</span>
+              <span style="opacity: 0.8;">Branches locales</span>
+            </div>
+            <div class="pipeline-step active">
+              <span style="font-weight: 600;">2. Shards LFS ⚡</span>
+              <span style="opacity: 0.8;">Transfert 928 KB/s</span>
+            </div>
+            <div class="pipeline-step pending">
+              <span style="font-weight: 600;">3. Push Cloud</span>
+              <span style="opacity: 0.8;">En attente de relai</span>
+            </div>
+          </div>
+          <div class="pipeline-details">
+            <span style="color: var(--accent-purple);">$ git lfs push --all origin main</span>
+            <span style="color: var(--accent-orange);">44 en file d'attente</span>
+          </div>
+        `;
+      } else if (state.terminalVariant === 'console') {
+        box.innerHTML = `
+          <div class="console-header">
+            <div class="traffic-dots">
+              <span class="traffic-dot td-red"></span>
+              <span class="traffic-dot td-yellow"></span>
+              <span class="traffic-dot td-green"></span>
+            </div>
+            <span class="console-title">zsh · Assets Fallback Daemon (PID 12854)</span>
+          </div>
+          <div class="console-body">
+            <div><span class="console-line-time">[01:32:04]</span><span class="console-line-cmd">$ git -C ~/Create/.../ZenRay-Edit status</span></div>
+            <div><span class="console-line-time">[01:32:06]</span><span class="console-line-info">lfs: uploading 2 large blobs (17.4 MB)</span></div>
+            <div><span class="console-line-time">[01:32:10]</span><span style="color:#C9D1D9;">gdrive: runner sync 12 MB/s · fallback actif</span></div>
+            <div style="color: var(--accent-orange); margin-top: 4px;">↳ 44 projets en file de relai séquentiel</div>
+          </div>
+        `;
+      }
+    }
+
+    function applyStyles() {
+      const root = document.documentElement;
+      root.style.setProperty('--ui-font', `'${state.uiFont}', -apple-system, BlinkMacSystemFont, sans-serif`);
+      root.style.setProperty('--number-font', `'${state.numberFont}', -apple-system, BlinkMacSystemFont, sans-serif`);
+      root.style.setProperty('--number-weight', state.numberWeight);
+
+      updateJson();
+    }
+
+    function updateJson() {
+      // Resolve exact Swift PostScript font names
+      const fontMap = {
+        'GT Ultra': 'GTUltra-Regular',
+        'GT Standard L': 'GTStandardL-Regular',
+        'GT America': 'GT-America-LCGV-Standard-Regular',
+        'GT Alpina': 'GT-Alpina-Standard-Regular',
+        'GT Cinetype': 'GT-Cinetype-Regular',
+        'GT Pressura': 'GT-Pressura-LCGV-Standard-Regular',
+        'GT Sectra': 'GT-Sectra-LCGV-Regular',
+        'GT Flexa': 'GT-Flexa-Standard-Regular',
+        'GT Maru': 'GT-Maru-Regular',
+        'GT Planar': 'GT-Planar-Regular',
+        'GT Walsheim': 'GT-Walsheim-LC-Regular',
+        'GT Zirkon': 'GT-Zirkon-Regular',
+        'GT Canon L': 'GT-Canon-L-Standard-Regular'
+      };
+
+      const out = {
+        fontName: fontMap[state.uiFont] || state.uiFont,
+        serifFontName: fontMap[state.numberFont] || state.numberFont,
+        numberWeight: state.numberWeight,
+        terminalStyle: state.terminalVariant === 'minimal' ? 'minimal-hud' : state.terminalVariant === 'pipeline' ? 'queue-pipeline' : 'cli-console'
+      };
+
+      document.getElementById('jsonOutput').textContent = JSON.stringify(out, null, 2);
+    }
+
+    function setTab(btn, scope) {
+      document.querySelectorAll('.filter-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const tiles = document.querySelectorAll('.project-tile');
+      tiles.forEach(tile => {
+        if (scope === 'all') tile.style.display = 'flex';
+        else if (scope === 'mac') tile.style.display = (tile.dataset.mac > 0) ? 'flex' : 'none';
+        else if (scope === 'github') tile.style.display = (tile.dataset.gh > 0) ? 'flex' : 'none';
+        else if (scope === 'gdrive') tile.style.display = (tile.dataset.gd > 0) ? 'flex' : 'none';
+      });
+    }
+
+    function copyConfig() {
+      const code = document.getElementById('jsonOutput').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+      });
+    }
+
+    // Initial Render
+    renderTerminal();
+    applyStyles();
+  </script>
+</body>
+</html>
