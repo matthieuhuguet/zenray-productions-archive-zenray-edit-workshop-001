@@ -1,0 +1,20 @@
+{
+  "date": "4 November 2026",
+  "slug": "zenray-clipboard",
+  "folder": "2026-11-04-zenray-clipboard",
+  "version": 1,
+  "title": "ZenRay Clipboard",
+  "module": "general",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-clipboard",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-zenray-clipboard/Articles",
+  "files": [
+    "index.html",
+    "diagram-memory-1080p.png",
+    "diagram-swap-1080p.png"
+  ],
+  "indexSha256": "8de93e473f84bdcb123ca6aff706aec8ec6bfbb4ffb6d42ed8decaba9689a6d0",
+  "filedAt": "2026-11-04T00:17:15.543Z",
+  "note": "Synthèse HTML ultra-simple 1080p ZenRay Clipboard (4 November 2026)"
+}
