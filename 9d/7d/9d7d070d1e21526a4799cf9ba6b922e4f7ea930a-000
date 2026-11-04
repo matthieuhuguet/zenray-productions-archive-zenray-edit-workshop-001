@@ -1,0 +1,13 @@
+{
+  "updatedAt": "2026-11-04T13:42:23.811228+01:00",
+  "files": [
+    {
+      "path": "/Users/zenray/.claude/tmp/tmp-conversation-codex-6d94c3fb52595cbb57e02bf5/Summary/ProjectInfo.json",
+      "sha256": "d4ef8b7c0719da26ad06940fe70cc71e81b87e1a7da03ea34f4c514171d03c70"
+    },
+    {
+      "path": "/Users/zenray/.claude/tmp/tmp-conversation-codex-6d94c3fb52595cbb57e02bf5/Summary/index.html",
+      "sha256": "fdba314cc967a7773a6c9301e53992aa47a8b48d418eff8fba28d43ffa8aabc4"
+    }
+  ]
+}
