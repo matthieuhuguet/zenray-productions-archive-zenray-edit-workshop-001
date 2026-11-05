@@ -1,0 +1,18 @@
+{
+  "date": "5 November 2026",
+  "slug": "adobe-clean-progress",
+  "folder": "2026-11-05-adobe-clean-progress",
+  "version": 1,
+  "title": "Adobe Clean sur ZenRay Progress",
+  "module": "progress",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-edit",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-adobe-clean-05-november-2026",
+  "files": [
+    "index.html"
+  ],
+  "indexSha256": "1a446ce001e5c2714713c66eeab00b14050041734e5db27d39b83108eefe8783",
+  "filedAt": "2026-11-05T12:06:09.154Z",
+  "note": null
+}
