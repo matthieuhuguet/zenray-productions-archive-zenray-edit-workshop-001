@@ -1,0 +1,19 @@
+{
+  "date": "12 November 2026",
+  "slug": "wheel-fl-car2-zenray-meshes-karma",
+  "folder": "2026-11-12-wheel-fl-car2-zenray-meshes-karma-v3",
+  "version": 3,
+  "title": "Roue avant Car2 : fiche 4x2 (4 Karma CPU + 4 Wireframe Ghost 2 048 px) et post Houdini",
+  "module": "general",
+  "assetsProject": "zenray-edit",
+  "project": "zenray-edit",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-wheel-fl-car2-zenray-meshes",
+  "files": [
+    "index.html",
+    "value-chain.svg"
+  ],
+  "indexSha256": "25d3455de3490d6935dbacb0a66d5ec515d174f6d10360f3fe484fb0e16ab928",
+  "filedAt": "2026-11-12T13:57:05.770Z",
+  "note": null
+}
