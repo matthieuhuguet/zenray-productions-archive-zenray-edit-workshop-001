@@ -1,0 +1,18 @@
+{
+  "date": "12 November 2026",
+  "slug": "audio-gallery-and-fonts-six-mockups",
+  "folder": "2026-11-12-audio-gallery-and-fonts-six-mockups",
+  "version": 1,
+  "title": "ZenRay Audio Gallery et ZenRay Fonts, six maquettes",
+  "module": "gallery",
+  "assetsProject": "zenray-edit",
+  "project": "audio-fonts-gallery-12-november-2026",
+  "status": "pending",
+  "atelier": "/Users/zenray/.claude/tmp/tmp-audio-fonts-gallery-12-november-2026",
+  "files": [
+    "index.html"
+  ],
+  "indexSha256": "635bd431f11bdb793af9423b82bf69f723a974813c39fdc4074d8cb5ec0684bb",
+  "filedAt": "2026-11-12T01:16:43.645Z",
+  "note": "Audio : Mur d'ondes, Pads, Constellation. Fonts : Mur de spécimens, Banc d'essai jeu, Table de mesure. Adobe Clean pour les deux apps."
+}
